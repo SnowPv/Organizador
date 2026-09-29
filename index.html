@@ -55,9 +55,9 @@ header.top small{display:block;color:var(--muted);font-size:13px;margin-top:2px;
 .tag.bad{background:#FBE3E5;color:#A81D2B}.tag.warn{background:#FBF0DA;color:#8A5A10}.tag.ok{background:#DEF3EA;color:#0F7A56}
 .tag.area-Trabajo{background:var(--trabajo-bg);color:var(--trabajo-ink)}.tag.area-Personal{background:var(--personal-bg);color:var(--personal-ink)}
 .empty{text-align:center;color:var(--muted);padding:26px 6px;font-size:14px;font-weight:500}
-nav.bottom{position:fixed;left:12px;right:12px;bottom:calc(10px + env(safe-area-inset-bottom));background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-radius:22px;padding:8px 6px;display:flex;justify-content:space-around;z-index:8;box-shadow:var(--shadow-md);border:1px solid rgba(20,20,43,.04)}
-nav.bottom button{flex:1;border:0;background:none;padding:6px 2px;color:var(--muted);font-size:10.5px;font-weight:600;border-radius:14px}
-nav.bottom button span{display:block;font-size:19px;line-height:1.3}
+nav.bottom{position:fixed;left:8px;right:8px;bottom:calc(10px + env(safe-area-inset-bottom));background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-radius:20px;padding:7px 3px;display:flex;justify-content:space-around;z-index:8;box-shadow:var(--shadow-md);border:1px solid rgba(20,20,43,.04)}
+nav.bottom button{flex:1;border:0;background:none;padding:5px 1px;color:var(--muted);font-size:9.5px;font-weight:600;border-radius:13px}
+nav.bottom button span{display:block;font-size:17px;line-height:1.3}
 nav.bottom button.on{color:var(--accent);background:var(--soft)}
 .fab{position:fixed;right:20px;bottom:calc(92px + env(safe-area-inset-bottom));width:58px;height:58px;border-radius:50%;border:0;background:var(--accent);color:#fff;font-size:30px;font-weight:300;line-height:1;box-shadow:var(--shadow-fab);z-index:9;transition:transform .12s}
 .fab:active{transform:scale(.93)}
@@ -88,6 +88,28 @@ label.l{display:block;font-size:11px;color:var(--muted);margin:14px 0 6px;font-w
 @keyframes sp{to{transform:rotate(360deg)}}
 .hint{font-size:13px;color:var(--muted);margin:8px 0;line-height:1.4}
 svg text{fill:var(--muted);font-size:9px}
+.badges{display:flex;gap:10px;overflow-x:auto;padding:2px 2px 4px}
+.badge{flex:none;width:72px;text-align:center;padding:10px 4px;border-radius:16px;background:var(--soft);opacity:.5}
+.badge.on{opacity:1;box-shadow:0 6px 16px -6px rgba(91,79,224,.35)}
+.badge .ic{font-size:26px;display:block;margin-bottom:4px}
+.badge .nm{font-size:10px;font-weight:700;line-height:1.2;color:var(--ink)}
+.badge.on .nm{color:var(--accent)}
+.quad{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.qc{border-radius:16px;padding:12px;color:#fff}
+.qc b{font-size:24px;display:block;font-weight:800}
+.qc span{font-size:11.5px;font-weight:600;opacity:.92;display:block;margin-top:2px}
+.heat{display:grid;grid-template-columns:repeat(10,1fr);gap:3px;margin-top:8px}
+.heat i{display:block;padding-top:100%;border-radius:4px;background:var(--soft);position:relative}
+.heat i.today{box-shadow:0 0 0 2px var(--ink) inset}
+.habit-row{padding:14px 0;border-top:1px solid var(--line)}
+.habit-row:first-of-type{border-top:0}
+.habit-dot{width:12px;height:12px;border-radius:50%;flex:none}
+.checklist-item{display:flex;gap:12px;align-items:center;padding:9px 0;border-top:1px solid var(--line)}
+.checklist-item:first-of-type{border-top:0}
+.checklist-item.done .ct{text-decoration:line-through;color:var(--muted)}
+.energy{font-size:15px}
+.weekcard{border-radius:16px;padding:12px;background:var(--soft);margin:8px 0}
+textarea.note{min-height:56px;resize:vertical}
 </style>
 </head>
 <body>
@@ -105,6 +127,8 @@ svg text{fill:var(--muted);font-size:9px}
 <nav class="bottom">
   <button data-tab="hoy"><span>☀</span>Hoy</button>
   <button data-tab="tareas"><span>☰</span>Tareas</button>
+  <button data-tab="habitos"><span>💪</span>Hábitos</button>
+  <button data-tab="semana"><span>🗓</span>Semana</button>
   <button data-tab="dash"><span>▥</span>Dashboard</button>
   <button data-tab="proy"><span>⚑</span>Proyectos</button>
 </nav>
@@ -127,6 +151,34 @@ function fmt(s){ if(!s) return 'Sin fecha'; const d = pd(s); return DIAS[d.getDa
 function hoy(){ return (S.data && S.data.hoy) || iso(new Date()); }
 function toast(msg){ const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg; document.body.appendChild(t); setTimeout(() => t.remove(), 2600); }
 function pct(x){ return Math.round((x || 0) * 100); }
+const PALETTE = ['#5B4FE0','#E0574F','#1AA179','#D9A62E','#2E86D9','#C24FBF','#E0824F','#2EA8A0','#B5539A','#4F8FE0'];
+function paletteColor(s){ s = String(s||''); let h = 0; for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0; return PALETTE[h % PALETTE.length]; }
+function hexToRgba(hex, a){ const n = parseInt(hex.slice(1), 16); return 'rgba(' + ((n>>16)&255) + ',' + ((n>>8)&255) + ',' + (n&255) + ',' + a + ')'; }
+function metaDiaria(){ return +((S.data.config.params || {})['Meta diaria de tareas']) || 6; }
+function achievements(){
+  const ind = S.data.indicadores || {}, T = S.data.tareas;
+  const racha = +ind[Object.keys(ind).find(k => k.startsWith('Racha'))] || 0;
+  const puntos = +ind['Puntos totales'] || 0;
+  const hechasHoy = +ind['Hechas hoy'] || 0;
+  return [
+    { ic: '🌱', nm: 'Primera tarea', on: T.some(t => t.hecho) },
+    { ic: '🎯', nm: 'Meta de hoy', on: hechasHoy >= metaDiaria() },
+    { ic: '🔥', nm: 'Racha de 3', on: racha >= 3 },
+    { ic: '⚡', nm: 'Racha de 10', on: racha >= 10 },
+    { ic: '💯', nm: '100 puntos', on: puntos >= 100 },
+    { ic: '🏆', nm: '500 puntos', on: puntos >= 500 }
+  ];
+}
+function quadrantCounts(){
+  const c = { 1: 0, 2: 0, 3: 0, 4: 0 };
+  S.data.tareas.forEach(t => { if (t.hecho) return; const n = parseInt(t.cuadrante); if (c[n] != null) c[n]++; });
+  return c;
+}
+function areaSummary(){
+  const m = {};
+  S.data.tareas.forEach(t => { const a = t.area || 'Sin área'; m[a] = m[a] || { total: 0, hechas: 0 }; m[a].total++; if (t.hecho) m[a].hechas++; });
+  return m;
+}
 
 /* ---------- API ---------- */
 async function api(action, extra){
@@ -151,7 +203,7 @@ async function load(){
 
 /* ---------- cabecera y navegación ---------- */
 function head(){
-  const titles = { hoy: 'Hoy', tareas: 'Tareas', dash: 'Dashboard', proy: 'Proyectos' };
+  const titles = { hoy: 'Hoy', tareas: 'Tareas', habitos: 'Hábitos', semana: 'Semana', dash: 'Dashboard', proy: 'Proyectos' };
   $('#hTitle').innerHTML = titles[S.tab] + (S.offline ? '<span class="chip-off">sin conexión</span>' : '');
   $('#hSub').innerHTML = S.busy ? '<span class="spin"></span>Actualizando…' : fmtLong(hoy());
   document.querySelectorAll('nav.bottom button').forEach(b => b.classList.toggle('on', b.dataset.tab === S.tab));
@@ -165,7 +217,7 @@ $('#fab').onclick = () => { try { openAdd(); } catch(e){ toast('No se pudo abrir
 function render(){
   head();
   if (!S.data){ $('#view').innerHTML = '<div class="empty"><span class="spin"></span>Cargando…</div>'; return; }
-  ({ hoy: viewHoy, tareas: viewTareas, dash: viewDash, proy: viewProy })[S.tab]();
+  ({ hoy: viewHoy, tareas: viewTareas, habitos: viewHabitos, semana: viewSemana, dash: viewDash, proy: viewProy })[S.tab]();
 }
 
 /* ---------- componentes ---------- */
@@ -188,7 +240,7 @@ function taskHTML(t){
     '<button class="chk ' + (t.hecho ? 'on' : '') + '" data-tog="' + idx + '" aria-label="Marcar">' + (t.hecho ? '✓' : '') + '</button>' +
     '<div class="grow" data-open="' + idx + '"><div class="t">' + esc(t.tarea) + '</div><div class="meta">' + tagAlerta(t) +
     (t.area ? '<span class="tag area-' + esc(t.area) + '">' + esc(t.area) + '</span>' : '') +
-    (t.categoria ? '<span class="tag">' + esc(t.categoria) + '</span>' : '') +
+    (t.categoria ? '<span class="tag" style="background:' + hexToRgba(paletteColor(t.categoria), .14) + ';color:' + paletteColor(t.categoria) + '">' + esc(t.categoria) + '</span>' : '') +
     (t.proyecto ? '<span class="tag">⚑ ' + esc(t.proyecto) + '</span>' : '') +
     (t.estado && t.estado !== 'Pendiente' && !t.hecho ? '<span class="tag">' + esc(t.estado) + '</span>' : '') +
     '</div></div></div>';
@@ -271,6 +323,21 @@ function chartDias(dias){
   if (meta) s += '<line x1="' + pad + '" x2="' + (W - pad) + '" y1="' + y(meta) + '" y2="' + y(meta) + '" stroke="var(--muted)" stroke-dasharray="4 3" stroke-width="1"/><text x="' + (W - pad) + '" y="' + (y(meta) - 3) + '" text-anchor="end">meta ' + meta + '</text>';
   return s + '</svg>';
 }
+function chartLine(dias, key, color){
+  if (!dias.length) return '<div class="empty">Aún no hay datos.</div>';
+  const W = 340, H = 130, pad = 18, n = dias.length;
+  const vals = dias.map(x => x[key] || 0), max = Math.max(1, ...vals), min = Math.min(0, ...vals);
+  const x = i => pad + i * (W - pad * 2) / Math.max(1, n - 1);
+  const y = v => H - 20 - ((v - min) / (max - min || 1)) * (H - 34);
+  let pts = vals.map((v, i) => x(i) + ',' + y(v)).join(' ');
+  let area = 'M' + x(0) + ',' + (H - 20) + ' L' + pts.replace(/ /g, ' L').slice(1) + ' L' + x(n - 1) + ',' + (H - 20) + ' Z';
+  let s = '<svg viewBox="0 0 ' + W + ' ' + H + '" width="100%">';
+  s += '<path d="' + area + '" fill="' + hexToRgba(color, .14) + '" stroke="none"/>';
+  s += '<polyline points="' + pts + '" fill="none" stroke="' + color + '" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>';
+  dias.forEach((d, i) => { if (i === n - 1 || i % Math.ceil(n / 6) === 0) s += '<text x="' + x(i) + '" y="' + (H - 4) + '" text-anchor="middle">' + pd(d.fecha).getDate() + '</text>'; });
+  s += '<circle cx="' + x(n - 1) + '" cy="' + y(vals[n - 1]) + '" r="4" fill="' + color + '"/>';
+  return s + '</svg>';
+}
 function viewDash(){
   const d = S.data, ind = d.indicadores || {}, h = hoy(), T = d.tareas;
   const kp = (v, l) => '<div class="kpi"><b>' + esc(v == null ? '–' : v) + '</b><span>' + l + '</span></div>';
@@ -281,14 +348,85 @@ function viewDash(){
   const catArr = Object.entries(cats).sort((a, b) => (b[1].h + b[1].p) - (a[1].h + a[1].p)).slice(0, 8);
   const mx = Math.max(1, ...catArr.map(c => c[1].h + c[1].p));
   const abiertas = T.filter(t => !t.hecho), tr = abiertas.filter(t => t.area === 'Trabajo').length, pe = abiertas.filter(t => t.area === 'Personal').length;
-  let html = '<div class="kpis" style="margin-top:8px">' + kp(ind['Hechas hoy'], 'hechas hoy') + kp(ind['Hechas esta semana'], 'hechas semana') + kp(typeof av === 'number' ? pct(av) + '%' : av, 'avance semanal') +
+  const badges = achievements();
+  const q = quadrantCounts();
+  const areas = areaSummary();
+  let html = '<div class="badges">' + badges.map(b => '<div class="badge ' + (b.on ? 'on' : '') + '"><span class="ic">' + (b.on ? b.ic : '🔒') + '</span><span class="nm">' + esc(b.nm) + '</span></div>').join('') + '</div>';
+  html += '<div class="kpis" style="margin-top:10px">' + kp(ind['Hechas hoy'], 'hechas hoy') + kp(ind['Hechas esta semana'], 'hechas semana') + kp(typeof av === 'number' ? pct(av) + '%' : av, 'avance semanal') +
     kp(ind['Vencidas'], 'vencidas') + kp(ind['Pendientes totales'], 'pendientes') + kp(ind['Puntos esta semana'], 'puntos semana') + '</div>';
   html += '<div class="card"><h2>Tareas completadas · últimos 14 días</h2>' + chartDias(dias) + '</div>';
-  html += '<div class="card"><h2>Trabajo vs personal (pendientes)</h2><div class="hero"><div class="ring">' + ring(tr + pe ? tr / (tr + pe) : 0, 'var(--accent)') + '<b>' + (tr + pe) + '<span>pendientes</span></b></div>' +
-    '<div class="stats" style="grid-template-columns:1fr"><div class="stat"><b>' + tr + '</b><span>Trabajo</span></div><div class="stat"><b>' + pe + '</b><span>Personal</span></div></div></div></div>';
-  html += '<div class="card"><h2>Por categoría</h2>' + (catArr.length ? catArr.map(c => '<div class="hb"><div class="n"><span>' + esc(c[0]) + '</span><span>' + c[1].h + ' hechas · ' + c[1].p + ' pendientes</span></div><div class="b"><i style="width:' + (c[1].h / mx * 100) + '%;background:var(--ok)"></i><i style="width:' + (c[1].p / mx * 100) + '%;background:var(--muted);opacity:.5"></i></div></div>').join('') : '<div class="empty">Sin datos todavía.</div>') + '</div>';
-  html += '<div class="card"><h2>Proyectos · avance vs tiempo</h2>' + (d.proyectos.length ? d.proyectos.map(p => '<div class="hb"><div class="n"><span>' + esc(p.nombre) + '</span><span>' + pct(p.avance) + '% · ' + esc(p.ritmo || '') + '</span></div><div class="bar"><i style="width:' + pct(Math.min(1, p.avance)) + '%"></i>' + (p.tiempo != null ? '<u style="left:calc(' + pct(p.tiempo) + '% - 1px)"></u>' : '') + '</div></div>').join('') + '<div class="hint">La línea negra marca el tiempo transcurrido del proyecto.</div>' : '<div class="empty">Aún no hay proyectos.</div>') + '</div>';
+  html += '<div class="card"><h2>Puntos acumulados</h2>' + chartLine(dias, 'acumulado', '#D9A62E') + '</div>';
+  html += '<div class="card"><h2>Matriz de Eisenhower · pendientes</h2><div class="quad">' +
+    '<div class="qc" style="background:#E0574F"><b>' + q[1] + '</b><span>🔴 Hacer ya</span></div>' +
+    '<div class="qc" style="background:#2E86D9"><b>' + q[2] + '</b><span>🔵 Planificar</span></div>' +
+    '<div class="qc" style="background:#D9A62E"><b>' + q[3] + '</b><span>🟠 Delegar</span></div>' +
+    '<div class="qc" style="background:#8B8D9A"><b>' + q[4] + '</b><span>⚪ Eliminar / posponer</span></div></div></div>';
+  html += '<div class="card"><h2>Trabajo vs personal</h2>' + Object.entries(areas).map(([a, v]) => '<div class="hb"><div class="n"><span>' + esc(a) + '</span><span>' + v.hechas + '/' + v.total + ' hechas</span></div><div class="b"><i style="width:' + (v.total ? v.hechas / v.total * 100 : 0) + '%;background:' + (a === 'Personal' ? 'var(--personal-ink)' : 'var(--trabajo-ink)') + '"></i></div></div>').join('') + '</div>';
+  html += '<div class="card"><h2>Por categoría</h2>' + (catArr.length ? catArr.map(c => { const col = paletteColor(c[0]); return '<div class="hb"><div class="n"><span>' + esc(c[0]) + '</span><span>' + c[1].h + ' hechas · ' + c[1].p + ' pendientes</span></div><div class="b"><i style="width:' + (c[1].h / mx * 100) + '%;background:' + col + '"></i><i style="width:' + (c[1].p / mx * 100) + '%;background:' + hexToRgba(col, .3) + '"></i></div></div>'; }).join('') : '<div class="empty">Sin datos todavía.</div>') + '</div>';
+  html += '<div class="card"><h2>Proyectos · avance vs tiempo</h2>' + (d.proyectos.length ? d.proyectos.map(p => '<div class="hb"><div class="n"><span>' + esc(p.nombre) + '</span><span>' + pct(p.avance) + '% · ' + esc(p.ritmo || '') + '</span></div><div class="bar"><i style="width:' + pct(Math.min(1, p.avance)) + '%;background:' + paletteColor(p.nombre) + '"></i>' + (p.tiempo != null ? '<u style="left:calc(' + pct(p.tiempo) + '% - 1px)"></u>' : '') + '</div></div>').join('') + '<div class="hint">La línea negra marca el tiempo transcurrido del proyecto.</div>' : '<div class="empty">Aún no hay proyectos.</div>') + '</div>';
   $('#view').innerHTML = html;
+}
+
+/* ---------- vista: Hábitos ---------- */
+function viewHabitos(){
+  const H = S.data.habitos;
+  if (!H){ $('#view').innerHTML = '<div class="empty">No encuentro la hoja Hábitos.</div>'; return; }
+  const hoyMismoMes = H.anioMes && hoy().slice(0, 7) === H.anioMes;
+  const diaHoy = hoyMismoMes ? +hoy().slice(8, 10) : 0;
+  let html = '<div class="hint" style="margin-top:8px">' + esc(H.mes) + '</div>';
+  html += '<div class="card">' + (H.habitos.length ? H.habitos.map(hb => {
+    const col = paletteColor(hb.nombre), marcaHoy = diaHoy > 0 && hb.marcas[diaHoy - 1];
+    const heat = hb.marcas.map((m, i) => '<i class="' + (i + 1 === diaHoy ? 'today' : '') + '" style="background:' + (m ? col : 'var(--soft)') + '"></i>').join('');
+    return '<div class="habit-row">' +
+      '<div class="row"><span class="habit-dot" style="background:' + col + '"></span><div class="grow"><b>' + esc(hb.nombre) + '</b><div class="hint" style="margin:2px 0 0">' + hb.hechos + ' / ' + hb.meta + ' días · ' + pct(hb.pct) + '%</div></div>' +
+      (diaHoy > 0 ? '<button class="pill ' + (marcaHoy ? 'on' : '') + '" data-hab="' + hb.row + '" data-marca="' + (marcaHoy ? 0 : 1) + '" style="' + (marcaHoy ? 'background:' + col + ';border-color:' + col : '') + '">' + (marcaHoy ? '✓ Hoy' : 'Marcar hoy') + '</button>' : '') + '</div>' +
+      '<div class="heat">' + heat + '</div></div>';
+  }).join('') : '<div class="empty">Aún no hay hábitos cargados en la hoja.</div>') + '</div>';
+  $('#view').innerHTML = html;
+  document.querySelectorAll('[data-hab]').forEach(b => b.onclick = async () => {
+    const hb = H.habitos.find(x => x.row == b.dataset.hab); const val = b.dataset.marca === '1';
+    b.disabled = true;
+    try { await api('habitToggle', { row: hb.row, nombre: hb.nombre, dia: diaHoy, valor: val }); toast(val ? '¡Hábito marcado! 💪' : 'Desmarcado'); await load(); }
+    catch(e){ b.disabled = false; toast('No se pudo guardar: ' + e.message); }
+  });
+}
+
+/* ---------- vista: Semana ---------- */
+function viewSemana(){
+  const s = S.data.semana;
+  if (!s){ $('#view').innerHTML = '<div class="empty">No encuentro la hoja Semana.</div>'; return; }
+  const actual = s.semanas.find(w => w.fecha === s.semanaDel) || s.semanas.find(w => w.fecha >= s.semanaDel) || null;
+  const historial = s.semanas.filter(w => w !== actual && (w.hechas || w.puntos || w.bien || w.mal)).slice(-4).reverse();
+  let html = '<div class="card"><h2>Semana del ' + esc(s.semanaDel) + '</h2><div class="kpis"><div class="kpi"><b>' + s.hechas + '</b><span>tareas hechas</span></div><div class="kpi"><b>' + s.puntos + '</b><span>puntos ganados</span></div></div></div>';
+  html += '<div class="card"><h2>Checklist de la revisión</h2>' + s.checklist.map(c => '<div class="checklist-item ' + (c.hecho ? 'done' : '') + '"><button class="chk ' + (c.hecho ? 'on' : '') + '" data-chk="' + c.row + '" data-v="' + (c.hecho ? 0 : 1) + '">' + (c.hecho ? '✓' : '') + '</button><span class="ct">' + esc(c.texto) + '</span></div>').join('') + '</div>';
+  html += '<div class="card"><h2>Reflexión de esta semana</h2>' +
+    '<label class="l">¿Qué salió bien?</label><textarea class="note" id="sm_bien">' + esc(actual ? actual.bien : '') + '</textarea>' +
+    '<label class="l">¿Qué se trabó?</label><textarea class="note" id="sm_mal">' + esc(actual ? actual.mal : '') + '</textarea>' +
+    '<label class="l">Prioridades de la próxima semana</label><textarea class="note" id="sm_prio">' + esc(actual ? actual.prioridades : '') + '</textarea>' +
+    '<label class="l">Energía (1 a 5)</label><div class="seg" id="sm_en">' + [1,2,3,4,5].map(n => '<button type="button" class="pill ' + (actual && actual.energia === n ? 'on' : '') + '" data-v="' + n + '">' + '⚡'.repeat(n) + '</button>').join('') + '</div>' +
+    '<div class="btns"><button class="btn" id="sm_ok">Guardar reflexión</button></div></div>';
+  if (historial.length) html += '<div class="card"><h2>Semanas anteriores</h2>' + historial.map(w => {
+    const tot = Math.max(1, w.trabajo + w.personal);
+    return '<div class="weekcard"><div class="row" style="justify-content:space-between"><b>' + esc(w.fecha) + '</b><span class="energy">' + (w.energia ? '⚡'.repeat(w.energia) : '') + '</span></div>' +
+      '<div class="hint" style="margin:4px 0">' + w.hechas + ' hechas · ' + w.puntos + ' puntos</div>' +
+      '<div class="b" style="display:flex;height:8px;border-radius:99px;overflow:hidden"><i style="width:' + (w.trabajo/tot*100) + '%;background:var(--trabajo-ink)"></i><i style="width:' + (w.personal/tot*100) + '%;background:var(--personal-ink)"></i></div>' +
+      (w.bien ? '<div class="hint">🙂 ' + esc(w.bien) + '</div>' : '') + (w.mal ? '<div class="hint">⚠️ ' + esc(w.mal) + '</div>' : '') + '</div>';
+  }).join('') + '</div>';
+  $('#view').innerHTML = html;
+  document.querySelectorAll('[data-chk]').forEach(b => b.onclick = async () => {
+    const val = b.dataset.v === '1'; b.disabled = true;
+    try { await api('semanaChecklist', { row: +b.dataset.chk, valor: val }); await load(); }
+    catch(e){ b.disabled = false; toast('No se pudo guardar: ' + e.message); }
+  });
+  if (actual) {
+    bindPills('sm_en');
+    $('#sm_ok').onclick = async () => {
+      $('#sm_ok').disabled = true;
+      const en = val('sm_en');
+      try { await api('semanaGuardar', { row: actual.row, campos: { bien: $('#sm_bien').value.trim(), mal: $('#sm_mal').value.trim(), prioridades: $('#sm_prio').value.trim(), energia: en } }); toast('Reflexión guardada ✓'); await load(); }
+      catch(e){ $('#sm_ok').disabled = false; toast('No se pudo guardar: ' + e.message); }
+    };
+  }
 }
 
 /* ---------- vista: Proyectos ---------- */
