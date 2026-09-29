@@ -1,0 +1,457 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#111827">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>Organizador</title>
+<style>
+:root{
+  --bg:#F4F5F7; --card:#FFFFFF; --ink:#141922; --muted:#6B7280; --line:#E5E7EB;
+  --brand:#111827; --accent:#F97316; --ok:#16A34A; --warn:#D97706; --bad:#DC2626; --soft:#EEF0F3;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#0B0F16; --card:#151B26; --ink:#F1F3F7; --muted:#9AA3B2; --line:#232B3A; --brand:#0B0F16; --soft:#1C2432; }
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;font-size:16px}
+body{padding-top:env(safe-area-inset-top);padding-bottom:calc(76px + env(safe-area-inset-bottom))}
+main{padding-bottom:80px}
+button,input,select,textarea{font:inherit;color:inherit}
+.wrap{max-width:720px;margin:0 auto;padding:0 14px}
+header.top{position:sticky;top:0;z-index:5;background:var(--bg);padding:12px 0 8px;display:flex;align-items:center;justify-content:space-between}
+header.top h1{font-size:20px;margin:0;font-weight:700}
+header.top small{display:block;color:var(--muted);font-size:13px;margin-top:2px}
+.icon-btn{border:0;background:var(--card);border:1px solid var(--line);width:40px;height:40px;border-radius:12px;font-size:18px;cursor:pointer}
+.chip-off{background:#FEF3C7;color:#92400E;border-radius:999px;padding:3px 10px;font-size:12px;margin-left:6px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin:10px 0}
+.card h2{font-size:13px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin:0 0 10px;font-weight:600}
+.row{display:flex;align-items:center;gap:12px}
+.grow{flex:1;min-width:0}
+.hero{display:flex;gap:16px;align-items:center}
+.ring{position:relative;width:104px;height:104px;flex:none}
+.ring b{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:24px}
+.ring b span{font-size:11px;color:var(--muted);font-weight:500}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;flex:1}
+.stat{background:var(--soft);border-radius:12px;padding:8px 10px}
+.stat b{display:block;font-size:18px}
+.stat span{font-size:12px;color:var(--muted)}
+.bar{height:8px;background:var(--soft);border-radius:99px;overflow:hidden;position:relative}
+.bar i{display:block;height:100%;background:var(--ok);border-radius:99px}
+.bar u{position:absolute;top:-2px;width:2px;height:12px;background:var(--ink);opacity:.55}
+.task{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-top:1px solid var(--line)}
+.task:first-of-type{border-top:0}
+.chk{flex:none;width:28px;height:28px;border-radius:9px;border:2px solid var(--muted);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;color:#fff;margin-top:1px}
+.chk.on{background:var(--ok);border-color:var(--ok)}
+.task .t{font-weight:600;line-height:1.25;word-break:break-word}
+.task.done .t{text-decoration:line-through;color:var(--muted);font-weight:500}
+.meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:5px}
+.tag{font-size:12px;background:var(--soft);color:var(--muted);padding:2px 8px;border-radius:99px}
+.tag.bad{background:#FEE2E2;color:#991B1B}.tag.warn{background:#FEF3C7;color:#92400E}.tag.ok{background:#DCFCE7;color:#166534}
+@media (prefers-color-scheme: dark){.tag.bad{background:#451A1A;color:#FCA5A5}.tag.warn{background:#3F2E0A;color:#FCD34D}.tag.ok{background:#0F3320;color:#86EFAC}}
+.empty{text-align:center;color:var(--muted);padding:18px 6px}
+nav.bottom{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);padding:6px 6px calc(6px + env(safe-area-inset-bottom));display:flex;justify-content:space-around;z-index:8}
+nav.bottom button{flex:1;border:0;background:none;padding:6px 2px;color:var(--muted);font-size:11px;cursor:pointer}
+nav.bottom button span{display:block;font-size:20px;line-height:1.2}
+nav.bottom button.on{color:var(--accent);font-weight:700}
+.fab{position:fixed;right:16px;bottom:calc(84px + env(safe-area-inset-bottom));width:58px;height:58px;border-radius:50%;border:0;background:var(--accent);color:#fff;font-size:32px;line-height:1;box-shadow:0 6px 18px rgba(0,0,0,.25);cursor:pointer;z-index:9}
+.seg{display:flex;gap:6px;flex-wrap:wrap}
+.pill{border:1px solid var(--line);background:var(--card);border-radius:99px;padding:8px 13px;font-size:14px;cursor:pointer}
+.pill.on{background:var(--brand);color:#fff;border-color:var(--brand)}
+@media (prefers-color-scheme: dark){.pill.on{background:var(--accent);border-color:var(--accent)}}
+input[type=text],input[type=date],input[type=url],input[type=password],select,textarea{width:100%;padding:12px;border-radius:12px;border:1px solid var(--line);background:var(--card);font-size:16px}
+label.l{display:block;font-size:12px;color:var(--muted);margin:12px 0 5px;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.btn{border:0;border-radius:12px;padding:13px 16px;font-weight:700;cursor:pointer;background:var(--accent);color:#fff;font-size:16px}
+.btn.sec{background:var(--soft);color:var(--ink)}
+.btn.bad{background:transparent;color:var(--bad)}
+.btns{display:flex;gap:8px;margin-top:16px}.btns .btn{flex:1}
+.backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:20;display:flex;align-items:flex-end;justify-content:center}
+.sheet{background:var(--bg);width:100%;max-width:720px;max-height:92vh;overflow:auto;border-radius:22px 22px 0 0;padding:16px 16px calc(20px + env(safe-area-inset-bottom))}
+.sheet h3{margin:0 0 4px;font-size:18px}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(150px + env(safe-area-inset-bottom));background:#111827;color:#fff;padding:10px 16px;border-radius:12px;z-index:30;font-size:14px;max-width:88%}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px}
+.kpi b{font-size:22px;display:block}.kpi span{font-size:12px;color:var(--muted)}
+.hb{margin:8px 0}.hb .n{display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px}
+.hb .b{display:flex;height:10px;border-radius:99px;overflow:hidden;background:var(--soft)}
+.hb .b i{display:block;height:100%}
+.filters{display:flex;gap:6px;overflow:auto;padding:4px 0}
+.spin{display:inline-block;width:14px;height:14px;border:2px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:sp .7s linear infinite;vertical-align:-2px;margin-right:6px}
+@keyframes sp{to{transform:rotate(360deg)}}
+.hint{font-size:13px;color:var(--muted);margin:6px 0}
+svg text{fill:var(--muted);font-size:9px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div><h1 id="hTitle">Organizador</h1><small id="hSub"></small></div>
+    <div class="row" style="gap:8px">
+      <button class="icon-btn" id="btnRefresh" title="Actualizar">↻</button>
+      <button class="icon-btn" id="btnSettings" title="Ajustes">⚙</button>
+    </div>
+  </header>
+  <main id="view"></main>
+</div>
+<button class="fab" id="fab" aria-label="Agregar tarea">+</button>
+<nav class="bottom">
+  <button data-tab="hoy"><span>☀</span>Hoy</button>
+  <button data-tab="tareas"><span>☰</span>Tareas</button>
+  <button data-tab="dash"><span>▥</span>Dashboard</button>
+  <button data-tab="proy"><span>⚑</span>Proyectos</button>
+</nav>
+<div id="layer"></div>
+
+<script>
+'use strict';
+const $ = s => document.querySelector(s);
+const LS = window.localStorage;
+let S = { data: null, tab: 'hoy', filtro: 'todas', q: '', verHechas: false, offline: false, busy: false };
+let deferredInstall = null;
+
+/* ---------- utilidades ---------- */
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const DIAS = ['dom','lun','mar','mié','jue','vie','sáb'], MESES = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+function pd(s){ return new Date(s + 'T12:00:00'); }
+function addDays(s, n){ const d = pd(s); d.setDate(d.getDate() + n); return iso(d); }
+function iso(d){ return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
+function fmt(s){ if(!s) return 'Sin fecha'; const d = pd(s); return DIAS[d.getDay()] + ' ' + d.getDate() + ' ' + MESES[d.getMonth()]; }
+function hoy(){ return (S.data && S.data.hoy) || iso(new Date()); }
+function toast(msg){ const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg; document.body.appendChild(t); setTimeout(() => t.remove(), 2600); }
+function pct(x){ return Math.round((x || 0) * 100); }
+
+/* ---------- API ---------- */
+async function api(action, extra){
+  let res;
+  res = await fetch(LS.url, { method: 'POST', body: JSON.stringify(Object.assign({ token: LS.token, action }, extra || {})) });
+  const txt = await res.text();
+  let j; try { j = JSON.parse(txt); } catch(e){ throw new Error('respuesta'); }
+  if (!j.ok) throw new Error(j.error || 'error');
+  return j;
+}
+async function load(){
+  S.busy = true; head();
+  try {
+    S.data = await api('state'); LS.cache = JSON.stringify(S.data); S.offline = false;
+  } catch(e){
+    if (e.message === 'auth'){ toast('La clave no coincide'); S.busy = false; return showSetup(); }
+    S.offline = true;
+    if (!S.data && LS.cache) S.data = JSON.parse(LS.cache);
+  }
+  S.busy = false; render();
+}
+
+/* ---------- cabecera y navegación ---------- */
+function head(){
+  const titles = { hoy: 'Hoy', tareas: 'Tareas', dash: 'Dashboard', proy: 'Proyectos' };
+  $('#hTitle').innerHTML = titles[S.tab] + (S.offline ? '<span class="chip-off">sin conexión</span>' : '');
+  $('#hSub').innerHTML = S.busy ? '<span class="spin"></span>Actualizando…' : fmtLong(hoy());
+  document.querySelectorAll('nav.bottom button').forEach(b => b.classList.toggle('on', b.dataset.tab === S.tab));
+}
+function fmtLong(s){ const d = pd(s); const n = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'][d.getDay()]; return n + ' ' + d.getDate() + ' de ' + ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'][d.getMonth()]; }
+document.querySelectorAll('nav.bottom button').forEach(b => b.onclick = () => { S.tab = b.dataset.tab; render(); window.scrollTo(0,0); });
+$('#btnRefresh').onclick = () => load();
+$('#btnSettings').onclick = () => showSettings();
+$('#fab').onclick = () => openAdd();
+
+function render(){
+  head();
+  if (!S.data){ $('#view').innerHTML = '<div class="empty"><span class="spin"></span>Cargando…</div>'; return; }
+  ({ hoy: viewHoy, tareas: viewTareas, dash: viewDash, proy: viewProy })[S.tab]();
+}
+
+/* ---------- componentes ---------- */
+function ordenar(a, b){
+  const ca = parseInt(a.cuadrante) || 9, cb = parseInt(b.cuadrante) || 9;
+  if (ca !== cb) return ca - cb;
+  return (a.limite || '9999').localeCompare(b.limite || '9999');
+}
+function tagAlerta(t){
+  if (t.hecho) return '<span class="tag ok">Hecha</span>';
+  const h = hoy();
+  if (!t.limite) return '';
+  if (t.limite < h) return '<span class="tag bad">Vencida · ' + fmt(t.limite) + '</span>';
+  if (t.limite === h) return '<span class="tag warn">Hoy</span>';
+  return '<span class="tag">' + fmt(t.limite) + '</span>';
+}
+function taskHTML(t){
+  const idx = S.data.tareas.indexOf(t);
+  return '<div class="task ' + (t.hecho ? 'done' : '') + '">' +
+    '<button class="chk ' + (t.hecho ? 'on' : '') + '" data-tog="' + idx + '" aria-label="Marcar">' + (t.hecho ? '✓' : '') + '</button>' +
+    '<div class="grow" data-open="' + idx + '"><div class="t">' + esc(t.tarea) + '</div><div class="meta">' + tagAlerta(t) +
+    (t.categoria ? '<span class="tag">' + esc(t.categoria) + '</span>' : '') +
+    (t.proyecto ? '<span class="tag">⚑ ' + esc(t.proyecto) + '</span>' : '') +
+    (t.estado && t.estado !== 'Pendiente' && !t.hecho ? '<span class="tag">' + esc(t.estado) + '</span>' : '') +
+    '</div></div></div>';
+}
+function bindTasks(root){
+  root.querySelectorAll('[data-tog]').forEach(b => b.onclick = e => { e.stopPropagation(); toggle(S.data.tareas[+b.dataset.tog]); });
+  root.querySelectorAll('[data-open]').forEach(b => b.onclick = () => openDetail(S.data.tareas[+b.dataset.open]));
+}
+function ring(p, color){
+  const r = 42, c = 2 * Math.PI * r;
+  return '<svg viewBox="0 0 104 104" width="104" height="104"><circle cx="52" cy="52" r="' + r + '" fill="none" stroke="var(--soft)" stroke-width="10"/>' +
+    '<circle cx="52" cy="52" r="' + r + '" fill="none" stroke="' + (color || 'var(--ok)') + '" stroke-width="10" stroke-linecap="round" stroke-dasharray="' + (c * Math.min(1, p)).toFixed(1) + ' ' + c.toFixed(1) + '" transform="rotate(-90 52 52)"/></svg>';
+}
+function projCard(p){
+  const av = Math.min(1, p.avance || 0), ti = p.tiempo;
+  return '<div class="card"><div class="row"><div class="grow"><b>' + esc(p.nombre) + '</b><div class="hint" style="margin:2px 0 0">' + esc(p.objetivo || '') + '</div></div><span class="tag">' + esc(p.ritmo || '') + '</span></div>' +
+    '<div class="bar" style="margin:10px 0 6px"><i style="width:' + pct(av) + '%"></i>' + (ti != null ? '<u style="left:calc(' + pct(ti) + '% - 1px)"></u>' : '') + '</div>' +
+    '<div class="row hint" style="justify-content:space-between"><span>' + pct(av) + '% avance · ' + p.hechas + '/' + p.tareas + ' tareas</span><span>' + (p.dias != null ? (p.dias >= 0 ? p.dias + ' días' : 'vencido') : '') + '</span></div>' +
+    (p.resultado ? '<div class="hint">🎯 ' + esc(p.resultado) + '</div>' : '') + '</div>';
+}
+
+/* ---------- vista: Hoy ---------- */
+function viewHoy(){
+  const d = S.data, h = hoy(), T = d.tareas, ind = d.indicadores || {};
+  const lista = T.filter(t => !t.hecho && ((t.limite && t.limite <= h) || t.estado === 'En curso')).sort(ordenar);
+  const hechasHoy = T.filter(t => t.hecho && (t.cierre || '').slice(0, 10) === h);
+  const prox = T.filter(t => !t.hecho && t.limite > h && t.limite <= addDays(h, 7)).sort(ordenar);
+  const total = lista.length + hechasHoy.length, p = total ? hechasHoy.length / total : 0;
+  const meta = +((d.config.params || {})['Meta diaria de tareas']) || 6;
+  const nombre = (d.config.params || {})['Tu nombre (para el saludo)'];
+  const hr = new Date().getHours(), saludo = hr < 12 ? 'Buenos días' : hr < 20 ? 'Buenas tardes' : 'Buenas noches';
+  const racha = ind[Object.keys(ind).find(k => k.startsWith('Racha'))] || 0;
+  const puntos = ind['Puntos totales'] || 0, nivel = ind['Nombre del nivel'] || '', enNivel = +ind['Puntos dentro del nivel actual'] || 0;
+  const paraNivel = +((d.config.params || {})['Puntos para subir de nivel']) || 100;
+  let html = '<div class="card"><div class="hero"><div class="ring">' + ring(p) + '<b>' + hechasHoy.length + '<span>de ' + total + '</span></b></div>' +
+    '<div class="stats"><div class="stat"><b>' + esc(racha) + '</b><span>racha (días)</span></div><div class="stat"><b>' + esc(puntos) + '</b><span>puntos</span></div>' +
+    '<div class="stat"><b>' + hechasHoy.length + '/' + meta + '</b><span>meta diaria</span></div><div class="stat"><b>' + esc(nivel) + '</b><span>nivel</span></div></div></div>' +
+    '<div class="bar" style="margin-top:12px"><i style="width:' + Math.min(100, Math.round(enNivel / paraNivel * 100)) + '%;background:var(--accent)"></i></div>' +
+    '<div class="hint">' + enNivel + ' / ' + paraNivel + ' puntos para el siguiente nivel</div></div>';
+  html += '<div class="card"><h2>' + esc(saludo) + (nombre ? ', ' + esc(nombre) : '') + ' · para hoy (' + lista.length + ')</h2>' +
+    (lista.length ? lista.map(taskHTML).join('') : '<div class="empty">Nada pendiente para hoy 🎉<br>Toca + para agregar algo.</div>') + '</div>';
+  if (hechasHoy.length) html += '<div class="card"><h2>Hechas hoy (' + hechasHoy.length + ')</h2>' + hechasHoy.map(taskHTML).join('') + '</div>';
+  if (prox.length) html += '<div class="card"><h2>Próximos 7 días (' + prox.length + ')</h2>' + prox.map(taskHTML).join('') + '</div>';
+  $('#view').innerHTML = html; bindTasks($('#view'));
+}
+
+/* ---------- vista: Tareas ---------- */
+function viewTareas(){
+  const d = S.data, h = hoy();
+  let L = d.tareas.filter(t => S.verHechas ? true : !t.hecho);
+  if (S.filtro !== 'todas') L = L.filter(t => t.area === S.filtro);
+  if (S.q) L = L.filter(t => (t.tarea + ' ' + (t.proyecto || '') + ' ' + (t.categoria || '')).toLowerCase().includes(S.q.toLowerCase()));
+  L.sort((a, b) => (a.hecho - b.hecho) || ordenar(a, b));
+  const grupos = [['Vencidas', t => !t.hecho && t.limite && t.limite < h], ['Hoy', t => !t.hecho && t.limite === h], ['Próximas', t => !t.hecho && t.limite > h], ['Sin fecha', t => !t.hecho && !t.limite], ['Hechas', t => t.hecho]];
+  let html = '<input type="text" id="q" placeholder="Buscar tarea, proyecto o categoría" value="' + esc(S.q) + '">' +
+    '<div class="filters" style="margin-top:8px">' + ['todas'].concat(d.config.areas).map(a => '<button class="pill ' + (S.filtro === a ? 'on' : '') + '" data-f="' + esc(a) + '">' + (a === 'todas' ? 'Todas' : esc(a)) + '</button>').join('') +
+    '<button class="pill ' + (S.verHechas ? 'on' : '') + '" id="vh">Ver hechas</button></div>';
+  grupos.forEach(g => { const items = L.filter(g[1]); if (items.length) html += '<div class="card"><h2>' + g[0] + ' (' + items.length + ')</h2>' + items.map(taskHTML).join('') + '</div>'; });
+  if (!L.length) html += '<div class="empty">No hay tareas con este filtro.</div>';
+  $('#view').innerHTML = html; bindTasks($('#view'));
+  const q = $('#q'); q.oninput = () => { S.q = q.value; const pos = q.selectionStart; viewTareas(); const q2 = $('#q'); q2.focus(); q2.setSelectionRange(pos, pos); };
+  document.querySelectorAll('[data-f]').forEach(b => b.onclick = () => { S.filtro = b.dataset.f; viewTareas(); });
+  $('#vh').onclick = () => { S.verHechas = !S.verHechas; viewTareas(); };
+}
+
+/* ---------- vista: Dashboard ---------- */
+function chartDias(dias){
+  if (!dias.length) return '<div class="empty">Aún no hay datos.</div>';
+  const W = 340, H = 150, pad = 18, n = dias.length, bw = (W - pad * 2) / n;
+  const max = Math.max(4, ...dias.map(x => x.completadas), ...dias.map(x => x.meta));
+  const y = v => H - 22 - (v / max) * (H - 40);
+  let s = '<svg viewBox="0 0 ' + W + ' ' + H + '" width="100%">';
+  dias.forEach((x, i) => {
+    const bx = pad + i * bw + 3, bh = (H - 22) - y(x.completadas);
+    s += '<rect x="' + bx + '" y="' + y(x.completadas) + '" width="' + (bw - 6) + '" height="' + Math.max(0, bh) + '" rx="3" fill="' + (x.completadas >= x.meta && x.meta > 0 ? 'var(--ok)' : 'var(--accent)') + '"/>';
+    if (x.completadas) s += '<text x="' + (bx + (bw - 6) / 2) + '" y="' + (y(x.completadas) - 3) + '" text-anchor="middle">' + x.completadas + '</text>';
+    s += '<text x="' + (bx + (bw - 6) / 2) + '" y="' + (H - 8) + '" text-anchor="middle">' + pd(x.fecha).getDate() + '</text>';
+  });
+  const meta = dias[dias.length - 1].meta;
+  if (meta) s += '<line x1="' + pad + '" x2="' + (W - pad) + '" y1="' + y(meta) + '" y2="' + y(meta) + '" stroke="var(--muted)" stroke-dasharray="4 3" stroke-width="1"/><text x="' + (W - pad) + '" y="' + (y(meta) - 3) + '" text-anchor="end">meta ' + meta + '</text>';
+  return s + '</svg>';
+}
+function viewDash(){
+  const d = S.data, ind = d.indicadores || {}, h = hoy(), T = d.tareas;
+  const kp = (v, l) => '<div class="kpi"><b>' + esc(v == null ? '–' : v) + '</b><span>' + l + '</span></div>';
+  const av = ind['Avance semanal'];
+  const dias = (d.dias || []).slice(-14);
+  const cats = {};
+  T.forEach(t => { const k = t.categoria || 'Sin categoría'; cats[k] = cats[k] || { h: 0, p: 0 }; t.hecho ? cats[k].h++ : cats[k].p++; });
+  const catArr = Object.entries(cats).sort((a, b) => (b[1].h + b[1].p) - (a[1].h + a[1].p)).slice(0, 8);
+  const mx = Math.max(1, ...catArr.map(c => c[1].h + c[1].p));
+  const abiertas = T.filter(t => !t.hecho), tr = abiertas.filter(t => t.area === 'Trabajo').length, pe = abiertas.filter(t => t.area === 'Personal').length;
+  let html = '<div class="kpis" style="margin-top:8px">' + kp(ind['Hechas hoy'], 'hechas hoy') + kp(ind['Hechas esta semana'], 'hechas semana') + kp(typeof av === 'number' ? pct(av) + '%' : av, 'avance semanal') +
+    kp(ind['Vencidas'], 'vencidas') + kp(ind['Pendientes totales'], 'pendientes') + kp(ind['Puntos esta semana'], 'puntos semana') + '</div>';
+  html += '<div class="card"><h2>Tareas completadas · últimos 14 días</h2>' + chartDias(dias) + '</div>';
+  html += '<div class="card"><h2>Trabajo vs personal (pendientes)</h2><div class="hero"><div class="ring">' + ring(tr + pe ? tr / (tr + pe) : 0, 'var(--accent)') + '<b>' + (tr + pe) + '<span>pendientes</span></b></div>' +
+    '<div class="stats" style="grid-template-columns:1fr"><div class="stat"><b>' + tr + '</b><span>Trabajo</span></div><div class="stat"><b>' + pe + '</b><span>Personal</span></div></div></div></div>';
+  html += '<div class="card"><h2>Por categoría</h2>' + (catArr.length ? catArr.map(c => '<div class="hb"><div class="n"><span>' + esc(c[0]) + '</span><span>' + c[1].h + ' hechas · ' + c[1].p + ' pendientes</span></div><div class="b"><i style="width:' + (c[1].h / mx * 100) + '%;background:var(--ok)"></i><i style="width:' + (c[1].p / mx * 100) + '%;background:var(--muted);opacity:.5"></i></div></div>').join('') : '<div class="empty">Sin datos todavía.</div>') + '</div>';
+  html += '<div class="card"><h2>Proyectos · avance vs tiempo</h2>' + (d.proyectos.length ? d.proyectos.map(p => '<div class="hb"><div class="n"><span>' + esc(p.nombre) + '</span><span>' + pct(p.avance) + '% · ' + esc(p.ritmo || '') + '</span></div><div class="bar"><i style="width:' + pct(Math.min(1, p.avance)) + '%"></i>' + (p.tiempo != null ? '<u style="left:calc(' + pct(p.tiempo) + '% - 1px)"></u>' : '') + '</div></div>').join('') + '<div class="hint">La línea negra marca el tiempo transcurrido del proyecto.</div>' : '<div class="empty">Aún no hay proyectos.</div>') + '</div>';
+  $('#view').innerHTML = html;
+}
+
+/* ---------- vista: Proyectos ---------- */
+function viewProy(){
+  const P = S.data.proyectos;
+  $('#view').innerHTML = '<div class="btns" style="margin:8px 0 0"><button class="btn" id="np">+ Nuevo proyecto</button></div>' +
+    (P.length ? P.map(projCard).join('') : '<div class="empty">Aún no hay proyectos.<br>Crea el primero con el botón de arriba.</div>');
+  $('#np').onclick = openProyecto;
+}
+
+/* ---------- hojas modales ---------- */
+function sheet(html, onClose){
+  const layer = $('#layer');
+  layer.innerHTML = '<div class="backdrop"><div class="sheet">' + html + '</div></div>';
+  const bd = layer.firstChild;
+  bd.onclick = e => { if (e.target === bd) closeSheet(); };
+  return layer;
+}
+function closeSheet(){ $('#layer').innerHTML = ''; }
+function pills(id, items, sel){
+  return '<div class="seg" id="' + id + '">' + items.map(i => '<button type="button" class="pill ' + (i.v === sel ? 'on' : '') + '" data-v="' + esc(i.v) + '">' + esc(i.t) + '</button>').join('') + '</div>';
+}
+function bindPills(id, cb){
+  const box = $('#' + id);
+  box.querySelectorAll('.pill').forEach(b => b.onclick = () => { box.querySelectorAll('.pill').forEach(x => x.classList.remove('on')); b.classList.add('on'); if (cb) cb(b.dataset.v); });
+}
+function val(id){ const b = $('#' + id + ' .pill.on'); return b ? b.dataset.v : ''; }
+function nextMonday(h){ const d = pd(h); const add = (8 - d.getDay()) % 7 || 7; return addDays(h, add); }
+
+function openAdd(){
+  const d = S.data; if (!d) return;
+  const h = hoy(), c = d.config;
+  let area = c.areas[0] || 'Trabajo';
+  const catsDe = a => c.categorias.filter(x => x.area === a);
+  sheet('<h3>Nueva tarea</h3>' +
+    '<label class="l">Tarea</label><input type="text" id="f_t" placeholder="¿Qué hay que hacer?" autocomplete="off">' +
+    '<label class="l">Área</label>' + pills('f_area', c.areas.map(a => ({ v: a, t: a })), area) +
+    '<label class="l">Categoría</label><select id="f_cat"></select>' +
+    '<label class="l">Proyecto (opcional)</label><select id="f_proy"><option value="">— ninguno —</option>' + d.proyectos.map(p => '<option>' + esc(p.nombre) + '</option>').join('') + '</select>' +
+    '<label class="l">Fecha límite</label>' + pills('f_fecha', [{ v: h, t: 'Hoy' }, { v: addDays(h, 1), t: 'Mañana' }, { v: nextMonday(h), t: 'Lunes' }, { v: '', t: 'Sin fecha' }], h) +
+    '<input type="date" id="f_fdate" style="margin-top:8px" value="' + h + '">' +
+    '<label class="l">Urgente</label>' + pills('f_urg', [{ v: 'Sí', t: 'Sí' }, { v: 'No', t: 'No' }], 'No') +
+    '<label class="l">Importante</label>' + pills('f_imp', [{ v: 'Sí', t: 'Sí' }, { v: 'No', t: 'No' }], 'Sí') +
+    '<label class="l">Tamaño</label>' + pills('f_tam', c.tamanos.map(x => ({ v: x.nombre, t: x.nombre + ' · ' + x.puntos + ' pts' })), 'Pequeña') +
+    '<label class="l">Notas (opcional)</label><input type="text" id="f_notas" autocomplete="off">' +
+    '<div class="btns"><button class="btn sec" id="f_otra">Guardar y otra</button><button class="btn" id="f_ok">Agregar</button></div>');
+  const fillCats = sel => { $('#f_cat').innerHTML = '<option value="">— sin categoría —</option>' + catsDe(area).map(x => '<option' + (x.nombre === sel ? ' selected' : '') + '>' + esc(x.nombre) + '</option>').join(''); };
+  fillCats();
+  bindPills('f_area', v => { area = v; fillCats(); });
+  bindPills('f_fecha', v => { $('#f_fdate').value = v; });
+  bindPills('f_urg'); bindPills('f_imp'); bindPills('f_tam');
+  $('#f_fdate').onchange = () => { document.querySelectorAll('#f_fecha .pill').forEach(x => x.classList.remove('on')); };
+  $('#f_proy').onchange = () => {
+    const p = d.proyectos.find(x => x.nombre === $('#f_proy').value); if (!p) return;
+    area = p.area || area;
+    document.querySelectorAll('#f_area .pill').forEach(x => x.classList.toggle('on', x.dataset.v === area));
+    fillCats(p.categoria);
+  };
+  setTimeout(() => $('#f_t').focus(), 60);
+  const enviar = async otra => {
+    const texto = $('#f_t').value.trim(); if (!texto){ toast('Escribe la tarea'); return; }
+    const t = { tarea: texto, area, categoria: $('#f_cat').value, proyecto: $('#f_proy').value, limite: $('#f_fdate').value, urgente: val('f_urg'), importante: val('f_imp'), tamano: val('f_tam'), notas: $('#f_notas').value.trim(), estado: 'Pendiente' };
+    const btns = document.querySelectorAll('.btns .btn'); btns.forEach(b => b.disabled = true);
+    S.data.tareas.push({ row: null, hecho: false, tarea: t.tarea, area: t.area, categoria: t.categoria, proyecto: t.proyecto, urgente: t.urgente, importante: t.importante, cuadrante: (t.urgente === 'Sí' && t.importante === 'Sí') ? '1' : t.importante === 'Sí' ? '2' : t.urgente === 'Sí' ? '3' : '4', tamano: t.tamano, limite: t.limite, estado: 'Pendiente', cierre: '', puntos: 0, alerta: '', notas: t.notas });
+    try { await api('add', { tarea: t }); toast('Tarea agregada ✓'); if (otra){ openAdd(); } else closeSheet(); await load(); }
+    catch(e){ S.data.tareas.pop(); btns.forEach(b => b.disabled = false); toast('No se pudo guardar: ' + e.message); render(); }
+  };
+  $('#f_ok').onclick = () => enviar(false);
+  $('#f_otra').onclick = () => enviar(true);
+  $('#f_t').onkeydown = e => { if (e.key === 'Enter') enviar(false); };
+}
+
+function openDetail(t){
+  if (!t || t.row == null){ toast('Espera a que se sincronice'); return; }
+  const c = S.data.config;
+  sheet('<h3>Editar tarea</h3>' +
+    '<label class="l">Tarea</label><input type="text" id="e_t" value="' + esc(t.tarea) + '">' +
+    '<label class="l">Estado</label><select id="e_est">' + c.estados.map(x => '<option' + (x === t.estado ? ' selected' : '') + '>' + esc(x) + '</option>').join('') + '</select>' +
+    '<label class="l">Fecha límite</label><input type="date" id="e_f" value="' + esc(t.limite) + '">' +
+    '<div class="seg" style="margin-top:8px"><button type="button" class="pill" id="e_hoy">Hoy</button><button type="button" class="pill" id="e_man">Mañana</button><button type="button" class="pill" id="e_lun">Lunes</button><button type="button" class="pill" id="e_sin">Sin fecha</button></div>' +
+    '<label class="l">Urgente</label>' + pills('e_urg', [{ v: 'Sí', t: 'Sí' }, { v: 'No', t: 'No' }], t.urgente) +
+    '<label class="l">Importante</label>' + pills('e_imp', [{ v: 'Sí', t: 'Sí' }, { v: 'No', t: 'No' }], t.importante) +
+    '<label class="l">Tamaño</label>' + pills('e_tam', c.tamanos.map(x => ({ v: x.nombre, t: x.nombre })), t.tamano) +
+    '<label class="l">Notas</label><input type="text" id="e_n" value="' + esc(t.notas) + '">' +
+    '<div class="hint">' + esc(t.area) + (t.categoria ? ' · ' + esc(t.categoria) : '') + (t.proyecto ? ' · ⚑ ' + esc(t.proyecto) : '') + '</div>' +
+    '<div class="btns"><button class="btn bad" id="e_del">Eliminar</button><button class="btn" id="e_ok">Guardar</button></div>');
+  bindPills('e_urg'); bindPills('e_imp'); bindPills('e_tam');
+  const h = hoy();
+  $('#e_hoy').onclick = () => $('#e_f').value = h; $('#e_man').onclick = () => $('#e_f').value = addDays(h, 1);
+  $('#e_lun').onclick = () => $('#e_f').value = nextMonday(h); $('#e_sin').onclick = () => $('#e_f').value = '';
+  $('#e_ok').onclick = async () => {
+    const campos = { nuevoTexto: $('#e_t').value.trim(), estado: $('#e_est').value, limite: $('#e_f').value, urgente: val('e_urg'), importante: val('e_imp'), tamano: val('e_tam'), notas: $('#e_n').value.trim() };
+    $('#e_ok').disabled = true;
+    try { await api('update', { row: t.row, tarea: t.tarea, campos }); closeSheet(); toast('Guardado ✓'); await load(); }
+    catch(e){ $('#e_ok').disabled = false; toast('No se pudo guardar: ' + e.message); }
+  };
+  $('#e_del').onclick = async () => {
+    if (!confirm('¿Eliminar esta tarea?')) return;
+    try { await api('delete', { row: t.row, tarea: t.tarea }); closeSheet(); toast('Eliminada'); await load(); }
+    catch(e){ toast('No se pudo eliminar: ' + e.message); }
+  };
+}
+
+function openProyecto(){
+  const c = S.data.config, h = hoy();
+  let area = c.areas[0] || 'Trabajo';
+  const catsDe = a => c.categorias.filter(x => x.area === a);
+  sheet('<h3>Nuevo proyecto</h3>' +
+    '<label class="l">Nombre</label><input type="text" id="p_n" placeholder="Ej.: Campaña de temporada">' +
+    '<label class="l">Área</label>' + pills('p_area', c.areas.map(a => ({ v: a, t: a })), area) +
+    '<label class="l">Categoría</label><select id="p_cat"></select>' +
+    '<label class="l">Objetivo</label><input type="text" id="p_o" placeholder="¿Qué quieres lograr?">' +
+    '<label class="l">Resultado clave (medible)</label><input type="text" id="p_r" placeholder="Ej.: 10 ventas cerradas">' +
+    '<label class="l">Inicio</label><input type="date" id="p_i" value="' + h + '">' +
+    '<label class="l">Fin</label><input type="date" id="p_f" value="' + addDays(h, 60) + '">' +
+    '<div class="btns"><button class="btn" id="p_ok">Crear proyecto</button></div>');
+  const fill = () => { $('#p_cat').innerHTML = '<option value="">— sin categoría —</option>' + catsDe(area).map(x => '<option>' + esc(x.nombre) + '</option>').join(''); };
+  fill(); bindPills('p_area', v => { area = v; fill(); });
+  setTimeout(() => $('#p_n').focus(), 60);
+  $('#p_ok').onclick = async () => {
+    const n = $('#p_n').value.trim(); if (!n){ toast('Ponle un nombre'); return; }
+    $('#p_ok').disabled = true;
+    try { await api('addProject', { proyecto: { nombre: n, area, categoria: $('#p_cat').value, objetivo: $('#p_o').value.trim(), resultado: $('#p_r').value.trim(), inicio: $('#p_i').value, fin: $('#p_f').value } }); closeSheet(); toast('Proyecto creado ✓'); await load(); }
+    catch(e){ $('#p_ok').disabled = false; toast('No se pudo crear: ' + e.message); }
+  };
+}
+
+/* ---------- acciones ---------- */
+async function toggle(t){
+  if (!t) return;
+  if (t.row == null){ toast('Espera a que se sincronice'); return; }
+  const antes = { hecho: t.hecho, cierre: t.cierre };
+  t.hecho = !t.hecho; t.cierre = t.hecho ? (hoy() + 'T' + new Date().toTimeString().slice(0, 5)) : '';
+  render();
+  try { await api('toggle', { row: t.row, tarea: t.tarea, hecho: t.hecho }); if (t.hecho) toast('¡Hecha! ✓'); load(); }
+  catch(e){ t.hecho = antes.hecho; t.cierre = antes.cierre; render(); toast('No se pudo guardar: ' + e.message); }
+}
+
+/* ---------- configuración inicial y ajustes ---------- */
+function showSetup(){
+  sheet('<h3>Conectar con tu Sheet</h3><div class="hint">Pega el link de tu aplicación web (termina en /exec) y la clave que pusiste en el script.</div>' +
+    '<label class="l">Link de la aplicación web</label><input type="url" id="s_url" placeholder="https://script.google.com/macros/s/…/exec" value="' + esc(LS.url || '') + '">' +
+    '<label class="l">Clave</label><input type="password" id="s_tok" value="' + esc(LS.token || '') + '">' +
+    '<div class="btns"><button class="btn" id="s_ok">Conectar</button></div>');
+  $('#s_ok').onclick = async () => {
+    const url = $('#s_url').value.trim(), tok = $('#s_tok').value;
+    if (!url || !tok){ toast('Faltan datos'); return; }
+    LS.url = url; LS.token = tok; $('#s_ok').disabled = true; $('#s_ok').textContent = 'Conectando…';
+    try { S.data = await api('state'); LS.cache = JSON.stringify(S.data); closeSheet(); render(); toast('Conectado ✓'); }
+    catch(e){ $('#s_ok').disabled = false; $('#s_ok').textContent = 'Conectar'; toast(e.message === 'auth' ? 'La clave no coincide' : 'No se pudo conectar. Revisa el link.'); }
+  };
+}
+function showSettings(){
+  sheet('<h3>Ajustes</h3><div class="hint">Conectado a tu Sheet del organizador.</div>' +
+    (deferredInstall ? '<div class="btns"><button class="btn" id="s_inst">Instalar app en este dispositivo</button></div>' : '') +
+    '<div class="btns"><button class="btn sec" id="s_re">Cambiar link o clave</button></div>' +
+    '<div class="btns"><button class="btn bad" id="s_out">Desconectar este dispositivo</button></div>');
+  if (deferredInstall) $('#s_inst').onclick = async () => { deferredInstall.prompt(); await deferredInstall.userChoice; deferredInstall = null; closeSheet(); };
+  $('#s_re').onclick = showSetup;
+  $('#s_out').onclick = () => { if (confirm('Se borran el link y la clave de este dispositivo.')){ delete LS.url; delete LS.token; delete LS.cache; S.data = null; closeSheet(); showSetup(); } };
+}
+
+window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferredInstall = e; });
+document.addEventListener('visibilitychange', () => { if (!document.hidden && LS.url && S.data) load(); });
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
+
+/* ---------- inicio ---------- */
+if (LS.cache) { try { S.data = JSON.parse(LS.cache); } catch(e){} }
+if (!LS.url || !LS.token) { render(); showSetup(); } else { render(); load(); }
+</script>
+</body>
+</html>
