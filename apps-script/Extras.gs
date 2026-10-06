@@ -15,8 +15,8 @@
  * Para actualizar este archivo más adelante: reemplaza todo su contenido y repite los dos pasos anteriores.
  */
 
-const EX_VERSION = '2026-10-08';
-const EX_NIVEL = 3;      // la app lo usa para saber qué funciones tiene este script
+const EX_VERSION = '2026-10-09';
+const EX_NIVEL = 4;      // la app lo usa para saber qué funciones tiene este script
 const EX_HOJA = 'Tareas';
 const EX_PRIMERA = 4;
 const EX_ULTIMA = 400;
@@ -585,6 +585,8 @@ function int_eventos_(tz) {
         id: e.getId() + '|' + Utilities.formatDate(inicio, tz, 'yyyy-MM-dd'),
         titulo: e.getTitle() || '(sin título)',
         fecha: Utilities.formatDate(inicio, tz, 'yyyy-MM-dd'),
+        // Último día del evento (los de día completo terminan a las 00:00 del día siguiente).
+        fechaFin: Utilities.formatDate(new Date(termino.getTime() - (todoElDia ? 1 : 0)), tz, 'yyyy-MM-dd'),
         inicio: todoElDia ? '' : Utilities.formatDate(inicio, tz, 'HH:mm'),
         fin: todoElDia ? '' : Utilities.formatDate(termino, tz, 'HH:mm'),
         todoElDia: todoElDia,

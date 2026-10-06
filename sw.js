@@ -1,6 +1,6 @@
 // Guarda la "cáscara" de la app para que abra rápido y sin conexión.
 // Los datos siempre se piden a tu Sheet (nunca se guardan aquí).
-const CACHE = 'organizador-v2';
+const CACHE = 'organizador-v3';
 const SHELL = ['./', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'icon-maskable-512.png'];
 
 self.addEventListener('install', e => {

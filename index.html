@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#F6F5FB" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0F0E17" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#F6F5FB">
+<meta name="color-scheme" content="light only">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
@@ -23,14 +23,6 @@
   --shadow-md:0 10px 30px -10px rgba(27,26,46,.22);
   --shadow-fab:0 12px 26px -8px rgba(164,77,240,.65);
   color-scheme:light;
-}
-@media (prefers-color-scheme: dark){
-  :root{
-    --bg:#0F0E17; --card:#1A1926; --ink:#F2F1FA; --muted:#9C9BB2; --line:#2A2939; --soft:#232236;
-    --ok-ink:#3FD2A8; --warn-ink:#FFC35C; --bad-ink:#FF7088; --info-ink:#7BBDFF; --accent-ink:#A79DFF;
-    --shadow-sm:0 1px 2px rgba(0,0,0,.4); --shadow-md:0 10px 30px -10px rgba(0,0,0,.7);
-    color-scheme:dark;
-  }
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,Inter,Arial,sans-serif;font-size:16px;-webkit-font-smoothing:antialiased}
@@ -114,7 +106,7 @@ nav.bottom button.on span{background:var(--soft);filter:none;opacity:1;transform
 .seg{display:flex;gap:7px;flex-wrap:wrap}
 .pill{border:1.5px solid var(--line);background:var(--card);border-radius:99px;padding:8px 14px;font-size:13.5px;font-weight:700;color:var(--ink)}
 .pill.on{background:var(--accent);color:#fff;border-color:var(--accent)}
-input[type=text],input[type=date],input[type=url],input[type=password],select,textarea{width:100%;padding:13px 14px;border-radius:15px;border:1.5px solid var(--line);background:var(--card);font-size:16px;color:var(--ink)}
+input[type=text],input[type=date],input[type=time],input[type=url],input[type=password],select,textarea{width:100%;padding:13px 14px;border-radius:15px;border:1.5px solid var(--line);background:var(--card);font-size:16px;color:var(--ink)}
 input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent)}
 label.l{display:block;font-size:11px;color:var(--muted);margin:14px 0 6px;font-weight:800;text-transform:uppercase;letter-spacing:.05em}
 .btn{border:0;border-radius:15px;padding:14px 16px;font-weight:800;background:var(--grad);color:#fff;font-size:15.5px;box-shadow:0 6px 16px -6px rgba(164,77,240,.6)}
@@ -125,7 +117,8 @@ label.l{display:block;font-size:11px;color:var(--muted);margin:14px 0 6px;font-w
 .btns{display:flex;gap:8px;margin-top:18px}.btns .btn{flex:1}
 .backdrop{position:fixed;inset:0;background:rgba(15,14,23,.45);z-index:20;display:flex;align-items:flex-end;justify-content:center;animation:fd .18s ease}
 .sheet{background:var(--bg);width:100%;max-width:720px;max-height:92vh;overflow:auto;border-radius:28px 28px 0 0;padding:10px 18px calc(22px + env(safe-area-inset-bottom));animation:up .22s ease}
-.sheet::before{content:"";display:block;width:40px;height:4px;background:var(--line);border-radius:99px;margin:6px auto 14px}
+.sheet::before{content:"";display:block;width:48px;height:5px;background:#D6D4E3;border-radius:99px;margin:4px auto 12px}
+.sheet-x{position:sticky;top:0;float:right;z-index:3;width:38px;height:38px;border-radius:50%;border:0;background:var(--soft);color:var(--muted);font-size:17px;font-weight:800;margin:-6px -6px 0 8px;box-shadow:var(--shadow-sm)}
 .sheet h3{margin:0 0 4px;font-size:20px;font-weight:800;letter-spacing:-.01em}
 @keyframes up{from{transform:translateY(40px);opacity:.4}}
 @keyframes fd{from{opacity:0}}
@@ -167,6 +160,9 @@ details.more summary::-webkit-details-marker{display:none}
 .wd b{display:block;font-size:17px;font-weight:800;margin:1px 0}
 .wd i{display:block;height:6px;border-radius:9px;margin:4px 8px 0;background:var(--line)}
 .wd.today{background:var(--grad);color:#fff}.wd.today small{color:#fff;opacity:.9}
+.wd.busy{background:repeating-linear-gradient(135deg,#EFEAFE 0 6px,#E4DDFD 6px 12px)}
+.wd.today.busy{background:var(--grad)}
+.busy-band{position:relative;z-index:1;background:rgba(255,255,255,.22);border-radius:14px;padding:8px 11px;font-size:13.5px;font-weight:700;margin:-4px 0 12px}
 .sug{display:flex;gap:11px;padding:11px 0;border-top:1px solid var(--line);align-items:center}
 .sug:first-of-type{border-top:0}
 .sug .ic{flex:none;width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:19px;background:var(--soft)}
@@ -321,9 +317,9 @@ async function api(action, extra){
   return j;
 }
 function apiX(op, extra){ return api('extra', Object.assign({ op }, extra || {})); }
-// Nivel 2 del script Extras: recordatorios y base de contactos. Nivel 3: la base solo usa contacto@blacklinechile.cl.
+// Nivel 2 del script Extras: recordatorios y base de contactos. Nivel 3: la base solo usa contacto@blacklinechile.cl. Nivel 4: eventos de varios días.
 function extNivel(){ return S.extInactivo ? 0 : (S.ext && S.ext.nivel) || 1; }
-function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < 3; }
+function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < 4; }
 let sincTimer = null;
 // Después de cambiar tareas, el script actualiza los recordatorios del calendario (en segundo plano).
 function sincPronto(){
@@ -440,6 +436,26 @@ function puntaje(t){
   if (!why) why = q === 2 ? 'Importante: avanza antes de que sea urgente' : 'Buen momento para sacarla';
   return { s, why };
 }
+// Días ocupados: eventos de día completo (o de 5 horas o más) en tu calendario, como una capacitación.
+function minutosHHMM(t){ const p = String(t || '').split(':'); return (+p[0] || 0) * 60 + (+p[1] || 0); }
+function ocupados(){
+  const m = {}, g = S.google;
+  if (!g || !g.eventos) return m;
+  g.eventos.forEach(e => {
+    const largo = e.todoElDia || (e.inicio && e.fin && minutosHHMM(e.fin) - minutosHHMM(e.inicio) >= 300);
+    if (!largo) return;
+    let d = e.fecha; const fin = e.fechaFin || e.fecha;
+    for (let i = 0; i < 31 && d <= fin; i++){ if (!m[d]) m[d] = e; d = addDays(d, 1); }
+  });
+  return m;
+}
+function proximoLibre(desde){
+  const oc = ocupados(); let d = addDays(desde, 1);
+  for (let i = 0; i < 30; i++){ if (!oc[d] && pd(d).getDay() !== 0) return d; d = addDays(d, 1); }
+  return addDays(desde, 1);
+}
+// Tareas no urgentes que caen en un día ocupado (hoy incluye las vencidas).
+function tareasEnDiaOcupado(d){ const h = hoy(); return pendientes().filter(t => quadOf(t) !== 1 && t.estado !== 'En curso' && (t.limite === d || (d === h && t.limite && t.limite < h))); }
 function enfoque(n){ return pendientes().map(t => Object.assign({ t }, puntaje(t))).filter(x => x.s > 0).sort((a, b) => b.s - a.s).slice(0, n); }
 
 /* ---------- componentes ---------- */
@@ -494,8 +510,10 @@ function heroHTML(){
   const racha = indicador('Racha') || 0, puntos = ind['Puntos totales'] || 0, nivel = ind['Nombre del nivel'] || '–';
   const enNivel = +ind['Puntos dentro del nivel actual'] || 0, paraNivel = +params()['Puntos para subir de nivel'] || 100;
   const meta = metaDiaria(), faltan = Math.max(0, meta - hechas.length);
-  const frase = !total ? 'Día despejado. ¿Qué quieres lograr hoy?' : hechas.length >= meta ? '¡Meta cumplida! Eres imparable 🚀' : p >= .5 ? 'Vas muy bien, sigue así 💪' : faltan === 1 ? 'Te falta 1 tarea para tu meta 🎯' : 'Te faltan ' + faltan + ' tareas para tu meta 🎯';
+  const oc = ocupados()[h];
+  const frase = oc ? (lista.some(t => quadOf(t) === 1) ? 'Día ocupado: haz solo lo urgente 🔥' : 'Día ocupado: hoy no te exijas más 🙌') : !total ? 'Día despejado. ¿Qué quieres lograr hoy?' : hechas.length >= meta ? '¡Meta cumplida! Eres imparable 🚀' : p >= .5 ? 'Vas muy bien, sigue así 💪' : faltan === 1 ? 'Te falta 1 tarea para tu meta 🎯' : 'Te faltan ' + faltan + ' tareas para tu meta 🎯';
   return '<div class="hero"><div class="hi">' + esc(saludo) + (nombre ? ', ' + esc(nombre) : '') + ' 👋</div><div class="big">' + frase + '</div>' +
+    (oc ? '<div class="busy-band">🔒 Hoy: ' + esc(oc.titulo) + (oc.todoElDia ? ' · todo el día' : ' · ' + esc(oc.inicio) + '–' + esc(oc.fin)) + '</div>' : '') +
     '<div class="in"><div class="ring">' + ring(p, '#fff', 'rgba(255,255,255,.25)') + '<b>' + hechas.length + '<span>de ' + total + ' hoy</span></b></div>' +
     '<div class="hstats"><div class="hstat"><b>🔥 ' + esc(racha) + '</b><span>racha (días)</span></div><div class="hstat"><b>⭐ ' + esc(puntos) + '</b><span>puntos</span></div>' +
     '<div class="hstat"><b>🎯 ' + hechas.length + '/' + meta + '</b><span>meta diaria</span></div><div class="hstat"><b>🏅 ' + esc(nivel) + '</b><span>nivel ' + esc(ind['Nivel'] || 1) + '</span></div></div></div>' +
@@ -521,7 +539,7 @@ function viewInicio(){
     '<button class="link" data-go="hoy">' + (lista.length > 5 ? 'Ver las ' + lista.length + ' tareas de hoy →' : 'Abrir Hoy →') + '</button>', lista.length + ' pendientes');
 
   html += agendaHTML();
-  if (necesitaActualizar()) html += card('Nueva versión del script', '⬆️', '<div class="hint" style="margin-top:0">📅 Recordatorios en tu calendario y 📇 base de datos solo con los correos de contacto@blacklinechile.cl.</div><button class="btn sm" id="updBtn">Actualizar (2 min)</button>');
+  if (necesitaActualizar()) html += card('Nueva versión del script', '⬆️', '<div class="hint" style="margin-top:0">' + (extNivel() >= 3 ? '🔒 Detecta eventos de varios días (capacitaciones, viajes) para marcarlos completos como ocupados.' : '📅 Recordatorios en tu calendario y 📇 base de datos solo con los correos de contacto@blacklinechile.cl.') + '</div><button class="btn sm" id="updBtn">Actualizar (2 min)</button>');
   html += asistenteHTML();
   html += semanaStripHTML();
   const abierto = LS.statsOpen === '1';
@@ -533,8 +551,10 @@ function viewInicio(){
   $('#qa').onclick = () => openAdd();
   $('#stt').onclick = () => { LS.statsOpen = abierto ? '0' : '1'; viewInicio(); };
   $$('[data-day]').forEach(b => b.onclick = () => openDia(b.dataset.day));
+  $('#bloqBtn').onclick = openBloqueo;
   bindAsistente();
   const sg = $('#sugBtn'); if (sg) sg.onclick = openSugerencias;
+  const b2 = $('#bloqBtn2'); if (b2) b2.onclick = openBloqueo;
   const ga = $('#gAct'); if (ga) ga.onclick = showExtrasSetup;
   const ub = $('#updBtn'); if (ub) ub.onclick = showExtrasUpdate;
 }
@@ -551,7 +571,7 @@ function agendaHTML(){
       '<div class="hint" style="margin:2px 0 0">' + (now ? '🟢 Ahora · ' : '') + (e.fin ? 'hasta ' + esc(e.fin) : '') + (e.lugar ? ' · 📍 ' + esc(e.lugar) : '') + '</div></div></div>';
   }).join('') : '<div class="empty" style="padding:12px">Sin eventos en el calendario hoy 🙌</div>';
   const n = sugerencias().length;
-  return card('Agenda de hoy', '📅', lista + (n ? '<button class="btn sm" id="sugBtn" style="margin-top:10px;width:100%">📥 ' + n + ' sugerencias de calendario y correo</button>' : ''), ev.length + ' eventos');
+  return card('Agenda de hoy', '📅', lista + '<button class="link" id="bloqBtn2">🔒 Bloquear días o agregar evento</button>' + (n ? '<button class="btn sm" id="sugBtn" style="margin-top:10px;width:100%">📥 ' + n + ' sugerencias de calendario y correo</button>' : ''), ev.length + ' eventos');
 }
 
 function semanaStripHTML(){
@@ -561,17 +581,25 @@ function semanaStripHTML(){
     const d = addDays(h, i), n = P.filter(t => t.limite === d).length + (i === 0 ? vencidas().length : 0);
     const ev = S.google && S.google.eventos ? S.google.eventos.filter(e => e.fecha === d).length : 0;
     const col = n === 0 ? 'var(--line)' : n > meta ? 'var(--bad)' : n >= meta * .6 ? 'var(--warn)' : 'var(--ok)';
-    s += '<button class="wd ' + (i === 0 ? 'today' : '') + '" data-day="' + d + '"><small>' + DIAS[pd(d).getDay()] + '</small><b>' + pd(d).getDate() + '</b><span style="font-size:11px;font-weight:700">' + n + (ev ? ' · ' + ev + '📅' : '') + '</span><i style="background:' + (i === 0 ? 'rgba(255,255,255,.7)' : col) + '"></i></button>';
+    const oc = ocupados()[d];
+    s += '<button class="wd ' + (i === 0 ? 'today ' : '') + (oc ? 'busy' : '') + '" data-day="' + d + '"' + (oc ? ' title="' + esc(oc.titulo) + '"' : '') + '><small>' + DIAS[pd(d).getDay()] + '</small><b>' + pd(d).getDate() + '</b><span style="font-size:11px;font-weight:700">' + (oc ? '🔒 ' : '') + n + (ev && !oc ? ' · ' + ev + '📅' : '') + '</span><i style="background:' + (i === 0 ? 'rgba(255,255,255,.7)' : oc ? '#A44DF0' : col) + '"></i></button>';
   }
-  return card('Próximos 7 días', '🗓️', s + '</div><div class="hint">Toca un día para ver sus tareas. Verde: liviano · naranjo: cargado · rojo: más que tu meta.</div>');
+  return card('Próximos 7 días', '🗓️', s + '</div><div class="hint">Toca un día para ver sus tareas. Verde: liviano · naranjo: cargado · rojo: más que tu meta · 🔒 día ocupado (capacitación, viaje…).</div><button class="btn sm sec" id="bloqBtn" style="margin-top:4px">🔒 Bloquear días o agregar evento</button>');
 }
 
 /* ---------- asistente: observaciones y acciones ---------- */
 function insights(){
   const h = hoy(), out = [], venc = vencidas(), meta = metaDiaria(), hechas = hechasEl(h).length;
+  const oc = ocupados();
+  [0, 1, 2].forEach(k => {
+    const d = addDays(h, k), ev = oc[d]; if (!ev) return;
+    const L = tareasEnDiaOcupado(d); if (!L.length) return;
+    const libre = proximoLibre(d);
+    out.push({ ic: '🔒', c: '#A44DF0', tx: (k === 0 ? 'Hoy' : k === 1 ? 'Mañana' : 'El ' + DIAS_L[pd(d).getDay()]) + ' estás en <b>' + esc(ev.titulo) + '</b>. Mueve ' + (L.length === 1 ? 'tu tarea no urgente' : 'tus <b>' + L.length + ' tareas</b> no urgentes') + ' al ' + fmt(libre) + ', tu próximo día libre.', acts: [['Mover al ' + fmt(libre), 'mover:' + d]] });
+  });
   const racha = +indicador('Racha') || 0, P = pendientes();
-  if (venc.length) out.push({ ic: '⏰', c: '#F04461', tx: 'Tienes <b>' + venc.length + (venc.length === 1 ? ' tarea vencida' : ' tareas vencidas') + '</b>. Muévelas para ponerte al día sin culpa.', acts: [['Mover a hoy', 'venc-hoy'], ['A mañana', 'venc-man']] });
-  if (racha > 0 && hechas < meta) out.push({ ic: '🔥', c: '#FF8A4C', tx: 'Llevas <b>' + racha + ' días</b> de racha. Completa ' + (meta - hechas) + ' más hoy para mantenerla.' });
+  if (venc.length && !oc[h]) out.push({ ic: '⏰', c: '#F04461', tx: 'Tienes <b>' + venc.length + (venc.length === 1 ? ' tarea vencida' : ' tareas vencidas') + '</b>. Muévelas para ponerte al día sin culpa.', acts: [['Mover a hoy', 'venc-hoy'], ['A mañana', 'venc-man']] });
+  if (racha > 0 && hechas < meta && !oc[h]) out.push({ ic: '🔥', c: '#FF8A4C', tx: 'Llevas <b>' + racha + ' días</b> de racha. Completa ' + (meta - hechas) + ' más hoy para mantenerla.' });
   const man = P.filter(t => t.limite === addDays(h, 1)).length;
   if (man > meta) out.push({ ic: '⚖️', c: '#FFB547', tx: 'Mañana tienes <b>' + man + ' tareas</b>, más que tu meta (' + meta + '). Adelanta o mueve alguna.', acts: [['Ver mañana', 'dia-man']] });
   const q1 = P.filter(t => quadOf(t) === 1);
@@ -585,6 +613,8 @@ function insights(){
   if (sin.length >= 3) out.push({ ic: '📌', c: '#6D5DFC', tx: '<b>' + sin.length + ' tareas</b> no tienen fecha. Con fecha es mucho más probable cumplirlas.', acts: [['Revisar', 'ver-sin']] });
   const frios = contactosFrios();
   if (frios.length) out.push({ ic: '🤝', c: '#13B386', tx: '<b>' + frios.length + (frios.length === 1 ? ' cliente' : ' clientes') + '</b> sin contacto hace más de 30 días. Un mensaje de seguimiento puede ser una venta.', acts: [['Ver', 'base-frios']] });
+  const pn = extNivel() >= 2 ? personasNuevas() : [];
+  if (pn.length) out.push({ ic: '👤', c: '#3B9EFF', tx: 'Nombras a <b>' + pn.slice(0, 3).map(p => esc(p.nombre)).join(', ') + (pn.length > 3 ? ' y ' + (pn.length - 3) + ' más' : '') + '</b> en tus tareas, pero no están en tu base de datos.', acts: [['Agregar', 'personas']] });
   const porC = ((S.base && S.base.contactos) || []).filter(c => c.tipo === 'Por clasificar').length;
   if (porC) out.push({ ic: '📇', c: '#FF5C8A', tx: '<b>' + porC + (porC === 1 ? ' contacto nuevo</b> en tu base de datos espera' : ' contactos nuevos</b> en tu base de datos esperan') + ' que le digas si es cliente o proveedor.', acts: [['Clasificar', 'base-clas']] });
   const sug = S.google && !S.google.inactivo ? sugerencias().filter(x => x.tipo === 'correo').length : 0;
@@ -611,6 +641,8 @@ function bindAsistente(){
     if (a === 'foco-q1') return openFocus(pendientes().filter(t => quadOf(t) === 1).sort(ordenar)[0]);
     if (a === 'ver-sin'){ S.q = ''; S.filtro = 'todas'; S.vista = 'lista'; return go('tareas'); }
     if (a === 'sug') return openSugerencias();
+    if (a.startsWith('mover:')){ const d = a.slice(6); return reprogramar(tareasEnDiaOcupado(d), proximoLibre(d), b); }
+    if (a === 'personas') return openPersonas();
     if (a === 'base-frios'){ S.bf = 'frios'; return go('base'); }
     if (a === 'base-clas'){ S.bf = 'Por clasificar'; return go('base'); }
     if (a.startsWith('proy:')) return openAdd({ proyecto: a.slice(5) });
@@ -631,12 +663,36 @@ async function reprogramar(lista, fecha, btn){
 function openDia(d){
   const T = pendientes().filter(t => t.limite === d || (d === hoy() && t.limite && t.limite < d)).sort(ordenar);
   const ev = S.google && S.google.eventos ? S.google.eventos.filter(e => e.fecha === d) : [];
+  const oc = ocupados()[d];
   sheet('<h3>' + (d === hoy() ? '☀️ Hoy' : '📅 ' + fmtLong(d)) + '</h3><div class="hint">' + T.length + ' tareas' + (ev.length ? ' · ' + ev.length + ' eventos' : '') + '</div>' +
+    (oc ? '<div class="card" style="background:#EFEAFE"><b>🔒 Día ocupado: ' + esc(oc.titulo) + '</b>' + (T.filter(t => quadOf(t) !== 1).length ? '<div class="btns" style="margin-top:8px"><button class="btn sm" id="dMover">Mover las no urgentes al ' + fmt(proximoLibre(d)) + '</button></div>' : '') + '</div>' : '') +
     (ev.length ? '<div class="card">' + ev.map(e => '<div class="ev"><div class="hr">' + (e.todoElDia ? 'Día' : esc(e.inicio)) + '</div><span class="dot" style="background:' + esc(e.color || '#6D5DFC') + '"></span><div class="grow"><b style="font-size:14px">' + esc(e.titulo) + '</b></div></div>').join('') + '</div>' : '') +
     '<div class="card">' + (T.length ? T.map(t => taskHTML(t)).join('') : '<div class="empty">Día libre de tareas 🌴</div>') + '</div>' +
     '<div class="btns"><button class="btn" id="dAdd">+ Tarea para este día</button></div>');
   bindTasks($('#layer'));
   $('#dAdd').onclick = () => openAdd({ limite: d });
+  const dm = $('#dMover'); if (dm) dm.onclick = () => { closeSheet(); reprogramar(tareasEnDiaOcupado(d), proximoLibre(d)); };
+}
+
+function openBloqueo(){
+  const h = hoy();
+  sheet('<h3>🔒 Bloquear días o agregar evento</h3><div class="hint">Para capacitaciones, viajes, ferias o vacaciones. Se guarda en tu Google Calendar y la app marca esos días como ocupados: no te propone tareas y te ayuda a mover las no urgentes.</div>' +
+    '<label class="l">¿Qué es?</label><input type="text" id="b_t" placeholder="Ej.: Capacitación Specialized">' +
+    '<label class="l">Desde</label><input type="date" id="b_d" value="' + h + '">' +
+    '<label class="l">Hasta</label><input type="date" id="b_h" value="' + h + '">' +
+    '<label class="l">Horario</label>' + pills('b_td', [{ v: 'si', t: '🌞 Todo el día' }, { v: 'no', t: '🕘 Con horario' }], 'si') +
+    '<div id="b_hrs" style="display:none"><div class="row" style="margin-top:8px"><input type="time" id="b_i" value="09:00"><input type="time" id="b_f" value="18:00"></div></div>' +
+    '<div class="btns"><button class="btn" id="b_ok">Crear en Google Calendar</button></div><div class="hint">Se abre Google Calendar con todo listo: solo toca Guardar y vuelve a la app.</div>');
+  bindPills('b_td', v => { $('#b_hrs').style.display = v === 'no' ? 'block' : 'none'; });
+  $('#b_d').onchange = () => { if ($('#b_h').value < $('#b_d').value) $('#b_h').value = $('#b_d').value; };
+  setTimeout(() => $('#b_t').focus(), 80);
+  $('#b_ok').onclick = () => {
+    const t = $('#b_t').value.trim() || 'Ocupado', d = $('#b_d').value, hs = $('#b_h').value < d ? d : $('#b_h').value;
+    const sin = x => x.replace(/-/g, '');
+    const fechas = val('b_td') === 'si' ? sin(d) + '/' + sin(addDays(hs, 1)) : sin(d) + 'T' + $('#b_i').value.replace(':', '') + '00/' + sin(hs) + 'T' + $('#b_f').value.replace(':', '') + '00';
+    window.open('https://calendar.google.com/calendar/render?action=TEMPLATE&text=' + encodeURIComponent(t) + '&dates=' + fechas + '&ctz=America/Santiago&details=' + encodeURIComponent('Creado desde el Organizador BlackLine'), '_blank');
+    S.googleAt = 0; closeSheet(); toast('Guárdalo en Calendar y vuelve: la app lo verá al actualizar ↻');
+  };
 }
 
 /* ---------- calendario y correo: sugerencias ---------- */
@@ -698,7 +754,7 @@ function showExtrasSetup(){
 
 function showExtrasUpdate(){
   const raw = 'https://raw.githubusercontent.com/SnowPv/Organizador/main/apps-script/Extras.gs';
-  sheet('<h3>⬆️ Actualizar el script Extras</h3><div class="hint">Hay una versión nueva: 📅 recordatorios en tu calendario y 📇 base de datos armada solo con los correos que llegan por contacto@blacklinechile.cl. Son 3 pasos:</div>' +
+  sheet('<h3>⬆️ Actualizar el script Extras</h3><div class="hint">Hay una versión nueva del script' + (extNivel() >= 3 ? ': detecta eventos de varios días (capacitaciones, viajes) para marcarlos completos como ocupados.' : ': 📅 recordatorios en tu calendario y 📇 base de datos armada solo con los correos que llegan por contacto@blacklinechile.cl.') + ' Son 3 pasos:</div>' +
     '<div class="card"><b>1.</b> En Apps Script elimina <b>Extras.gs</b> (⋮ → Eliminar) y crea otro igual (<b>+ → Secuencia de comandos → Extras</b>). Toca <b>📋 Copiar código</b> y pégalo con el <b>«Pegar» de Chrome</b> (mantén presionado), no con el portapapeles del teclado. Guarda 💾.<div style="margin-top:8px"><button class="btn sm sec" id="gu1">📋 Copiar código</button> <a class="btn sm sec" style="text-decoration:none;display:inline-block" href="' + raw + '" target="_blank">Abrir archivo</a></div></div>' +
     '<div class="card"><b>2.</b> Arriba elige <b>autorizarExtras</b> y toca <b>Ejecutar</b>. Acepta los permisos nuevos (crear el calendario y programar tareas automáticas).</div>' +
     '<div class="card"><b>3.</b> <b>Implementar → Administrar implementaciones → ✏️ → Nueva versión → Implementar</b>.</div>' +
@@ -724,8 +780,39 @@ function avatar(c, size){
 // Un contacto se relaciona con una tarea si la tarea nombra su nombre completo o su empresa.
 function clavesContacto(c){ const k = []; if (c.nombre && String(c.nombre).trim().includes(' ')) k.push(norm(c.nombre).trim()); if (c.empresa && String(c.empresa).trim().length >= 3) k.push(norm(c.empresa).trim()); return k; }
 function nombra(tx, k){ return new RegExp('(^|[^a-z0-9])' + k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '([^a-z0-9]|$)').test(tx); }
-function contactosDe(t){ const tx = norm(t.tarea + ' ' + (t.notas || '')); return contactos().filter(c => clavesContacto(c).some(k => nombra(tx, k))); }
-function tareasDe(c){ const k = clavesContacto(c); if (!k.length) return []; return S.data.tareas.filter(t => { const tx = norm(t.tarea + ' ' + (t.notas || '')); return k.some(x => nombra(tx, x)); }); }
+function contactosDe(t){ const tx = norm(textoTarea(t)); return contactos().filter(c => clavesContacto(c).some(k => nombra(tx, k))); }
+function tareasDe(c){ const k = clavesContacto(c); if (!k.length) return []; return S.data.tareas.filter(t => { const tx = norm(textoTarea(t)); return k.some(x => nombra(tx, x)); }); }
+// Personas nombradas en tareas o subtareas («seguimiento a Franco Adam», «con Agustín Jordan») que aún no están en la base.
+function textoTarea(t){ return t.tarea + ' ' + (t.notas || '') + ' ' + (t.subtareas || []).map(x => x.t).join(' · '); }
+function personasNuevas(){
+  if (!S.base) return [];
+  const conocidas = new Set(((S.base && S.base.contactos) || []).flatMap(c => [norm(c.nombre), norm(c.empresa)]).filter(Boolean));
+  const descartadas = lsGet('personasNo', {}), proyectos = (S.data.proyectos || []).map(p => norm(p.nombre));
+  const out = {}, re = /(?:^|\s)(?:a|al|con|para|de|del)\s+([A-ZÁÉÍÓÚÑ][a-záéíóúñ]+(?:\s+[A-ZÁÉÍÓÚÑ][a-záéíóúñ]+){1,2})/g;
+  S.data.tareas.forEach(t => {
+    let m; const tx = textoTarea(t);
+    while ((m = re.exec(tx))){
+      const n = m[1].trim(), k = norm(n);
+      if (conocidas.has(k) || descartadas[k] || proyectos.some(p => p.includes(k))) continue;
+      (out[k] = out[k] || { nombre: n, tareas: [] }).tareas.push(t.tarea);
+    }
+  });
+  return Object.values(out);
+}
+function openPersonas(){
+  const L = personasNuevas();
+  sheet('<h3>👤 Personas en tus tareas</h3><div class="hint">Las nombras en tareas o subtareas pero no están en tu base. Agrégalas para ir guardando su historial.</div>' +
+    '<div class="card" id="pList">' + (L.length ? L.map((p, i) => '<div class="sug" data-pi="' + i + '"><span class="ic">👤</span><div class="grow"><div class="tt">' + esc(p.nombre) + '</div><div class="st">' + esc(p.tareas.slice(0, 2).join(' · ')) + '</div></div>' +
+      '<button class="sq no" data-pno="' + i + '" aria-label="Descartar">✕</button><button class="sq add" style="width:auto;padding:0 10px;font-size:13px" data-padd2="' + i + '" data-tipo="Cliente">🛒</button><button class="sq add" style="width:auto;padding:0 10px;font-size:13px;background:#3B9EFF" data-padd2="' + i + '" data-tipo="Proveedor">📦</button></div>').join('') : '<div class="empty">No hay personas nuevas ✨</div>') + '</div>' +
+    '<div class="hint">🛒 = cliente · 📦 = proveedor · ✕ = no es un contacto (no vuelve a aparecer). Después puedes completar su teléfono en la pestaña Base.</div>');
+  const quitar = i => { const el = $('[data-pi="' + i + '"]'); if (el) el.remove(); if (!$$('#pList .sug').length) $('#pList').innerHTML = '<div class="empty">¡Listo! 🎉</div>'; };
+  $$('[data-pno]').forEach(b => b.onclick = () => { const p = L[+b.dataset.pno], m = lsGet('personasNo', {}); m[norm(p.nombre)] = 1; lsSet('personasNo', m); quitar(+b.dataset.pno); });
+  $$('[data-padd2]').forEach(b => b.onclick = async () => {
+    const i = +b.dataset.padd2, p = L[i]; b.disabled = true;
+    try { await apiX('contacto', { contacto: { tipo: b.dataset.tipo, nombre: p.nombre, notas: 'Mencionado en: ' + p.tareas.slice(0, 3).join(' · ') } }); quitar(i); toast('✓ ' + p.nombre + ' agregado a la base'); await loadBase(true); }
+    catch(e){ b.disabled = false; toast('No se pudo agregar: ' + e.message); }
+  });
+}
 function relacionadosHTML(t){
   const L = contactosDe(t); if (!L.length) return '';
   return '<label class="l">👤 Relacionado con</label><div class="seg">' + L.map(c => '<button type="button" class="pill" data-cto="' + esc(c.id) + '">' + (TIPO_IC[c.tipo] || '') + ' ' + esc(c.nombre || c.email) + '</button>').join('') + '</div>';
@@ -1038,14 +1125,43 @@ function viewProy(){
 }
 
 /* ---------- hojas modales ---------- */
+// Hojas que suben desde abajo: se cierran con ✕, tocando fuera, deslizando hacia abajo o con «atrás».
+let hojaEnHistorial = false, ignorarPop = false;
 function sheet(html){
-  const layer = $('#layer');
-  layer.innerHTML = '<div class="backdrop"><div class="sheet">' + html + '</div></div>';
-  const bd = layer.firstChild;
+  const layer = $('#layer'), yaAbierta = !!layer.innerHTML;
+  layer.innerHTML = '<div class="backdrop"><div class="sheet"><button class="sheet-x" aria-label="Cerrar">✕</button>' + html + '</div></div>';
+  const bd = layer.firstChild, sh = bd.firstChild;
   bd.onclick = e => { if (e.target === bd) closeSheet(); };
+  sh.querySelector('.sheet-x').onclick = () => closeSheet();
+  deslizarParaCerrar(sh);
+  if (!yaAbierta && !hojaEnHistorial){ try { history.pushState({ hoja: 1 }, ''); hojaEnHistorial = true; } catch(e){} }
   return layer;
 }
-function closeSheet(){ $('#layer').innerHTML = ''; if (focusTick){ clearInterval(focusTick); focusTick = null; } focusPill(); }
+function deslizarParaCerrar(sh){
+  let y0 = null, dy = 0;
+  sh.addEventListener('touchstart', e => { y0 = sh.scrollTop <= 0 ? e.touches[0].clientY : null; dy = 0; sh.style.transition = 'none'; }, { passive: true });
+  sh.addEventListener('touchmove', e => {
+    if (y0 == null) return;
+    dy = e.touches[0].clientY - y0;
+    if (dy > 0 && sh.scrollTop <= 0){ sh.style.transform = 'translateY(' + dy + 'px)'; if (e.cancelable) e.preventDefault(); }
+    else { y0 = null; sh.style.transform = ''; }
+  }, { passive: false });
+  sh.addEventListener('touchend', () => {
+    if (y0 == null) return;
+    y0 = null; sh.style.transition = 'transform .2s ease';
+    if (dy > 90){ sh.style.transform = 'translateY(100%)'; setTimeout(() => closeSheet(), 170); }
+    else sh.style.transform = '';
+  });
+}
+function cerrarHoja(){ $('#layer').innerHTML = ''; if (focusTick){ clearInterval(focusTick); focusTick = null; } focusPill(); }
+function closeSheet(){
+  cerrarHoja();
+  if (hojaEnHistorial){ hojaEnHistorial = false; ignorarPop = true; history.back(); }
+}
+window.addEventListener('popstate', () => {
+  if (ignorarPop){ ignorarPop = false; return; }
+  if (hojaEnHistorial || $('#layer').innerHTML){ hojaEnHistorial = false; cerrarHoja(); }
+});
 function pills(id, items, sel){
   return '<div class="seg" id="' + id + '">' + items.map(i => '<button type="button" class="pill ' + (i.v === sel ? 'on' : '') + '" data-v="' + esc(i.v) + '">' + esc(i.t) + '</button>').join('') + '</div>';
 }
