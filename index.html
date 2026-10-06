@@ -257,7 +257,7 @@ textarea.note{min-height:56px;resize:vertical}
 const $ = s => document.querySelector(s);
 const $$ = s => document.querySelectorAll(s);
 const LS = window.localStorage;
-let S = { data: null, tab: 'inicio', filtro: 'todas', q: '', verHechas: false, vista: LS.vista || 'lista', offline: false, busy: false, google: null, googleBusy: false, googleAt: 0 };
+let S = { data: null, tab: 'inicio', filtro: 'todas', q: '', verHechas: false, vista: LS.vista || 'lista', offline: false, busy: false, google: null, googleBusy: false, googleAt: 0, ext: null, extInactivo: false };
 let deferredInstall = null;
 
 /* ---------- utilidades ---------- */
@@ -307,6 +307,21 @@ async function api(action, extra){
   if (!j.ok) throw new Error(j.error || 'error');
   return j;
 }
+function apiX(op, extra){ return api('extra', Object.assign({ op }, extra || {})); }
+const REPETIR = ['Diaria', 'Días hábiles', 'Semanal', 'Quincenal', 'Mensual', 'Anual'];
+function parseSub(txt){ return String(txt || '').split(/\n/).map(l => l.trim()).filter(Boolean).map(l => ({ ok: /^(☑|\[x\])/i.test(l), t: l.replace(/^(☑|☐|\[x\]|\[ \]|-)\s*/i, '') })).filter(x => x.t); }
+// Subtareas y repetición viven en las columnas U y V; se leen aparte y se unen a cada tarea por fila.
+function applyExtras(){
+  if (!S.data) return;
+  const m = {}; ((S.ext && S.ext.filas) || []).forEach(f => { m[f.row] = f; });
+  S.data.tareas.forEach(t => { if (t.row == null) return; const f = m[t.row]; t.subtareas = f ? parseSub(f.sub) : []; t.repetir = f ? f.rep : ''; });
+}
+async function loadExtras(){
+  if (!LS.url) return;
+  try { S.ext = await apiX('extras'); S.extInactivo = false; lsSet('extCache', S.ext); }
+  catch(e){ if (/accion desconocida/i.test(e.message)) S.extInactivo = true; else if (!S.ext) S.ext = lsGet('extCache', null); }
+  applyExtras();
+}
 async function load(){
   S.busy = true; head();
   const antes = S.data ? +((S.data.indicadores || {})['Nivel']) || 0 : 0;
@@ -319,15 +334,17 @@ async function load(){
     S.offline = true;
     if (!S.data && LS.cache) S.data = JSON.parse(LS.cache);
   }
+  applyExtras();
   S.busy = false; render();
+  loadExtras().then(() => { if (!$('#layer').innerHTML) render(); });
   loadGoogle(false);
 }
-// Calendario y Gmail: se piden aparte para no hacer más lenta la carga principal.
+// Calendario y Gmail (vía Extras): se piden aparte para no hacer más lenta la carga principal.
 async function loadGoogle(forzar){
   if (!LS.url || S.googleBusy) return;
   if (!forzar && S.google && Date.now() - S.googleAt < 10 * 60000) return;
   S.googleBusy = true;
-  try { const g = await api('google'); S.google = g; S.googleAt = Date.now(); lsSet('googleCache', g); }
+  try { const g = await apiX('google'); S.google = g; S.googleAt = Date.now(); lsSet('googleCache', g); }
   catch(e){
     if (/accion desconocida/i.test(e.message)){ S.google = { inactivo: true }; S.googleAt = Date.now(); }
     else if (!S.google) S.google = lsGet('googleCache', null);
@@ -414,9 +431,15 @@ function taskHTML(t, opt){
       (t.area ? '<span class="tag" style="background:' + hexToRgba(areaCol(t.area), .13) + ';color:' + areaCol(t.area) + '">' + (AREA_IC[t.area] || '') + ' ' + esc(t.area) + '</span>' : '') +
       (t.categoria ? '<span class="tag" style="background:' + hexToRgba(cc, .13) + ';color:' + cc + '">' + catIc(t.categoria) + ' ' + esc(t.categoria) + '</span>' : '') +
       (t.proyecto ? '<span class="tag">🚀 ' + esc(t.proyecto) + '</span>' : '') +
+      subTag(t) + (t.repetir ? '<span class="tag info">🔁 ' + esc(t.repetir) + '</span>' : '') +
       (t.estado && t.estado !== 'Pendiente' && !t.hecho ? '<span class="tag">' + (EST_IC[t.estado] || '') + ' ' + esc(t.estado) + '</span>' : '') +
       '</div>') +
     '</div>' + (!t.hecho && opt.play ? '<button class="play" data-focus="' + idx + '" aria-label="Enfocar">▶</button>' : '') + '</div>';
+}
+function subTag(t){
+  const L = t.subtareas || []; if (!L.length) return '';
+  const n = L.filter(x => x.ok).length;
+  return '<span class="tag ' + (n === L.length ? 'ok' : '') + '">☑ ' + n + '/' + L.length + '</span>';
 }
 function bindTasks(root){
   root.querySelectorAll('[data-tog]').forEach(b => b.onclick = e => { e.stopPropagation(); toggle(S.data.tareas[+b.dataset.tog]); });
@@ -478,13 +501,13 @@ function viewInicio(){
   $$('[data-day]').forEach(b => b.onclick = () => openDia(b.dataset.day));
   bindAsistente();
   const sg = $('#sugBtn'); if (sg) sg.onclick = openSugerencias;
-  const ga = $('#gAct'); if (ga) ga.onclick = showGoogleSetup;
+  const ga = $('#gAct'); if (ga) ga.onclick = showExtrasSetup;
 }
 
 function agendaHTML(){
   const g = S.google, h = hoy();
   if (!g) return card('Agenda de hoy', '📅', '<div class="empty"><span class="spin"></span>Revisando tu calendario…</div>');
-  if (g.inactivo) return card('Calendario y correo', '✨', '<div class="hint" style="margin-top:0">Conecta tu Google Calendar y Gmail para ver tu agenda aquí y convertir eventos y correos destacados en tareas con un toque.</div><button class="btn sm" id="gAct">Cómo activarlo</button>');
+  if (g.inactivo) return card('Activa las funciones extra', '✨', '<div class="hint" style="margin-top:0">📅 Tu agenda de Google Calendar aquí · ✉️ correos destacados como tareas · ☑ subtareas · 🔁 tareas que se repiten. Se activa una vez en tu Apps Script.</div><button class="btn sm" id="gAct">Cómo activarlo</button>');
   const ev = (g.eventos || []).filter(e => e.fecha === h);
   const ahora = new Date().toTimeString().slice(0, 5);
   const lista = ev.length ? ev.map(e => {
@@ -615,20 +638,20 @@ function openSugerencias(){
     catch(e){ b.disabled = false; b.textContent = '+'; toast('No se pudo guardar: ' + e.message); }
   });
 }
-function showGoogleSetup(){
-  const raw = 'https://raw.githubusercontent.com/SnowPv/Organizador/main/apps-script/Inteligencia.gs';
-  const linea = "case 'google':      return app_json_(app_google_(p));";
-  sheet('<h3>✨ Activar calendario y correo</h3><div class="hint">Se hace una sola vez, idealmente desde el PC. La app lee tu Google Calendar y Gmail a través de tu propio script: nada sale de tu cuenta.</div>' +
-    '<div class="card"><b>1.</b> En el Sheet: <b>Extensiones → Apps Script</b>. Toca <b>+ → Secuencia de comandos</b> y nómbrala <b>Inteligencia</b>.' +
+function showExtrasSetup(){
+  const raw = 'https://raw.githubusercontent.com/SnowPv/Organizador/main/apps-script/Extras.gs';
+  const linea = "case 'extra':       return app_json_(app_extra_(p));";
+  sheet('<h3>✨ Activar funciones extra</h3><div class="hint">📅 Agenda y ✉️ correos como tareas · ☑ subtareas · 🔁 tareas que se repiten · 💪 mes nuevo de hábitos desde la app · y el Sheet vuelve a completar solo la fecha de cierre, el área y el estado cuando editas a mano. Se hace una sola vez, idealmente desde el PC. Todo corre en tu propio script: nada sale de tu cuenta.</div>' +
+    '<div class="card"><b>1.</b> En el Sheet: <b>Extensiones → Apps Script</b>. Toca <b>+ → Secuencia de comandos</b> y nómbrala <b>Extras</b>.' +
     '<div class="hint">Pega dentro todo el código de este archivo:</div><button class="btn sm sec" id="gc1">📋 Copiar código</button> <a class="btn sm sec" style="text-decoration:none;display:inline-block" href="' + raw + '" target="_blank">Abrir archivo</a></div>' +
     '<div class="card"><b>2.</b> En <b>WebApp</b>, dentro de <code>switch (p.action)</code>, agrega esta línea debajo de <code>case \'semanaGuardar\'</code>:<div class="hint" style="font-family:monospace;word-break:break-all">' + esc(linea) + '</div><button class="btn sm sec" id="gc2">📋 Copiar línea</button></div>' +
-    '<div class="card"><b>3.</b> Guarda 💾. Arriba elige la función <b>autorizarGoogle</b>, toca <b>Ejecutar</b> y acepta los permisos.</div>' +
+    '<div class="card"><b>3.</b> Guarda 💾. Arriba elige la función <b>autorizarExtras</b>, toca <b>Ejecutar</b> y acepta los permisos (Google te mostrará una advertencia porque el script es tuyo: <i>Configuración avanzada → Ir a…</i>).</div>' +
     '<div class="card"><b>4.</b> <b>Implementar → Administrar implementaciones → ✏️ → Versión: Nueva versión → Implementar</b>.</div>' +
     '<div class="btns"><button class="btn" id="gTry">Ya lo hice, probar</button></div>');
   const copiar = async txt => { try { await navigator.clipboard.writeText(txt); toast('Copiado ✓'); } catch(e){ toast('No se pudo copiar'); } };
   $('#gc1').onclick = async () => { try { const r = await fetch(raw, { cache: 'no-store' }); copiar(await r.text()); } catch(e){ toast('No se pudo descargar. Usa «Abrir archivo».'); } };
   $('#gc2').onclick = () => copiar(linea);
-  $('#gTry').onclick = async () => { $('#gTry').disabled = true; S.google = null; await loadGoogle(true); closeSheet(); render(); toast(S.google && !S.google.inactivo ? '¡Conectado! 📅✉️' : 'Aún no responde. Revisa el paso 4.'); };
+  $('#gTry').onclick = async () => { $('#gTry').disabled = true; S.google = null; await loadExtras(); await loadGoogle(true); closeSheet(); render(); toast(!S.extInactivo ? '¡Funciones extra activas! ✨' : 'Aún no responde. Revisa los pasos 2 y 4.'); };
 }
 
 /* ---------- vista: Hoy ---------- */
@@ -691,7 +714,7 @@ function tableroHTML(L){
     return '<div class="col"><h4><span>' + (EST_IC[e] || '•') + ' ' + esc(e) + '</span><span style="color:var(--muted)">' + items.length + '</span></h4>' +
       (items.length ? items.map(t => {
         const idx = S.data.tareas.indexOf(t);
-        return '<div class="kc" style="--c:' + (t.categoria ? catCol(t.categoria) : QUAD[quadOf(t)].c) + '" data-open="' + idx + '"><div class="t">' + esc(t.tarea) + '</div><div class="meta">' + tagFecha(t) + (t.categoria ? '<span class="tag">' + catIc(t.categoria) + ' ' + esc(t.categoria) + '</span>' : '') + '</div>' +
+        return '<div class="kc" style="--c:' + (t.categoria ? catCol(t.categoria) : QUAD[quadOf(t)].c) + '" data-open="' + idx + '"><div class="t">' + esc(t.tarea) + '</div><div class="meta">' + tagFecha(t) + (t.categoria ? '<span class="tag">' + catIc(t.categoria) + ' ' + esc(t.categoria) + '</span>' : '') + subTag(t) + (t.repetir ? '<span class="tag info">🔁</span>' : '') + '</div>' +
           '<div class="mv">' + (i > 0 ? '<button data-mv="' + idx + '" data-est="' + esc(E[i - 1]) + '">◀ ' + esc(E[i - 1]) + '</button>' : '<span></span>') + (i < E.length - 1 ? '<button data-mv="' + idx + '" data-est="' + esc(E[i + 1]) + '">' + esc(E[i + 1]) + ' ▶</button>' : '') + '</div></div>';
       }).join('') : '<div class="hint" style="text-align:center">Vacío</div>') + '</div>';
   }).join('') + '</div><div class="hint">Desliza hacia el lado para ver todas las columnas. Usa ◀ ▶ para mover una tarea de estado.</div>';
@@ -780,7 +803,7 @@ function viewHabitos(){
   const diaHoy = hoyMismoMes ? +hoy().slice(8, 10) : 0;
   const hechosHoy = diaHoy ? H.habitos.filter(hb => hb.marcas[diaHoy - 1]).length : 0;
   let html = '<div class="hero" style="background:var(--grad-green)"><div class="hi">💪 ' + esc(H.mes) + '</div><div class="big">' + (diaHoy ? hechosHoy + ' de ' + H.habitos.length + ' hábitos hoy' : 'Hábitos del mes') + '</div>' +
-    (diaHoy ? '<div class="lvl"><div class="bar"><i style="width:' + (H.habitos.length ? hechosHoy / H.habitos.length * 100 : 0) + '%"></i></div></div>' : '<div class="hint" style="color:#fff">El mes de la hoja no es el actual. Usa el menú Organizador del Sheet para empezar un mes nuevo.</div>') + '</div>';
+    (diaHoy ? '<div class="lvl"><div class="bar"><i style="width:' + (H.habitos.length ? hechosHoy / H.habitos.length * 100 : 0) + '%"></i></div></div>' : (S.extInactivo ? '<div class="hint" style="color:#fff">El mes de la hoja no es el actual. Activa las funciones extra para empezar el mes desde aquí.</div>' : '<button class="btn sm sec" id="hMes" style="position:relative;z-index:1">🗓️ Empezar ' + MESES_L[new Date().getMonth()] + '</button><div class="hint" style="color:#fff">El mes anterior queda guardado en la hoja «Historial hábitos».</div>')) + '</div>';
   html += '<div class="card">' + (H.habitos.length ? H.habitos.map(hb => {
     const col = paletteColor(hb.nombre), marcaHoy = diaHoy > 0 && hb.marcas[diaHoy - 1];
     let racha = 0; for (let i = diaHoy - 1; i >= 0 && hb.marcas[i]; i--) racha++;
@@ -792,6 +815,11 @@ function viewHabitos(){
       '<div class="heat">' + heat + '</div></div>';
   }).join('') : '<div class="empty">Aún no hay hábitos cargados en la hoja.</div>') + '</div>';
   $('#view').innerHTML = html;
+  const hm = $('#hMes'); if (hm) hm.onclick = async () => {
+    hm.disabled = true;
+    try { const r = await apiX('mesHabitos'); toast(r.cambiado ? '💪 ¡Listo! Hábitos de ' + r.mes : 'Ya estás en el mes actual'); await load(); }
+    catch(e){ hm.disabled = false; toast('No se pudo: ' + e.message); }
+  };
   $$('[data-hab]').forEach(b => b.onclick = async () => {
     const hb = H.habitos.find(x => x.row == b.dataset.hab); const v = b.dataset.marca === '1';
     b.disabled = true;
@@ -910,11 +938,19 @@ const WD_N = ['domingo','lunes','martes','miercoles','jueves','viernes','sabado'
 const MES_N = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
 // Entiende frases como «llamar a Crank mañana a las 10 urgente #ventas».
 function parseTarea(txt){
-  const h = hoy(), r = { limite: null, urgente: null, importante: null, tamano: null, categoria: null, area: null, proyecto: null, hora: null };
+  const h = hoy(), r = { repetir: null, limite: null, urgente: null, importante: null, tamano: null, categoria: null, area: null, proyecto: null, hora: null };
   let n = norm(txt); const cortes = [];
   const B = '(?=[\\s,.;]|$)';
   const regla = (re, fn) => { const m = new RegExp('(^|\\s)(' + re + ')' + B).exec(n); if (!m) return false; const ini = m.index + m[1].length, fin = ini + m[2].length; if (fn(m.slice(2)) === false) return false; cortes.push([ini, fin]); n = n.slice(0, ini) + ' '.repeat(fin - ini) + n.slice(fin); return true; };
   const fecha = f => { if (!r.limite) r.limite = f; };
+  const rep = v => () => { r.repetir = v; };
+  regla('(?:cada|todos los|todas las) (lunes|martes|miercoles|jueves|viernes|sabado|domingo)', m => { r.repetir = 'Semanal'; fecha(addDays(h, (WD_N.indexOf(m[1]) - pd(h).getDay() + 7) % 7)); }) ||
+  regla('de lunes a viernes|(?:todos los |cada )?dias? habil(?:es)?', rep('Días hábiles')) ||
+  regla('todos los dias|cada dia|diariamente|diari[ao]', rep('Diaria')) ||
+  regla('cada 15 dias|cada dos semanas|quincenal(?:mente)?', rep('Quincenal')) ||
+  regla('cada semana|todas las semanas|semanal(?:mente)?', rep('Semanal')) ||
+  regla('cada mes|todos los meses|mensual(?:mente)?', rep('Mensual')) ||
+  regla('cada ano|todos los anos|anual(?:mente)?', rep('Anual'));
   regla('(?:para )?pasado manana', () => fecha(addDays(h, 2))) ||
   regla('(?:para )?hoy', () => fecha(h)) ||
   regla('(?:para )?manana', () => fecha(addDays(h, 1))) ||
@@ -983,6 +1019,9 @@ function openAdd(pre){
     '<label class="l">Prioridad</label><div class="seg"><span class="hint" style="margin:0 4px 0 0;align-self:center">Urgente</span>' + pills('f_urg', [{ v: 'Sí', t: '🔴 Sí' }, { v: 'No', t: 'No' }], 'No').replace('class="seg"', 'class="seg" style="display:inline-flex"') + '</div>' +
     '<div class="seg" style="margin-top:8px"><span class="hint" style="margin:0 4px 0 0;align-self:center">Importante</span>' + pills('f_imp', [{ v: 'Sí', t: '⭐ Sí' }, { v: 'No', t: 'No' }], 'Sí').replace('class="seg"', 'class="seg" style="display:inline-flex"') + '</div>' +
     '<label class="l">Tamaño</label>' + pills('f_tam', c.tamanos.map(x => ({ v: x.nombre, t: x.nombre + ' · ' + x.puntos + ' pts' })), 'Pequeña') +
+    (S.extInactivo ? '<div class="hint">☑ Subtareas y 🔁 repetir: actívalas en ⚙️ Ajustes → Funciones extra.</div>' :
+      '<label class="l">🔁 Repetir</label>' + pills('f_rep', [{ v: '', t: 'No' }].concat(REPETIR.map(x => ({ v: x, t: x }))), '') +
+      '<label class="l">☑ Subtareas (una por línea)</label><textarea class="note" id="f_subs" placeholder="Cotizar&#10;Enviar correo&#10;Confirmar"></textarea>') +
     '<label class="l">Notas</label><input type="text" id="f_notas" autocomplete="off" value="' + esc(pre.notas || '') + '"></details>' +
     '<div class="btns"><button class="btn sec" id="f_otra">Guardar y otra</button><button class="btn" id="f_ok">Agregar</button></div>');
   const fillCats = sel => { $('#f_cat').innerHTML = '<option value="">— sin categoría —</option>' + catsDe(area).map(x => '<option' + (x.nombre === sel ? ' selected' : '') + '>' + esc(x.nombre) + '</option>').join(''); };
@@ -990,6 +1029,7 @@ function openAdd(pre){
   const setArea = (a, cat) => { area = a; setPill('f_area', a); fillCats(cat); };
   bindPills('f_area', v => { toc.add('area'); toc.add('cat'); area = v; fillCats(); actualizar(); });
   bindPills('f_fecha', v => { toc.add('fecha'); $('#f_fdate').value = v; actualizar(); });
+  if (!S.extInactivo) bindPills('f_rep', () => { toc.add('rep'); actualizar(); });
   bindPills('f_urg', () => { toc.add('urg'); actualizar(); }); bindPills('f_imp', () => { toc.add('imp'); actualizar(); }); bindPills('f_tam', () => { toc.add('tam'); actualizar(); });
   $('#f_fdate').onchange = () => { toc.add('fecha'); setPill('f_fecha', $('#f_fdate').value); actualizar(); };
   $('#f_cat').onchange = () => { toc.add('cat'); actualizar(); };
@@ -1007,6 +1047,7 @@ function openAdd(pre){
     if (!toc.has('urg')) setPill('f_urg', P.urgente || 'No');
     if (!toc.has('imp')) setPill('f_imp', P.importante || 'Sí');
     if (!toc.has('tam') && P.tamano) setPill('f_tam', P.tamano);
+    if (!toc.has('rep') && $('#f_rep')) setPill('f_rep', P.repetir || '');
     if (!toc.has('cat') && !$('#f_proy').value){ if (P.categoria) setArea(P.area || area, P.categoria); else if (P.area && P.area !== area) setArea(P.area); }
     if (P.proyecto && $('#f_proy').value !== P.proyecto){ $('#f_proy').value = P.proyecto; const p = d.proyectos.find(x => x.nombre === P.proyecto); if (p && !toc.has('cat')) setArea(p.area || area, p.categoria); }
     const lim = $('#f_fdate').value, cat = $('#f_cat').value, urg = val('f_urg') === 'Sí', imp = val('f_imp') === 'Sí';
@@ -1017,6 +1058,7 @@ function openAdd(pre){
       chip((AREA_IC[area] || '') + ' ' + area, hexToRgba(areaCol(area), .14), areaCol(area)) +
       (cat ? chip(catIc(cat) + ' ' + cat + (P.adivinada && !toc.has('cat') ? ' ✨' : ''), hexToRgba(catCol(cat), .14), catCol(cat)) : '') +
       ($('#f_proy').value ? chip('🚀 ' + $('#f_proy').value, 'var(--soft)', 'var(--ink)') : '') +
+      (val('f_rep') ? chip('🔁 ' + val('f_rep'), 'rgba(59,158,255,.14)', 'var(--info-ink)') : '') +
       chip(QUAD[q].ic + ' ' + QUAD[q].n, hexToRgba(QUAD[q].c, .15), QUAD[q].c);
     $$('#f_chips .chip').forEach(b => b.onclick = () => { $('#f_more').open = true; });
     $('#f_prev').innerHTML = P.titulo && P.titulo !== txt.trim() ? 'Se guardará como: <b>' + esc(P.titulo) + '</b>' : (P.adivinada && !toc.has('cat') ? '✨ Categoría sugerida según tus tareas anteriores' : '');
@@ -1030,14 +1072,31 @@ function openAdd(pre){
     const texto = P.titulo || crudo;
     let notas = $('#f_notas').value.trim(); if (P.hora && !notas.includes(P.hora)) notas = ('⏰ ' + P.hora + (notas ? ' · ' + notas : ''));
     const t = { tarea: texto, area, categoria: $('#f_cat').value, proyecto: $('#f_proy').value, limite: $('#f_fdate').value, urgente: val('f_urg'), importante: val('f_imp'), tamano: val('f_tam'), notas, estado: 'Pendiente' };
+    const repetir = $('#f_rep') ? val('f_rep') : '', subs = $('#f_subs') ? parseSub($('#f_subs').value) : [];
+    const antes = new Set(S.data.tareas.filter(x => x.tarea === texto).map(x => x.row));
     const btns = $$('.btns .btn'); btns.forEach(b => b.disabled = true);
     S.data.tareas.push({ row: null, hecho: false, tarea: t.tarea, area: t.area, categoria: t.categoria, proyecto: t.proyecto, urgente: t.urgente, importante: t.importante, cuadrante: String((t.urgente === 'Sí' && t.importante === 'Sí') ? 1 : t.importante === 'Sí' ? 2 : t.urgente === 'Sí' ? 3 : 4), tamano: t.tamano, limite: t.limite, estado: 'Pendiente', cierre: '', puntos: 0, alerta: '', notas: t.notas });
-    try { await api('add', { tarea: t }); toast('✓ Agregada' + (t.limite ? ' · ' + fmtRel(t.limite) : '')); vibrar(20); if (otra){ openAdd({ limite: pre.limite, proyecto: pre.proyecto }); } else closeSheet(); await load(); }
+    try {
+      await api('add', { tarea: t }); toast('✓ Agregada' + (t.limite ? ' · ' + fmtRel(t.limite) : '')); vibrar(20);
+      if (otra){ openAdd({ limite: pre.limite, proyecto: pre.proyecto }); } else closeSheet();
+      await load();
+      if (repetir || subs.length) await guardarExtrasNueva(texto, antes, repetir, subs);
+    }
     catch(e){ S.data.tareas.pop(); btns.forEach(b => b.disabled = false); toast('No se pudo guardar: ' + e.message); render(); }
   };
   $('#f_ok').onclick = () => enviar(false);
   $('#f_otra').onclick = () => enviar(true);
   $('#f_t').onkeydown = e => { if (e.key === 'Enter') enviar(false); };
+}
+// La tarea recién creada no trae su fila; se ubica por el texto entre las filas que no existían antes.
+async function guardarExtrasNueva(texto, antes, repetir, subs){
+  const n = S.data.tareas.find(x => x.tarea === texto && x.row != null && !antes.has(x.row));
+  if (!n){ toast('No pude ubicar la tarea para guardar subtareas/repetición'); return; }
+  try {
+    if (subs.length) await apiX('subtareas', { row: n.row, tarea: n.tarea, subtareas: subs });
+    if (repetir) await apiX('repetir', { row: n.row, tarea: n.tarea, valor: repetir });
+    await loadExtras(); if (!$('#layer').innerHTML) render();
+  } catch(e){ toast('No se guardaron subtareas/repetición: ' + e.message); }
 }
 // Dictado por voz (Chrome en Android lo soporta).
 function dictar(input, btn, cb){
@@ -1063,6 +1122,11 @@ function openDetail(t){
     '<label class="l">Urgente</label>' + pills('e_urg', [{ v: 'Sí', t: '🔴 Sí' }, { v: 'No', t: 'No' }], t.urgente) +
     '<label class="l">Importante</label>' + pills('e_imp', [{ v: 'Sí', t: '⭐ Sí' }, { v: 'No', t: 'No' }], t.importante) +
     '<label class="l">Tamaño</label>' + pills('e_tam', c.tamanos.map(x => ({ v: x.nombre, t: x.nombre })), t.tamano) +
+    (S.extInactivo ? '<div class="card" style="margin-top:14px"><b>☑ Subtareas y 🔁 repetir</b><div class="hint">Divide la tarea en pasos y haz que se repita sola. Se activan una vez en tu Apps Script.</div><button class="btn sm sec" id="e_act">Cómo activarlas</button></div>' :
+      '<label class="l">☑ Subtareas</label><div class="card" style="margin:0;padding:4px 14px" id="e_subs"></div>' +
+      '<div class="smart" style="margin-top:8px"><input type="text" id="e_sub_new" placeholder="+ Agregar un paso" autocomplete="off"><button class="mic" id="e_sub_add" aria-label="Agregar paso">＋</button></div>' +
+      '<label class="l">🔁 Repetir</label>' + pills('e_rep', [{ v: '', t: 'No se repite' }].concat(REPETIR.map(x => ({ v: x, t: x }))), t.repetir || '') +
+      '<div class="hint">Al marcarla hecha se crea sola la siguiente, con la fecha que corresponda.</div>') +
     '<label class="l">Notas</label><textarea class="note" id="e_n">' + esc(t.notas) + '</textarea>' +
     linkHTML(t.notas) +
     '<div class="hint">' + (AREA_IC[t.area] || '') + ' ' + esc(t.area) + (t.categoria ? ' · ' + catIc(t.categoria) + ' ' + esc(t.categoria) : '') + (t.proyecto ? ' · 🚀 ' + esc(t.proyecto) : '') + '</div>' +
@@ -1073,6 +1137,8 @@ function openDetail(t){
   $('#e_lun').onclick = () => $('#e_f').value = nextMonday(h); $('#e_sin').onclick = () => $('#e_f').value = '';
   $('#e_sem').onclick = () => $('#e_f').value = addDays($('#e_f').value || h, 7);
   if (!t.hecho){ $('#e_focus').onclick = () => openFocus(t); $('#e_done').onclick = () => { closeSheet(); toggle(t); }; }
+  if (S.extInactivo) $('#e_act').onclick = showExtrasSetup;
+  else bindSubtareas(t);
   $('#e_ok').onclick = async () => {
     const campos = { nuevoTexto: $('#e_t').value.trim(), estado: val('e_est') || t.estado, limite: $('#e_f').value, urgente: val('e_urg'), importante: val('e_imp'), tamano: val('e_tam'), notas: $('#e_n').value.trim() };
     $('#e_ok').disabled = true;
@@ -1084,6 +1150,34 @@ function openDetail(t){
     try { await api('delete', { row: t.row, tarea: t.tarea }); closeSheet(); toast('Eliminada'); await load(); }
     catch(e){ toast('No se pudo eliminar: ' + e.message); }
   };
+}
+// Subtareas: cada cambio se guarda al tiro en la columna U.
+function bindSubtareas(t){
+  let subs = (t.subtareas || []).map(x => Object.assign({}, x));
+  const guardar = async () => {
+    t.subtareas = subs.map(x => Object.assign({}, x));
+    try { await apiX('subtareas', { row: t.row, tarea: t.tarea, subtareas: subs }); }
+    catch(e){ toast('No se pudo guardar: ' + e.message); }
+  };
+  const pintar = () => {
+    const n = subs.filter(x => x.ok).length;
+    $('#e_subs').innerHTML = (subs.length ? '<div class="bar" style="margin:10px 0 4px"><i style="width:' + (n / subs.length * 100) + '%;background:var(--ok)"></i></div>' : '') +
+      (subs.length ? subs.map((x, i) => '<div class="checklist-item ' + (x.ok ? 'done' : '') + '"><button class="chk ' + (x.ok ? 'on' : '') + '" style="--q:#13B386" data-si="' + i + '">' + (x.ok ? '✓' : '') + '</button><span class="ct grow">' + esc(x.t) + '</span><button class="sq no" style="width:30px;height:30px;font-size:13px" data-sx="' + i + '" aria-label="Quitar">✕</button></div>').join('')
+        : '<div class="hint">Divide la tarea en pasos pequeños: es más fácil partir.</div>');
+    $$('[data-si]').forEach(b => b.onclick = () => {
+      const x = subs[+b.dataset.si]; x.ok = !x.ok; pintar(); guardar();
+      if (x.ok){ vibrar(15); if (subs.every(y => y.ok)){ confetti(25); toast('☑ ¡Todos los pasos listos! Ya puedes marcar la tarea.'); } }
+    });
+    $$('[data-sx]').forEach(b => b.onclick = () => { subs.splice(+b.dataset.sx, 1); pintar(); guardar(); });
+  };
+  const agregar = () => { const v = $('#e_sub_new').value.trim(); if (!v) return; subs.push({ t: v, ok: false }); $('#e_sub_new').value = ''; pintar(); guardar(); $('#e_sub_new').focus(); };
+  $('#e_sub_add').onclick = agregar;
+  $('#e_sub_new').onkeydown = e => { if (e.key === 'Enter') agregar(); };
+  bindPills('e_rep', async v => {
+    try { await apiX('repetir', { row: t.row, tarea: t.tarea, valor: v }); t.repetir = v; toast(v ? '🔁 Se repetirá: ' + v.toLowerCase() : 'Ya no se repite'); }
+    catch(e){ toast('No se pudo guardar: ' + e.message); }
+  });
+  pintar();
 }
 function linkHTML(notas){
   const m = String(notas || '').match(/https?:\/\/\S+/);
@@ -1192,6 +1286,10 @@ async function toggle(t){
   try {
     await api('toggle', { row: t.row, tarea: t.tarea, hecho: t.hecho });
     if (t.hecho){ const n = hechasEl(hoy()).length, m = metaDiaria(); toast(n === m ? '🏆 ¡Meta del día cumplida!' : '¡Hecha! ✓ ' + n + '/' + m + ' hoy'); if (n === m) confetti(90); }
+    if (t.hecho && t.repetir && !S.extInactivo){
+      try { const r = await apiX('siguiente', { row: t.row, tarea: t.tarea }); if (r.creada) toast('🔁 Lista la próxima: ' + fmtRel(r.fecha).toLowerCase()); }
+      catch(e){ toast('No se pudo crear la siguiente: ' + e.message); }
+    }
     load();
   }
   catch(e){ t.hecho = antes.hecho; t.cierre = antes.cierre; render(); toast('No se pudo guardar: ' + e.message); }
@@ -1212,17 +1310,17 @@ function showSetup(){
   };
 }
 function showSettings(){
-  const g = S.google, gTxt = !g ? 'Revisando…' : g.inactivo ? 'No activado' : 'Conectado ✓ · ' + (g.eventos || []).length + ' eventos · ' + (g.correos || []).length + ' correos';
+  const g = S.google, gTxt = S.extInactivo || (g && g.inactivo) ? 'No activadas' : !g ? 'Revisando…' : 'Activas ✓ · ' + (g.eventos || []).length + ' eventos · ' + (g.correos || []).length + ' correos' + (g.avisos && g.avisos.length ? ' · ⚠️ ' + g.avisos.join(' · ') : '');
   sheet('<h3>⚙️ Ajustes</h3><div class="hint">Conectado a tu Sheet del organizador.</div>' +
     (deferredInstall ? '<div class="btns"><button class="btn" id="s_inst">📲 Instalar app en este dispositivo</button></div>' : '') +
-    '<div class="card"><b>📅✉️ Calendario y correo</b><div class="hint">' + esc(gTxt) + '</div><button class="btn sm sec" id="s_g">' + (g && !g.inactivo ? 'Ver sugerencias' : 'Cómo activarlo') + '</button></div>' +
-    '<div class="card"><b>✨ Trucos para agregar rápido</b><div class="hint">• Fechas: <i>hoy, mañana, pasado mañana, el viernes, en 3 días, 15/10, 20 de octubre, la próxima semana</i><br>• Hora: <i>a las 10, 15:30</i><br>• Prioridad: <i>urgente</i> o <i>!</i> · <i>importante</i><br>• Categoría o área: <i>#ventas, #marketing, #personal</i><br>• Proyecto: <i>@levo</i><br>• Toca 🎤 para dictar.</div></div>' +
+    '<div class="card"><b>✨ Funciones extra</b> <span class="hint">(calendario, correo, subtareas, repetir)</span><div class="hint">' + esc(gTxt) + '</div><button class="btn sm sec" id="s_g">' + (g && !g.inactivo ? 'Ver sugerencias' : 'Cómo activarlas') + '</button></div>' +
+    '<div class="card"><b>✨ Trucos para agregar rápido</b><div class="hint">• Fechas: <i>hoy, mañana, pasado mañana, el viernes, en 3 días, 15/10, 20 de octubre, la próxima semana</i><br>• Hora: <i>a las 10, 15:30</i><br>• Prioridad: <i>urgente</i> o <i>!</i> · <i>importante</i><br>• Categoría o área: <i>#ventas, #marketing, #personal</i><br>• Proyecto: <i>@levo</i><br>• Repetir: <i>cada lunes, todos los días, días hábiles, cada mes</i><br>• Toca 🎤 para dictar.</div></div>' +
     '<div class="btns"><button class="btn sec" id="s_re">Cambiar link o clave</button></div>' +
     '<div class="btns"><button class="btn bad" id="s_out">Desconectar este dispositivo</button></div>');
   if (deferredInstall) $('#s_inst').onclick = async () => { deferredInstall.prompt(); await deferredInstall.userChoice; deferredInstall = null; closeSheet(); };
-  $('#s_g').onclick = () => g && !g.inactivo ? openSugerencias() : showGoogleSetup();
+  $('#s_g').onclick = () => g && !g.inactivo ? openSugerencias() : showExtrasSetup();
   $('#s_re').onclick = showSetup;
-  $('#s_out').onclick = () => { if (confirm('Se borran el link y la clave de este dispositivo.')){ ['url', 'token', 'cache', 'googleCache'].forEach(k => LS.removeItem(k)); S.data = null; S.google = null; closeSheet(); showSetup(); } };
+  $('#s_out').onclick = () => { if (confirm('Se borran el link y la clave de este dispositivo.')){ ['url', 'token', 'cache', 'googleCache', 'extCache'].forEach(k => LS.removeItem(k)); S.data = null; S.google = null; closeSheet(); showSetup(); } };
 }
 
 window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferredInstall = e; });
@@ -1234,6 +1332,7 @@ if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catc
 /* ---------- inicio ---------- */
 if (LS.cache) { try { S.data = JSON.parse(LS.cache); } catch(e){} }
 S.google = lsGet('googleCache', null);
+S.ext = lsGet('extCache', null);
 if (!LS.url || !LS.token) { render(); showSetup(); } else { render(); load(); }
 </script>
 </body>
