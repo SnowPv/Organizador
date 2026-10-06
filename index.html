@@ -1141,7 +1141,7 @@ function parseTarea(txt){
     if (p){ r.proyecto = p.nombre; const ini = m.index + m[1].length; cortes.push([ini, ini + m[2].length + 1]); }
   }
   let titulo = txt; cortes.sort((a, b) => b[0] - a[0]).forEach(([a, b]) => { titulo = titulo.slice(0, a) + titulo.slice(b); });
-  titulo = titulo.replace(/\s+/g, ' ').replace(/\s+(para|el|la|a|de)\s*$/i, '').replace(/[\s,;]+$/, '').trim();
+  titulo = titulo.replace(/\s+/g, ' ').replace(/(\s+(para|el|la|las|los|a|al|de|del|en|con|y))+\s*$/i, '').replace(/[\s,;]+$/, '').trim();
   r.titulo = titulo ? titulo.charAt(0).toUpperCase() + titulo.slice(1) : '';
   if (!r.categoria){ const g = adivinar(r.titulo); if (g.categoria){ r.categoria = g.categoria; r.area = r.area || g.area; r.adivinada = true; } }
   return r;
