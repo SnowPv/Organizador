@@ -102,8 +102,8 @@ header.top small{display:block;color:var(--muted);font-size:13px;margin-top:2px;
 
 /* navegación */
 nav.bottom{position:fixed;left:8px;right:8px;bottom:calc(10px + env(safe-area-inset-bottom));background:color-mix(in srgb, var(--card) 92%, transparent);backdrop-filter:blur(12px);border-radius:24px;padding:6px 4px;display:flex;justify-content:space-around;z-index:8;box-shadow:var(--shadow-md);border:1px solid var(--line);max-width:720px;margin:0 auto}
-nav.bottom button{flex:1;border:0;background:none;padding:4px 1px;color:var(--muted);font-size:10px;font-weight:700;border-radius:16px;display:flex;flex-direction:column;align-items:center;gap:1px}
-nav.bottom button span{display:flex;align-items:center;justify-content:center;font-size:19px;line-height:1;width:42px;height:30px;border-radius:12px;filter:grayscale(.6);opacity:.75;transition:all .2s}
+nav.bottom button{flex:1;min-width:0;border:0;background:none;padding:4px 0;color:var(--muted);font-size:9.5px;font-weight:700;border-radius:16px;display:flex;flex-direction:column;align-items:center;gap:1px}
+nav.bottom button span{display:flex;align-items:center;justify-content:center;font-size:19px;line-height:1;width:38px;height:30px;border-radius:12px;filter:grayscale(.6);opacity:.75;transition:all .2s}
 nav.bottom button.on{color:var(--accent-ink)}
 nav.bottom button.on span{background:var(--soft);filter:none;opacity:1;transform:translateY(-1px)}
 .fab{position:fixed;right:18px;bottom:calc(96px + env(safe-area-inset-bottom));width:60px;height:60px;border-radius:20px;border:0;background:var(--grad);color:#fff;font-size:32px;font-weight:300;line-height:1;box-shadow:var(--shadow-fab);z-index:9;transition:transform .12s}
@@ -221,6 +221,16 @@ svg text{fill:var(--muted);font-size:9px;font-weight:600}
 textarea.note{min-height:56px;resize:vertical}
 .proj{border-left:5px solid var(--c)}
 
+/* base de contactos */
+.ct-row{display:flex;gap:12px;align-items:center;padding:11px 0;border-top:1px solid var(--line)}
+.ct-row:first-of-type{border-top:0}
+.av{flex:none;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;letter-spacing:.02em}
+.ct-last{flex:none;text-align:right;font-size:11.5px;color:var(--muted);font-weight:700;line-height:1.35}
+.tl{display:flex;gap:10px;padding:9px 0;border-top:1px solid var(--line);align-items:flex-start}
+.tl:first-of-type{border-top:0}
+.tl .ic{flex:none;width:32px;height:32px;border-radius:10px;background:var(--soft);display:flex;align-items:center;justify-content:center;font-size:15px}
+.acts3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.acts3 a,.acts3 button{text-align:center;text-decoration:none;border:0;border-radius:14px;padding:11px 4px;background:var(--soft);color:var(--ink);font-weight:800;font-size:13px}
 /* foco */
 .timer{position:relative;width:220px;height:220px;margin:14px auto}
 .timer b{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:44px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
@@ -249,6 +259,7 @@ textarea.note{min-height:56px;resize:vertical}
   <button data-tab="habitos"><span>💪</span>Hábitos</button>
   <button data-tab="semana"><span>🗓️</span>Semana</button>
   <button data-tab="proy"><span>🚀</span>Proyectos</button>
+  <button data-tab="base"><span>📇</span>Base</button>
 </nav>
 <div id="layer"></div>
 
@@ -257,7 +268,7 @@ textarea.note{min-height:56px;resize:vertical}
 const $ = s => document.querySelector(s);
 const $$ = s => document.querySelectorAll(s);
 const LS = window.localStorage;
-let S = { data: null, tab: 'inicio', filtro: 'todas', q: '', verHechas: false, vista: LS.vista || 'lista', offline: false, busy: false, google: null, googleBusy: false, googleAt: 0, ext: null, extInactivo: false };
+let S = { data: null, tab: 'inicio', filtro: 'todas', q: '', verHechas: false, vista: LS.vista || 'lista', offline: false, busy: false, google: null, googleBusy: false, googleAt: 0, ext: null, extInactivo: false, base: null, baseAt: 0, bf: 'todos', bq: '', mutado: false };
 let deferredInstall = null;
 
 /* ---------- utilidades ---------- */
@@ -300,7 +311,9 @@ function quadOf(t){ const n = parseInt(t.cuadrante); if (QUAD[n]) return n; retu
 function habIc(n){ const k = norm(n); const m = HAB_IC.find(x => k.includes(x[0])); return m ? m[1] : '✨'; }
 
 /* ---------- API ---------- */
+const OPS_CAMBIO = ['subtareas', 'repetir', 'siguiente'];
 async function api(action, extra){
+  if (['add', 'update', 'toggle', 'delete'].includes(action) || (action === 'extra' && OPS_CAMBIO.includes(extra && extra.op))) S.mutado = true;
   const res = await fetch(LS.url, { method: 'POST', body: JSON.stringify(Object.assign({ token: LS.token, action }, extra || {})) });
   const txt = await res.text();
   let j; try { j = JSON.parse(txt); } catch(e){ throw new Error('respuesta'); }
@@ -308,6 +321,22 @@ async function api(action, extra){
   return j;
 }
 function apiX(op, extra){ return api('extra', Object.assign({ op }, extra || {})); }
+// Nivel 2 del script Extras: recordatorios en el calendario y base de contactos.
+function extNivel(){ return S.extInactivo ? 0 : (S.ext && S.ext.nivel) || 1; }
+function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < 2; }
+let sincTimer = null;
+// Después de cambiar tareas, el script actualiza los recordatorios del calendario (en segundo plano).
+function sincPronto(){
+  if (extNivel() < 2) return;
+  clearTimeout(sincTimer);
+  sincTimer = setTimeout(() => apiX('sinc').catch(() => {}), 2500);
+}
+async function loadBase(forzar){
+  if (extNivel() < 2) return;
+  if (!forzar && S.base && Date.now() - S.baseAt < 10 * 60000) return;
+  try { const b = await apiX('base'); S.base = b; S.baseAt = Date.now(); lsSet('baseCache', b); }
+  catch(e){ if (!S.base) S.base = lsGet('baseCache', null); }
+}
 const REPETIR = ['Diaria', 'Días hábiles', 'Semanal', 'Quincenal', 'Mensual', 'Anual'];
 function parseSub(txt){ return String(txt || '').split(/\n/).map(l => l.trim()).filter(Boolean).map(l => ({ ok: /^(☑|\[x\])/i.test(l), t: l.replace(/^(☑|☐|\[x\]|\[ \]|-)\s*/i, '') })).filter(x => x.t); }
 // Subtareas y repetición viven en las columnas U y V; se leen aparte y se unen a cada tarea por fila.
@@ -336,7 +365,11 @@ async function load(){
   }
   applyExtras();
   S.busy = false; render();
-  loadExtras().then(() => { if (!$('#layer').innerHTML) render(); });
+  loadExtras().then(async () => {
+    if (S.mutado){ S.mutado = false; sincPronto(); }
+    await loadBase(false);
+    if (!$('#layer').innerHTML) render();
+  });
   loadGoogle(false);
 }
 // Calendario y Gmail (vía Extras): se piden aparte para no hacer más lenta la carga principal.
@@ -358,7 +391,7 @@ async function updateTask(t, cambios){
 }
 
 /* ---------- cabecera y navegación ---------- */
-const TITLES = { inicio: 'Inicio', hoy: 'Hoy', tareas: 'Tareas', habitos: 'Hábitos', semana: 'Semana', proy: 'Proyectos' };
+const TITLES = { inicio: 'Inicio', hoy: 'Hoy', tareas: 'Tareas', habitos: 'Hábitos', semana: 'Semana', proy: 'Proyectos', base: 'Base de datos' };
 function head(){
   $('#hTitle').innerHTML = TITLES[S.tab] + (S.offline ? '<span class="chip-off">sin conexión</span>' : '');
   $('#hSub').innerHTML = S.busy ? '<span class="spin"></span>Actualizando…' : fmtLong(hoy());
@@ -373,7 +406,7 @@ $('#fab').onclick = () => { try { openAdd(); } catch(e){ toast('No se pudo abrir
 function render(){
   head();
   if (!S.data){ $('#view').innerHTML = '<div class="empty"><span class="spin"></span>Cargando…</div>'; return; }
-  ({ inicio: viewInicio, hoy: viewHoy, tareas: viewTareas, habitos: viewHabitos, semana: viewSemana, proy: viewProy })[S.tab]();
+  ({ inicio: viewInicio, hoy: viewHoy, tareas: viewTareas, habitos: viewHabitos, semana: viewSemana, proy: viewProy, base: viewBase })[S.tab]();
   focusPill();
 }
 
@@ -488,6 +521,7 @@ function viewInicio(){
     '<button class="link" data-go="hoy">' + (lista.length > 5 ? 'Ver las ' + lista.length + ' tareas de hoy →' : 'Abrir Hoy →') + '</button>', lista.length + ' pendientes');
 
   html += agendaHTML();
+  if (necesitaActualizar()) html += card('Nueva versión del script', '⬆️', '<div class="hint" style="margin-top:0">Activa 📅 recordatorios en tu calendario y 📇 la base de datos automática de clientes y proveedores.</div><button class="btn sm" id="updBtn">Actualizar (2 min)</button>');
   html += asistenteHTML();
   html += semanaStripHTML();
   const abierto = LS.statsOpen === '1';
@@ -502,6 +536,7 @@ function viewInicio(){
   bindAsistente();
   const sg = $('#sugBtn'); if (sg) sg.onclick = openSugerencias;
   const ga = $('#gAct'); if (ga) ga.onclick = showExtrasSetup;
+  const ub = $('#updBtn'); if (ub) ub.onclick = showExtrasUpdate;
 }
 
 function agendaHTML(){
@@ -548,17 +583,21 @@ function insights(){
   });
   const sin = P.filter(t => !t.limite);
   if (sin.length >= 3) out.push({ ic: '📌', c: '#6D5DFC', tx: '<b>' + sin.length + ' tareas</b> no tienen fecha. Con fecha es mucho más probable cumplirlas.', acts: [['Revisar', 'ver-sin']] });
+  const frios = contactosFrios();
+  if (frios.length) out.push({ ic: '🤝', c: '#13B386', tx: '<b>' + frios.length + (frios.length === 1 ? ' cliente' : ' clientes') + '</b> sin contacto hace más de 30 días. Un mensaje de seguimiento puede ser una venta.', acts: [['Ver', 'base-frios']] });
+  const porC = ((S.base && S.base.contactos) || []).filter(c => c.tipo === 'Por clasificar').length;
+  if (porC) out.push({ ic: '📇', c: '#FF5C8A', tx: '<b>' + porC + (porC === 1 ? ' contacto nuevo</b> en tu base de datos espera' : ' contactos nuevos</b> en tu base de datos esperan') + ' que le digas si es cliente o proveedor.', acts: [['Clasificar', 'base-clas']] });
+  const sug = S.google && !S.google.inactivo ? sugerencias().filter(x => x.tipo === 'correo').length : 0;
+  if (sug) out.push({ ic: '✉️', c: '#FF5C8A', tx: '<b>' + sug + ' correos</b> destacados o importantes podrían ser tareas.', acts: [['Revisar', 'sug']] });
   const dias = (S.data.dias || []).filter(d => d.completadas > 0);
   if (dias.length >= 5){
     const por = {}; dias.forEach(d => { const k = pd(d.fecha).getDay(); por[k] = por[k] || [0, 0]; por[k][0] += d.completadas; por[k][1]++; });
     const best = Object.entries(por).sort((a, b) => b[1][0] / b[1][1] - a[1][0] / a[1][1])[0];
     out.push({ ic: '📈', c: '#13B386', tx: 'Tu día más productivo es el <b>' + DIAS_L[best[0]] + '</b>. Reserva ahí las tareas grandes.' });
   }
-  const sug = S.google && !S.google.inactivo ? sugerencias().filter(x => x.tipo === 'correo').length : 0;
-  if (sug) out.push({ ic: '✉️', c: '#FF5C8A', tx: '<b>' + sug + ' correos</b> destacados o importantes podrían ser tareas.', acts: [['Revisar', 'sug']] });
   if (hechas >= meta && meta) out.unshift({ ic: '🏆', c: '#13B386', tx: '¡Cumpliste tu meta de hoy (' + meta + ')! Todo lo que hagas ahora es extra ⭐' });
   if (!out.length) out.push({ ic: '🌟', c: '#13B386', tx: 'Todo bajo control. Buen momento para avanzar un proyecto o planificar la semana.' });
-  return out.slice(0, 5);
+  return out.slice(0, 6);
 }
 function asistenteHTML(){
   return card('Asistente', '💡', insights().map(i => '<div class="ins"><span class="ic" style="background:' + hexToRgba(i.c, .15) + '">' + i.ic + '</span><div class="grow"><div class="tx">' + i.tx + '</div>' +
@@ -572,6 +611,8 @@ function bindAsistente(){
     if (a === 'foco-q1') return openFocus(pendientes().filter(t => quadOf(t) === 1).sort(ordenar)[0]);
     if (a === 'ver-sin'){ S.q = ''; S.filtro = 'todas'; S.vista = 'lista'; return go('tareas'); }
     if (a === 'sug') return openSugerencias();
+    if (a === 'base-frios'){ S.bf = 'frios'; return go('base'); }
+    if (a === 'base-clas'){ S.bf = 'Por clasificar'; return go('base'); }
     if (a.startsWith('proy:')) return openAdd({ proyecto: a.slice(5) });
   });
 }
@@ -639,6 +680,7 @@ function openSugerencias(){
   });
 }
 function showExtrasSetup(){
+  if (necesitaActualizar()) return showExtrasUpdate();
   const raw = 'https://raw.githubusercontent.com/SnowPv/Organizador/main/apps-script/Extras.gs';
   const linea = "case 'extra':       return app_json_(app_extra_(p));";
   sheet('<h3>✨ Activar funciones extra</h3><div class="hint">📅 Agenda y ✉️ correos como tareas · ☑ subtareas · 🔁 tareas que se repiten · 💪 mes nuevo de hábitos desde la app · y el Sheet vuelve a completar solo la fecha de cierre, el área y el estado cuando editas a mano. Se hace una sola vez, idealmente desde el PC. Todo corre en tu propio script: nada sale de tu cuenta.</div>' +
@@ -652,6 +694,116 @@ function showExtrasSetup(){
   $('#gc1').onclick = async () => { try { const r = await fetch(raw, { cache: 'no-store' }); copiar(await r.text()); } catch(e){ toast('No se pudo descargar. Usa «Abrir archivo».'); } };
   $('#gc2').onclick = () => copiar(linea);
   $('#gTry').onclick = async () => { $('#gTry').disabled = true; S.google = null; await loadExtras(); await loadGoogle(true); closeSheet(); render(); toast(!S.extInactivo ? '¡Funciones extra activas! ✨' : 'Aún no responde. Revisa los pasos 2 y 4.'); };
+}
+
+function showExtrasUpdate(){
+  const raw = 'https://raw.githubusercontent.com/SnowPv/Organizador/main/apps-script/Extras.gs';
+  sheet('<h3>⬆️ Actualizar el script Extras</h3><div class="hint">Hay una versión nueva con 📅 recordatorios en tu calendario y 📇 base de datos de contactos. Son 3 pasos:</div>' +
+    '<div class="card"><b>1.</b> Toca <b>📋 Copiar código</b>. En Apps Script abre <b>Extras.gs</b>, mantén presionado → <b>Seleccionar todo</b> → <b>Pegar</b> (reemplaza todo). Guarda 💾.<div style="margin-top:8px"><button class="btn sm sec" id="gu1">📋 Copiar código</button> <a class="btn sm sec" style="text-decoration:none;display:inline-block" href="' + raw + '" target="_blank">Abrir archivo</a></div></div>' +
+    '<div class="card"><b>2.</b> Arriba elige <b>autorizarExtras</b> y toca <b>Ejecutar</b>. Acepta los permisos nuevos (crear el calendario y programar tareas automáticas).</div>' +
+    '<div class="card"><b>3.</b> <b>Implementar → Administrar implementaciones → ✏️ → Nueva versión → Implementar</b>.</div>' +
+    '<div class="hint">La línea que agregaste en WebApp ya sirve; no hay que tocarla.</div>' +
+    '<div class="btns"><button class="btn" id="guTry">Ya lo hice, probar</button></div>');
+  $('#gu1').onclick = async () => { try { const r = await fetch(raw, { cache: 'no-store' }); await navigator.clipboard.writeText(await r.text()); toast('Copiado ✓'); } catch(e){ toast('No se pudo copiar. Usa «Abrir archivo».'); } };
+  $('#guTry').onclick = async () => { $('#guTry').disabled = true; await loadExtras(); if (extNivel() >= 2){ await loadBase(true); apiX('sinc').catch(() => {}); } closeSheet(); render(); toast(extNivel() >= 2 ? '¡Actualizado! 📅📇' : 'Aún responde la versión anterior. Revisa el paso 3.'); };
+}
+
+/* ---------- vista: Base de datos (contactos) ---------- */
+const TIPOS_C = ['Cliente', 'Proveedor', 'Institución', 'Equipo', 'Otro', 'Por clasificar', 'Ignorar'];
+const TIPO_IC = { 'Cliente': '🛒', 'Proveedor': '📦', 'Institución': '🏛️', 'Equipo': '👥', 'Otro': '🔖', 'Por clasificar': '❔', 'Ignorar': '🚫' };
+const TIPO_COL = { 'Cliente': '#13B386', 'Proveedor': '#3B9EFF', 'Institución': '#A44DF0', 'Equipo': '#FF8A4C', 'Otro': '#7E7F92', 'Por clasificar': '#F5A524', 'Ignorar': '#A3A2B5' };
+function contactos(){ return ((S.base && S.base.contactos) || []).filter(c => c.tipo !== 'Ignorar'); }
+function contactoPorId(id){ return ((S.base && S.base.contactos) || []).find(c => c.id === id); }
+function contactosFrios(){ return contactos().filter(c => c.tipo === 'Cliente' && c.ultima && diffDays(c.ultima, hoy()) > 30); }
+function haceTxt(ymd){ if (!ymd) return 'sin contacto'; const n = diffDays(ymd, hoy()); return n <= 0 ? 'hoy' : n === 1 ? 'ayer' : n < 30 ? 'hace ' + n + ' d' : n < 365 ? 'hace ' + Math.round(n / 30) + ' m' : 'hace +1 año'; }
+function avatar(c, size){
+  size = size || 42;
+  const ini = String(c.nombre || c.email || '?').trim().split(/\s+/).slice(0, 2).map(w => w.charAt(0).toUpperCase()).join('');
+  return '<span class="av" style="width:' + size + 'px;height:' + size + 'px;font-size:' + Math.round(size * .36) + 'px;background:' + (TIPO_COL[c.tipo] || '#7E7F92') + '">' + esc(ini) + '</span>';
+}
+// Un contacto se relaciona con una tarea si la tarea nombra su nombre completo o su empresa.
+function clavesContacto(c){ const k = []; if (c.nombre && String(c.nombre).trim().includes(' ')) k.push(norm(c.nombre).trim()); if (c.empresa && String(c.empresa).trim().length >= 3) k.push(norm(c.empresa).trim()); return k; }
+function nombra(tx, k){ return new RegExp('(^|[^a-z0-9])' + k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '([^a-z0-9]|$)').test(tx); }
+function contactosDe(t){ const tx = norm(t.tarea + ' ' + (t.notas || '')); return contactos().filter(c => clavesContacto(c).some(k => nombra(tx, k))); }
+function tareasDe(c){ const k = clavesContacto(c); if (!k.length) return []; return S.data.tareas.filter(t => { const tx = norm(t.tarea + ' ' + (t.notas || '')); return k.some(x => nombra(tx, x)); }); }
+function relacionadosHTML(t){
+  const L = contactosDe(t); if (!L.length) return '';
+  return '<label class="l">👤 Relacionado con</label><div class="seg">' + L.map(c => '<button type="button" class="pill" data-cto="' + esc(c.id) + '">' + (TIPO_IC[c.tipo] || '') + ' ' + esc(c.nombre || c.email) + '</button>').join('') + '</div>';
+}
+function viewBase(){
+  if (S.extInactivo || necesitaActualizar()){
+    $('#view').innerHTML = '<div class="hero" style="background:linear-gradient(135deg,#FF5C8A,#FF8A4C)"><div class="hi">📇 Base de datos</div><div class="big">Tu memoria de clientes y proveedores</div><div class="hint" style="color:#fff">La app revisa tus correos, reuniones y tareas, y arma sola una ficha por contacto con todo su historial. Te avisa a quién hacerle seguimiento.</div></div>' +
+      '<div class="btns"><button class="btn" id="bAct">' + (S.extInactivo ? 'Activar funciones extra' : '⬆️ Actualizar el script (2 min)') + '</button></div>';
+    $('#bAct').onclick = showExtrasSetup; return;
+  }
+  if (!S.base){ $('#view').innerHTML = '<div class="empty"><span class="spin"></span>Cargando tu base de datos…</div>'; loadBase(true).then(() => { if (S.tab === 'base') render(); }); return; }
+  const todos = contactos(), cuenta = t => todos.filter(c => c.tipo === t).length, frios = contactosFrios();
+  const q = norm(S.bq);
+  let L = todos.filter(c => S.bf === 'todos' ? true : S.bf === 'frios' ? frios.includes(c) : S.bf === 'otros' ? !['Cliente', 'Proveedor', 'Por clasificar'].includes(c.tipo) : c.tipo === S.bf);
+  if (q) L = L.filter(c => norm([c.nombre, c.empresa, c.email, c.telefono, c.etiquetas, c.notas].join(' ')).includes(q));
+  L.sort((a, b) => (b.ultima || '').localeCompare(a.ultima || '') || String(a.nombre).localeCompare(String(b.nombre)));
+  const filtros = [['todos', '✨ Todos'], ['Cliente', '🛒 Clientes'], ['Proveedor', '📦 Proveedores'], ['Por clasificar', '❔ Por clasificar'], ['frios', '🧊 Sin contacto +30 d'], ['otros', '🔖 Otros']];
+  let html = '<div class="hero" style="background:linear-gradient(135deg,#FF5C8A,#FF8A4C)"><div class="hi">📇 Base de datos</div><div class="big">' + todos.length + ' contactos</div>' +
+    '<div class="hstats" style="grid-template-columns:repeat(4,1fr);position:relative;z-index:1">' +
+    '<div class="hstat"><b>' + cuenta('Cliente') + '</b><span>clientes</span></div><div class="hstat"><b>' + cuenta('Proveedor') + '</b><span>proveed.</span></div>' +
+    '<div class="hstat"><b>' + cuenta('Por clasificar') + '</b><span>por clasif.</span></div><div class="hstat"><b>' + frios.length + '</b><span>fríos</span></div></div></div>';
+  html += '<div class="btns" style="margin-top:0"><button class="btn sec" id="bScan">🔄 Revisar Gmail y calendario</button><button class="btn" id="bNew">+ Nuevo</button></div>';
+  html += '<input type="text" id="bq" style="margin-top:12px" placeholder="🔎 Buscar nombre, empresa, interés…" value="' + esc(S.bq) + '">';
+  html += '<div class="filters" style="margin-top:8px">' + filtros.map(f => '<button class="pill ' + (S.bf === f[0] ? 'on' : '') + '" data-bf="' + f[0] + '">' + f[1] + '</button>').join('') + '</div>';
+  html += '<div class="card">' + (L.length ? L.map(c => '<div class="ct-row" data-c="' + esc(c.id) + '">' + avatar(c) + '<div class="grow"><b style="font-size:15px">' + esc(c.nombre || c.email) + '</b>' +
+    '<div class="meta" style="margin-top:4px"><span class="tag" style="background:' + hexToRgba(TIPO_COL[c.tipo] || '#7E7F92', .14) + ';color:' + (TIPO_COL[c.tipo] || '#7E7F92') + '">' + (TIPO_IC[c.tipo] || '') + ' ' + esc(c.tipo) + '</span>' + (c.empresa ? '<span class="tag">🏢 ' + esc(c.empresa) + '</span>' : '') + (c.etiquetas ? '<span class="tag">🏷️ ' + esc(String(c.etiquetas).slice(0, 28)) + '</span>' : '') + '</div></div>' +
+    '<div class="ct-last">' + haceTxt(c.ultima) + '<br>' + (c.n ? c.n + ' 💬' : '') + '</div></div>').join('')
+    : '<div class="empty">' + (todos.length ? 'Nada con este filtro 🔍' : 'Aún no hay contactos.<br>Toca «Revisar Gmail y calendario» para armar tu base, o agrega uno a mano.') + '</div>') + '</div>';
+  html += '<div class="hint">Se actualiza sola cada 6 horas con las personas a las que escribes, los correos importantes que recibes y los invitados a tus reuniones. Marca un contacto como «Ignorar» para que no vuelva a aparecer.</div>';
+  $('#view').innerHTML = html;
+  const bq = $('#bq'); bq.oninput = () => { S.bq = bq.value; const pos = bq.selectionStart; viewBase(); const b2 = $('#bq'); b2.focus(); b2.setSelectionRange(pos, pos); };
+  $$('[data-bf]').forEach(b => b.onclick = () => { S.bf = b.dataset.bf; viewBase(); });
+  $$('[data-c]').forEach(b => b.onclick = () => openContacto(contactoPorId(b.dataset.c)));
+  $('#bNew').onclick = () => openContacto(null);
+  $('#bScan').onclick = async e => {
+    const b = e.target; b.disabled = true; b.innerHTML = '<span class="spin"></span>Revisando…';
+    try { const r = await apiX('escanear'); toast('✓ ' + r.nuevos + ' contactos nuevos · ' + r.interacciones + ' interacciones'); await loadBase(true); render(); }
+    catch(err){ b.disabled = false; b.textContent = '🔄 Revisar Gmail y calendario'; toast('No se pudo revisar: ' + err.message); }
+  };
+}
+function openContacto(c){
+  const nuevo = !c; c = c || { id: '', tipo: 'Cliente', nombre: '', empresa: '', email: '', telefono: '', etiquetas: '', notas: '' };
+  const inter = nuevo ? [] : ((S.base && S.base.interacciones) || []).filter(i => i.id === c.id);
+  const tareas = nuevo ? [] : tareasDe(c);
+  const tel = String(c.telefono || '').replace(/[^\d+]/g, ''), wa = tel.replace(/^\+/, '').replace(/^9(\d{8})$/, '569$1');
+  const icTl = t => /correo/i.test(t) ? '✉️' : /reuni/i.test(t) ? '📅' : /tarea/i.test(t) ? '✅' : '📝';
+  sheet('<div class="row">' + avatar(c, 54) + '<div class="grow"><h3>' + (nuevo ? 'Nuevo contacto' : esc(c.nombre || c.email)) + '</h3><div class="hint" style="margin:2px 0 0">' + (nuevo ? 'Cliente, proveedor o lo que necesites recordar' : (c.n ? c.n + ' interacciones · última ' + haceTxt(c.ultima) : 'Sin interacciones aún') + (c.origen ? ' · ' + esc(c.origen) : '')) + '</div></div></div>' +
+    (!nuevo && (tel || c.email) ? '<div class="acts3">' + (tel ? '<a href="https://wa.me/' + esc(wa) + '" target="_blank">💬 WhatsApp</a><a href="tel:' + esc(tel) + '">📞 Llamar</a>' : '') + (c.email ? '<a href="mailto:' + esc(c.email) + '">✉️ Correo</a>' : '') + '</div>' : '') +
+    '<label class="l">Tipo</label>' + pills('c_tipo', TIPOS_C.map(x => ({ v: x, t: (TIPO_IC[x] || '') + ' ' + x })), c.tipo) +
+    '<label class="l">Nombre</label><input type="text" id="c_nom" value="' + esc(c.nombre) + '" placeholder="Nombre y apellido">' +
+    '<label class="l">Empresa</label><input type="text" id="c_emp" value="' + esc(c.empresa) + '">' +
+    '<label class="l">Teléfono</label><input type="text" id="c_tel" inputmode="tel" value="' + esc(c.telefono) + '" placeholder="+56 9…">' +
+    '<label class="l">Email</label><input type="text" id="c_mail" inputmode="email" value="' + esc(c.email) + '">' +
+    '<label class="l">🏷️ Etiquetas / intereses</label><input type="text" id="c_tag" value="' + esc(c.etiquetas) + '" placeholder="Levo talla M, club Pichijuán, repuestos…">' +
+    '<label class="l">Notas</label><textarea class="note" id="c_not">' + esc(c.notas) + '</textarea>' +
+    '<div class="btns"><button class="btn sec" id="c_seg">＋ Tarea de seguimiento</button><button class="btn" id="c_ok">Guardar</button></div>' +
+    (nuevo ? '' :
+      (tareas.length ? '<label class="l">📋 Tareas relacionadas</label><div class="card" style="margin:0">' + tareas.map(t => taskHTML(t)).join('') + '</div>' : '') +
+      '<label class="l">🕑 Historial</label><div class="smart"><input type="text" id="c_nota" placeholder="📝 Anotar algo (vino a la tienda, pidió precio…)" autocomplete="off"><button class="mic" id="c_nota_ok" aria-label="Anotar">＋</button></div>' +
+      '<div class="card" style="margin-top:8px">' + (inter.length ? inter.slice(0, 40).map(i => '<div class="tl"><span class="ic">' + icTl(i.tipo) + '</span><div class="grow"><div style="font-size:14px;font-weight:650;line-height:1.35">' + esc(i.detalle) + '</div><div class="hint" style="margin:2px 0 0">' + esc(i.tipo) + ' · ' + (i.fecha ? fmtRel(i.fecha) : '') + '</div></div>' + (i.link ? '<a class="play" style="display:flex;align-items:center;justify-content:center;text-decoration:none" href="' + esc(i.link) + '" target="_blank">↗</a>' : '') + '</div>').join('') : '<div class="hint">Aquí se irán guardando correos, reuniones, tareas y notas con este contacto.</div>') + '</div>'));
+  bindPills('c_tipo'); bindTasks($('#layer'));
+  $('#c_seg').onclick = () => { const n = $('#c_nom').value.trim() || c.nombre || c.email; openAdd({ texto: 'Seguimiento ' + n + ' mañana', notas: c.telefono ? '📞 ' + c.telefono : '' }); };
+  $('#c_ok').onclick = async () => {
+    const d = { id: c.id, tipo: val('c_tipo') || 'Por clasificar', nombre: $('#c_nom').value.trim(), empresa: $('#c_emp').value.trim(), email: $('#c_mail').value.trim(), telefono: $('#c_tel').value.trim(), etiquetas: $('#c_tag').value.trim(), notas: $('#c_not').value.trim() };
+    if (!d.nombre && !d.email){ toast('Ponle al menos un nombre'); return; }
+    $('#c_ok').disabled = true;
+    try { await apiX('contacto', { contacto: d }); toast(d.tipo === 'Ignorar' ? '🚫 No volverá a aparecer' : 'Contacto guardado ✓'); closeSheet(); await loadBase(true); render(); }
+    catch(e){ $('#c_ok').disabled = false; toast('No se pudo guardar: ' + e.message); }
+  };
+  if (!nuevo){
+    const anotar = async () => {
+      const tx = $('#c_nota').value.trim(); if (!tx) return;
+      $('#c_nota_ok').disabled = true;
+      try { await apiX('nota', { id: c.id, texto: tx }); toast('📝 Anotado'); await loadBase(true); openContacto(contactoPorId(c.id)); }
+      catch(e){ $('#c_nota_ok').disabled = false; toast('No se pudo anotar: ' + e.message); }
+    };
+    $('#c_nota_ok').onclick = anotar; $('#c_nota').onkeydown = e => { if (e.key === 'Enter') anotar(); };
+  }
 }
 
 /* ---------- vista: Hoy ---------- */
@@ -1128,7 +1280,7 @@ function openDetail(t){
       '<label class="l">🔁 Repetir</label>' + pills('e_rep', [{ v: '', t: 'No se repite' }].concat(REPETIR.map(x => ({ v: x, t: x }))), t.repetir || '') +
       '<div class="hint">Al marcarla hecha se crea sola la siguiente, con la fecha que corresponda.</div>') +
     '<label class="l">Notas</label><textarea class="note" id="e_n">' + esc(t.notas) + '</textarea>' +
-    linkHTML(t.notas) +
+    linkHTML(t.notas) + relacionadosHTML(t) +
     '<div class="hint">' + (AREA_IC[t.area] || '') + ' ' + esc(t.area) + (t.categoria ? ' · ' + catIc(t.categoria) + ' ' + esc(t.categoria) : '') + (t.proyecto ? ' · 🚀 ' + esc(t.proyecto) : '') + '</div>' +
     '<div class="btns"><button class="btn bad" id="e_del">🗑 Eliminar</button><button class="btn" id="e_ok">Guardar</button></div>');
   bindPills('e_est'); bindPills('e_urg'); bindPills('e_imp'); bindPills('e_tam');
@@ -1137,6 +1289,7 @@ function openDetail(t){
   $('#e_lun').onclick = () => $('#e_f').value = nextMonday(h); $('#e_sin').onclick = () => $('#e_f').value = '';
   $('#e_sem').onclick = () => $('#e_f').value = addDays($('#e_f').value || h, 7);
   if (!t.hecho){ $('#e_focus').onclick = () => openFocus(t); $('#e_done').onclick = () => { closeSheet(); toggle(t); }; }
+  $$('[data-cto]').forEach(b => b.onclick = () => openContacto(contactoPorId(b.dataset.cto)));
   if (S.extInactivo) $('#e_act').onclick = showExtrasSetup;
   else bindSubtareas(t);
   $('#e_ok').onclick = async () => {
@@ -1314,13 +1467,16 @@ function showSettings(){
   sheet('<h3>⚙️ Ajustes</h3><div class="hint">Conectado a tu Sheet del organizador.</div>' +
     (deferredInstall ? '<div class="btns"><button class="btn" id="s_inst">📲 Instalar app en este dispositivo</button></div>' : '') +
     '<div class="card"><b>✨ Funciones extra</b> <span class="hint">(calendario, correo, subtareas, repetir)</span><div class="hint">' + esc(gTxt) + '</div><button class="btn sm sec" id="s_g">' + (g && !g.inactivo ? 'Ver sugerencias' : 'Cómo activarlas') + '</button></div>' +
+    (extNivel() >= 2 ? '<div class="card"><b>📅 Recordatorios en tu calendario</b><div class="hint">Cada tarea pendiente con fecha está en el calendario «' + esc((S.ext && S.ext.calendario) || 'Organizador BlackLine') + '», con aviso en tu teléfono 10 min antes (a las 9:00, o a la hora que pongas: «a las 15:30»). Se actualiza solo cada hora y cuando cambias algo.</div><button class="btn sm sec" id="s_sinc">🔄 Sincronizar ahora</button></div>' : necesitaActualizar() ? '<div class="card"><b>⬆️ Hay una versión nueva del script</b><div class="hint">📅 Recordatorios en tu calendario y 📇 base de datos de contactos.</div><button class="btn sm" id="s_upd">Actualizar (2 min)</button></div>' : '') +
     '<div class="card"><b>✨ Trucos para agregar rápido</b><div class="hint">• Fechas: <i>hoy, mañana, pasado mañana, el viernes, en 3 días, 15/10, 20 de octubre, la próxima semana</i><br>• Hora: <i>a las 10, 15:30</i><br>• Prioridad: <i>urgente</i> o <i>!</i> · <i>importante</i><br>• Categoría o área: <i>#ventas, #marketing, #personal</i><br>• Proyecto: <i>@levo</i><br>• Repetir: <i>cada lunes, todos los días, días hábiles, cada mes</i><br>• Toca 🎤 para dictar.</div></div>' +
     '<div class="btns"><button class="btn sec" id="s_re">Cambiar link o clave</button></div>' +
     '<div class="btns"><button class="btn bad" id="s_out">Desconectar este dispositivo</button></div>');
   if (deferredInstall) $('#s_inst').onclick = async () => { deferredInstall.prompt(); await deferredInstall.userChoice; deferredInstall = null; closeSheet(); };
   $('#s_g').onclick = () => g && !g.inactivo ? openSugerencias() : showExtrasSetup();
+  const ss2 = $('#s_sinc'); if (ss2) ss2.onclick = async () => { ss2.disabled = true; try { const r = await apiX('sinc'); toast('📅 ' + r.creados + ' nuevos · ' + r.actualizados + ' actualizados · ' + r.borrados + ' borrados'); } catch(e){ toast('No se pudo: ' + e.message); } ss2.disabled = false; };
+  const su = $('#s_upd'); if (su) su.onclick = showExtrasUpdate;
   $('#s_re').onclick = showSetup;
-  $('#s_out').onclick = () => { if (confirm('Se borran el link y la clave de este dispositivo.')){ ['url', 'token', 'cache', 'googleCache', 'extCache'].forEach(k => LS.removeItem(k)); S.data = null; S.google = null; closeSheet(); showSetup(); } };
+  $('#s_out').onclick = () => { if (confirm('Se borran el link y la clave de este dispositivo.')){ ['url', 'token', 'cache', 'googleCache', 'extCache', 'baseCache'].forEach(k => LS.removeItem(k)); S.data = null; S.google = null; closeSheet(); showSetup(); } };
 }
 
 window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferredInstall = e; });
@@ -1333,6 +1489,7 @@ if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catc
 if (LS.cache) { try { S.data = JSON.parse(LS.cache); } catch(e){} }
 S.google = lsGet('googleCache', null);
 S.ext = lsGet('extCache', null);
+S.base = lsGet('baseCache', null);
 if (!LS.url || !LS.token) { render(); showSetup(); } else { render(); load(); }
 </script>
 </body>
