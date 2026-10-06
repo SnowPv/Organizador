@@ -15,8 +15,8 @@
  * Para actualizar este archivo más adelante: reemplaza todo su contenido y repite los dos pasos anteriores.
  */
 
-const EX_VERSION = '2026-10-07';
-const EX_NIVEL = 2;      // la app lo usa para saber qué funciones tiene este script
+const EX_VERSION = '2026-10-08';
+const EX_NIVEL = 3;      // la app lo usa para saber qué funciones tiene este script
 const EX_HOJA = 'Tareas';
 const EX_PRIMERA = 4;
 const EX_ULTIMA = 400;
@@ -38,7 +38,9 @@ const EX_HOJA_CONTACTOS = 'Contactos';
 const EX_HOJA_INTER = 'Interacciones';
 const EX_CAB_CONTACTOS = ['ID', 'Tipo', 'Nombre', 'Empresa', 'Email', 'Teléfono', 'Etiquetas / intereses', 'Notas', 'Última interacción', 'Interacciones', 'Origen', 'Creado'];
 const EX_CAB_INTER = ['Fecha', 'Contacto (ID)', 'Tipo', 'Detalle', 'Link', 'Clave (no editar)'];
-const EX_DIAS_ESCANEO_INICIAL = 30;     // la primera vez revisa 30 días hacia atrás; después, solo lo nuevo
+// Solo los correos que llegan por el correo de la tienda crean contactos.
+const EX_CORREO_TIENDA = 'contacto@blacklinechile.cl';
+const EX_DIAS_ESCANEO_INICIAL = 90;     // la primera vez revisa 90 días hacia atrás; después, solo lo nuevo
 const EX_IGNORAR_RE = /no-?reply|notific|mailer|newsletter|bounce|news@|marketing@|alerts?@|calendar-|@.*(mailchimp|sendgrid|hubspot)/i;
 const EX_DOMINIOS_PERSONALES = /^(gmail|googlemail|hotmail|outlook|live|yahoo|icloud|me|msn|proton|protonmail)\./i;
 
@@ -308,27 +310,65 @@ function ex_adivinarTipo_(texto) {
   return 'Por clasificar';
 }
 
-// Revisa Gmail (correos que enviaste y los importantes que recibiste), tu calendario
-// (invitados a reuniones) y tus tareas completadas, y va armando la base de contactos.
+// Datos de un formulario web o de un correo reenviado: "Nombre: …", "Email: …", "Teléfono: …", "De: Nombre <correo>".
+function ex_datosCorreo_(texto) {
+  const t = String(texto || ''), d = {};
+  const m1 = t.match(/(?:^|\n)\s*\*?(?:nombre(?: completo)?|name)\*?\s*:\s*([^\n]{2,60})/i);
+  const m2 = t.match(/(?:e-?mail|correo(?: electr[oó]nico)?)\*?\s*:\s*<?([^\s<>]+@[^\s<>]+?)>?(?:\s|$)/i);
+  const m3 = t.match(/(?:tel[eé]fono|celular|fono|m[oó]vil|phone|whatsapp)\*?\s*:\s*(\+?[\d][\d\s().-]{6,18}\d)/i);
+  const m4 = t.match(/(?:^|\n)\s*(?:De|From)\s*:\s*([^\n]+)/);
+  if (m4) { const a = ex_direcciones_(m4[1])[0]; if (a) { d.email = a.email; d.nombre = a.nombre; } }
+  if (m2) d.email = m2[1].toLowerCase();
+  if (m1) d.nombre = m1[1].trim();
+  if (m3) d.telefono = m3[1].replace(/[^\d+]/g, '');
+  return d;
+}
+
+// Limpia lo que haya armado una versión anterior que leía todo tu correo personal (se hace una sola vez).
+function ex_purgarAntiguos_(b) {
+  const filas = ex_filasContactos_(b.cs);
+  const quedan = filas.filter(function (r) { return r[0] && ['✉️ Gmail', '📅 Calendario'].indexOf(String(r[10])) < 0; });
+  if (quedan.length === filas.length) return;
+  const ids = {};
+  quedan.forEach(function (r) { ids[String(r[0])] = true; });
+  const ni = b.is.getLastRow() - 1;
+  const inter = (ni > 0 ? b.is.getRange(2, 1, ni, EX_CAB_INTER.length).getValues() : []).filter(function (r) { return ids[String(r[1])]; });
+  if (filas.length) b.cs.getRange(2, 1, filas.length, EX_CAB_CONTACTOS.length).clearContent();
+  if (ni > 0) b.is.getRange(2, 1, ni, EX_CAB_INTER.length).clearContent();
+  if (quedan.length) b.cs.getRange(2, 1, quedan.length, EX_CAB_CONTACTOS.length).setValues(quedan);
+  if (inter.length) b.is.getRange(2, 1, inter.length, EX_CAB_INTER.length).setValues(inter);
+}
+
+// Arma la base de contactos con los correos que llegan por contacto@blacklinechile.cl (y tus respuestas a esas
+// personas). Las reuniones del calendario y las tareas completadas se suman al historial de contactos que ya existen.
 function ex_escanearBase_() {
   const b = ex_baseHojas_(), tz = ex_tz_(), props = PropertiesService.getScriptProperties();
   const yo = String(Session.getEffectiveUser().getEmail() || '').toLowerCase();
-  const dias = props.getProperty('EX_ESCANEO') ? 4 : EX_DIAS_ESCANEO_INICIAL;
+  const tienda = EX_CORREO_TIENDA.toLowerCase();
+  const primera = !props.getProperty('EX_ESCANEO_TIENDA');
+  if (primera) ex_purgarAntiguos_(b);
+  const dias = primera ? EX_DIAS_ESCANEO_INICIAL : 4;
   const desde = Date.now() - dias * 86400000;
   const contactos = {};
-  ex_filasContactos_(b.cs).forEach(function (r) { if (r[0]) contactos[String(r[0])] = { tipo: r[1], nombre: r[2], empresa: r[3] }; });
+  ex_filasContactos_(b.cs).forEach(function (r, i) { if (r[0]) contactos[String(r[0])] = { tipo: r[1], nombre: r[2], empresa: r[3], tel: String(r[5] || ''), fila: i + 2 }; });
   const ni = b.is.getLastRow() - 1;
   const claves = {};
   (ni > 0 ? b.is.getRange(2, 6, ni, 1).getValues() : []).forEach(function (r) { claves[String(r[0])] = true; });
-  const nuevosC = [], nuevasI = [];
-  const asegurar = function (email, nombre, origen, pista) {
+  const nuevosC = [], nuevasI = [], telefonos = [];
+  // crear = false: solo se usa si el contacto ya existe (no agrega gente nueva).
+  const asegurar = function (email, nombre, pista, crear, tel) {
     email = String(email || '').trim().toLowerCase();
-    if (!email || email === yo || EX_IGNORAR_RE.test(email)) return null;
+    if (!email || email === yo || email === tienda || EX_IGNORAR_RE.test(email)) return null;
     const c = contactos[email];
-    if (c) return c.tipo === 'Ignorar' ? null : email;
-    const nuevo = { tipo: ex_adivinarTipo_(pista), nombre: nombre || email.split('@')[0], empresa: ex_empresa_(email) };
-    contactos[email] = nuevo;
-    nuevosC.push([email, nuevo.tipo, nuevo.nombre, nuevo.empresa, email, '', '', '', '', 0, origen, new Date()]);
+    if (c) {
+      if (c.tipo === 'Ignorar') return null;
+      if (tel && !c.tel) { c.tel = tel; if (c.fila) telefonos.push([c.fila, tel]); else c.nuevo[5] = "'" + tel; }
+      return email;
+    }
+    if (!crear) return null;
+    const fila = [email, ex_adivinarTipo_(pista), nombre || email.split('@')[0], ex_empresa_(email), email, tel ? "'" + tel : '', '', '', '', 0, '✉️ ' + tienda, new Date()];
+    contactos[email] = { tipo: fila[1], nombre: fila[2], empresa: fila[3], tel: tel || '', nuevo: fila };
+    nuevosC.push(fila);
     return email;
   };
   const registrar = function (clave, fecha, id, tipo, detalle, link) {
@@ -337,37 +377,52 @@ function ex_escanearBase_() {
     nuevasI.push([fecha, id, tipo, detalle, link, clave]);
   };
 
-  // Gmail
-  [['in:sent newer_than:' + dias + 'd'], ['in:inbox is:important newer_than:' + dias + 'd -category:promotions -category:social -category:updates -category:forums']].forEach(function (q) {
-    GmailApp.search(q[0], 0, 50).forEach(function (th) {
-      const link = 'https://mail.google.com/mail/u/0/#all/' + th.getId();
-      th.getMessages().forEach(function (m) {
-        const fecha = m.getDate();
-        if (fecha.getTime() < desde) return;
-        const asunto = m.getSubject() || '(sin asunto)';
-        const de = ex_direcciones_(m.getFrom());
-        const deMi = de.some(function (d) { return d.email === yo; });
-        const lista = deMi ? ex_direcciones_(m.getTo() + ',' + m.getCc()) : de;
-        const pista = asunto + ' ' + String(m.getPlainBody() || '').slice(0, 400);
-        lista.forEach(function (d) {
-          const id = asegurar(d.email, d.nombre, '✉️ Gmail', pista);
-          registrar('m:' + m.getId() + ':' + d.email, fecha, id, deMi ? '✉️ Correo enviado' : '✉️ Correo recibido', asunto, link);
+  // Gmail: hilos donde participa el correo de la tienda
+  const q = '{to:' + tienda + ' cc:' + tienda + ' from:' + tienda + ' deliveredto:' + tienda + '} newer_than:' + dias + 'd';
+  GmailApp.search(q, 0, 100).forEach(function (th) {
+    const link = 'https://mail.google.com/mail/u/0/#all/' + th.getId();
+    th.getMessages().forEach(function (m) {
+      const fecha = m.getDate();
+      if (fecha.getTime() < desde) return;
+      const asunto = m.getSubject() || '(sin asunto)';
+      const de = ex_direcciones_(m.getFrom());
+      const deMi = de.some(function (d) { return d.email === yo; });
+      const deTienda = de.some(function (d) { return d.email === tienda; });
+      const cuerpo = String(m.getPlainBody() || '');
+      const pista = asunto + ' ' + cuerpo.slice(0, 600);
+      if (deMi) {
+        // Tus respuestas: se suman al historial de quienes ya están en la base.
+        ex_direcciones_(m.getTo() + ',' + m.getCc()).forEach(function (d) {
+          registrar('m:' + m.getId() + ':' + d.email, fecha, asegurar(d.email, d.nombre, pista, false), '✉️ Correo enviado', asunto, link);
         });
+        return;
+      }
+      let cab = (m.getTo() + ',' + m.getCc() + ',' + m.getFrom()).toLowerCase();
+      try { cab += ',' + String(m.getHeader('Delivered-To') || '') + ',' + String(m.getHeader('X-Forwarded-To') || '') + ',' + String(m.getHeader('X-Forwarded-For') || ''); } catch (x) {}
+      if (cab.toLowerCase().indexOf(tienda) < 0) return;
+      const datos = ex_datosCorreo_(cuerpo);
+      let personas = de;
+      if (deTienda) {
+        // Formulario web o reenvío manual: la persona real está en "Responder a" o en el texto del correo.
+        const resp = ex_direcciones_(m.getReplyTo()).filter(function (d) { return d.email !== tienda; });
+        personas = resp.length ? resp : (datos.email ? [{ email: datos.email, nombre: datos.nombre || '' }] : []);
+      }
+      personas.forEach(function (d) {
+        const id = asegurar(d.email, d.nombre || datos.nombre, pista, true, datos.email === d.email || deTienda ? datos.telefono : '');
+        registrar('m:' + m.getId() + ':' + d.email, fecha, id, '✉️ Correo recibido', asunto, link);
       });
     });
   });
 
-  // Calendario: invitados a reuniones (los futuros se agregan como contactos, la reunión se registra al pasar)
+  // Calendario: reuniones con contactos que ya están en la base
   const calId = props.getProperty('EX_CAL_ID'), ahora = new Date();
   CalendarApp.getAllCalendars().forEach(function (cal) {
     const id = cal.getId();
     if (id === calId || cal.isHidden() || /#holiday@|#contacts@|addressbook#/.test(id)) return;
-    cal.getEvents(new Date(desde), new Date(Date.now() + 14 * 86400000)).forEach(function (e) {
-      const invitados = e.getGuestList();
-      if (!invitados.length) return;
-      invitados.forEach(function (g) {
-        const cid = asegurar(g.getEmail(), g.getName ? g.getName() : '', '📅 Calendario', e.getTitle());
-        if (e.getStartTime() <= ahora) registrar('e:' + e.getId() + ':' + ex_ymd_(e.getStartTime(), tz) + ':' + cid, e.getStartTime(), cid, '📅 Reunión', e.getTitle(), '');
+    cal.getEvents(new Date(desde), ahora).forEach(function (e) {
+      e.getGuestList().forEach(function (g) {
+        const cid = asegurar(g.getEmail(), '', '', false);
+        registrar('e:' + e.getId() + ':' + ex_ymd_(e.getStartTime(), tz) + ':' + cid, e.getStartTime(), cid, '📅 Reunión', e.getTitle(), '');
       });
     });
   });
@@ -389,10 +444,11 @@ function ex_escanearBase_() {
     });
   });
 
+  telefonos.forEach(function (x) { b.cs.getRange(x[0], 6).setValue("'" + x[1]); });
   if (nuevosC.length) b.cs.getRange(b.cs.getLastRow() + 1, 1, nuevosC.length, EX_CAB_CONTACTOS.length).setValues(nuevosC);
   if (nuevasI.length) b.is.getRange(b.is.getLastRow() + 1, 1, nuevasI.length, EX_CAB_INTER.length).setValues(nuevasI);
   ex_recalcular_(b.cs, b.is);
-  props.setProperty('EX_ESCANEO', new Date().toISOString());
+  props.setProperty('EX_ESCANEO_TIENDA', new Date().toISOString());
   return { ok: true, nuevos: nuevosC.length, interacciones: nuevasI.length, dias: dias };
 }
 

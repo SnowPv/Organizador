@@ -321,9 +321,9 @@ async function api(action, extra){
   return j;
 }
 function apiX(op, extra){ return api('extra', Object.assign({ op }, extra || {})); }
-// Nivel 2 del script Extras: recordatorios en el calendario y base de contactos.
+// Nivel 2 del script Extras: recordatorios y base de contactos. Nivel 3: la base solo usa contacto@blacklinechile.cl.
 function extNivel(){ return S.extInactivo ? 0 : (S.ext && S.ext.nivel) || 1; }
-function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < 2; }
+function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < 3; }
 let sincTimer = null;
 // Después de cambiar tareas, el script actualiza los recordatorios del calendario (en segundo plano).
 function sincPronto(){
@@ -521,7 +521,7 @@ function viewInicio(){
     '<button class="link" data-go="hoy">' + (lista.length > 5 ? 'Ver las ' + lista.length + ' tareas de hoy →' : 'Abrir Hoy →') + '</button>', lista.length + ' pendientes');
 
   html += agendaHTML();
-  if (necesitaActualizar()) html += card('Nueva versión del script', '⬆️', '<div class="hint" style="margin-top:0">Activa 📅 recordatorios en tu calendario y 📇 la base de datos automática de clientes y proveedores.</div><button class="btn sm" id="updBtn">Actualizar (2 min)</button>');
+  if (necesitaActualizar()) html += card('Nueva versión del script', '⬆️', '<div class="hint" style="margin-top:0">📅 Recordatorios en tu calendario y 📇 base de datos solo con los correos de contacto@blacklinechile.cl.</div><button class="btn sm" id="updBtn">Actualizar (2 min)</button>');
   html += asistenteHTML();
   html += semanaStripHTML();
   const abierto = LS.statsOpen === '1';
@@ -698,14 +698,14 @@ function showExtrasSetup(){
 
 function showExtrasUpdate(){
   const raw = 'https://raw.githubusercontent.com/SnowPv/Organizador/main/apps-script/Extras.gs';
-  sheet('<h3>⬆️ Actualizar el script Extras</h3><div class="hint">Hay una versión nueva con 📅 recordatorios en tu calendario y 📇 base de datos de contactos. Son 3 pasos:</div>' +
-    '<div class="card"><b>1.</b> Toca <b>📋 Copiar código</b>. En Apps Script abre <b>Extras.gs</b>, mantén presionado → <b>Seleccionar todo</b> → <b>Pegar</b> (reemplaza todo). Guarda 💾.<div style="margin-top:8px"><button class="btn sm sec" id="gu1">📋 Copiar código</button> <a class="btn sm sec" style="text-decoration:none;display:inline-block" href="' + raw + '" target="_blank">Abrir archivo</a></div></div>' +
+  sheet('<h3>⬆️ Actualizar el script Extras</h3><div class="hint">Hay una versión nueva: 📅 recordatorios en tu calendario y 📇 base de datos armada solo con los correos que llegan por contacto@blacklinechile.cl. Son 3 pasos:</div>' +
+    '<div class="card"><b>1.</b> En Apps Script elimina <b>Extras.gs</b> (⋮ → Eliminar) y crea otro igual (<b>+ → Secuencia de comandos → Extras</b>). Toca <b>📋 Copiar código</b> y pégalo con el <b>«Pegar» de Chrome</b> (mantén presionado), no con el portapapeles del teclado. Guarda 💾.<div style="margin-top:8px"><button class="btn sm sec" id="gu1">📋 Copiar código</button> <a class="btn sm sec" style="text-decoration:none;display:inline-block" href="' + raw + '" target="_blank">Abrir archivo</a></div></div>' +
     '<div class="card"><b>2.</b> Arriba elige <b>autorizarExtras</b> y toca <b>Ejecutar</b>. Acepta los permisos nuevos (crear el calendario y programar tareas automáticas).</div>' +
     '<div class="card"><b>3.</b> <b>Implementar → Administrar implementaciones → ✏️ → Nueva versión → Implementar</b>.</div>' +
     '<div class="hint">La línea que agregaste en WebApp ya sirve; no hay que tocarla.</div>' +
     '<div class="btns"><button class="btn" id="guTry">Ya lo hice, probar</button></div>');
   $('#gu1').onclick = async () => { try { const r = await fetch(raw, { cache: 'no-store' }); await navigator.clipboard.writeText(await r.text()); toast('Copiado ✓'); } catch(e){ toast('No se pudo copiar. Usa «Abrir archivo».'); } };
-  $('#guTry').onclick = async () => { $('#guTry').disabled = true; await loadExtras(); if (extNivel() >= 2){ await loadBase(true); apiX('sinc').catch(() => {}); } closeSheet(); render(); toast(extNivel() >= 2 ? '¡Actualizado! 📅📇' : 'Aún responde la versión anterior. Revisa el paso 3.'); };
+  $('#guTry').onclick = async () => { $('#guTry').disabled = true; await loadExtras(); if (extNivel() >= 2){ await loadBase(true); apiX('sinc').catch(() => {}); } closeSheet(); render(); toast(!necesitaActualizar() ? '¡Actualizado! 📅📇' : 'Aún responde la versión anterior. Revisa el paso 3.'); };
 }
 
 /* ---------- vista: Base de datos (contactos) ---------- */
@@ -732,7 +732,7 @@ function relacionadosHTML(t){
 }
 function viewBase(){
   if (S.extInactivo || necesitaActualizar()){
-    $('#view').innerHTML = '<div class="hero" style="background:linear-gradient(135deg,#FF5C8A,#FF8A4C)"><div class="hi">📇 Base de datos</div><div class="big">Tu memoria de clientes y proveedores</div><div class="hint" style="color:#fff">La app revisa tus correos, reuniones y tareas, y arma sola una ficha por contacto con todo su historial. Te avisa a quién hacerle seguimiento.</div></div>' +
+    $('#view').innerHTML = '<div class="hero" style="background:linear-gradient(135deg,#FF5C8A,#FF8A4C)"><div class="hi">📇 Base de datos</div><div class="big">Tu memoria de clientes y proveedores</div><div class="hint" style="color:#fff">La app revisa los correos que llegan por contacto@blacklinechile.cl y arma sola una ficha por cliente con todo su historial. Te avisa a quién hacerle seguimiento.</div></div>' +
       '<div class="btns"><button class="btn" id="bAct">' + (S.extInactivo ? 'Activar funciones extra' : '⬆️ Actualizar el script (2 min)') + '</button></div>';
     $('#bAct').onclick = showExtrasSetup; return;
   }
@@ -754,7 +754,7 @@ function viewBase(){
     '<div class="meta" style="margin-top:4px"><span class="tag" style="background:' + hexToRgba(TIPO_COL[c.tipo] || '#7E7F92', .14) + ';color:' + (TIPO_COL[c.tipo] || '#7E7F92') + '">' + (TIPO_IC[c.tipo] || '') + ' ' + esc(c.tipo) + '</span>' + (c.empresa ? '<span class="tag">🏢 ' + esc(c.empresa) + '</span>' : '') + (c.etiquetas ? '<span class="tag">🏷️ ' + esc(String(c.etiquetas).slice(0, 28)) + '</span>' : '') + '</div></div>' +
     '<div class="ct-last">' + haceTxt(c.ultima) + '<br>' + (c.n ? c.n + ' 💬' : '') + '</div></div>').join('')
     : '<div class="empty">' + (todos.length ? 'Nada con este filtro 🔍' : 'Aún no hay contactos.<br>Toca «Revisar Gmail y calendario» para armar tu base, o agrega uno a mano.') + '</div>') + '</div>';
-  html += '<div class="hint">Se actualiza sola cada 6 horas con las personas a las que escribes, los correos importantes que recibes y los invitados a tus reuniones. Marca un contacto como «Ignorar» para que no vuelva a aparecer.</div>';
+  html += '<div class="hint">Se actualiza sola cada 6 horas con los correos que llegan por contacto@blacklinechile.cl (incluye nombre y teléfono de los formularios web). Tus respuestas, reuniones y tareas con esas personas se suman a su historial. Marca un contacto como «Ignorar» para que no vuelva a aparecer.</div>';
   $('#view').innerHTML = html;
   const bq = $('#bq'); bq.oninput = () => { S.bq = bq.value; const pos = bq.selectionStart; viewBase(); const b2 = $('#bq'); b2.focus(); b2.setSelectionRange(pos, pos); };
   $$('[data-bf]').forEach(b => b.onclick = () => { S.bf = b.dataset.bf; viewBase(); });
@@ -1467,7 +1467,7 @@ function showSettings(){
   sheet('<h3>⚙️ Ajustes</h3><div class="hint">Conectado a tu Sheet del organizador.</div>' +
     (deferredInstall ? '<div class="btns"><button class="btn" id="s_inst">📲 Instalar app en este dispositivo</button></div>' : '') +
     '<div class="card"><b>✨ Funciones extra</b> <span class="hint">(calendario, correo, subtareas, repetir)</span><div class="hint">' + esc(gTxt) + '</div><button class="btn sm sec" id="s_g">' + (g && !g.inactivo ? 'Ver sugerencias' : 'Cómo activarlas') + '</button></div>' +
-    (extNivel() >= 2 ? '<div class="card"><b>📅 Recordatorios en tu calendario</b><div class="hint">Cada tarea pendiente con fecha está en el calendario «' + esc((S.ext && S.ext.calendario) || 'Organizador BlackLine') + '», con aviso en tu teléfono 10 min antes (a las 9:00, o a la hora que pongas: «a las 15:30»). Se actualiza solo cada hora y cuando cambias algo.</div><button class="btn sm sec" id="s_sinc">🔄 Sincronizar ahora</button></div>' : necesitaActualizar() ? '<div class="card"><b>⬆️ Hay una versión nueva del script</b><div class="hint">📅 Recordatorios en tu calendario y 📇 base de datos de contactos.</div><button class="btn sm" id="s_upd">Actualizar (2 min)</button></div>' : '') +
+    (extNivel() >= 2 ? '<div class="card"><b>📅 Recordatorios en tu calendario</b><div class="hint">Cada tarea pendiente con fecha está en el calendario «' + esc((S.ext && S.ext.calendario) || 'Organizador BlackLine') + '», con aviso en tu teléfono 10 min antes (a las 9:00, o a la hora que pongas: «a las 15:30»). Se actualiza solo cada hora y cuando cambias algo.</div><button class="btn sm sec" id="s_sinc">🔄 Sincronizar ahora</button></div>' : necesitaActualizar() ? '<div class="card"><b>⬆️ Hay una versión nueva del script</b><div class="hint">📅 Recordatorios y 📇 base de datos solo con contacto@blacklinechile.cl.</div><button class="btn sm" id="s_upd">Actualizar (2 min)</button></div>' : '') +
     '<div class="card"><b>✨ Trucos para agregar rápido</b><div class="hint">• Fechas: <i>hoy, mañana, pasado mañana, el viernes, en 3 días, 15/10, 20 de octubre, la próxima semana</i><br>• Hora: <i>a las 10, 15:30</i><br>• Prioridad: <i>urgente</i> o <i>!</i> · <i>importante</i><br>• Categoría o área: <i>#ventas, #marketing, #personal</i><br>• Proyecto: <i>@levo</i><br>• Repetir: <i>cada lunes, todos los días, días hábiles, cada mes</i><br>• Toca 🎤 para dictar.</div></div>' +
     '<div class="btns"><button class="btn sec" id="s_re">Cambiar link o clave</button></div>' +
     '<div class="btns"><button class="btn bad" id="s_out">Desconectar este dispositivo</button></div>');
