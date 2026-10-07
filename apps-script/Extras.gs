@@ -15,8 +15,8 @@
  * Para actualizar este archivo más adelante: reemplaza todo su contenido y repite los dos pasos anteriores.
  */
 
-const EX_VERSION = '2026-10-09';
-const EX_NIVEL = 4;      // la app lo usa para saber qué funciones tiene este script
+const EX_VERSION = '2026-10-10';
+const EX_NIVEL = 5;      // la app lo usa para saber qué funciones tiene este script
 const EX_HOJA = 'Tareas';
 const EX_PRIMERA = 4;
 const EX_ULTIMA = 400;
@@ -42,6 +42,10 @@ const EX_CAB_INTER = ['Fecha', 'Contacto (ID)', 'Tipo', 'Detalle', 'Link', 'Clav
 const EX_CORREO_TIENDA = 'contacto@blacklinechile.cl';
 const EX_DIAS_ESCANEO_INICIAL = 90;     // la primera vez revisa 90 días hacia atrás; después, solo lo nuevo
 const EX_IGNORAR_RE = /no-?reply|notific|mailer|newsletter|bounce|news@|marketing@|alerts?@|calendar-|@.*(mailchimp|sendgrid|hubspot)/i;
+// Negociaciones (pipeline de ventas).
+const EX_HOJA_NEG = 'Negociaciones';
+const EX_CAB_NEG = ['ID', 'Negociación', 'Contacto (ID)', 'Etapa', 'Valor ($)', 'Producto / interés', 'Creada', 'Cierre esperado', 'Próxima acción', 'Fecha próxima acción', 'Estado', 'Motivo de pérdida', 'Notas', 'Historial de etapas', 'Última actividad', 'Origen'];
+const EX_CAMPOS_NEG = { titulo: 2, contacto: 3, valor: 5, producto: 6, cierre: 8, proxima: 9, fechaProx: 10, motivo: 12, notas: 13, origen: 16 };
 const EX_DOMINIOS_PERSONALES = /^(gmail|googlemail|hotmail|outlook|live|yahoo|icloud|me|msn|proton|protonmail)\./i;
 
 // Días hacia adelante que se leen del calendario (incluye hoy).
@@ -76,6 +80,9 @@ function app_extra_(p) {
     case 'contacto':   return ex_guardarContacto_(p.contacto || {});
     case 'nota':       return ex_nota_(p);
     case 'escanear':   return ex_escanearBase_();
+    case 'negocios':   return ex_leerNegocios_();
+    case 'negocio':    return ex_guardarNegocio_(p.negocio || {});
+    case 'negocioNota': return ex_notaNegocio_(p);
     default:           return { ok: false, error: 'op desconocida: ' + p.op };
   }
 }
@@ -255,8 +262,8 @@ function ex_leerBase_() {
     return { id: String(r[0]), tipo: r[1] || 'Por clasificar', nombre: r[2], empresa: r[3], email: r[4], telefono: String(r[5] || ''), etiquetas: r[6], notas: r[7], ultima: f(r[8]), n: Number(r[9]) || 0, origen: r[10], creado: f(r[11]) };
   });
   const ni = b.is.getLastRow() - 1;
-  const inter = (ni > 0 ? b.is.getRange(2, 1, ni, 5).getValues() : []).filter(function (r) { return r[1]; })
-    .map(function (r) { return { fecha: f(r[0]), id: String(r[1]), tipo: r[2], detalle: r[3], link: r[4] }; })
+  const inter = (ni > 0 ? b.is.getRange(2, 1, ni, 6).getValues() : []).filter(function (r) { return r[1]; })
+    .map(function (r) { const neg = String(r[5]).match(/^d:([^:]+):/); return { fecha: f(r[0]), id: String(r[1]), tipo: r[2], detalle: r[3], link: r[4], neg: neg ? neg[1] : '' }; })
     .sort(function (a, b2) { return b2.fecha.localeCompare(a.fecha); }).slice(0, 600);
   return { ok: true, contactos: contactos, interacciones: inter };
 }
@@ -465,6 +472,73 @@ function ex_recalcular_(cs, is) {
     if (!a.u || r[0] > a.u) a.u = r[0];
   });
   cs.getRange(2, 9, nc, 2).setValues(ids.map(function (r) { const a = agg[String(r[0])]; return a ? [a.u, a.n] : ['', 0]; }));
+}
+
+/* ---------- negociaciones ---------- */
+function ex_hojaNeg_() {
+  const ss = SpreadsheetApp.getActive();
+  let sh = ss.getSheetByName(EX_HOJA_NEG);
+  if (!sh) { sh = ss.insertSheet(EX_HOJA_NEG); sh.appendRow(EX_CAB_NEG); sh.setFrozenRows(1); }
+  return sh;
+}
+
+function ex_filasNeg_(sh) {
+  const n = sh.getLastRow() - 1;
+  return n > 0 ? sh.getRange(2, 1, n, EX_CAB_NEG.length).getValues() : [];
+}
+
+function ex_leerNegocios_() {
+  const tz = ex_tz_(), f = function (d) { return d instanceof Date ? ex_ymd_(d, tz) : (d ? String(d) : ''); };
+  const negocios = ex_filasNeg_(ex_hojaNeg_()).filter(function (r) { return r[0]; }).map(function (r) {
+    return { id: String(r[0]), titulo: r[1], contacto: String(r[2] || ''), etapa: r[3] || 'Nuevo', valor: Number(r[4]) || 0, producto: r[5], creada: f(r[6]), cierre: f(r[7]), proxima: r[8], fechaProx: f(r[9]), estado: r[10] || 'Abierta', motivo: r[11], notas: r[12], historial: String(r[13] || ''), actividad: f(r[14]), origen: r[15] };
+  });
+  return { ok: true, negocios: negocios };
+}
+
+// Crea o actualiza una negociación. Cada cambio de etapa queda en el historial y en el historial del contacto.
+function ex_guardarNegocio_(n) {
+  const sh = ex_hojaNeg_(), filas = ex_filasNeg_(sh), tz = ex_tz_(), hoy = ex_hoyYmd_(tz);
+  const fecha = function (v) { return v ? ex_aFecha_(String(v), tz) : ''; };
+  let i = n.id ? filas.findIndex(function (r) { return String(r[0]) === String(n.id); }) : -1;
+  let r, antes = '';
+  if (i >= 0) { r = filas[i].slice(); antes = String(r[3]); }
+  else {
+    r = EX_CAB_NEG.map(function () { return ''; });
+    r[0] = 'N-' + Date.now().toString(36); r[3] = 'Nuevo'; r[6] = new Date(); r[10] = 'Abierta'; r[15] = '✍️ App';
+  }
+  Object.keys(EX_CAMPOS_NEG).forEach(function (k) {
+    if (n[k] === undefined) return;
+    const c = EX_CAMPOS_NEG[k] - 1;
+    r[c] = (k === 'cierre' || k === 'fechaProx') ? fecha(n[k]) : k === 'valor' ? (Number(n[k]) || 0) : n[k];
+  });
+  const etapa = n.etapa || r[3] || 'Nuevo';
+  if (i < 0 || etapa !== antes) {
+    r[3] = etapa;
+    r[13] = (r[13] ? r[13] + '|' : '') + hoy + ':' + etapa;
+    r[10] = etapa === 'Ganada' ? 'Ganada' : etapa === 'Perdida' ? 'Perdida' : 'Abierta';
+  }
+  r[14] = new Date();
+  if (i >= 0) sh.getRange(i + 2, 1, 1, EX_CAB_NEG.length).setValues([r]);
+  else sh.appendRow(r);
+  if (r[2] && (i < 0 || etapa !== antes)) {
+    const b = ex_baseHojas_();
+    const det = i < 0 ? 'Nueva negociación: ' + r[1] : r[1] + ': ' + antes + ' → ' + etapa + (etapa === 'Perdida' && r[11] ? ' (' + r[11] + ')' : '');
+    b.is.appendRow([new Date(), String(r[2]), etapa === 'Ganada' ? '🏆 Venta ganada' : '🤝 Negociación', det, '', 'd:' + r[0] + ':' + Date.now()]);
+    ex_recalcular_(b.cs, b.is);
+  }
+  return { ok: true, id: String(r[0]) };
+}
+
+// Registra una actividad (llamada, visita, nota…) en la negociación y en el historial del contacto.
+function ex_notaNegocio_(p) {
+  const sh = ex_hojaNeg_(), filas = ex_filasNeg_(sh), texto = String(p.texto || '').trim();
+  const i = filas.findIndex(function (r) { return String(r[0]) === String(p.id); });
+  if (i < 0 || !texto) throw new Error('no encuentro la negociación o falta el texto');
+  sh.getRange(i + 2, 15).setValue(new Date());
+  const b = ex_baseHojas_();
+  b.is.appendRow([new Date(), String(filas[i][2] || ''), p.tipo || '📝 Actividad', texto, '', 'd:' + filas[i][0] + ':' + Date.now()]);
+  if (filas[i][2]) ex_recalcular_(b.cs, b.is);
+  return { ok: true };
 }
 
 /* ---------- tareas automáticas (cada hora y cada 6 horas) ---------- */

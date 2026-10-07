@@ -227,6 +227,26 @@ textarea.note{min-height:56px;resize:vertical}
 .tl .ic{flex:none;width:32px;height:32px;border-radius:10px;background:var(--soft);display:flex;align-items:center;justify-content:center;font-size:15px}
 .acts3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
 .acts3 a,.acts3 button{text-align:center;text-decoration:none;border:0;border-radius:14px;padding:11px 4px;background:var(--soft);color:var(--ink);font-weight:800;font-size:13px}
+/* negociaciones */
+.stages{display:flex;gap:2px;margin:12px 0 8px}
+.stages button{flex:1;min-width:0;border:0;padding:9px 0 9px 6px;font-size:10.5px;font-weight:800;color:var(--muted);background:var(--soft);clip-path:polygon(0 0,86% 0,100% 50%,86% 100%,0 100%,14% 50%);white-space:nowrap;overflow:hidden}
+.stages button:first-child{clip-path:polygon(0 0,86% 0,100% 50%,86% 100%,0 100%);padding-left:0}
+.stages button.ok{background:color-mix(in srgb,var(--c) 30%,white);color:var(--ink)}
+.stages button.on{background:var(--c);color:#fff}
+.hd{display:inline-block;width:9px;height:9px;border-radius:50%;flex:none}
+.fun{display:flex;flex-direction:column;align-items:center;gap:2px}
+.fun .fr{border-radius:12px;color:#fff;padding:8px 10px;font-size:12.5px;font-weight:800;display:flex;justify-content:space-between;gap:6px;min-width:150px;box-sizing:border-box}
+.fun .cv{font-size:11px;color:var(--muted);font-weight:800}
+.mbar{display:flex;align-items:flex-end;gap:8px;height:110px;margin-top:6px}
+.mbar div{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;font-size:10.5px;color:var(--muted);font-weight:700}
+.mbar i{display:block;width:100%;border-radius:8px 8px 4px 4px;background:var(--grad-green);min-height:3px}
+.rec{display:flex;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
+.rec:first-of-type{border-top:0}
+.rec .ic{flex:none;width:34px;height:34px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:17px}
+.chips2{display:flex;gap:6px;overflow-x:auto;padding:2px 0 4px}
+.chips2 button{flex:none;border:1.5px solid var(--line);background:var(--card);border-radius:99px;padding:7px 11px;font-size:12.5px;font-weight:800;color:var(--ink)}
+.deal{padding:12px 0;border-top:1px solid var(--line)}
+.deal:first-of-type{border-top:0}
 /* foco */
 .timer{position:relative;width:220px;height:220px;margin:14px auto}
 .timer b{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:44px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
@@ -253,7 +273,7 @@ textarea.note{min-height:56px;resize:vertical}
   <button data-tab="hoy"><span>☀️</span>Hoy</button>
   <button data-tab="tareas"><span>📋</span>Tareas</button>
   <button data-tab="habitos"><span>💪</span>Hábitos</button>
-  <button data-tab="semana"><span>🗓️</span>Semana</button>
+  <button data-tab="negocios"><span>🤝</span>Negocios</button>
   <button data-tab="proy"><span>🚀</span>Proyectos</button>
   <button data-tab="base"><span>📇</span>Base</button>
 </nav>
@@ -264,7 +284,7 @@ textarea.note{min-height:56px;resize:vertical}
 const $ = s => document.querySelector(s);
 const $$ = s => document.querySelectorAll(s);
 const LS = window.localStorage;
-let S = { data: null, tab: 'inicio', filtro: 'todas', q: '', verHechas: false, vista: LS.vista || 'lista', offline: false, busy: false, google: null, googleBusy: false, googleAt: 0, ext: null, extInactivo: false, base: null, baseAt: 0, bf: 'todos', bq: '', mutado: false };
+let S = { data: null, tab: 'inicio', filtro: 'todas', q: '', verHechas: false, vista: LS.vista || 'lista', offline: false, busy: false, google: null, googleBusy: false, googleAt: 0, ext: null, extInactivo: false, base: null, baseAt: 0, bf: 'todos', bq: '', mutado: false, subH: 'habitos', neg: null, negAt: 0, nv: LS.nv || 'resumen', nf: 'abiertas', nq: '' };
 let deferredInstall = null;
 
 /* ---------- utilidades ---------- */
@@ -319,7 +339,7 @@ async function api(action, extra){
 function apiX(op, extra){ return api('extra', Object.assign({ op }, extra || {})); }
 // Nivel 2 del script Extras: recordatorios y base de contactos. Nivel 3: la base solo usa contacto@blacklinechile.cl. Nivel 4: eventos de varios días.
 function extNivel(){ return S.extInactivo ? 0 : (S.ext && S.ext.nivel) || 1; }
-function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < 4; }
+function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < 5; }
 let sincTimer = null;
 // Después de cambiar tareas, el script actualiza los recordatorios del calendario (en segundo plano).
 function sincPronto(){
@@ -364,6 +384,7 @@ async function load(){
   loadExtras().then(async () => {
     if (S.mutado){ S.mutado = false; sincPronto(); }
     await loadBase(false);
+    await loadNeg(false);
     if (!$('#layer').innerHTML) render();
   });
   loadGoogle(false);
@@ -387,9 +408,9 @@ async function updateTask(t, cambios){
 }
 
 /* ---------- cabecera y navegación ---------- */
-const TITLES = { inicio: 'Inicio', hoy: 'Hoy', tareas: 'Tareas', habitos: 'Hábitos', semana: 'Semana', proy: 'Proyectos', base: 'Base de datos' };
+const TITLES = { inicio: 'Inicio', hoy: 'Hoy', tareas: 'Tareas', habitos: 'Hábitos', semana: 'Semana', proy: 'Proyectos', base: 'Base de datos', negocios: 'Negociaciones' };
 function head(){
-  $('#hTitle').innerHTML = TITLES[S.tab] + (S.offline ? '<span class="chip-off">sin conexión</span>' : '');
+  $('#hTitle').innerHTML = (S.tab === 'habitos' && S.subH === 'semana' ? 'Semana' : TITLES[S.tab]) + (S.offline ? '<span class="chip-off">sin conexión</span>' : '');
   $('#hSub').innerHTML = S.busy ? '<span class="spin"></span>Actualizando…' : fmtLong(hoy());
   $$('nav.bottom button').forEach(b => b.classList.toggle('on', b.dataset.tab === S.tab));
 }
@@ -402,7 +423,7 @@ $('#fab').onclick = () => { try { openAdd(); } catch(e){ toast('No se pudo abrir
 function render(){
   head();
   if (!S.data){ $('#view').innerHTML = '<div class="empty"><span class="spin"></span>Cargando…</div>'; return; }
-  ({ inicio: viewInicio, hoy: viewHoy, tareas: viewTareas, habitos: viewHabitos, semana: viewSemana, proy: viewProy, base: viewBase })[S.tab]();
+  ({ inicio: viewInicio, hoy: viewHoy, tareas: viewTareas, habitos: () => S.subH === 'semana' ? viewSemana() : viewHabitos(), semana: viewSemana, proy: viewProy, base: viewBase, negocios: viewNegocios })[S.tab]();
   focusPill();
 }
 
@@ -538,8 +559,12 @@ function viewInicio(){
   html += card('Resumen de hoy', '☀️', (lista.length ? lista.slice(0, 5).map(t => taskHTML(t)).join('') : '<div class="empty">Nada pendiente para hoy 🎉</div>') +
     '<button class="link" data-go="hoy">' + (lista.length > 5 ? 'Ver las ' + lista.length + ' tareas de hoy →' : 'Abrir Hoy →') + '</button>', lista.length + ' pendientes');
 
+  if (extNivel() >= 5 && S.neg && negocios().length){
+    const m = metricasNeg();
+    html += card('Ventas', '🤝', '<div class="kpis"><div class="kpi" style="--c:#FF8A4C"><b>' + clpCorto(m.abiertoV) + '</b><span>pipeline</span></div><div class="kpi" style="--c:#A44DF0"><b>' + clpCorto(m.ponderado) + '</b><span>pronóstico</span></div><div class="kpi" style="--c:#13B386"><b>' + clpCorto(m.gMesV) + '</b><span>ganado mes</span></div></div><button class="link" data-go="negocios">Abrir negociaciones →</button>', m.estancadas.length ? '🧊 ' + m.estancadas.length + ' estancadas' : abiertos().length + ' abiertas');
+  }
   html += agendaHTML();
-  if (necesitaActualizar()) html += card('Nueva versión del script', '⬆️', '<div class="hint" style="margin-top:0">' + (extNivel() >= 3 ? '🔒 Detecta eventos de varios días (capacitaciones, viajes) para marcarlos completos como ocupados.' : '📅 Recordatorios en tu calendario y 📇 base de datos solo con los correos de contacto@blacklinechile.cl.') + '</div><button class="btn sm" id="updBtn">Actualizar (2 min)</button>');
+  if (necesitaActualizar()) html += card('Nueva versión del script', '⬆️', '<div class="hint" style="margin-top:0">' + (extNivel() >= 3 ? '🤝 Activa la pestaña Negocios (pipeline de ventas con sugerencias) y detecta eventos de varios días.' : '📅 Recordatorios en tu calendario y 📇 base de datos solo con los correos de contacto@blacklinechile.cl.') + '</div><button class="btn sm" id="updBtn">Actualizar (2 min)</button>');
   html += asistenteHTML();
   html += semanaStripHTML();
   const abierto = LS.statsOpen === '1';
@@ -611,6 +636,10 @@ function insights(){
   });
   const sin = P.filter(t => !t.limite);
   if (sin.length >= 3) out.push({ ic: '📌', c: '#6D5DFC', tx: '<b>' + sin.length + ' tareas</b> no tienen fecha. Con fecha es mucho más probable cumplirlas.', acts: [['Revisar', 'ver-sin']] });
+  if (extNivel() >= 5 && S.neg){
+    const est = abiertos().map(n => ({ n, a: analizar(n) })).filter(x => x.a.estancada || x.a.sinResponder != null || x.a.proxVencida);
+    if (est.length) out.push({ ic: '🤝', c: '#FF8A4C', tx: '<b>' + est.length + (est.length === 1 ? ' negociación necesita' : ' negociaciones necesitan') + ' atención</b> (' + clpCorto(est.reduce((s, x) => s + (x.n.valor || 0), 0)) + ' en juego): ' + esc(est.sort((x, y) => y.a.prioridad - x.a.prioridad)[0].n.titulo) + (est.length > 1 ? ' y otras' : '') + '.', acts: [['Ver qué hacer', 'neg']] });
+  }
   const frios = contactosFrios();
   if (frios.length) out.push({ ic: '🤝', c: '#13B386', tx: '<b>' + frios.length + (frios.length === 1 ? ' cliente' : ' clientes') + '</b> sin contacto hace más de 30 días. Un mensaje de seguimiento puede ser una venta.', acts: [['Ver', 'base-frios']] });
   const pn = extNivel() >= 2 ? personasNuevas() : [];
@@ -643,6 +672,7 @@ function bindAsistente(){
     if (a === 'sug') return openSugerencias();
     if (a.startsWith('mover:')){ const d = a.slice(6); return reprogramar(tareasEnDiaOcupado(d), proximoLibre(d), b); }
     if (a === 'personas') return openPersonas();
+    if (a === 'neg'){ S.nv = 'resumen'; return go('negocios'); }
     if (a === 'base-frios'){ S.bf = 'frios'; return go('base'); }
     if (a === 'base-clas'){ S.bf = 'Por clasificar'; return go('base'); }
     if (a.startsWith('proy:')) return openAdd({ proyecto: a.slice(5) });
@@ -754,7 +784,7 @@ function showExtrasSetup(){
 
 function showExtrasUpdate(){
   const raw = 'https://raw.githubusercontent.com/SnowPv/Organizador/main/apps-script/Extras.gs';
-  sheet('<h3>⬆️ Actualizar el script Extras</h3><div class="hint">Hay una versión nueva del script' + (extNivel() >= 3 ? ': detecta eventos de varios días (capacitaciones, viajes) para marcarlos completos como ocupados.' : ': 📅 recordatorios en tu calendario y 📇 base de datos armada solo con los correos que llegan por contacto@blacklinechile.cl.') + ' Son 3 pasos:</div>' +
+  sheet('<h3>⬆️ Actualizar el script Extras</h3><div class="hint">Hay una versión nueva del script' + (extNivel() >= 3 ? ': 🤝 pestaña Negocios (pipeline de ventas con sugerencias) y eventos de varios días.' : ': 📅 recordatorios en tu calendario y 📇 base de datos armada solo con los correos que llegan por contacto@blacklinechile.cl.') + ' Son 3 pasos:</div>' +
     '<div class="card"><b>1.</b> En Apps Script elimina <b>Extras.gs</b> (⋮ → Eliminar) y crea otro igual (<b>+ → Secuencia de comandos → Extras</b>). Toca <b>📋 Copiar código</b> y pégalo con el <b>«Pegar» de Chrome</b> (mantén presionado), no con el portapapeles del teclado. Guarda 💾.<div style="margin-top:8px"><button class="btn sm sec" id="gu1">📋 Copiar código</button> <a class="btn sm sec" style="text-decoration:none;display:inline-block" href="' + raw + '" target="_blank">Abrir archivo</a></div></div>' +
     '<div class="card"><b>2.</b> Arriba elige <b>autorizarExtras</b> y toca <b>Ejecutar</b>. Acepta los permisos nuevos (crear el calendario y programar tareas automáticas).</div>' +
     '<div class="card"><b>3.</b> <b>Implementar → Administrar implementaciones → ✏️ → Nueva versión → Implementar</b>.</div>' +
@@ -869,11 +899,14 @@ function openContacto(c){
     '<label class="l">🏷️ Etiquetas / intereses</label><input type="text" id="c_tag" value="' + esc(c.etiquetas) + '" placeholder="Levo talla M, club Pichijuán, repuestos…">' +
     '<label class="l">Notas</label><textarea class="note" id="c_not">' + esc(c.notas) + '</textarea>' +
     '<div class="btns"><button class="btn sec" id="c_seg">＋ Tarea de seguimiento</button><button class="btn" id="c_ok">Guardar</button></div>' +
+    (!nuevo && extNivel() >= 5 ? '<label class="l">🤝 Negociaciones</label><div class="card" style="margin:0">' + (negocios().filter(x => x.contacto === c.id).map(x => dealCard(x, analizar(x), true)).join('') || '<div class="hint">Sin negociaciones.</div>') + '<button class="btn sm sec" id="c_neg" style="margin-top:8px">＋ Nueva negociación</button></div>' : '') +
     (nuevo ? '' :
       (tareas.length ? '<label class="l">📋 Tareas relacionadas</label><div class="card" style="margin:0">' + tareas.map(t => taskHTML(t)).join('') + '</div>' : '') +
       '<label class="l">🕑 Historial</label><div class="smart"><input type="text" id="c_nota" placeholder="📝 Anotar algo (vino a la tienda, pidió precio…)" autocomplete="off"><button class="mic" id="c_nota_ok" aria-label="Anotar">＋</button></div>' +
       '<div class="card" style="margin-top:8px">' + (inter.length ? inter.slice(0, 40).map(i => '<div class="tl"><span class="ic">' + icTl(i.tipo) + '</span><div class="grow"><div style="font-size:14px;font-weight:650;line-height:1.35">' + esc(i.detalle) + '</div><div class="hint" style="margin:2px 0 0">' + esc(i.tipo) + ' · ' + (i.fecha ? fmtRel(i.fecha) : '') + '</div></div>' + (i.link ? '<a class="play" style="display:flex;align-items:center;justify-content:center;text-decoration:none" href="' + esc(i.link) + '" target="_blank">↗</a>' : '') + '</div>').join('') : '<div class="hint">Aquí se irán guardando correos, reuniones, tareas y notas con este contacto.</div>') + '</div>'));
   bindPills('c_tipo'); bindTasks($('#layer'));
+  const cn = $('#c_neg'); if (cn) cn.onclick = () => openNegocio(null, { contacto: c.id });
+  $$('#layer [data-neg]').forEach(b => b.onclick = () => openNegocio(negocios().find(x => x.id === b.dataset.neg)));
   $('#c_seg').onclick = () => { const n = $('#c_nom').value.trim() || c.nombre || c.email; openAdd({ texto: 'Seguimiento ' + n + ' mañana', notas: c.telefono ? '📞 ' + c.telefono : '' }); };
   $('#c_ok').onclick = async () => {
     const d = { id: c.id, tipo: val('c_tipo') || 'Por clasificar', nombre: $('#c_nom').value.trim(), empresa: $('#c_emp').value.trim(), email: $('#c_mail').value.trim(), telefono: $('#c_tel').value.trim(), etiquetas: $('#c_tag').value.trim(), notas: $('#c_not').value.trim() };
@@ -891,6 +924,351 @@ function openContacto(c){
     };
     $('#c_nota_ok').onclick = anotar; $('#c_nota').onkeydown = e => { if (e.key === 'Enter') anotar(); };
   }
+}
+
+/* ---------- vista: Negocios (pipeline de ventas estilo CRM) ---------- */
+// Etapas del embudo: probabilidad base de cierre y días normales sin movimiento antes de considerarla estancada.
+const ETAPAS = [
+  { k: 'Nuevo', corto: 'Nuevo', ic: '🆕', p: .10, max: 2, c: '#8E8DA6', tip: 'Contáctalo hoy: responder rápido a un lead nuevo es lo que más aumenta la probabilidad de venta.', acc: [['💬 Primer mensaje', 'wa:primer']] },
+  { k: 'Contactado', corto: 'Contacto', ic: '💬', p: .20, max: 5, c: '#3B9EFF', tip: 'Descubre su necesidad: uso (enduro, trail, ruta), presupuesto, talla y para cuándo la quiere. Luego invítalo a probar.', acc: [['🚵 Agendar test ride', 'testride']] },
+  { k: 'Prueba / visita', corto: 'Prueba', ic: '🚵', p: .35, max: 7, c: '#20B8B0', tip: 'Después de la prueba, envía la cotización en menos de 24 horas, mientras la emoción sigue alta.', acc: [['📄 Tarea: enviar cotización', 'tarea:cotizacion']] },
+  { k: 'Cotización', corto: 'Cotiz.', ic: '📄', p: .55, max: 5, c: '#A44DF0', tip: 'Haz seguimiento a los 2–3 días: pregunta si tiene dudas y ofrece las opciones de pago.', acc: [['💬 Seguimiento', 'wa:seguimiento']] },
+  { k: 'Negociación', corto: 'Negoc.', ic: '🤝', p: .75, max: 7, c: '#FF8A4C', tip: 'Acuerda una fecha de cierre y ofrece un incentivo con plazo (accesorio o primera mantención sin costo).', acc: [['💬 Oferta de cierre', 'wa:oferta']] }
+];
+const ETAPA_FIN = { 'Ganada': { k: 'Ganada', corto: 'Ganada', ic: '🏆', c: '#13B386', p: 1 }, 'Perdida': { k: 'Perdida', corto: 'Perdida', ic: '❌', c: '#F04461', p: 0 } };
+const MOTIVOS = ['Precio', 'Compró en otro lado', 'No respondió', 'Postergó la compra', 'Sin stock', 'Otro'];
+// Señales en notas, correos e intereses → consejo concreto (como los "insights" de los CRM grandes, pero con reglas de tu negocio).
+const SENALES = [
+  { re: /precio|caro|descuento|rebaja|presupuesto|mas barat|valor final/, ic: '💸', t: 'Objeción de precio', a: 'Muestra el valor total (garantía, mantenciones, servicio técnico local) y ofrece cuotas o un modelo alternativo antes de bajar el precio.' },
+  { re: /cuota|credito|financ|tarjeta|transferencia|abono/, ic: '💳', t: 'Pregunta por medios de pago', a: 'Envíale todas las opciones de pago concretas en un solo mensaje (cuotas sin interés, transferencia, abono para reservar).' },
+  { re: /pensar|pensando|despues|mas adelante|no estoy seguro|no se si|lo veo/, ic: '🤔', t: 'Indeciso', a: 'Pregúntale directo qué le falta para decidir y propón un plazo concreto (un beneficio válido hasta el viernes).' },
+  { re: /senora|esposa|marido|pareja|socio|consultar con|mi papa|mi mama|mi polola|mi pololo/, ic: '👥', t: 'Hay otro decisor', a: 'Invita a la otra persona a la tienda o al test ride: las compras que se deciden entre dos se cierran juntos.' },
+  { re: /talla|medida|altura|tamano/, ic: '📏', t: 'Duda de talla', a: 'Agenda un fitting en la tienda: resolver la talla elimina la principal excusa para no decidir.' },
+  { re: /probar|test ride|demo|rodar|prueba/, ic: '🚵', t: 'Quiere probar', a: 'Agenda el test ride con día y hora, con la bici lista (ideal en Pichijuán).' },
+  { re: /stock|llega|disponib|importa|reserva/, ic: '📦', t: 'Disponibilidad', a: 'Confírmale la fecha de llegada y ofrece reservar con un abono para asegurar su unidad.' },
+  { re: /usada|parte de pago|vender la mia|permuta/, ic: '🔄', t: 'Parte de pago', a: 'Pídele fotos de su bici actual y propón un valor de parte de pago: baja la barrera de entrada.' },
+  { re: /trek|giant|scott|orbea|santa cruz|canyon|cannondale|otra tienda|competencia|mercadolibre/, ic: '⚔️', t: 'Está comparando', a: 'Diferénciate por servicio: mantención, garantía local, comunidad y salidas. No compitas solo por precio.' },
+  { re: /regalo|cumpleanos|navidad|aniversario/, ic: '🎁', t: 'Fecha especial', a: 'Usa la fecha como plazo natural de cierre y ofrece tenerla lista para entregar.' }
+];
+const ACTIVIDADES = [['📞 Llamé', '📞 Llamada', 'Contactado'], ['💬 Le escribí', '💬 Mensaje', 'Contactado'], ['🏪 Vino a la tienda', '🏪 Visita', 'Prueba / visita'], ['🚵 Hizo test ride', '🚵 Test ride', 'Prueba / visita'], ['📄 Envié cotización', '📄 Cotización enviada', 'Cotización']];
+const clp = n => '$' + Math.round(n || 0).toLocaleString('es-CL');
+const clpCorto = n => n >= 1e6 ? '$' + (n / 1e6).toFixed(n >= 1e7 ? 0 : 1).replace('.', ',') + ' M' : n >= 1e3 ? '$' + Math.round(n / 1e3) + ' mil' : clp(n);
+function negocios(){ return (S.neg && S.neg.negocios) || []; }
+function abiertos(){ return negocios().filter(n => n.estado === 'Abierta'); }
+function etapaIdx(k){ return ETAPAS.findIndex(e => e.k === k); }
+function etapaDe(n){ return ETAPA_FIN[n.etapa] || ETAPAS[Math.max(0, etapaIdx(n.etapa))]; }
+function historialDe(n){ return String(n.historial || '').split('|').filter(Boolean).map(x => { const i = x.indexOf(':'); return { f: x.slice(0, i), e: x.slice(i + 1) }; }); }
+function interDe(n){ return ((S.base && S.base.interacciones) || []).filter(i => i.neg === n.id || (n.contacto && i.id === n.contacto)); }
+function negTag(n){ return '🤝 ' + n.titulo + ' (' + n.id + ')'; }
+function saludCol(v){ return v >= 70 ? '#13B386' : v >= 40 ? '#F5A524' : '#F04461'; }
+async function loadNeg(forzar){
+  if (extNivel() < 5) return;
+  if (!forzar && S.neg && Date.now() - S.negAt < 5 * 60000) return;
+  try { S.neg = await apiX('negocios'); S.negAt = Date.now(); lsSet('negCache', S.neg); }
+  catch(e){ if (!S.neg) S.neg = lsGet('negCache', null); }
+}
+// Diagnóstico de una negociación: actividad, salud (0-100), probabilidad ajustada, prioridad y señales.
+function analizar(n){
+  const h = hoy(), e = etapaDe(n), I = interDe(n).slice().sort((a, b) => a.fecha.localeCompare(b.fecha));
+  const hist = historialDe(n), ultEtapa = hist.length ? hist[hist.length - 1].f : (n.creada || h);
+  const c = n.contacto ? contactoPorId(n.contacto) : null;
+  const ultAct = [n.actividad, ultEtapa].concat(I.map(i => i.fecha)).filter(Boolean).sort().pop() || h;
+  const dEtapa = Math.max(0, diffDays(ultEtapa, h)), dAct = Math.max(0, diffDays(ultAct, h));
+  const abierta = n.estado === 'Abierta', max = e.max || 7;
+  const estancada = abierta && dAct > max;
+  const proxVencida = abierta && !!n.proxima && !!n.fechaProx && n.fechaProx < h;
+  const sinProx = abierta && !n.proxima;
+  const correos = I.filter(i => /correo/i.test(i.tipo)), ult = correos[correos.length - 1];
+  const sinResponder = abierta && ult && /recibido/i.test(ult.tipo) ? Math.max(0, diffDays(ult.fecha, h)) : null;
+  const corpus = norm([n.notas, n.producto, c && c.notas, c && c.etiquetas].concat(I.slice(-15).map(i => i.detalle)).join(' '));
+  const senales = SENALES.filter(x => x.re.test(corpus));
+  const recientes = I.filter(i => diffDays(i.fecha, h) <= 14).length;
+  let salud = 100 - Math.min(55, dAct / max * 35) - (proxVencida ? 15 : 0) - (sinProx ? 10 : 0) - (sinResponder != null ? 15 : 0) + (recientes >= 2 ? 8 : 0) + (n.cierre && n.cierre >= h ? 4 : 0);
+  salud = Math.max(5, Math.min(100, Math.round(salud)));
+  const prob = abierta ? e.p * (0.55 + 0.45 * salud / 100) : (n.estado === 'Ganada' ? 1 : 0);
+  const urg = (sinResponder != null ? 4 : 0) + (proxVencida ? 3 : 0) + (estancada ? 2 : 0) + (n.fechaProx === h ? 2 : 0) + (n.cierre && n.cierre < h ? 1 : 0);
+  return { e, c, I, corpus, dEtapa, dAct, ultAct, estancada, proxVencida, sinProx, sinResponder, senales, salud, prob, abierta, prioridad: urg * 10 + Math.log10(1 + (n.valor || 0)) * prob * 3 };
+}
+// Próximos pasos sugeridos, del más urgente al menos urgente, cada uno con su botón de acción.
+function recomendaciones(n, a){
+  a = a || analizar(n);
+  if (!a.abierta) return [];
+  const R = [], idx = etapaIdx(n.etapa), nom = a.c && a.c.nombre ? String(a.c.nombre).split(' ')[0] : 'el cliente';
+  if (a.sinResponder != null) R.push({ ic: '⚡', c: '#F04461', t: nom + ' te escribió ' + (a.sinResponder ? 'hace ' + a.sinResponder + ' días' : 'hoy') + ' y no hay respuesta', d: 'Respóndele hoy: cada día sin respuesta enfría la venta.', acts: [['💬 Responder', 'wa:responder']] });
+  if (a.proxVencida) R.push({ ic: '⏰', c: '#F04461', t: 'Venció la próxima acción: «' + n.proxima + '» (' + fmt(n.fechaProx) + ')', d: 'Hazla hoy o reagéndala con una fecha realista.', acts: [['✅ Ya la hice', 'hecho-prox'], ['📅 Pasar a pasado mañana', 'reagendar']] });
+  if (a.estancada){
+    const muy = a.dAct > a.e.max * 3;
+    R.push({ ic: '🧊', c: '#3B9EFF', t: 'Estancada: ' + a.dAct + ' días sin movimiento en «' + n.etapa + '»', d: muy ? 'Envía un mensaje de cierre honesto («¿lo dejamos para más adelante?»): suele reactivar o aclarar. Si no responde, márcala perdida para mantener tu pipeline limpio.' : 'Reactívala aportando algo de valor: un video de la bici, una review o la invitación a la próxima salida en Pichijuán.', acts: muy ? [['💬 Mensaje de cierre', 'wa:cierre'], ['❌ Marcar perdida', 'perdida']] : [['💬 Reactivar', 'wa:reactivar']] });
+  }
+  if (a.sinProx) R.push({ ic: '🧭', c: '#A44DF0', t: 'Sin próxima acción', d: 'Define el siguiente paso con fecha: los negocios sin siguiente paso son los que se pierden.', acts: [['＋ Definir', 'prox']] });
+  if (/cotiz/.test(a.corpus) && idx >= 0 && idx < 3) R.push({ ic: '🔀', c: '#A44DF0', t: 'Parece que ya hay cotización', d: 'Las notas mencionan una cotización: ¿la paso a la etapa Cotización?', acts: [['➡️ Mover a Cotización', 'etapa:Cotización']] });
+  else if (/test ride|probo|vino a la tienda|visita/.test(a.corpus) && idx >= 0 && idx < 2) R.push({ ic: '🔀', c: '#20B8B0', t: 'Ya hubo prueba o visita', d: '¿La paso a la etapa Prueba / visita?', acts: [['➡️ Mover a Prueba', 'etapa:Prueba / visita']] });
+  if (n.cierre && n.cierre < hoy()) R.push({ ic: '📆', c: '#F5A524', t: 'La fecha de cierre esperada (' + fmt(n.cierre) + ') ya pasó', d: 'Actualízala para que tu pronóstico de ventas sea real.', acts: [['＋14 días', 'cierre14']] });
+  a.senales.slice(0, 3).forEach(x => R.push({ ic: x.ic, c: '#FF5C8A', t: x.t, d: x.a }));
+  if (idx >= 0) R.push({ ic: a.e.ic, c: a.e.c, t: 'Paso clave en «' + n.etapa + '»', d: a.e.tip, acts: a.e.acc });
+  return R.slice(0, 6);
+}
+function plantilla(tipo, n, a){
+  const nom = a.c && a.c.nombre ? ' ' + String(a.c.nombre).split(' ')[0] : '', prod = n.producto || 'la bici', yo = params()['Tu nombre (para el saludo)'] || 'Gonzalo';
+  return ({
+    primer: 'Hola' + nom + ' 👋 Soy ' + yo + ' de Blackline Puerto Varas. Vi tu interés en ' + prod + '. ¿Te acomoda pasar a verla o agendamos un test ride?',
+    responder: 'Hola' + nom + ', gracias por escribirnos 🙌 Te respondo por aquí para ayudarte más rápido con ' + prod + '.',
+    seguimiento: 'Hola' + nom + ', ¿alcanzaste a revisar la cotización de ' + prod + '? Si quieres te cuento las opciones de pago o resolvemos cualquier duda 😊',
+    reactivar: 'Hola' + nom + '! Me acordé de ti: ' + prod + ' sigue disponible y esta semana hay salida en Pichijuán. ¿Sigues interesado?',
+    cierre: 'Hola' + nom + ', no quiero molestarte 🙂 ¿Prefieres que lo dejemos para más adelante? Si sigues interesado en ' + prod + ', te reservo una unidad.',
+    oferta: 'Hola' + nom + ', si cerramos esta semana ' + prod + ' te incluyo la primera mantención sin costo. ¿Coordinamos la entrega?'
+  })[tipo] || '';
+}
+async function negAccion(acc, n, btn){
+  const a = analizar(n), c = a.c;
+  if (acc.startsWith('wa:')){
+    const txt = plantilla(acc.slice(3), n, a), tel = c ? String(c.telefono || '').replace(/[^\d+]/g, '').replace(/^\+/, '').replace(/^9(\d{8})$/, '569$1') : '';
+    if (tel) window.open('https://wa.me/' + tel + '?text=' + encodeURIComponent(txt), '_blank');
+    else if (c && c.email) window.open('mailto:' + c.email + '?subject=' + encodeURIComponent(n.producto || n.titulo) + '&body=' + encodeURIComponent(txt), '_blank');
+    else { try { await navigator.clipboard.writeText(txt); toast('Mensaje copiado: agrega el teléfono del contacto para abrir WhatsApp directo'); } catch(e){ toast(txt); } }
+    return negRegistrar(n, '💬 Mensaje', 'Mensaje enviado: ' + txt.slice(0, 80) + '…', 'Contactado');
+  }
+  if (acc.startsWith('etapa:')) return moverEtapa(n, acc.slice(6));
+  if (acc === 'perdida') return openPerdida(n);
+  if (acc === 'prox' || acc === 'reagendar' || acc === 'cierre14' || acc === 'hecho-prox'){
+    if (acc === 'prox') return openNegocio(n, { foco: 'prox' });
+    if (btn) btn.disabled = true;
+    const cambios = acc === 'reagendar' ? { fechaProx: addDays(hoy(), 2) } : acc === 'cierre14' ? { cierre: addDays(hoy(), 14) } : { proxima: '', fechaProx: '' };
+    try {
+      if (acc === 'hecho-prox') await apiX('negocioNota', { id: n.id, texto: '✅ ' + n.proxima, tipo: '✅ Acción' });
+      await apiX('negocio', { negocio: Object.assign({ id: n.id }, cambios) }); await loadNeg(true);
+      toast(acc === 'hecho-prox' ? '✅ Registrado. Define el siguiente paso' : 'Actualizado ✓');
+      const n2 = negocios().find(x => x.id === n.id);
+      if (acc === 'hecho-prox' && n2) return openNegocio(n2, { foco: 'prox' });
+      refrescarNeg(n2);
+    } catch(e){ if (btn) btn.disabled = false; toast('No se pudo: ' + e.message); }
+    return;
+  }
+  if (acc === 'testride'){
+    const d = addDays(hoy(), 2).replace(/-/g, '');
+    window.open('https://calendar.google.com/calendar/render?action=TEMPLATE&text=' + encodeURIComponent('🚵 Test ride ' + (c ? c.nombre : n.titulo)) + '&dates=' + d + 'T110000/' + d + 'T120000&ctz=America/Santiago&details=' + encodeURIComponent(negTag(n)), '_blank');
+    return toast('Ajusta día y hora en Calendar y guarda. Al hacerlo, toca «🚵 Hizo test ride» aquí.');
+  }
+  if (acc === 'tarea:cotizacion') return openAdd({ texto: 'Enviar cotización ' + (n.producto || '') + ' a ' + (c ? c.nombre : n.titulo) + ' mañana', notas: negTag(n) });
+}
+function refrescarNeg(n){ if ($('#layer').innerHTML && n && $('#ng_root') && $('#ng_root').dataset.id === n.id) openNegocio(n); else render(); }
+async function negRegistrar(n, tipo, texto, etapaSug){
+  try {
+    await apiX('negocioNota', { id: n.id, texto, tipo });
+    const iS = etapaIdx(etapaSug), iA = etapaIdx(n.etapa);
+    if (etapaSug && n.estado === 'Abierta' && iA >= 0 && iS > iA){ await apiX('negocio', { negocio: { id: n.id, etapa: etapaSug } }); toast('📝 Registrado · ➡️ avanzó a ' + etapaSug); }
+    else toast('📝 Registrado');
+    await Promise.all([loadNeg(true), loadBase(true)]);
+    refrescarNeg(negocios().find(x => x.id === n.id));
+  } catch(e){ toast('No se pudo registrar: ' + e.message); }
+}
+async function moverEtapa(n, k){
+  if (k === 'Perdida') return openPerdida(n);
+  if (k === n.etapa) return;
+  const antes = n.etapa; n.etapa = k; if (k === 'Ganada') n.estado = 'Ganada';
+  refrescarNeg(n);
+  try {
+    await apiX('negocio', { negocio: { id: n.id, etapa: k } });
+    if (k === 'Ganada'){ confetti(140); vibrar([60, 40, 120]); toast('🏆 ¡Venta ganada! ' + clp(n.valor)); }
+    else toast((etapaDe(n).ic || '') + ' Movida a ' + k);
+    await Promise.all([loadNeg(true), loadBase(true)]);
+    const n2 = negocios().find(x => x.id === n.id);
+    if (k === 'Ganada' && n2) return openGanada(n2);
+    refrescarNeg(n2);
+  } catch(e){ n.etapa = antes; refrescarNeg(n); toast('No se pudo mover: ' + e.message); }
+}
+function openGanada(n){
+  const a = analizar(n), nom = a.c ? a.c.nombre : 'el cliente';
+  sheet('<h3>🏆 ¡Venta ganada!</h3><div class="hint" style="font-size:15px">' + esc(n.titulo) + ' · <b>' + clp(n.valor) + '</b></div>' +
+    '<div class="card"><b>Postventa = próxima venta</b><div class="hint">Un cliente feliz vuelve y recomienda. Agenda un contacto para ver cómo le va con su bici.</div><div class="btns"><button class="btn" id="gw1">📅 Llamar a ' + esc(String(nom).split(' ')[0]) + ' en 1 semana</button></div><div class="btns" style="margin-top:8px"><button class="btn sec" id="gw2">🔧 Recordar 1ª mantención (2 meses)</button></div></div>');
+  $('#gw1').onclick = () => openAdd({ texto: 'Llamar a ' + nom + ' para ver cómo le va con ' + (n.producto || 'su bici') + ' en 7 días', notas: negTag(n) });
+  $('#gw2').onclick = () => openAdd({ texto: 'Ofrecer primera mantención a ' + nom + ' ' + addDays(hoy(), 60).split('-').reverse().slice(0, 2).join('/'), notas: negTag(n) });
+}
+function openPerdida(n){
+  sheet('<h3>❌ Marcar como perdida</h3><div class="hint">' + esc(n.titulo) + '. Saber por qué se pierden las ventas es lo que más ayuda a vender mejor.</div><label class="l">Motivo</label>' + pills('pd_m', MOTIVOS.map(x => ({ v: x, t: x })), '') +
+    '<label class="l">Comentario (opcional)</label><input type="text" id="pd_c" placeholder="Ej.: compró una Trek usada"><div class="btns"><button class="btn sec" id="pd_no">Cancelar</button><button class="btn" id="pd_ok" style="background:#F04461">Marcar perdida</button></div>');
+  bindPills('pd_m');
+  $('#pd_no').onclick = () => openNegocio(n);
+  $('#pd_ok').onclick = async () => {
+    const m = val('pd_m'); if (!m){ toast('Elige un motivo'); return; }
+    $('#pd_ok').disabled = true;
+    try {
+      const com = $('#pd_c').value.trim();
+      await apiX('negocio', { negocio: { id: n.id, etapa: 'Perdida', motivo: m + (com ? ' · ' + com : '') } });
+      toast('Marcada perdida. ¡A la próxima! 💪'); closeSheet(); await Promise.all([loadNeg(true), loadBase(true)]); render();
+    } catch(e){ $('#pd_ok').disabled = false; toast('No se pudo: ' + e.message); }
+  };
+}
+// Métricas del tablero: pipeline, pronóstico ponderado, tasa de cierre, ciclo de venta, ticket y conversión por etapa.
+function metricasNeg(){
+  const h = hoy(), N = negocios(), A = abiertos(), mes = h.slice(0, 7);
+  const fechaFin = n => { const hi = historialDe(n); return hi.length ? hi[hi.length - 1].f : n.actividad; };
+  const ganadas = N.filter(n => n.estado === 'Ganada'), perdidas = N.filter(n => n.estado === 'Perdida');
+  const g90 = ganadas.filter(n => diffDays(fechaFin(n), h) <= 90), p90 = perdidas.filter(n => diffDays(fechaFin(n), h) <= 90);
+  const gMes = ganadas.filter(n => (fechaFin(n) || '').slice(0, 7) === mes);
+  const an = A.map(n => ({ n, a: analizar(n) }));
+  const ciclo = ganadas.map(n => diffDays(n.creada || fechaFin(n), fechaFin(n))).filter(x => x >= 0);
+  const alcanzo = ETAPAS.map((e, i) => N.filter(n => n.estado === 'Ganada' || historialDe(n).some(x => etapaIdx(x.e) >= i) || etapaIdx(n.etapa) >= i).length);
+  const meses = [];
+  for (let i = 5; i >= 0; i--){ const d = new Date(); d.setDate(1); d.setMonth(d.getMonth() - i); const k = iso(d).slice(0, 7); meses.push({ k, nom: MESES[d.getMonth()], v: ganadas.filter(n => (fechaFin(n) || '').slice(0, 7) === k).reduce((s, n) => s + (n.valor || 0), 0) }); }
+  const motivos = {}; perdidas.forEach(n => { const m = String(n.motivo || 'Sin motivo').split(' · ')[0]; motivos[m] = (motivos[m] || 0) + 1; });
+  return {
+    an, abiertoV: A.reduce((s, n) => s + (n.valor || 0), 0), ponderado: an.reduce((s, x) => s + (x.n.valor || 0) * x.a.prob, 0),
+    gMes, gMesV: gMes.reduce((s, n) => s + (n.valor || 0), 0), tasa: g90.length + p90.length ? g90.length / (g90.length + p90.length) : null,
+    ciclo: ciclo.length ? Math.round(ciclo.reduce((s, x) => s + x, 0) / ciclo.length) : null,
+    ticket: ganadas.length ? ganadas.reduce((s, n) => s + (n.valor || 0), 0) / ganadas.length : null,
+    estancadas: an.filter(x => x.a.estancada), alcanzo, meses, motivos
+  };
+}
+// Contactos con señales de compra y sin negociación abierta.
+function oportunidades(){
+  if (!S.base) return [];
+  const con = new Set(abiertos().map(n => n.contacto)), I = S.base.interacciones || [], h = hoy();
+  return contactos().filter(c => ['Cliente', 'Por clasificar'].includes(c.tipo) && !con.has(c.id)).map(c => {
+    const rec = I.filter(i => i.id === c.id && diffDays(i.fecha, h) <= 30);
+    return { c, rec, compra: /precio|cotiz|comprar|interes|test|probar|disponib|cuota|valor|reserv|talla|levo|bici/.test(norm([c.notas, c.etiquetas].concat(rec.map(i => i.detalle)).join(' '))) };
+  }).filter(x => x.compra && x.rec.length).slice(0, 5);
+}
+function dealCard(n, a, compact){
+  const e = a.e, c = a.c, rec = recomendaciones(n, a)[0];
+  return '<div class="deal" data-neg="' + esc(n.id) + '"><div class="row" style="gap:10px;align-items:flex-start"><span class="hd" style="background:' + saludCol(a.salud) + ';margin-top:6px"></span><div class="grow"><b style="font-size:15px">' + esc(n.titulo) + '</b>' +
+    '<div class="meta"><span class="tag" style="background:' + hexToRgba(e.c, .15) + ';color:' + e.c + '">' + e.ic + ' ' + esc(n.etapa) + '</span>' + (n.valor ? '<span class="tag">💰 ' + clpCorto(n.valor) + '</span>' : '') + (c ? '<span class="tag">👤 ' + esc(String(c.nombre || c.email).split(' ').slice(0, 2).join(' ')) + '</span>' : '') +
+    (a.abierta ? '<span class="tag ' + (a.estancada ? 'bad' : '') + '">⏱ ' + a.dEtapa + ' d en etapa</span>' : '') + '</div>' +
+    (!compact && a.abierta && n.proxima ? '<div class="hint" style="margin:5px 0 0">➡️ ' + esc(n.proxima) + (n.fechaProx ? ' · ' + fmtRel(n.fechaProx) : '') + '</div>' : '') +
+    (rec ? '<div class="why">' + rec.ic + ' ' + esc(rec.t) + '</div>' : '') + '</div>' +
+    (a.abierta ? '<div class="ct-last">' + Math.round(a.prob * 100) + '%<br><small>prob.</small></div>' : '') + '</div></div>';
+}
+function viewNegocios(){
+  if (S.extInactivo || extNivel() < 5){
+    $('#view').innerHTML = '<div class="hero" style="background:linear-gradient(135deg,#FF8A4C,#FF5C8A)"><div class="hi">🤝 Negociaciones</div><div class="big">Tu pipeline de ventas, con un asistente que te dice qué hacer en cada negocio</div><div class="hint" style="color:#fff">Embudo, etapas, pronóstico, tasa de cierre y sugerencias para destrabar los negocios estancados, conectado con tus contactos, correos y tareas.</div></div>' +
+      '<div class="btns"><button class="btn" id="ngAct">' + (S.extInactivo ? 'Activar funciones extra' : '⬆️ Actualizar el script (2 min)') + '</button></div>';
+    $('#ngAct').onclick = showExtrasSetup; return;
+  }
+  if (!S.neg){ $('#view').innerHTML = '<div class="empty"><span class="spin"></span>Cargando tus negociaciones…</div>'; Promise.all([loadNeg(true), loadBase(false)]).then(() => { if (S.tab === 'negocios') render(); }); return; }
+  const vistas = [['resumen', '📊 Resumen'], ['pipeline', '▦ Pipeline'], ['lista', '☰ Lista']];
+  let html = '<div class="views" style="margin-top:4px">' + vistas.map(v => '<button class="' + (S.nv === v[0] ? 'on' : '') + '" data-nv="' + v[0] + '">' + v[1] + '</button>').join('') + '</div>';
+  html += '<div class="btns" style="margin-top:10px"><button class="btn" id="ngNew">＋ Nueva negociación</button></div>';
+  if (S.nv === 'pipeline') html += pipelineHTML(); else if (S.nv === 'lista') html += listaNegHTML(); else html += resumenNegHTML();
+  $('#view').innerHTML = html;
+  $$('[data-nv]').forEach(b => b.onclick = () => { S.nv = LS.nv = b.dataset.nv; viewNegocios(); });
+  $('#ngNew').onclick = () => openNegocio(null);
+  $$('[data-neg]').forEach(b => b.onclick = () => openNegocio(negocios().find(x => x.id === b.dataset.neg)));
+  $$('[data-nmv]').forEach(b => b.onclick = e => { e.stopPropagation(); moverEtapa(negocios().find(x => x.id === b.dataset.nmv), b.dataset.k); });
+  $$('[data-nf]').forEach(b => b.onclick = () => { S.nf = b.dataset.nf; viewNegocios(); });
+  $$('[data-opc]').forEach(b => b.onclick = () => openNegocio(null, { contacto: b.dataset.opc }));
+  const q = $('#nq'); if (q) q.oninput = () => { S.nq = q.value; const pos = q.selectionStart; viewNegocios(); const q2 = $('#nq'); q2.focus(); q2.setSelectionRange(pos, pos); };
+}
+function resumenNegHTML(){
+  const m = metricasNeg(), A = m.an;
+  if (!negocios().length) return '<div class="card"><div class="empty">🤝 Aún no hay negociaciones.<br>Crea la primera con el botón de arriba, desde la ficha de un contacto o desde las oportunidades que detecte la app.</div></div>' + oportunidadesHTML();
+  const kp = (v, l, c) => '<div class="kpi" style="--c:' + c + '"><b>' + v + '</b><span>' + l + '</span></div>';
+  let html = '<div class="hero" style="background:linear-gradient(135deg,#FF8A4C,#FF5C8A 60%,#A44DF0)"><div class="hi">🤝 Pipeline abierto · ' + A.length + ' negocios</div><div class="big" style="font-size:30px;margin-bottom:6px">' + clp(m.abiertoV) + '</div>' +
+    '<div class="hstats" style="position:relative;z-index:1"><div class="hstat"><b>' + clpCorto(m.ponderado) + '</b><span>pronóstico ponderado</span></div><div class="hstat"><b>' + clpCorto(m.gMesV) + '</b><span>ganado este mes (' + m.gMes.length + ')</span></div></div></div>';
+  html += '<div class="kpis">' + kp(m.tasa == null ? '–' : Math.round(m.tasa * 100) + '%', '🎯 tasa de cierre (90 d)', '#13B386') + kp(m.ciclo == null ? '–' : m.ciclo + ' d', '⏱ ciclo de venta', '#3B9EFF') + kp(m.ticket == null ? '–' : clpCorto(m.ticket), '🧾 ticket promedio', '#A44DF0') + '</div>';
+  const top = A.slice().sort((x, y) => y.a.prioridad - x.a.prioridad).slice(0, 3);
+  if (top.length) html += card('Prioridades de hoy', '🎯', top.map(x => dealCard(x.n, x.a)).join(''), m.estancadas.length ? '🧊 ' + m.estancadas.length + ' estancadas' : '');
+  // embudo
+  const maxC = Math.max(1, ...ETAPAS.map(e => A.filter(x => x.n.etapa === e.k).length));
+  html += card('Embudo de ventas', '🔻', '<div class="fun">' + ETAPAS.map((e, i) => {
+    const L = A.filter(x => x.n.etapa === e.k), v = L.reduce((s, x) => s + (x.n.valor || 0), 0), w = 46 + 54 * (1 - i / ETAPAS.length) * (0.35 + 0.65 * L.length / maxC);
+    const cv = i < ETAPAS.length - 1 && m.alcanzo[i] ? Math.round(m.alcanzo[i + 1] / m.alcanzo[i] * 100) : null;
+    return '<div class="fr" style="width:' + w.toFixed(0) + '%;background:' + e.c + '"><span>' + e.ic + ' ' + e.corto + '</span><span>' + L.length + ' · ' + clpCorto(v) + '</span></div>' + (cv != null ? '<div class="cv">↓ ' + cv + '% avanza</div>' : '');
+  }).join('') + '<div class="fr" style="width:40%;background:#13B386;justify-content:center">🏆 ' + negocios().filter(n => n.estado === 'Ganada').length + ' ganadas</div></div><div class="hint">El % muestra cuántos negocios que llegaron a una etapa pasaron a la siguiente (histórico).</div>');
+  const mx = Math.max(1, ...m.meses.map(x => x.v));
+  html += card('Ventas ganadas · 6 meses', '📈', '<div class="mbar">' + m.meses.map(x => '<div>' + (x.v ? clpCorto(x.v) : '') + '<i style="height:' + Math.max(2, x.v / mx * 80) + '%"></i>' + x.nom + '</div>').join('') + '</div>');
+  const mot = Object.entries(m.motivos).sort((a, b) => b[1] - a[1]);
+  if (mot.length){ const mm = Math.max(...mot.map(x => x[1])); html += card('Por qué se pierden', '❌', mot.map(([k, v]) => '<div class="hb"><div class="n"><span>' + esc(k) + '</span><span>' + v + '</span></div><div class="b"><i style="width:' + (v / mm * 100) + '%;background:#F04461"></i></div></div>').join('')); }
+  return html + oportunidadesHTML();
+}
+function oportunidadesHTML(){
+  const O = oportunidades(); if (!O.length) return '';
+  return card('Oportunidades detectadas', '💡', O.map(x => '<div class="sug"><span class="ic">' + avatar(x.c, 38) + '</span><div class="grow"><div class="tt">' + esc(x.c.nombre || x.c.email) + '</div><div class="st">' + esc((x.rec[0] && x.rec[0].detalle) || x.c.etiquetas || '') + '</div></div><button class="btn sm" data-opc="' + esc(x.c.id) + '">＋ Negocio</button></div>').join('') + '<div class="hint">Contactos con señales de compra (precio, test ride, cuotas…) en los últimos 30 días y sin negociación abierta.</div>');
+}
+function pipelineHTML(){
+  const h = hoy(), cols = ETAPAS.concat([ETAPA_FIN.Ganada]);
+  return '<div class="board">' + cols.map((e, i) => {
+    const L = negocios().filter(n => n.etapa === e.k && (e.k !== 'Ganada' || diffDays(historialDe(n).slice(-1)[0] ? historialDe(n).slice(-1)[0].f : h, h) <= 30));
+    const v = L.reduce((s, n) => s + (n.valor || 0), 0);
+    return '<div class="col"><h4><span>' + e.ic + ' ' + esc(e.k) + '</span><span style="color:var(--muted)">' + L.length + ' · ' + clpCorto(v) + '</span></h4>' +
+      (L.length ? L.map(n => { const a = analizar(n);
+        return '<div class="kc" style="--c:' + (a.estancada ? '#F04461' : e.c) + '" data-neg="' + esc(n.id) + '"><div class="row" style="gap:6px"><span class="hd" style="background:' + saludCol(a.salud) + '"></span><div class="t grow">' + esc(n.titulo) + '</div></div>' +
+          '<div class="meta">' + (n.valor ? '<span class="tag">💰 ' + clpCorto(n.valor) + '</span>' : '') + (a.abierta ? '<span class="tag ' + (a.estancada ? 'bad' : '') + '">⏱ ' + a.dEtapa + ' d</span>' : '') + (n.proxima && a.abierta ? '<span class="tag ' + (a.proxVencida ? 'bad' : 'info') + '">➡️ ' + esc(String(n.proxima).slice(0, 22)) + '</span>' : '') + '</div>' +
+          (i < ETAPAS.length ? '<div class="mv">' + (i > 0 ? '<button data-nmv="' + esc(n.id) + '" data-k="' + esc(ETAPAS[i - 1].k) + '">◀</button>' : '<span></span>') + '<button data-nmv="' + esc(n.id) + '" data-k="' + esc(i < ETAPAS.length - 1 ? ETAPAS[i + 1].k : 'Ganada') + '">' + (i < ETAPAS.length - 1 ? ETAPAS[i + 1].corto + ' ▶' : '🏆 Ganada') + '</button></div>' : '') + '</div>';
+      }).join('') : '<div class="hint" style="text-align:center">Vacío</div>') + '</div>';
+  }).join('') + '</div><div class="hint">Desliza para ver todas las etapas. Borde rojo = estancada. El punto de color es la salud del negocio.</div>';
+}
+function listaNegHTML(){
+  const q = norm(S.nq), filtros = [['abiertas', '🔥 Abiertas'], ['estancadas', '🧊 Estancadas'], ['ganadas', '🏆 Ganadas'], ['perdidas', '❌ Perdidas'], ['todas', '✨ Todas']];
+  let L = negocios().map(n => ({ n, a: analizar(n) }));
+  L = L.filter(x => S.nf === 'todas' ? true : S.nf === 'abiertas' ? x.a.abierta : S.nf === 'estancadas' ? x.a.estancada : S.nf === 'ganadas' ? x.n.estado === 'Ganada' : x.n.estado === 'Perdida');
+  if (q) L = L.filter(x => norm([x.n.titulo, x.n.producto, x.n.notas, x.a.c && x.a.c.nombre].join(' ')).includes(q));
+  L.sort((x, y) => y.a.prioridad - x.a.prioridad || (y.n.valor || 0) - (x.n.valor || 0));
+  return '<input type="text" id="nq" style="margin-top:12px" placeholder="🔎 Buscar cliente, producto, nota…" value="' + esc(S.nq) + '">' +
+    '<div class="filters" style="margin-top:8px">' + filtros.map(f => '<button class="pill ' + (S.nf === f[0] ? 'on' : '') + '" data-nf="' + f[0] + '">' + f[1] + '</button>').join('') + '</div>' +
+    '<div class="card">' + (L.length ? L.map(x => dealCard(x.n, x.a)).join('') : '<div class="empty">Nada con este filtro 🔍</div>') + '</div><div class="hint">Ordenadas por prioridad: primero lo urgente (sin responder, acción vencida, estancadas) y lo de mayor valor.</div>';
+}
+function openNegocio(n, opt){
+  opt = opt || {};
+  const nuevo = !n, h = hoy();
+  if (nuevo){
+    const c = opt.contacto ? contactoPorId(opt.contacto) : null;
+    n = { id: '', titulo: c ? (c.nombre || c.email) + (c.etiquetas ? ' – ' + String(c.etiquetas).split(',')[0] : '') : '', contacto: c ? c.id : '', etapa: 'Nuevo', valor: 0, producto: c && c.etiquetas ? String(c.etiquetas).split(',')[0] : '', cierre: addDays(h, 14), proxima: 'Contactar', fechaProx: h, notas: '', estado: 'Abierta' };
+  }
+  const a = nuevo ? null : analizar(n), e = etapaDe(n), C = contactos().slice().sort((x, y) => String(x.nombre).localeCompare(String(y.nombre)));
+  const R = nuevo ? [] : recomendaciones(n, a);
+  const I = nuevo ? [] : a.I.slice().reverse();
+  const icTl = t => /correo/i.test(t) ? '✉️' : /reuni/i.test(t) ? '📅' : /tarea|acci/i.test(t) ? '✅' : /venta/i.test(t) ? '🏆' : /negoci/i.test(t) ? '🤝' : String(t || '').match(/\p{Extended_Pictographic}/u) ? String(t).match(/\p{Extended_Pictographic}/u)[0] : '📝';
+  const campos = '<label class="l">Negociación</label><input type="text" id="ng_t" value="' + esc(n.titulo) + '" placeholder="Ej.: Juan Pérez – Turbo Levo">' +
+    '<label class="l">Cliente</label><select id="ng_c"><option value="">— sin contacto —</option>' + C.map(c => '<option value="' + esc(c.id) + '"' + (c.id === n.contacto ? ' selected' : '') + '>' + esc(c.nombre || c.email) + (c.empresa ? ' · ' + esc(c.empresa) : '') + '</option>').join('') + '</select>' +
+    '<label class="l">Producto / interés</label><input type="text" id="ng_p" value="' + esc(n.producto) + '" placeholder="Ej.: Turbo Levo Comp talla M">' +
+    '<label class="l">Valor estimado ($)</label><input type="text" id="ng_v" inputmode="numeric" value="' + (n.valor ? Math.round(n.valor).toLocaleString('es-CL') : '') + '" placeholder="Ej.: 6.990.000">' +
+    '<label class="l">Cierre esperado</label><input type="date" id="ng_ci" value="' + esc(n.cierre) + '">' +
+    '<label class="l">Notas</label><textarea class="note" id="ng_n" placeholder="Lo que sabes: uso, presupuesto, dudas, competencia…">' + esc(n.notas) + '</textarea>';
+  const prox = '<label class="l">➡️ Próxima acción</label><input type="text" id="ng_px" value="' + esc(n.proxima) + '" placeholder="Ej.: Llamar para agendar test ride">' +
+    '<div class="row" style="margin-top:8px"><input type="date" id="ng_pf" value="' + esc(n.fechaProx) + '" style="flex:1"><div class="seg" style="flex:none">' + [['Hoy', 0], ['Mañ.', 1], ['+3', 3], ['+7', 7]].map(x => '<button type="button" class="pill" data-pfd="' + x[1] + '" style="padding:8px 10px">' + x[0] + '</button>').join('') + '</div></div>' +
+    '<label class="row" style="margin-top:10px;gap:8px;font-size:14px;font-weight:600"><input type="checkbox" id="ng_tk" ' + (nuevo ? 'checked' : '') + ' style="width:20px;height:20px"> Crear también una tarea con recordatorio</label>';
+  sheet('<div id="ng_root" data-id="' + esc(n.id) + '"></div>' + (nuevo ? '<h3>🤝 Nueva negociación</h3><div class="hint">Elige el cliente y lo que quiere comprar. La app hará el seguimiento y te sugerirá los pasos.</div><label class="l">Etapa</label>' + pills('ng_e', ETAPAS.map(x => ({ v: x.k, t: x.ic + ' ' + x.corto })), opt.etapa || 'Nuevo') + campos + prox :
+    '<h3>' + esc(n.titulo) + '</h3><div class="hint" style="margin:2px 0 0">' + (a.c ? '<a href="#" id="ng_cto" style="color:var(--accent-ink);font-weight:700;text-decoration:none">👤 ' + esc(a.c.nombre || a.c.email) + '</a> · ' : '') + (n.valor ? '💰 <b>' + clp(n.valor) + '</b> · ' : '') + (n.producto ? esc(n.producto) : '') + '</div>' +
+    '<div class="stages">' + ETAPAS.map((x, i) => '<button style="--c:' + x.c + '" class="' + (x.k === n.etapa ? 'on' : (etapaIdx(n.etapa) > i || n.estado === 'Ganada') ? 'ok' : '') + '" data-ngk="' + esc(x.k) + '">' + x.corto + '</button>').join('') + '</div>' +
+    (a.abierta ? '<div class="btns" style="margin-top:4px"><button class="btn sm" id="ng_win" style="background:var(--grad-green)">🏆 Ganada</button><button class="btn sm sec" id="ng_lose">❌ Perdida</button></div>'
+      : '<div class="card" style="background:' + hexToRgba(e.c, .12) + '"><b>' + e.ic + ' ' + esc(n.estado) + '</b>' + (n.motivo ? '<div class="hint">Motivo: ' + esc(n.motivo) + '</div>' : '') + '<button class="btn sm sec" id="ng_reopen" style="margin-top:8px">↩️ Reabrir</button></div>') +
+    (a.abierta ? '<div class="kpis" style="margin-top:12px"><div class="kpi" style="--c:' + saludCol(a.salud) + '"><b>' + a.salud + '</b><span>salud</span></div><div class="kpi" style="--c:' + e.c + '"><b>' + Math.round(a.prob * 100) + '%</b><span>prob. de cierre</span></div><div class="kpi" style="--c:' + (a.estancada ? '#F04461' : '#3B9EFF') + '"><b>' + a.dAct + ' d</b><span>sin actividad</span></div></div>' : '') +
+    (R.length ? '<label class="l">🧠 Qué hacer ahora</label><div class="card" style="margin:0">' + R.map((r, i) => '<div class="rec"><span class="ic" style="background:' + hexToRgba(r.c, .15) + '">' + r.ic + '</span><div class="grow"><div style="font-weight:750;font-size:14px;line-height:1.35">' + esc(r.t) + '</div><div class="hint" style="margin:3px 0 0">' + esc(r.d) + '</div>' + (r.acts ? '<div class="acts" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">' + r.acts.map(x => '<button class="btn sm sec" data-nga="' + esc(x[1]) + '">' + esc(x[0]) + '</button>').join('') + '</div>' : '') + '</div></div>').join('') + '</div>' : '') +
+    '<label class="l">📝 Registrar actividad</label><div class="chips2">' + ACTIVIDADES.map((x, i) => '<button data-nact="' + i + '">' + x[0] + '</button>').join('') + '</div>' +
+    '<div class="smart" style="margin-top:6px"><input type="text" id="ng_nota" placeholder="Qué pasó (pidió cuotas, viene el sábado…)" autocomplete="off"><button class="mic" id="ng_nota_ok" aria-label="Registrar">＋</button></div>' +
+    prox + '<details class="more"><summary>✏️ Editar datos</summary>' + campos + '</details>' +
+    '<label class="l">🕑 Historial</label><div class="card" style="margin-top:0">' + (I.length ? I.slice(0, 30).map(i => '<div class="tl"><span class="ic">' + icTl(i.tipo) + '</span><div class="grow"><div style="font-size:14px;font-weight:650;line-height:1.35">' + esc(i.detalle) + '</div><div class="hint" style="margin:2px 0 0">' + esc(i.tipo) + ' · ' + (i.fecha ? fmtRel(i.fecha) : '') + '</div></div></div>').join('') : '<div class="hint">Aquí aparecen las actividades, correos y cambios de etapa.</div>') + '</div>') +
+    '<div class="btns"><button class="btn" id="ng_ok">' + (nuevo ? 'Crear negociación' : 'Guardar') + '</button></div>');
+  if (nuevo) bindPills('ng_e');
+  $$('[data-pfd]').forEach(b => b.onclick = () => { $('#ng_pf').value = addDays(h, +b.dataset.pfd); });
+  const vIn = $('#ng_v'); if (vIn) vIn.oninput = () => { const d = vIn.value.replace(/\D/g, ''); vIn.value = d ? (+d).toLocaleString('es-CL') : ''; };
+  const cSel = $('#ng_c'); if (cSel && nuevo) cSel.onchange = () => { const c = contactoPorId(cSel.value); if (c && !$('#ng_t').value.trim()) $('#ng_t').value = (c.nombre || c.email) + ($('#ng_p').value ? ' – ' + $('#ng_p').value : ''); };
+  if (opt.foco === 'prox') setTimeout(() => { const x = $('#ng_px'); if (x){ x.scrollIntoView({ block: 'center' }); x.focus(); } }, 120);
+  else if (nuevo) setTimeout(() => $('#ng_t').focus(), 100);
+  if (!nuevo){
+    const ct = $('#ng_cto'); if (ct) ct.onclick = ev => { ev.preventDefault(); openContacto(a.c); };
+    $$('[data-ngk]').forEach(b => b.onclick = () => moverEtapa(n, b.dataset.ngk));
+    const w = $('#ng_win'); if (w) w.onclick = () => moverEtapa(n, 'Ganada');
+    const l = $('#ng_lose'); if (l) l.onclick = () => openPerdida(n);
+    const ro = $('#ng_reopen'); if (ro) ro.onclick = () => moverEtapa(n, 'Negociación');
+    $$('[data-nga]').forEach(b => b.onclick = () => negAccion(b.dataset.nga, n, b));
+    $$('[data-nact]').forEach(b => b.onclick = () => { const x = ACTIVIDADES[+b.dataset.nact], extra = $('#ng_nota').value.trim(); b.disabled = true; negRegistrar(n, x[1], x[0].replace(/^\S+\s/, '') + (extra ? ': ' + extra : ''), x[2]); });
+    const nota = () => { const t = $('#ng_nota').value.trim(); if (!t) return; $('#ng_nota_ok').disabled = true; negRegistrar(n, '📝 Nota', t); };
+    $('#ng_nota_ok').onclick = nota; $('#ng_nota').onkeydown = ev => { if (ev.key === 'Enter') nota(); };
+  }
+  $('#ng_ok').onclick = async () => {
+    const d = { id: n.id || undefined, titulo: $('#ng_t').value.trim(), contacto: $('#ng_c').value, producto: $('#ng_p').value.trim(), valor: +($('#ng_v').value.replace(/\D/g, '')) || 0, cierre: $('#ng_ci').value, notas: $('#ng_n').value.trim(), proxima: $('#ng_px').value.trim(), fechaProx: $('#ng_pf').value };
+    if (nuevo) d.etapa = val('ng_e') || 'Nuevo';
+    if (!d.titulo){ const c = contactoPorId(d.contacto); d.titulo = c ? (c.nombre || c.email) + (d.producto ? ' – ' + d.producto : '') : d.producto; }
+    if (!d.titulo){ toast('Ponle un nombre o elige un cliente'); return; }
+    $('#ng_ok').disabled = true;
+    try {
+      const r = await apiX('negocio', { negocio: d });
+      if ($('#ng_tk') && $('#ng_tk').checked && d.proxima) await api('add', { tarea: { tarea: '🤝 ' + d.proxima + ' – ' + d.titulo, area: 'Trabajo', categoria: (S.data.config.categorias.find(c => c.nombre === 'Ventas') || {}).nombre || '', proyecto: '', limite: d.fechaProx || hoy(), urgente: 'No', importante: 'Sí', tamano: 'Pequeña', notas: '🤝 ' + d.titulo + ' (' + r.id + ')', estado: 'Pendiente' } });
+      toast(nuevo ? '🤝 Negociación creada' : 'Guardado ✓'); closeSheet();
+      await Promise.all([loadNeg(true), loadBase(true)]); if (S.mutado) load(); else render();
+    } catch(e){ $('#ng_ok').disabled = false; toast('No se pudo guardar: ' + e.message); }
+  };
 }
 
 /* ---------- vista: Hoy ---------- */
@@ -1053,7 +1431,7 @@ function viewHabitos(){
       '<div class="bar" style="margin-top:8px"><i style="width:' + Math.min(100, pct(hb.pct)) + '%;background:' + col + '"></i></div>' +
       '<div class="heat">' + heat + '</div></div>';
   }).join('') : '<div class="empty">Aún no hay hábitos cargados en la hoja.</div>') + '</div>';
-  $('#view').innerHTML = html;
+  $('#view').innerHTML = '<div class="views" style="grid-template-columns:1fr 1fr;margin-top:4px">' + [['habitos', '💪 Hábitos'], ['semana', '🗓️ Semana']].map(v => '<button class="' + (S.subH === v[0] ? 'on' : '') + '" data-subh="' + v[0] + '">' + v[1] + '</button>').join('') + '</div>' + html; bindSubH();
   const hm = $('#hMes'); if (hm) hm.onclick = async () => {
     hm.disabled = true;
     try { const r = await apiX('mesHabitos'); toast(r.cambiado ? '💪 ¡Listo! Hábitos de ' + r.mes : 'Ya estás en el mes actual'); await load(); }
@@ -1066,6 +1444,8 @@ function viewHabitos(){
     catch(e){ b.disabled = false; toast('No se pudo guardar: ' + e.message); }
   });
 }
+
+function bindSubH(){ $$('[data-subh]').forEach(b => b.onclick = () => { S.subH = b.dataset.subh; render(); window.scrollTo(0, 0); }); }
 
 /* ---------- vista: Semana ---------- */
 function viewSemana(){
@@ -1090,7 +1470,7 @@ function viewSemana(){
       '<div style="display:flex;height:8px;border-radius:99px;overflow:hidden"><i style="width:' + (w.trabajo/tot*100) + '%;background:var(--trabajo)"></i><i style="width:' + (w.personal/tot*100) + '%;background:var(--personal)"></i></div>' +
       (w.bien ? '<div class="hint">🙂 ' + esc(w.bien) + '</div>' : '') + (w.mal ? '<div class="hint">⚠️ ' + esc(w.mal) + '</div>' : '') + '</div>';
   }).join(''));
-  $('#view').innerHTML = html;
+  $('#view').innerHTML = '<div class="views" style="grid-template-columns:1fr 1fr;margin-top:4px">' + [['habitos', '💪 Hábitos'], ['semana', '🗓️ Semana']].map(v => '<button class="' + (S.subH === v[0] ? 'on' : '') + '" data-subh="' + v[0] + '">' + v[1] + '</button>').join('') + '</div>' + html; bindSubH();
   $$('[data-chk]').forEach(b => b.onclick = async () => {
     const v = b.dataset.v === '1'; b.disabled = true;
     try { await api('semanaChecklist', { row: +b.dataset.chk, valor: v }); if (v) vibrar(20); await load(); }
@@ -1555,6 +1935,8 @@ async function toggle(t){
   try {
     await api('toggle', { row: t.row, tarea: t.tarea, hecho: t.hecho });
     if (t.hecho){ const n = hechasEl(hoy()).length, m = metaDiaria(); toast(n === m ? '🏆 ¡Meta del día cumplida!' : '¡Hecha! ✓ ' + n + '/' + m + ' hoy'); if (n === m) confetti(90); }
+    const ng = t.hecho && extNivel() >= 5 && String(t.notas || '').match(/\((N-[a-z0-9]+)\)/);
+    if (ng) apiX('negocioNota', { id: ng[1], texto: '✅ ' + t.tarea, tipo: '✅ Tarea' }).then(() => loadNeg(true)).catch(() => {});
     if (t.hecho && t.repetir && !S.extInactivo){
       try { const r = await apiX('siguiente', { row: t.row, tarea: t.tarea }); if (r.creada) toast('🔁 Lista la próxima: ' + fmtRel(r.fecha).toLowerCase()); }
       catch(e){ toast('No se pudo crear la siguiente: ' + e.message); }
@@ -1592,7 +1974,7 @@ function showSettings(){
   const ss2 = $('#s_sinc'); if (ss2) ss2.onclick = async () => { ss2.disabled = true; try { const r = await apiX('sinc'); toast('📅 ' + r.creados + ' nuevos · ' + r.actualizados + ' actualizados · ' + r.borrados + ' borrados'); } catch(e){ toast('No se pudo: ' + e.message); } ss2.disabled = false; };
   const su = $('#s_upd'); if (su) su.onclick = showExtrasUpdate;
   $('#s_re').onclick = showSetup;
-  $('#s_out').onclick = () => { if (confirm('Se borran el link y la clave de este dispositivo.')){ ['url', 'token', 'cache', 'googleCache', 'extCache', 'baseCache'].forEach(k => LS.removeItem(k)); S.data = null; S.google = null; closeSheet(); showSetup(); } };
+  $('#s_out').onclick = () => { if (confirm('Se borran el link y la clave de este dispositivo.')){ ['url', 'token', 'cache', 'googleCache', 'extCache', 'baseCache', 'negCache'].forEach(k => LS.removeItem(k)); S.data = null; S.google = null; closeSheet(); showSetup(); } };
 }
 
 window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferredInstall = e; });
@@ -1606,6 +1988,7 @@ if (LS.cache) { try { S.data = JSON.parse(LS.cache); } catch(e){} }
 S.google = lsGet('googleCache', null);
 S.ext = lsGet('extCache', null);
 S.base = lsGet('baseCache', null);
+S.neg = lsGet('negCache', null);
 if (!LS.url || !LS.token) { render(); showSetup(); } else { render(); load(); }
 </script>
 </body>
