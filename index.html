@@ -339,7 +339,7 @@ async function api(action, extra){
 function apiX(op, extra){ return api('extra', Object.assign({ op }, extra || {})); }
 // Nivel 2 del script Extras: recordatorios y base de contactos. Nivel 3: la base solo usa contacto@blacklinechile.cl. Nivel 4: eventos de varios días.
 function extNivel(){ return S.extInactivo ? 0 : (S.ext && S.ext.nivel) || 1; }
-function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < 6; }
+function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < 7; }
 let sincTimer = null;
 // Después de cambiar tareas, el script actualiza los recordatorios del calendario (en segundo plano).
 function sincPronto(){
@@ -564,7 +564,7 @@ function viewInicio(){
     html += card('Ventas', '🤝', '<div class="kpis"><div class="kpi" style="--c:#FF8A4C"><b>' + clpCorto(m.abiertoV) + '</b><span>pipeline</span></div><div class="kpi" style="--c:#A44DF0"><b>' + clpCorto(m.ponderado) + '</b><span>pronóstico</span></div><div class="kpi" style="--c:#13B386"><b>' + clpCorto(m.gMesV) + '</b><span>ganado mes</span></div></div><button class="link" data-go="negocios">Abrir negociaciones →</button>', m.estancadas.length ? '🧊 ' + m.estancadas.length + ' estancadas' : abiertos().length + ' abiertas');
   }
   html += agendaHTML();
-  if (necesitaActualizar()) html += card('Nueva versión del script', '⬆️', '<div class="hint" style="margin-top:0">' + (extNivel() >= 5 ? '💬 Prepara la conexión con WhatsApp Business: los mensajes crean clientes y negociaciones solos.' : extNivel() >= 3 ? '🤝 Activa la pestaña Negocios (pipeline de ventas con sugerencias) y detecta eventos de varios días.' : '📅 Recordatorios en tu calendario y 📇 base de datos solo con los correos de contacto@blacklinechile.cl.') + '</div><button class="btn sm" id="updBtn">Actualizar (2 min)</button>');
+  if (necesitaActualizar()) html += card('Nueva versión del script', '⬆️', '<div class="hint" style="margin-top:0">' + (extNivel() >= 5 ? '🧠 Agente de ventas con IA + conexión con WhatsApp Business (Telnyx): organiza tus chats como lo harías tú.' : extNivel() >= 3 ? '🤝 Activa la pestaña Negocios (pipeline de ventas con sugerencias) y detecta eventos de varios días.' : '📅 Recordatorios en tu calendario y 📇 base de datos solo con los correos de contacto@blacklinechile.cl.') + '</div><button class="btn sm" id="updBtn">Actualizar (2 min)</button>');
   html += asistenteHTML();
   html += semanaStripHTML();
   const abierto = LS.statsOpen === '1';
@@ -640,6 +640,12 @@ function insights(){
     const est = abiertos().map(n => ({ n, a: analizar(n) })).filter(x => x.a.estancada || x.a.sinResponder != null || x.a.proxVencida);
     if (est.length) out.push({ ic: '🤝', c: '#FF8A4C', tx: '<b>' + est.length + (est.length === 1 ? ' negociación necesita' : ' negociaciones necesitan') + ' atención</b> (' + clpCorto(est.reduce((s, x) => s + (x.n.valor || 0), 0)) + ' en juego): ' + esc(est.sort((x, y) => y.a.prioridad - x.a.prioridad)[0].n.titulo) + (est.length > 1 ? ' y otras' : '') + '.', acts: [['Ver qué hacer', 'neg']] });
   }
+  if (extNivel() >= 7 && S.base){
+    const hoyAg = (S.base.interacciones || []).filter(i => /🧠 Agente/.test(i.tipo) && i.fecha === hoy()).length;
+    const esperan = contactos().filter(c => agenteDe(c.id).idea).length;
+    if (esperan) out.push({ ic: '🧠', c: '#6D5DFC', tx: '<b>' + esperan + (esperan === 1 ? ' cliente espera' : ' clientes esperan') + ' respuesta</b> por WhatsApp. El agente te dejó una idea de respuesta en su ficha.', acts: [['Ver', 'base-esperan']] });
+    else if (hoyAg) out.push({ ic: '🧠', c: '#6D5DFC', tx: 'El agente organizó <b>' + hoyAg + (hoyAg === 1 ? ' conversación' : ' conversaciones') + '</b> de WhatsApp hoy.' });
+  }
   const frios = contactosFrios();
   if (frios.length) out.push({ ic: '🤝', c: '#13B386', tx: '<b>' + frios.length + (frios.length === 1 ? ' cliente' : ' clientes') + '</b> sin contacto hace más de 30 días. Un mensaje de seguimiento puede ser una venta.', acts: [['Ver', 'base-frios']] });
   const pn = extNivel() >= 2 ? personasNuevas() : [];
@@ -673,6 +679,7 @@ function bindAsistente(){
     if (a.startsWith('mover:')){ const d = a.slice(6); return reprogramar(tareasEnDiaOcupado(d), proximoLibre(d), b); }
     if (a === 'personas') return openPersonas();
     if (a === 'neg'){ S.nv = 'resumen'; return go('negocios'); }
+    if (a === 'base-esperan'){ S.bf = 'esperan'; return go('base'); }
     if (a === 'base-frios'){ S.bf = 'frios'; return go('base'); }
     if (a === 'base-clas'){ S.bf = 'Por clasificar'; return go('base'); }
     if (a.startsWith('proy:')) return openAdd({ proyecto: a.slice(5) });
@@ -784,7 +791,7 @@ function showExtrasSetup(){
 
 function showExtrasUpdate(){
   const raw = 'https://raw.githubusercontent.com/SnowPv/Organizador/main/apps-script/Extras.gs';
-  sheet('<h3>⬆️ Actualizar el script Extras</h3><div class="hint">Hay una versión nueva del script' + (extNivel() >= 5 ? ': 💬 recibe los mensajes de WhatsApp Business y con ellos crea clientes y negociaciones.' : extNivel() >= 3 ? ': 🤝 pestaña Negocios (pipeline de ventas con sugerencias) y eventos de varios días.' : ': 📅 recordatorios en tu calendario y 📇 base de datos armada solo con los correos que llegan por contacto@blacklinechile.cl.') + ' Son 3 pasos:</div>' +
+  sheet('<h3>⬆️ Actualizar el script Extras</h3><div class="hint">Hay una versión nueva del script' + (extNivel() >= 5 ? ': 🧠 agente de ventas con IA y conexión con WhatsApp Business (Telnyx).' : extNivel() >= 3 ? ': 🤝 pestaña Negocios (pipeline de ventas con sugerencias) y eventos de varios días.' : ': 📅 recordatorios en tu calendario y 📇 base de datos armada solo con los correos que llegan por contacto@blacklinechile.cl.') + ' Son 3 pasos:</div>' +
     '<div class="card"><b>1.</b> En Apps Script elimina <b>Extras.gs</b> (⋮ → Eliminar) y crea otro igual (<b>+ → Secuencia de comandos → Extras</b>). Toca <b>📋 Copiar código</b> y pégalo con el <b>«Pegar» de Chrome</b> (mantén presionado), no con el portapapeles del teclado. Guarda 💾.<div style="margin-top:8px"><button class="btn sm sec" id="gu1">📋 Copiar código</button> <a class="btn sm sec" style="text-decoration:none;display:inline-block" href="' + raw + '" target="_blank">Abrir archivo</a></div></div>' +
     '<div class="card"><b>2.</b> Arriba elige <b>autorizarExtras</b> y toca <b>Ejecutar</b>. Acepta los permisos nuevos (crear el calendario y programar tareas automáticas).</div>' +
     '<div class="card"><b>3.</b> <b>Implementar → Administrar implementaciones → ✏️ → Nueva versión → Implementar</b>.</div>' +
@@ -843,6 +850,31 @@ function openPersonas(){
     catch(e){ b.disabled = false; toast('No se pudo agregar: ' + e.message); }
   });
 }
+// Lo último que entendió el agente de IA sobre un contacto, con su idea de respuesta si el cliente espera.
+function agenteDe(id){
+  const I = ((S.base && S.base.interacciones) || []).filter(i => i.id === id);
+  const r = I.find(i => /🧠 Agente/.test(i.tipo)), idea = I.find(i => /Idea de respuesta/.test(i.tipo));
+  return { r, idea: idea && r && idea.fecha >= r.fecha ? idea : null };
+}
+function agenteActivo(){ return extNivel() >= 7 && S.ext && S.ext.agente && S.ext.agente.activo; }
+function agenteHTML(c){
+  if (!c || extNivel() < 7) return '';
+  const g = agenteDe(c.id), tel = String(c.telefono || '').replace(/[^\d+]/g, '').replace(/^\+/, '').replace(/^9(\d{8})$/, '569$1');
+  if (!g.r && !agenteActivo()) return '';
+  return '<div class="card" style="background:linear-gradient(135deg,rgba(109,93,252,.08),rgba(255,92,138,.08));margin-top:12px"><b>🧠 Lo que entendió el agente</b>' +
+    (g.r ? '<div style="font-size:14px;line-height:1.45;margin-top:6px">' + esc(g.r.detalle) + '</div><div class="hint" style="margin:4px 0 0">' + fmtRel(g.r.fecha) + '</div>' : '<div class="hint">Aún no ha analizado conversaciones de este contacto.</div>') +
+    (g.idea ? '<div class="card" style="margin:10px 0 0;padding:10px 12px"><div class="hint" style="margin:0 0 4px">💬 Espera respuesta · idea:</div><div style="font-size:14px">' + esc(g.idea.detalle) + '</div>' + (tel ? '<a class="btn sm sec" style="display:inline-block;margin-top:8px;text-decoration:none" target="_blank" href="https://wa.me/' + esc(tel) + '?text=' + encodeURIComponent(g.idea.detalle) + '">Abrir WhatsApp con esta idea</a>' : '') + '</div>' : '') +
+    (agenteActivo() ? '<button class="btn sm sec" data-agente="' + esc(c.id) + '" style="margin-top:10px">🧠 Analizar ahora</button>' : '') + '</div>';
+}
+async function analizarAhora(id, btn){
+  btn.disabled = true; btn.innerHTML = '<span class="spin"></span>Analizando…';
+  try {
+    const r = await apiX('agente', { id });
+    toast('🧠 ' + (r.cambios && r.cambios.length ? r.cambios.slice(0, 3).join(' · ') : 'Sin cambios: todo estaba al día'));
+    await Promise.all([loadBase(true), loadNeg(true)]); S.mutado = true;
+    const c = contactoPorId(id); if (c && $('#layer').innerHTML) openContacto(c); load();
+  } catch(e){ btn.disabled = false; btn.textContent = '🧠 Analizar ahora'; toast('No se pudo analizar: ' + e.message); }
+}
 function relacionadosHTML(t){
   const L = contactosDe(t); if (!L.length) return '';
   return '<label class="l">👤 Relacionado con</label><div class="seg">' + L.map(c => '<button type="button" class="pill" data-cto="' + esc(c.id) + '">' + (TIPO_IC[c.tipo] || '') + ' ' + esc(c.nombre || c.email) + '</button>').join('') + '</div>';
@@ -856,10 +888,10 @@ function viewBase(){
   if (!S.base){ $('#view').innerHTML = '<div class="empty"><span class="spin"></span>Cargando tu base de datos…</div>'; loadBase(true).then(() => { if (S.tab === 'base') render(); }); return; }
   const todos = contactos(), cuenta = t => todos.filter(c => c.tipo === t).length, frios = contactosFrios();
   const q = norm(S.bq);
-  let L = todos.filter(c => S.bf === 'todos' ? true : S.bf === 'frios' ? frios.includes(c) : S.bf === 'otros' ? !['Cliente', 'Proveedor', 'Por clasificar'].includes(c.tipo) : c.tipo === S.bf);
+  let L = todos.filter(c => S.bf === 'todos' ? true : S.bf === 'esperan' ? !!agenteDe(c.id).idea : S.bf === 'frios' ? frios.includes(c) : S.bf === 'otros' ? !['Cliente', 'Proveedor', 'Por clasificar'].includes(c.tipo) : c.tipo === S.bf);
   if (q) L = L.filter(c => norm([c.nombre, c.empresa, c.email, c.telefono, c.etiquetas, c.notas].join(' ')).includes(q));
   L.sort((a, b) => (b.ultima || '').localeCompare(a.ultima || '') || String(a.nombre).localeCompare(String(b.nombre)));
-  const filtros = [['todos', '✨ Todos'], ['Cliente', '🛒 Clientes'], ['Proveedor', '📦 Proveedores'], ['Por clasificar', '❔ Por clasificar'], ['frios', '🧊 Sin contacto +30 d'], ['otros', '🔖 Otros']];
+  const filtros = [['todos', '✨ Todos'], ['Cliente', '🛒 Clientes'], ['Proveedor', '📦 Proveedores'], ['Por clasificar', '❔ Por clasificar'], ['frios', '🧊 Sin contacto +30 d'], ['otros', '🔖 Otros']].concat(extNivel() >= 7 ? [['esperan', '💬 Esperan respuesta']] : []);
   let html = '<div class="hero" style="background:linear-gradient(135deg,#FF5C8A,#FF8A4C)"><div class="hi">📇 Base de datos</div><div class="big">' + todos.length + ' contactos</div>' +
     '<div class="hstats" style="grid-template-columns:repeat(4,1fr);position:relative;z-index:1">' +
     '<div class="hstat"><b>' + cuenta('Cliente') + '</b><span>clientes</span></div><div class="hstat"><b>' + cuenta('Proveedor') + '</b><span>proveed.</span></div>' +
@@ -888,8 +920,9 @@ function openContacto(c){
   const inter = nuevo ? [] : ((S.base && S.base.interacciones) || []).filter(i => i.id === c.id);
   const tareas = nuevo ? [] : tareasDe(c);
   const tel = String(c.telefono || '').replace(/[^\d+]/g, ''), wa = tel.replace(/^\+/, '').replace(/^9(\d{8})$/, '569$1');
-  const icTl = t => /whatsapp/i.test(t) ? '💬' : /correo/i.test(t) ? '✉️' : /reuni/i.test(t) ? '📅' : /tarea/i.test(t) ? '✅' : /negoci|venta/i.test(t) ? '🤝' : '📝';
+  const icTl = t => /agente|idea/i.test(t) ? '🧠' : /whatsapp/i.test(t) ? '💬' : /correo/i.test(t) ? '✉️' : /reuni/i.test(t) ? '📅' : /tarea/i.test(t) ? '✅' : /negoci|venta/i.test(t) ? '🤝' : '📝';
   sheet('<div class="row">' + avatar(c, 54) + '<div class="grow"><h3>' + (nuevo ? 'Nuevo contacto' : esc(c.nombre || c.email)) + '</h3><div class="hint" style="margin:2px 0 0">' + (nuevo ? 'Cliente, proveedor o lo que necesites recordar' : (c.n ? c.n + ' interacciones · última ' + haceTxt(c.ultima) : 'Sin interacciones aún') + (c.origen ? ' · ' + esc(c.origen) : '')) + '</div></div></div>' +
+    (!nuevo ? agenteHTML(c) : '') +
     (!nuevo && (tel || c.email) ? '<div class="acts3">' + (tel ? '<a href="https://wa.me/' + esc(wa) + '" target="_blank">💬 WhatsApp</a><a href="tel:' + esc(tel) + '">📞 Llamar</a>' : '') + (c.email ? '<a href="mailto:' + esc(c.email) + '">✉️ Correo</a>' : '') + '</div>' : '') +
     '<label class="l">Tipo</label>' + pills('c_tipo', TIPOS_C.map(x => ({ v: x, t: (TIPO_IC[x] || '') + ' ' + x })), c.tipo) +
     '<label class="l">Nombre</label><input type="text" id="c_nom" value="' + esc(c.nombre) + '" placeholder="Nombre y apellido">' +
@@ -906,6 +939,7 @@ function openContacto(c){
       '<div class="card" style="margin-top:8px">' + (inter.length ? inter.slice(0, 40).map(i => '<div class="tl"><span class="ic">' + icTl(i.tipo) + '</span><div class="grow"><div style="font-size:14px;font-weight:650;line-height:1.35">' + esc(i.detalle) + '</div><div class="hint" style="margin:2px 0 0">' + esc(i.tipo) + ' · ' + (i.fecha ? fmtRel(i.fecha) : '') + '</div></div>' + (i.link ? '<a class="play" style="display:flex;align-items:center;justify-content:center;text-decoration:none" href="' + esc(i.link) + '" target="_blank">↗</a>' : '') + '</div>').join('') : '<div class="hint">Aquí se irán guardando correos, reuniones, tareas y notas con este contacto.</div>') + '</div>'));
   bindPills('c_tipo'); bindTasks($('#layer'));
   const cn = $('#c_neg'); if (cn) cn.onclick = () => openNegocio(null, { contacto: c.id });
+  $$('#layer [data-agente]').forEach(b => b.onclick = () => analizarAhora(b.dataset.agente, b));
   $$('#layer [data-neg]').forEach(b => b.onclick = () => openNegocio(negocios().find(x => x.id === b.dataset.neg)));
   $('#c_seg').onclick = () => { const n = $('#c_nom').value.trim() || c.nombre || c.email; openAdd({ texto: 'Seguimiento ' + n + ' mañana', notas: c.telefono ? '📞 ' + c.telefono : '' }); };
   $('#c_ok').onclick = async () => {
@@ -1217,7 +1251,7 @@ function openNegocio(n, opt){
   const a = nuevo ? null : analizar(n), e = etapaDe(n), C = contactos().slice().sort((x, y) => String(x.nombre).localeCompare(String(y.nombre)));
   const R = nuevo ? [] : recomendaciones(n, a);
   const I = nuevo ? [] : a.I.slice().reverse();
-  const icTl = t => /whatsapp/i.test(t) ? '💬' : /correo/i.test(t) ? '✉️' : /reuni/i.test(t) ? '📅' : /tarea|acci/i.test(t) ? '✅' : /venta/i.test(t) ? '🏆' : /negoci/i.test(t) ? '🤝' : String(t || '').match(/\p{Extended_Pictographic}/u) ? String(t).match(/\p{Extended_Pictographic}/u)[0] : '📝';
+  const icTl = t => /agente|idea/i.test(t) ? '🧠' : /whatsapp/i.test(t) ? '💬' : /correo/i.test(t) ? '✉️' : /reuni/i.test(t) ? '📅' : /tarea|acci/i.test(t) ? '✅' : /venta/i.test(t) ? '🏆' : /negoci/i.test(t) ? '🤝' : String(t || '').match(/\p{Extended_Pictographic}/u) ? String(t).match(/\p{Extended_Pictographic}/u)[0] : '📝';
   const campos = '<label class="l">Negociación</label><input type="text" id="ng_t" value="' + esc(n.titulo) + '" placeholder="Ej.: Juan Pérez – Turbo Levo">' +
     '<label class="l">Cliente</label><select id="ng_c"><option value="">— sin contacto —</option>' + C.map(c => '<option value="' + esc(c.id) + '"' + (c.id === n.contacto ? ' selected' : '') + '>' + esc(c.nombre || c.email) + (c.empresa ? ' · ' + esc(c.empresa) : '') + '</option>').join('') + '</select>' +
     '<label class="l">Producto / interés</label><input type="text" id="ng_p" value="' + esc(n.producto) + '" placeholder="Ej.: Turbo Levo Comp talla M">' +
@@ -1233,6 +1267,7 @@ function openNegocio(n, opt){
     (a.abierta ? '<div class="btns" style="margin-top:4px"><button class="btn sm" id="ng_win" style="background:var(--grad-green)">🏆 Ganada</button><button class="btn sm sec" id="ng_lose">❌ Perdida</button></div>'
       : '<div class="card" style="background:' + hexToRgba(e.c, .12) + '"><b>' + e.ic + ' ' + esc(n.estado) + '</b>' + (n.motivo ? '<div class="hint">Motivo: ' + esc(n.motivo) + '</div>' : '') + '<button class="btn sm sec" id="ng_reopen" style="margin-top:8px">↩️ Reabrir</button></div>') +
     (a.abierta ? '<div class="kpis" style="margin-top:12px"><div class="kpi" style="--c:' + saludCol(a.salud) + '"><b>' + a.salud + '</b><span>salud</span></div><div class="kpi" style="--c:' + e.c + '"><b>' + Math.round(a.prob * 100) + '%</b><span>prob. de cierre</span></div><div class="kpi" style="--c:' + (a.estancada ? '#F04461' : '#3B9EFF') + '"><b>' + a.dAct + ' d</b><span>sin actividad</span></div></div>' : '') +
+    agenteHTML(a.c) +
     (R.length ? '<label class="l">🧠 Qué hacer ahora</label><div class="card" style="margin:0">' + R.map((r, i) => '<div class="rec"><span class="ic" style="background:' + hexToRgba(r.c, .15) + '">' + r.ic + '</span><div class="grow"><div style="font-weight:750;font-size:14px;line-height:1.35">' + esc(r.t) + '</div><div class="hint" style="margin:3px 0 0">' + esc(r.d) + '</div>' + (r.acts ? '<div class="acts" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">' + r.acts.map(x => '<button class="btn sm sec" data-nga="' + esc(x[1]) + '">' + esc(x[0]) + '</button>').join('') + '</div>' : '') + '</div></div>').join('') + '</div>' : '') +
     '<label class="l">📝 Registrar actividad</label><div class="chips2">' + ACTIVIDADES.map((x, i) => '<button data-nact="' + i + '">' + x[0] + '</button>').join('') + '</div>' +
     '<div class="smart" style="margin-top:6px"><input type="text" id="ng_nota" placeholder="Qué pasó (pidió cuotas, viene el sábado…)" autocomplete="off"><button class="mic" id="ng_nota_ok" aria-label="Registrar">＋</button></div>' +
@@ -1247,6 +1282,7 @@ function openNegocio(n, opt){
   else if (nuevo) setTimeout(() => $('#ng_t').focus(), 100);
   if (!nuevo){
     const ct = $('#ng_cto'); if (ct) ct.onclick = ev => { ev.preventDefault(); openContacto(a.c); };
+    $$('#layer [data-agente]').forEach(b => b.onclick = () => analizarAhora(b.dataset.agente, b));
     $$('[data-ngk]').forEach(b => b.onclick = () => moverEtapa(n, b.dataset.ngk));
     const w = $('#ng_win'); if (w) w.onclick = () => moverEtapa(n, 'Ganada');
     const l = $('#ng_lose'); if (l) l.onclick = () => openPerdida(n);
@@ -1966,6 +2002,7 @@ function showSettings(){
     (deferredInstall ? '<div class="btns"><button class="btn" id="s_inst">📲 Instalar app en este dispositivo</button></div>' : '') +
     '<div class="card"><b>✨ Funciones extra</b> <span class="hint">(calendario, correo, subtareas, repetir)</span><div class="hint">' + esc(gTxt) + '</div><button class="btn sm sec" id="s_g">' + (g && !g.inactivo ? 'Ver sugerencias' : 'Cómo activarlas') + '</button></div>' +
     (extNivel() >= 2 ? '<div class="card"><b>📅 Recordatorios en tu calendario</b><div class="hint">Cada tarea pendiente con fecha está en el calendario «' + esc((S.ext && S.ext.calendario) || 'Organizador BlackLine') + '», con aviso en tu teléfono 10 min antes (a las 9:00, o a la hora que pongas: «a las 15:30»). Se actualiza solo cada hora y cuando cambias algo.</div><button class="btn sm sec" id="s_sinc">🔄 Sincronizar ahora</button></div>' : necesitaActualizar() ? '<div class="card"><b>⬆️ Hay una versión nueva del script</b><div class="hint">📅 Recordatorios y 📇 base de datos solo con contacto@blacklinechile.cl.</div><button class="btn sm" id="s_upd">Actualizar (2 min)</button></div>' : '') +
+    (extNivel() >= 7 ? '<div class="card"><b>🧠 Agente de ventas IA</b><div class="hint">' + (agenteActivo() ? 'Activo ✓ (' + esc(S.ext.agente.modelo) + ')' + (S.ext.agente.ultimo ? ' · último análisis ' + haceTxt(S.ext.agente.ultimo.slice(0, 10)) : '') + '. Cada 10 minutos lee las conversaciones nuevas de WhatsApp: crea y completa clientes, mueve negociaciones, agenda lo conversado como tareas y te sugiere qué responder. Nunca escribe a tus clientes.' : 'No activado: falta tu clave de Claude (ANTHROPIC_API_KEY) en las propiedades del script. Los pasos están en la guía.') + '</div></div>' : '') +
     (extNivel() >= 6 ? '<div class="card"><b>💬 WhatsApp Business</b><div class="hint">' + (S.ext && S.ext.wa ? 'Conectado ✓ · último mensaje recibido ' + haceTxt(S.ext.wa.slice(0, 10)) + '. Cada mensaje crea o actualiza al cliente en la Base, queda en su historial y, si pregunta por precio, stock, talla o test ride, abre una negociación nueva.' : 'Aún no conectado. Con la conexión, cada mensaje crea o actualiza al cliente, queda en su historial y abre negociaciones solas.') + '</div><a class="btn sm sec" style="display:inline-block;text-decoration:none" href="https://github.com/SnowPv/Organizador/blob/main/docs/WHATSAPP.md" target="_blank">📖 Guía de conexión</a></div>' : '') +
     '<div class="card"><b>✨ Trucos para agregar rápido</b><div class="hint">• Fechas: <i>hoy, mañana, pasado mañana, el viernes, en 3 días, 15/10, 20 de octubre, la próxima semana</i><br>• Hora: <i>a las 10, 15:30</i><br>• Prioridad: <i>urgente</i> o <i>!</i> · <i>importante</i><br>• Categoría o área: <i>#ventas, #marketing, #personal</i><br>• Proyecto: <i>@levo</i><br>• Repetir: <i>cada lunes, todos los días, días hábiles, cada mes</i><br>• Toca 🎤 para dictar.</div></div>' +
     '<div class="btns"><button class="btn sec" id="s_re">Cambiar link o clave</button></div>' +

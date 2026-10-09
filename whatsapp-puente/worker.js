@@ -1,7 +1,7 @@
 /**
  * Organizador BlackLine · Puente de WhatsApp (Cloudflare Worker, plan gratuito)
  *
- * Meta (o tu proveedor de WhatsApp) envía cada mensaje a este Worker; el Worker responde
+ * Telnyx (o Meta) envía cada mensaje a este Worker; el Worker responde
  * de inmediato y reenvía el mensaje a tu Apps Script, que lo guarda en el Sheet.
  * Apps Script no puede recibir los avisos de Meta directamente (responde con una redirección),
  * por eso existe este puente.
@@ -10,7 +10,8 @@
  *   APPS_SCRIPT_URL  el link /exec de tu Apps Script
  *   APP_TOKEN        la clave del organizador (la misma que usas en la app)
  *   VERIFY_TOKEN     una palabra secreta que inventas y pegas también en Meta («Verify token»)
- *   APP_SECRET       (opcional) el «App secret» de tu app de Meta: valida que el aviso viene de Meta
+ *   TELNYX_PUBLIC_KEY  (recomendado con Telnyx) la «Public Key» de tu cuenta Telnyx: valida que el aviso viene de Telnyx
+ *   APP_SECRET       (opcional, solo con Meta directo) el «App secret» de tu app de Meta
  *   URL_KEY          (opcional) si tu proveedor no firma los avisos: agrega ?k=ESTA_CLAVE al link del webhook
  */
 export default {
@@ -31,6 +32,9 @@ export default {
     const cuerpo = await req.text();
     if (env.APP_SECRET && !(await firmaValida(cuerpo, req.headers.get('x-hub-signature-256'), env.APP_SECRET))) {
       return new Response('firma inválida', { status: 401 });
+    }
+    if (env.TELNYX_PUBLIC_KEY && !(await firmaTelnyx(cuerpo, req.headers, env.TELNYX_PUBLIC_KEY))) {
+      return new Response('firma de Telnyx inválida', { status: 401 });
     }
     if (env.URL_KEY && url.searchParams.get('k') !== env.URL_KEY) return new Response('clave inválida', { status: 401 });
 
@@ -68,4 +72,19 @@ async function firmaValida(cuerpo, cabecera, secreto) {
   let dif = 0;
   for (let i = 0; i < hex.length; i++) dif |= hex.charCodeAt(i) ^ esperada.charCodeAt(i);
   return dif === 0;
+}
+
+// Telnyx firma cada aviso con Ed25519 sobre «timestamp|cuerpo» (cabeceras telnyx-signature-ed25519 y telnyx-timestamp).
+async function firmaTelnyx(cuerpo, headers, clavePublica) {
+  const firma = headers.get('telnyx-signature-ed25519'), ts = headers.get('telnyx-timestamp');
+  if (!firma || !ts || Math.abs(Date.now() / 1000 - Number(ts)) > 300) return false;
+  const b64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+  const datos = new TextEncoder().encode(ts + '|' + cuerpo);
+  for (const alg of [{ name: 'Ed25519' }, { name: 'NODE-ED25519', namedCurve: 'NODE-ED25519' }]) {
+    try {
+      const k = await crypto.subtle.importKey('raw', b64(clavePublica), alg, false, ['verify']);
+      return await crypto.subtle.verify(alg.name === 'Ed25519' ? 'Ed25519' : alg, k, b64(firma), datos);
+    } catch (e) { /* prueba el siguiente nombre del algoritmo */ }
+  }
+  return false;
 }

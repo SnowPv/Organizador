@@ -15,8 +15,8 @@
  * Para actualizar este archivo más adelante: reemplaza todo su contenido y repite los dos pasos anteriores.
  */
 
-const EX_VERSION = '2026-10-11';
-const EX_NIVEL = 6;      // la app lo usa para saber qué funciones tiene este script
+const EX_VERSION = '2026-10-12';
+const EX_NIVEL = 7;      // la app lo usa para saber qué funciones tiene este script
 const EX_HOJA = 'Tareas';
 const EX_PRIMERA = 4;
 const EX_ULTIMA = 400;
@@ -51,6 +51,13 @@ const EX_HOJA_WA = 'WhatsApp';
 const EX_CAB_WA = ['Fecha', 'Dirección', 'Teléfono', 'Nombre', 'Mensaje', 'Tipo', 'Contacto (ID)', 'ID mensaje'];
 const EX_WA_INTENCION = /precio|valor|cuanto|cotiz|disponib|stock|talla|test|probar|cuota|comprar|venden|tienen|mantencion|reserv|levo|turbo|vado|bici|ebike|e-bike/;
 const EX_WA_MODELOS = /(turbo\s*levo\s*sl|turbo\s*levo|levo\s*sl|levo|turbo\s*vado\s*sl|turbo\s*vado|vado|turbo\s*como|como\s*sl|turbo\s*creo|creo|kenevo|stumpjumper\s*evo|stumpjumper|epic\s*evo|epic|chisel|rockhopper|tarmac|roubaix|diverge|allez|status|enduro)/i;
+// Agente de ventas con IA (Claude). La clave va en Configuración del proyecto → Propiedades del script:
+// ANTHROPIC_API_KEY = tu clave de console.anthropic.com. Opcional: AGENTE_MODELO para usar otro modelo.
+const EX_AG_MODELO = 'claude-opus-5-5';
+const EX_AG_ESPERA_MIN = 3;        // espera a que la conversación se calme antes de analizarla
+const EX_AG_MAX_POR_RONDA = 6;     // conversaciones por ronda (cada 10 minutos)
+const EX_HOJA_AG = 'Agente';
+const EX_CAB_AG = ['Fecha', 'Contacto (ID)', 'Nombre', 'Resumen', 'Temperatura', 'Cambios aplicados', 'Idea de respuesta'];
 const EX_DOMINIOS_PERSONALES = /^(gmail|googlemail|hotmail|outlook|live|yahoo|icloud|me|msn|proton|protonmail)\./i;
 
 // Días hacia adelante que se leen del calendario (incluye hoy).
@@ -69,6 +76,7 @@ function autorizarExtras() {
   const sinLeer = GmailApp.getInboxUnreadCount();
   ex_baseHojas_();
   ex_instalarTriggers_();
+  UrlFetchApp.fetch('https://api.anthropic.com/v1/models', { muteHttpExceptions: true });   // pide el permiso para conectarse a Claude
   Logger.log('Listo. Calendario de recordatorios: ' + cal.getName() + ' · correos sin leer: ' + sinLeer + ' · tareas automáticas programadas.');
 }
 
@@ -89,6 +97,7 @@ function app_extra_(p) {
     case 'negocio':    return ex_guardarNegocio_(p.negocio || {});
     case 'negocioNota': return ex_notaNegocio_(p);
     case 'whatsapp':   return ex_whatsapp_(p);
+    case 'agente':     return ex_agente_(p.id);
     default:           return { ok: false, error: 'op desconocida: ' + p.op };
   }
 }
@@ -119,7 +128,9 @@ function ex_leer_() {
     if (!tareas[i][0] || (!extra[i][0] && !extra[i][1])) continue;
     filas.push({ row: EX_PRIMERA + i, sub: String(extra[i][0] || ''), rep: String(extra[i][1] || '') });
   }
-  return { ok: true, version: EX_VERSION, nivel: EX_NIVEL, filas: filas, calendario: EX_CAL_NOMBRE, wa: PropertiesService.getScriptProperties().getProperty('EX_WA_ULTIMO') || '' };
+  const pr = PropertiesService.getScriptProperties();
+  return { ok: true, version: EX_VERSION, nivel: EX_NIVEL, filas: filas, calendario: EX_CAL_NOMBRE, wa: pr.getProperty('EX_WA_ULTIMO') || '',
+    agente: { activo: !!pr.getProperty('ANTHROPIC_API_KEY'), modelo: pr.getProperty('AGENTE_MODELO') || EX_AG_MODELO, ultimo: pr.getProperty('EX_AG_ULTIMO') || '' } };
 }
 
 // Confirma que la fila sigue siendo la misma tarea (por si alguien movió filas en el Sheet).
@@ -567,8 +578,29 @@ function ex_textoWa_(m) {
 
 // Recibe el aviso de Meta (formato estándar de la API de WhatsApp Cloud, también el historial y los mensajes
 // que envías desde la app del teléfono) y lo reparte en: hoja WhatsApp, Contactos, Interacciones y Negociaciones.
+// Normaliza un aviso de Telnyx (message.received / message.echo) al formato de mensaje de Meta.
+function ex_desdeTelnyx_(pay, msgs, nombres) {
+  const d = pay.data || {}, ev = String(d.event_type || ''), pl = d.payload || {}, body = pl.body || {};
+  if (ev !== 'message.received' && ev !== 'message.echo') return;
+  if (body.type === 'edit' || body.type === 'revoke' || body.type === 'reaction') return;
+  const tel = function (x) { if (Array.isArray(x)) x = x[0]; return String((x && x.phone_number) || x || '').replace(/\D/g, ''); };
+  const saliente = ev === 'message.echo' || pl.direction === 'outbound';
+  const m = Object.assign({}, body, {
+    id: body.foreign_id || pl.id || body.id,
+    from: saliente ? tel(pl.from) : tel(pl.from),
+    to: saliente ? tel(pl.to) : '',
+    timestamp: body.timestamp || String(Math.floor(Date.parse(pl.received_at || d.occurred_at || new Date().toISOString()) / 1000)),
+    type: body.type || (pl.text ? 'text' : '')
+  });
+  if (!m.text && pl.text) m.text = { body: pl.text };
+  const nom = (pl.from && (pl.from.name || pl.from.profile_name)) || (body.contacts && body.contacts[0] && body.contacts[0].profile && body.contacts[0].profile.name);
+  if (nom && !saliente) nombres[m.from] = nom;
+  if (m.id && (m.from || m.to)) msgs.push({ m: m, saliente: saliente });
+}
+
 function ex_whatsapp_(p) {
   const pay = p.payload || {}, msgs = [], nombres = {};
+  if (pay.data && pay.data.event_type) ex_desdeTelnyx_(pay, msgs, nombres);
   (pay.entry || []).forEach(function (en) {
     (en.changes || []).forEach(function (ch) {
       const v = ch.value || {}, campo = String(ch.field || '');
@@ -630,15 +662,219 @@ function ex_whatsapp_(p) {
   Object.keys(actividad).forEach(function (f) { neg.getRange(Number(f), 15).setValue(actividad[f]); });
   leads.forEach(function (l) { ex_guardarNegocio_(l); });
   ex_recalcular_(b.cs, b.is);
-  PropertiesService.getScriptProperties().setProperty('EX_WA_ULTIMO', new Date().toISOString());
+  const props = PropertiesService.getScriptProperties();
+  props.setProperty('EX_WA_ULTIMO', new Date().toISOString());
+  // El agente revisa estas conversaciones en su próxima ronda (cada 10 min), cuando la conversación se calme.
+  const pend = JSON.parse(props.getProperty('EX_AG_PEND') || '{}');
+  filasWa.forEach(function (f) { pend[f[6]] = Date.now(); });
+  props.setProperty('EX_AG_PEND', JSON.stringify(pend));
   return { ok: true, mensajes: nuevasI.length, contactosNuevos: nuevosC.length, leads: leads.length };
+}
+
+/* ---------- agente de ventas con IA ---------- */
+const EX_AG_SISTEMA = [
+  'Eres el asistente de ventas de Blackline Puerto Varas, tienda de bicicletas Specialized (e-bikes como Turbo Levo, Turbo Vado, Turbo Como, Kenevo; MTB como Stumpjumper, Epic, Chisel; ruta y gravel como Tarmac, Roubaix, Diverge), repuestos, accesorios y taller de mantención en Puerto Varas, Chile.',
+  'Trabajas para el encargado de la tienda. Lees las conversaciones de WhatsApp Business (y otras interacciones) con un contacto y organizas el CRM como lo haría un vendedor experto y ordenado. No escribes a clientes: solo analizas y organizas.',
+  '',
+  'Tu trabajo con cada conversación:',
+  '1. Resumir en 1 a 3 frases qué quiere la persona y en qué quedó la conversación.',
+  '2. Clasificar el contacto: Cliente (quiere comprar, mantener o reparar), Proveedor (vende a la tienda: marcas, distribuidores, servicios), Institución, Equipo (gente de la tienda), Otro, Ignorar (spam, publicidad o conversación personal sin relación con la tienda) o Por clasificar si no está claro.',
+  '3. Extraer datos útiles para vender: nombre real si lo dice, correo, modelo o producto de interés, talla o altura, uso (enduro, trail, ruta, ciudad), presupuesto, plazo, forma de pago, objeciones, quién más decide, competencia que menciona.',
+  '4. Decidir la negociación: crear una si hay intención real de compra o servicio y no existe una abierta; actualizar la existente; o ninguna. Etapas en orden: Nuevo, Contactado, Prueba / visita, Cotización, Negociación. Usa Ganada o Perdida solo si la conversación lo dice explícitamente (ya compró, ya pagó; o compró en otro lado, no le interesa). Estima el valor en pesos chilenos solo si se mencionó un precio o un modelo concreto; si no, 0.',
+  '5. Detectar compromisos y crear recordatorios: lo que el encargado prometió (te aviso, te mando la cotización, te confirmo stock) y lo que acordó el cliente (paso el sábado, lo pienso y te digo el lunes). Cada uno con fecha concreta resuelta desde la fecha de hoy que se te entrega; si no hay fecha clara, usa el día hábil siguiente.',
+  '6. Definir la próxima acción más efectiva para avanzar la venta, con fecha.',
+  '7. Indicar si el cliente está esperando respuesta del encargado (su último mensaje no tiene respuesta).',
+  '8. Proponer una idea breve de respuesta (tono cercano, chileno, profesional) solo si el cliente espera respuesta; si no, deja el texto vacío.',
+  '',
+  'Reglas: no inventes datos que no estén en la conversación; si un dato no aparece, deja el texto vacío. No repitas tareas que ya existen en la lista de tareas abiertas que se te entrega. Escribe todo en español de Chile. Responde solo con el JSON pedido.'
+].join('\n');
+
+const EX_AG_ESQUEMA = {
+  type: 'object', additionalProperties: false,
+  required: ['resumen', 'temperatura', 'contacto', 'negociacion', 'tareas', 'proxima_accion', 'esperando_respuesta', 'idea_respuesta'],
+  properties: {
+    resumen: { type: 'string' },
+    temperatura: { type: 'string', enum: ['caliente', 'tibio', 'frio', 'sin_intencion'] },
+    contacto: {
+      type: 'object', additionalProperties: false, required: ['nombre', 'tipo', 'email', 'etiquetas', 'datos_clave'],
+      properties: {
+        nombre: { type: 'string' },
+        tipo: { type: 'string', enum: ['Cliente', 'Proveedor', 'Institución', 'Equipo', 'Otro', 'Por clasificar', 'Ignorar'] },
+        email: { type: 'string' },
+        etiquetas: { type: 'array', items: { type: 'string' } },
+        datos_clave: { type: 'string' }
+      }
+    },
+    negociacion: {
+      type: 'object', additionalProperties: false, required: ['accion', 'titulo', 'producto', 'valor_estimado', 'etapa', 'motivo_perdida'],
+      properties: {
+        accion: { type: 'string', enum: ['crear', 'actualizar', 'ninguna'] },
+        titulo: { type: 'string' },
+        producto: { type: 'string' },
+        valor_estimado: { type: 'integer' },
+        etapa: { type: 'string', enum: ['Nuevo', 'Contactado', 'Prueba / visita', 'Cotización', 'Negociación', 'Ganada', 'Perdida'] },
+        motivo_perdida: { type: 'string' }
+      }
+    },
+    tareas: {
+      type: 'array',
+      items: {
+        type: 'object', additionalProperties: false, required: ['texto', 'fecha', 'hora', 'urgente'],
+        properties: { texto: { type: 'string' }, fecha: { type: 'string' }, hora: { type: 'string' }, urgente: { type: 'boolean' } }
+      }
+    },
+    proxima_accion: { type: 'object', additionalProperties: false, required: ['texto', 'fecha'], properties: { texto: { type: 'string' }, fecha: { type: 'string' } } },
+    esperando_respuesta: { type: 'boolean' },
+    idea_respuesta: { type: 'string' }
+  }
+};
+
+function ex_hojaAg_() {
+  const ss = SpreadsheetApp.getActive();
+  let sh = ss.getSheetByName(EX_HOJA_AG);
+  if (!sh) { sh = ss.insertSheet(EX_HOJA_AG); sh.appendRow(EX_CAB_AG); sh.setFrozenRows(1); }
+  return sh;
+}
+
+// Llama a Claude con la conversación y devuelve el análisis (JSON validado por esquema).
+function ex_llamarClaude_(contexto) {
+  const props = PropertiesService.getScriptProperties();
+  const clave = props.getProperty('ANTHROPIC_API_KEY');
+  if (!clave) throw new Error('falta ANTHROPIC_API_KEY en las propiedades del script');
+  const cuerpo = {
+    model: props.getProperty('AGENTE_MODELO') || EX_AG_MODELO,
+    max_tokens: 8000,
+    fallbacks: 'default',
+    output_config: { effort: 'medium', format: { type: 'json_schema', schema: EX_AG_ESQUEMA } },
+    system: [{ type: 'text', text: EX_AG_SISTEMA, cache_control: { type: 'ephemeral' } }],
+    messages: [{ role: 'user', content: contexto }]
+  };
+  const r = UrlFetchApp.fetch('https://api.anthropic.com/v1/messages', {
+    method: 'post', contentType: 'application/json', muteHttpExceptions: true, payload: JSON.stringify(cuerpo),
+    headers: { 'x-api-key': clave, 'anthropic-version': '2023-06-01', 'anthropic-beta': 'server-side-fallback-2026-07-01' }
+  });
+  const j = JSON.parse(r.getContentText() || '{}');
+  if (r.getResponseCode() !== 200) throw new Error('Claude respondió ' + r.getResponseCode() + ': ' + ((j.error && j.error.message) || '').slice(0, 200));
+  if (j.stop_reason === 'refusal') throw new Error('Claude no analizó esta conversación');
+  const txt = (j.content || []).filter(function (c) { return c.type === 'text'; }).map(function (c) { return c.text; }).join('');
+  return JSON.parse(txt);
+}
+
+// Arma el contexto (perfil, negociación abierta, tareas abiertas y la conversación) para un contacto.
+function ex_contextoAgente_(id) {
+  const tz = ex_tz_(), b = ex_baseHojas_();
+  const c = ex_filasContactos_(b.cs).filter(function (r) { return String(r[0]) === id; })[0];
+  if (!c) throw new Error('no encuentro el contacto ' + id);
+  const fmt = function (d) { return d instanceof Date ? Utilities.formatDate(d, tz, 'yyyy-MM-dd HH:mm') : String(d || ''); };
+  const wa = ex_hojaWa_(), nw = wa.getLastRow() - 1;
+  const chat = (nw > 0 ? wa.getRange(2, 1, nw, EX_CAB_WA.length).getValues() : []).filter(function (r) { return String(r[6]) === id; })
+    .sort(function (x, y) { return x[0] - y[0]; }).slice(-60)
+    .map(function (r) { return '[' + fmt(r[0]) + '] ' + (r[1] === 'Enviado' ? 'TIENDA' : 'CLIENTE') + ': ' + r[4]; });
+  const ni = b.is.getLastRow() - 1;
+  const otras = (ni > 0 ? b.is.getRange(2, 1, ni, 4).getValues() : []).filter(function (r) { return String(r[1]) === id && !/whatsapp|agente/i.test(r[2]); })
+    .sort(function (x, y) { return x[0] - y[0]; }).slice(-15).map(function (r) { return '[' + fmt(r[0]) + '] ' + r[2] + ': ' + r[3]; });
+  const neg = ex_filasNeg_(ex_hojaNeg_()).filter(function (r) { return String(r[2]) === id && r[10] === 'Abierta'; })[0];
+  const tareas = ex_hoja_().getRange(EX_PRIMERA, 1, EX_ULTIMA - EX_PRIMERA + 1, 15).getValues()
+    .filter(function (r) { return r[1] && r[0] !== true && String(r[14]).indexOf(id) >= 0; }).map(function (r) { return '- ' + r[1] + (r[9] instanceof Date ? ' (' + ex_ymd_(r[9], tz) + ')' : ''); });
+  const contexto = [
+    'Hoy es ' + Utilities.formatDate(new Date(), tz, "EEEE yyyy-MM-dd HH:mm") + ' (hora de Chile).',
+    '', 'CONTACTO: ' + JSON.stringify({ nombre: c[2], tipo: c[1], empresa: c[3], email: c[4], telefono: String(c[5] || ''), etiquetas: c[6], notas: c[7] }),
+    '', 'NEGOCIACIÓN ABIERTA: ' + (neg ? JSON.stringify({ titulo: neg[1], etapa: neg[3], valor: neg[4], producto: neg[5], proxima_accion: neg[8], notas: neg[12] }) : 'ninguna'),
+    '', 'TAREAS ABIERTAS CON ESTE CONTACTO:', tareas.length ? tareas.join('\n') : '(ninguna)',
+    '', 'OTRAS INTERACCIONES:', otras.length ? otras.join('\n') : '(ninguna)',
+    '', 'CONVERSACIÓN DE WHATSAPP (más antigua primero):', chat.length ? chat.join('\n') : '(sin mensajes)'
+  ].join('\n');
+  return { contexto: contexto, c: c, neg: neg };
+}
+
+// Analiza la conversación de un contacto y aplica los cambios al CRM (desde la app: ya corre con el Sheet tomado).
+function ex_agente_(id) {
+  id = String(id || '');
+  const ctx = ex_contextoAgente_(id);
+  return ex_aplicarAgente_(id, ctx, ex_llamarClaude_(ctx.contexto));
+}
+
+function ex_aplicarAgente_(id, ctx, a) {
+  const tz = ex_tz_();
+  const b = ex_baseHojas_(), filas = ex_filasContactos_(b.cs), i = filas.findIndex(function (r) { return String(r[0]) === id; });
+  const cambios = [], c = filas[i], ac = a.contacto || {};
+  // Contacto: completa lo que falta, sin pisar lo que tú ya definiste.
+  if (ac.nombre && (/^\+?\d[\d\s]+$/.test(String(c[2])) || !c[2])) { b.cs.getRange(i + 2, 3).setValue(ac.nombre); cambios.push('nombre: ' + ac.nombre); }
+  if (ac.tipo && ac.tipo !== 'Por clasificar' && (c[1] === 'Por clasificar' || !c[1])) { b.cs.getRange(i + 2, 2).setValue(ac.tipo); cambios.push('tipo: ' + ac.tipo); }
+  if (ac.email && !c[4]) { b.cs.getRange(i + 2, 5).setValue(ac.email.toLowerCase()); cambios.push('correo'); }
+  const tags = String(c[6] || '').split(',').map(function (t) { return t.trim(); }).filter(String);
+  (ac.etiquetas || []).forEach(function (t) { if (t && !tags.some(function (x) { return ex_norm_(x) === ex_norm_(t); })) tags.push(t); });
+  if (tags.join(', ') !== String(c[6] || '')) { b.cs.getRange(i + 2, 7).setValue(tags.slice(0, 12).join(', ')); cambios.push('etiquetas'); }
+  if (ac.datos_clave && !c[7]) b.cs.getRange(i + 2, 8).setValue('🧠 ' + ac.datos_clave);
+  if (ac.tipo === 'Ignorar' && c[1] === 'Por clasificar') return ex_registrarAgente_(id, c, a, cambios.concat('marcado Ignorar'));
+  // Negociación
+  const n = a.negociacion || {}, etapas = ['Nuevo', 'Contactado', 'Prueba / visita', 'Cotización', 'Negociación'];
+  let negId = ctx.neg ? String(ctx.neg[0]) : '';
+  if (!ctx.neg && n.accion === 'crear' && etapas.indexOf(n.etapa) >= 0) {
+    negId = ex_guardarNegocio_({ titulo: n.titulo || (ac.nombre || c[2]) + (n.producto ? ' – ' + n.producto : ''), contacto: id, etapa: n.etapa, producto: n.producto, valor: n.valor_estimado || 0, origen: '🧠 Agente WhatsApp', proxima: (a.proxima_accion || {}).texto || '', fechaProx: (a.proxima_accion || {}).fecha || '', cierre: ex_diaYmd_(ex_proxima_(ex_dia_(ex_hoyYmd_(tz)), 'Quincenal')) }).id;
+    cambios.push('negociación nueva: ' + n.etapa);
+  } else if (ctx.neg && n.accion !== 'ninguna') {
+    const upd = { id: negId };
+    if (n.producto && !ctx.neg[5]) upd.producto = n.producto;
+    if (/^\+?\d[\d\s]+( –|$)/.test(String(ctx.neg[1])) && (ac.nombre || n.titulo)) upd.titulo = n.titulo || ac.nombre + (n.producto ? ' – ' + n.producto : '');
+    if (n.valor_estimado > 0 && !Number(ctx.neg[4])) upd.valor = n.valor_estimado;
+    if (etapas.indexOf(n.etapa) > etapas.indexOf(String(ctx.neg[3]))) { upd.etapa = n.etapa; cambios.push('etapa → ' + n.etapa); }
+    if (a.proxima_accion && a.proxima_accion.texto) { upd.proxima = a.proxima_accion.texto; upd.fechaProx = a.proxima_accion.fecha || ''; }
+    // Ganada o perdida: lo confirmas tú (el agente solo lo sugiere como próxima acción).
+    if (n.etapa === 'Ganada' || n.etapa === 'Perdida') { upd.proxima = '🧠 Confirmar: ¿' + (n.etapa === 'Ganada' ? 'compró? → marcar Ganada' : 'se perdió? (' + (n.motivo_perdida || 'sin motivo') + ') → marcar Perdida'); upd.fechaProx = ex_hoyYmd_(tz); cambios.push('sugiere ' + n.etapa); }
+    if (Object.keys(upd).length > 1) ex_guardarNegocio_(upd);
+  }
+  // Recordatorios de lo conversado (sin repetir los que ya creó).
+  const props = PropertiesService.getScriptProperties(), hechas = JSON.parse(props.getProperty('EX_AG_TAREAS') || '[]');
+  (a.tareas || []).slice(0, 4).forEach(function (t) {
+    if (!t.texto) return;
+    const k = ex_firma_(id + '|' + ex_norm_(t.texto) + '|' + t.fecha);
+    if (hechas.indexOf(k) >= 0) return;
+    hechas.push(k);
+    app_agregar_({ tarea: { tarea: t.texto, area: 'Trabajo', categoria: 'Ventas', proyecto: '', limite: /^\d{4}-\d{2}-\d{2}$/.test(t.fecha) ? t.fecha : ex_hoyYmd_(tz), urgente: t.urgente ? 'Sí' : 'No', importante: 'Sí', tamano: 'Pequeña', notas: (t.hora ? '⏰ ' + t.hora + ' · ' : '') + '🧠 WhatsApp · ' + (ac.nombre || c[2]) + ' [' + id + ']' + (negId ? ' (' + negId + ')' : ''), estado: 'Pendiente' } });
+    cambios.push('tarea: ' + t.texto);
+  });
+  props.setProperty('EX_AG_TAREAS', JSON.stringify(hechas.slice(-400)));
+  return ex_registrarAgente_(id, c, a, cambios);
+}
+
+function ex_registrarAgente_(id, c, a, cambios) {
+  const b = ex_baseHojas_();
+  b.is.appendRow([new Date(), id, '🧠 Agente', a.resumen + (a.contacto && a.contacto.datos_clave ? ' · ' + a.contacto.datos_clave : ''), '', 'ai:' + id + ':' + Date.now()]);
+  if (a.esperando_respuesta && a.idea_respuesta) b.is.appendRow([new Date(), id, '🧠 Idea de respuesta', a.idea_respuesta, '', 'ai:' + id + ':r' + Date.now()]);
+  ex_hojaAg_().appendRow([new Date(), id, (a.contacto && a.contacto.nombre) || c[2], a.resumen, a.temperatura, cambios.join(' · '), a.esperando_respuesta ? a.idea_respuesta : '']);
+  ex_recalcular_(b.cs, b.is);
+  PropertiesService.getScriptProperties().setProperty('EX_AG_ULTIMO', new Date().toISOString());
+  return { ok: true, resumen: a.resumen, temperatura: a.temperatura, cambios: cambios, esperando: a.esperando_respuesta, idea: a.idea_respuesta };
+}
+
+// Ronda automática (cada 10 min): analiza las conversaciones con mensajes nuevos que ya se calmaron.
+function ex_rondaAgente_() {
+  const props = PropertiesService.getScriptProperties();
+  if (!props.getProperty('ANTHROPIC_API_KEY')) return;
+  const pend = JSON.parse(props.getProperty('EX_AG_PEND') || '{}'), listos = Object.keys(pend).filter(function (id) { return Date.now() - pend[id] > EX_AG_ESPERA_MIN * 60000; }).slice(0, EX_AG_MAX_POR_RONDA);
+  const hechos = {};
+  listos.forEach(function (id) {
+    try {
+      // La llamada a Claude va sin tomar el Sheet; solo se toma para guardar los cambios.
+      const a = ex_llamarClaude_(ex_contextoAgente_(id).contexto);
+      ex_conLock_(function () { ex_aplicarAgente_(id, ex_contextoAgente_(id), a); hechos[id] = pend[id]; });
+    } catch (err) { console.log('Agente ' + id + ': ' + err.message); hechos[id] = pend[id]; }
+  });
+  // Se relee la lista: si llegaron mensajes nuevos mientras tanto, esa conversación queda para la próxima ronda.
+  ex_conLock_(function () {
+    const ahora = JSON.parse(props.getProperty('EX_AG_PEND') || '{}');
+    Object.keys(hechos).forEach(function (id) { if (ahora[id] === hechos[id]) delete ahora[id]; });
+    props.setProperty('EX_AG_PEND', JSON.stringify(ahora));
+  });
 }
 
 /* ---------- tareas automáticas (cada hora y cada 6 horas) ---------- */
 function ex_instalarTriggers_() {
   ScriptApp.getProjectTriggers().forEach(function (t) {
-    if (['ex_tareaHoraria', 'ex_tareaBase'].indexOf(t.getHandlerFunction()) >= 0) ScriptApp.deleteTrigger(t);
+    if (['ex_tareaHoraria', 'ex_tareaBase', 'ex_tareaAgente'].indexOf(t.getHandlerFunction()) >= 0) ScriptApp.deleteTrigger(t);
   });
+  ScriptApp.newTrigger('ex_tareaAgente').timeBased().everyMinutes(10).create();
   ScriptApp.newTrigger('ex_tareaHoraria').timeBased().everyHours(1).create();
   ScriptApp.newTrigger('ex_tareaBase').timeBased().everyHours(6).create();
 }
@@ -649,6 +885,7 @@ function ex_conLock_(fn) {
 }
 function ex_tareaHoraria() { ex_conLock_(ex_sincCalendario_); }
 function ex_tareaBase() { ex_conLock_(ex_escanearBase_); }
+function ex_tareaAgente() { ex_rondaAgente_(); }
 
 /* ---------- hábitos: mes nuevo ---------- */
 // Guarda el resumen del mes que termina en "Historial hábitos" y deja la grilla lista para el mes actual.
