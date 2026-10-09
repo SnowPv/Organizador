@@ -15,8 +15,8 @@
  * Para actualizar este archivo más adelante: reemplaza todo su contenido y repite los dos pasos anteriores.
  */
 
-const EX_VERSION = '2026-10-10';
-const EX_NIVEL = 5;      // la app lo usa para saber qué funciones tiene este script
+const EX_VERSION = '2026-10-11';
+const EX_NIVEL = 6;      // la app lo usa para saber qué funciones tiene este script
 const EX_HOJA = 'Tareas';
 const EX_PRIMERA = 4;
 const EX_ULTIMA = 400;
@@ -46,6 +46,11 @@ const EX_IGNORAR_RE = /no-?reply|notific|mailer|newsletter|bounce|news@|marketin
 const EX_HOJA_NEG = 'Negociaciones';
 const EX_CAB_NEG = ['ID', 'Negociación', 'Contacto (ID)', 'Etapa', 'Valor ($)', 'Producto / interés', 'Creada', 'Cierre esperado', 'Próxima acción', 'Fecha próxima acción', 'Estado', 'Motivo de pérdida', 'Notas', 'Historial de etapas', 'Última actividad', 'Origen'];
 const EX_CAMPOS_NEG = { titulo: 2, contacto: 3, valor: 5, producto: 6, cierre: 8, proxima: 9, fechaProx: 10, motivo: 12, notas: 13, origen: 16 };
+// WhatsApp Business (mensajes que llegan desde el puente: Meta → Cloudflare Worker → este script).
+const EX_HOJA_WA = 'WhatsApp';
+const EX_CAB_WA = ['Fecha', 'Dirección', 'Teléfono', 'Nombre', 'Mensaje', 'Tipo', 'Contacto (ID)', 'ID mensaje'];
+const EX_WA_INTENCION = /precio|valor|cuanto|cotiz|disponib|stock|talla|test|probar|cuota|comprar|venden|tienen|mantencion|reserv|levo|turbo|vado|bici|ebike|e-bike/;
+const EX_WA_MODELOS = /(turbo\s*levo\s*sl|turbo\s*levo|levo\s*sl|levo|turbo\s*vado\s*sl|turbo\s*vado|vado|turbo\s*como|como\s*sl|turbo\s*creo|creo|kenevo|stumpjumper\s*evo|stumpjumper|epic\s*evo|epic|chisel|rockhopper|tarmac|roubaix|diverge|allez|status|enduro)/i;
 const EX_DOMINIOS_PERSONALES = /^(gmail|googlemail|hotmail|outlook|live|yahoo|icloud|me|msn|proton|protonmail)\./i;
 
 // Días hacia adelante que se leen del calendario (incluye hoy).
@@ -83,6 +88,7 @@ function app_extra_(p) {
     case 'negocios':   return ex_leerNegocios_();
     case 'negocio':    return ex_guardarNegocio_(p.negocio || {});
     case 'negocioNota': return ex_notaNegocio_(p);
+    case 'whatsapp':   return ex_whatsapp_(p);
     default:           return { ok: false, error: 'op desconocida: ' + p.op };
   }
 }
@@ -113,7 +119,7 @@ function ex_leer_() {
     if (!tareas[i][0] || (!extra[i][0] && !extra[i][1])) continue;
     filas.push({ row: EX_PRIMERA + i, sub: String(extra[i][0] || ''), rep: String(extra[i][1] || '') });
   }
-  return { ok: true, version: EX_VERSION, nivel: EX_NIVEL, filas: filas, calendario: EX_CAL_NOMBRE };
+  return { ok: true, version: EX_VERSION, nivel: EX_NIVEL, filas: filas, calendario: EX_CAL_NOMBRE, wa: PropertiesService.getScriptProperties().getProperty('EX_WA_ULTIMO') || '' };
 }
 
 // Confirma que la fila sigue siendo la misma tarea (por si alguien movió filas en el Sheet).
@@ -539,6 +545,93 @@ function ex_notaNegocio_(p) {
   b.is.appendRow([new Date(), String(filas[i][2] || ''), p.tipo || '📝 Actividad', texto, '', 'd:' + filas[i][0] + ':' + Date.now()]);
   if (filas[i][2]) ex_recalcular_(b.cs, b.is);
   return { ok: true };
+}
+
+/* ---------- WhatsApp Business ---------- */
+function ex_hojaWa_() {
+  const ss = SpreadsheetApp.getActive();
+  let sh = ss.getSheetByName(EX_HOJA_WA);
+  if (!sh) { sh = ss.insertSheet(EX_HOJA_WA); sh.appendRow(EX_CAB_WA); sh.setFrozenRows(1); }
+  return sh;
+}
+
+function ex_textoWa_(m) {
+  if (m.text && m.text.body) return m.text.body;
+  if (m.button && m.button.text) return m.button.text;
+  if (m.interactive) { const r = m.interactive.button_reply || m.interactive.list_reply; if (r) return r.title; }
+  const media = m[m.type] || {};
+  if (media.caption) return media.caption;
+  if (m.type === 'location' && m.location) return '📍 Ubicación ' + (m.location.name || '');
+  return '[' + (m.type || 'mensaje') + ']';
+}
+
+// Recibe el aviso de Meta (formato estándar de la API de WhatsApp Cloud, también el historial y los mensajes
+// que envías desde la app del teléfono) y lo reparte en: hoja WhatsApp, Contactos, Interacciones y Negociaciones.
+function ex_whatsapp_(p) {
+  const pay = p.payload || {}, msgs = [], nombres = {};
+  (pay.entry || []).forEach(function (en) {
+    (en.changes || []).forEach(function (ch) {
+      const v = ch.value || {}, campo = String(ch.field || '');
+      const propio = String((v.metadata && v.metadata.display_phone_number) || '').replace(/\D/g, '');
+      (v.contacts || []).forEach(function (c) { if (c.wa_id) nombres[String(c.wa_id)] = (c.profile && c.profile.name) || ''; });
+      const add = function (m, saliente) { if (m && m.id && (m.from || m.to)) msgs.push({ m: m, saliente: saliente }); };
+      (v.messages || []).forEach(function (m) { add(m, campo === 'smb_message_echoes' || (!!propio && String(m.from) === propio)); });
+      (v.message_echoes || []).forEach(function (m) { add(m, true); });
+      (v.history || []).forEach(function (h) { (h.threads || []).forEach(function (th) { (th.messages || []).forEach(function (m) { add(m, !!propio && String(m.from) === propio); }); }); });
+    });
+  });
+  if (!msgs.length) return { ok: true, mensajes: 0 };
+  const b = ex_baseHojas_(), wa = ex_hojaWa_(), neg = ex_hojaNeg_(), hoy = Date.now();
+  const filasC = ex_filasContactos_(b.cs), contactos = {}, porTel = {};
+  const ult9 = function (t) { return String(t || '').replace(/\D/g, '').slice(-9); };
+  filasC.forEach(function (r, i) { if (!r[0]) return; contactos[String(r[0])] = { fila: i + 2, tipo: r[1], nombre: r[2], tel: String(r[5] || '') }; if (ult9(r[5]).length === 9) porTel[ult9(r[5])] = String(r[0]); });
+  const ni = b.is.getLastRow() - 1, claves = {};
+  (ni > 0 ? b.is.getRange(2, 6, ni, 1).getValues() : []).forEach(function (r) { claves[String(r[0])] = true; });
+  const abiertas = {};
+  ex_filasNeg_(neg).forEach(function (r, i) { if (r[0] && r[10] === 'Abierta' && r[2]) (abiertas[String(r[2])] = abiertas[String(r[2])] || []).push(i + 2); });
+  const nuevosC = [], nuevasI = [], filasWa = [], telefonos = [], actividad = {}, leads = [];
+  msgs.sort(function (x, y) { return Number(x.m.timestamp || 0) - Number(y.m.timestamp || 0); });
+  msgs.forEach(function (x) {
+    const m = x.m, clave = 'w:' + m.id;
+    if (claves[clave]) return;
+    claves[clave] = true;
+    const tel = String(x.saliente ? (m.to || '') : (m.from || '')).replace(/\D/g, '');
+    if (!tel) return;
+    const fecha = new Date(Number(m.timestamp || 0) * 1000 || hoy), texto = ex_textoWa_(m);
+    const nombreWa = nombres[tel] || '';
+    let id = porTel[ult9(tel)];
+    if (!id) {
+      id = 'wa:+' + tel;
+      if (!contactos[id]) {
+        const intencion = EX_WA_INTENCION.test(ex_norm_(texto));
+        const fila = [id, intencion ? 'Cliente' : 'Por clasificar', nombreWa || '+' + tel, '', '', "'+" + tel, '', '', '', 0, '💬 WhatsApp', new Date()];
+        contactos[id] = { tipo: fila[1], nombre: fila[2], tel: '+' + tel, nuevo: true };
+        nuevosC.push(fila);
+      }
+      porTel[ult9(tel)] = id;
+    }
+    const c = contactos[id];
+    if (c.tipo === 'Ignorar') return;
+    if (!c.nuevo && !ult9(c.tel) && c.fila) { telefonos.push([c.fila, '+' + tel]); c.tel = '+' + tel; }
+    nuevasI.push([fecha, id, x.saliente ? '💬 WhatsApp enviado' : '💬 WhatsApp recibido', texto.slice(0, 300), 'https://wa.me/' + tel, clave]);
+    filasWa.push([fecha, x.saliente ? 'Enviado' : 'Recibido', '+' + tel, c.nombre || nombreWa, texto.slice(0, 500), m.type || '', id, m.id]);
+    if (abiertas[id]) abiertas[id].forEach(function (f) { if (!actividad[f] || fecha > actividad[f]) actividad[f] = fecha; });
+    // Lead nuevo: mensaje reciente con intención de compra de alguien sin negociación abierta.
+    if (!x.saliente && !abiertas[id] && hoy - fecha.getTime() < 30 * 86400000 && EX_WA_INTENCION.test(ex_norm_(texto))) {
+      const mod = texto.match(EX_WA_MODELOS);
+      leads.push({ titulo: (c.nombre || nombreWa || '+' + tel) + (mod ? ' – ' + mod[1].replace(/\s+/g, ' ').replace(/\b\w/g, function (l) { return l.toUpperCase(); }) : ' – WhatsApp'), contacto: id, producto: mod ? mod[1] : '', proxima: 'Responder por WhatsApp', fechaProx: ex_hoyYmd_(), origen: '💬 WhatsApp', notas: 'Primer mensaje: ' + texto.slice(0, 200) });
+      abiertas[id] = [];
+    }
+  });
+  if (nuevosC.length) b.cs.getRange(b.cs.getLastRow() + 1, 1, nuevosC.length, EX_CAB_CONTACTOS.length).setValues(nuevosC);
+  telefonos.forEach(function (t) { b.cs.getRange(t[0], 6).setValue("'" + t[1]); });
+  if (nuevasI.length) b.is.getRange(b.is.getLastRow() + 1, 1, nuevasI.length, EX_CAB_INTER.length).setValues(nuevasI);
+  if (filasWa.length) wa.getRange(wa.getLastRow() + 1, 1, filasWa.length, EX_CAB_WA.length).setValues(filasWa);
+  Object.keys(actividad).forEach(function (f) { neg.getRange(Number(f), 15).setValue(actividad[f]); });
+  leads.forEach(function (l) { ex_guardarNegocio_(l); });
+  ex_recalcular_(b.cs, b.is);
+  PropertiesService.getScriptProperties().setProperty('EX_WA_ULTIMO', new Date().toISOString());
+  return { ok: true, mensajes: nuevasI.length, contactosNuevos: nuevosC.length, leads: leads.length };
 }
 
 /* ---------- tareas automáticas (cada hora y cada 6 horas) ---------- */

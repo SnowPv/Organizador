@@ -339,7 +339,7 @@ async function api(action, extra){
 function apiX(op, extra){ return api('extra', Object.assign({ op }, extra || {})); }
 // Nivel 2 del script Extras: recordatorios y base de contactos. Nivel 3: la base solo usa contacto@blacklinechile.cl. Nivel 4: eventos de varios días.
 function extNivel(){ return S.extInactivo ? 0 : (S.ext && S.ext.nivel) || 1; }
-function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < 5; }
+function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < 6; }
 let sincTimer = null;
 // Después de cambiar tareas, el script actualiza los recordatorios del calendario (en segundo plano).
 function sincPronto(){
@@ -564,7 +564,7 @@ function viewInicio(){
     html += card('Ventas', '🤝', '<div class="kpis"><div class="kpi" style="--c:#FF8A4C"><b>' + clpCorto(m.abiertoV) + '</b><span>pipeline</span></div><div class="kpi" style="--c:#A44DF0"><b>' + clpCorto(m.ponderado) + '</b><span>pronóstico</span></div><div class="kpi" style="--c:#13B386"><b>' + clpCorto(m.gMesV) + '</b><span>ganado mes</span></div></div><button class="link" data-go="negocios">Abrir negociaciones →</button>', m.estancadas.length ? '🧊 ' + m.estancadas.length + ' estancadas' : abiertos().length + ' abiertas');
   }
   html += agendaHTML();
-  if (necesitaActualizar()) html += card('Nueva versión del script', '⬆️', '<div class="hint" style="margin-top:0">' + (extNivel() >= 3 ? '🤝 Activa la pestaña Negocios (pipeline de ventas con sugerencias) y detecta eventos de varios días.' : '📅 Recordatorios en tu calendario y 📇 base de datos solo con los correos de contacto@blacklinechile.cl.') + '</div><button class="btn sm" id="updBtn">Actualizar (2 min)</button>');
+  if (necesitaActualizar()) html += card('Nueva versión del script', '⬆️', '<div class="hint" style="margin-top:0">' + (extNivel() >= 5 ? '💬 Prepara la conexión con WhatsApp Business: los mensajes crean clientes y negociaciones solos.' : extNivel() >= 3 ? '🤝 Activa la pestaña Negocios (pipeline de ventas con sugerencias) y detecta eventos de varios días.' : '📅 Recordatorios en tu calendario y 📇 base de datos solo con los correos de contacto@blacklinechile.cl.') + '</div><button class="btn sm" id="updBtn">Actualizar (2 min)</button>');
   html += asistenteHTML();
   html += semanaStripHTML();
   const abierto = LS.statsOpen === '1';
@@ -784,7 +784,7 @@ function showExtrasSetup(){
 
 function showExtrasUpdate(){
   const raw = 'https://raw.githubusercontent.com/SnowPv/Organizador/main/apps-script/Extras.gs';
-  sheet('<h3>⬆️ Actualizar el script Extras</h3><div class="hint">Hay una versión nueva del script' + (extNivel() >= 3 ? ': 🤝 pestaña Negocios (pipeline de ventas con sugerencias) y eventos de varios días.' : ': 📅 recordatorios en tu calendario y 📇 base de datos armada solo con los correos que llegan por contacto@blacklinechile.cl.') + ' Son 3 pasos:</div>' +
+  sheet('<h3>⬆️ Actualizar el script Extras</h3><div class="hint">Hay una versión nueva del script' + (extNivel() >= 5 ? ': 💬 recibe los mensajes de WhatsApp Business y con ellos crea clientes y negociaciones.' : extNivel() >= 3 ? ': 🤝 pestaña Negocios (pipeline de ventas con sugerencias) y eventos de varios días.' : ': 📅 recordatorios en tu calendario y 📇 base de datos armada solo con los correos que llegan por contacto@blacklinechile.cl.') + ' Son 3 pasos:</div>' +
     '<div class="card"><b>1.</b> En Apps Script elimina <b>Extras.gs</b> (⋮ → Eliminar) y crea otro igual (<b>+ → Secuencia de comandos → Extras</b>). Toca <b>📋 Copiar código</b> y pégalo con el <b>«Pegar» de Chrome</b> (mantén presionado), no con el portapapeles del teclado. Guarda 💾.<div style="margin-top:8px"><button class="btn sm sec" id="gu1">📋 Copiar código</button> <a class="btn sm sec" style="text-decoration:none;display:inline-block" href="' + raw + '" target="_blank">Abrir archivo</a></div></div>' +
     '<div class="card"><b>2.</b> Arriba elige <b>autorizarExtras</b> y toca <b>Ejecutar</b>. Acepta los permisos nuevos (crear el calendario y programar tareas automáticas).</div>' +
     '<div class="card"><b>3.</b> <b>Implementar → Administrar implementaciones → ✏️ → Nueva versión → Implementar</b>.</div>' +
@@ -888,7 +888,7 @@ function openContacto(c){
   const inter = nuevo ? [] : ((S.base && S.base.interacciones) || []).filter(i => i.id === c.id);
   const tareas = nuevo ? [] : tareasDe(c);
   const tel = String(c.telefono || '').replace(/[^\d+]/g, ''), wa = tel.replace(/^\+/, '').replace(/^9(\d{8})$/, '569$1');
-  const icTl = t => /correo/i.test(t) ? '✉️' : /reuni/i.test(t) ? '📅' : /tarea/i.test(t) ? '✅' : '📝';
+  const icTl = t => /whatsapp/i.test(t) ? '💬' : /correo/i.test(t) ? '✉️' : /reuni/i.test(t) ? '📅' : /tarea/i.test(t) ? '✅' : /negoci|venta/i.test(t) ? '🤝' : '📝';
   sheet('<div class="row">' + avatar(c, 54) + '<div class="grow"><h3>' + (nuevo ? 'Nuevo contacto' : esc(c.nombre || c.email)) + '</h3><div class="hint" style="margin:2px 0 0">' + (nuevo ? 'Cliente, proveedor o lo que necesites recordar' : (c.n ? c.n + ' interacciones · última ' + haceTxt(c.ultima) : 'Sin interacciones aún') + (c.origen ? ' · ' + esc(c.origen) : '')) + '</div></div></div>' +
     (!nuevo && (tel || c.email) ? '<div class="acts3">' + (tel ? '<a href="https://wa.me/' + esc(wa) + '" target="_blank">💬 WhatsApp</a><a href="tel:' + esc(tel) + '">📞 Llamar</a>' : '') + (c.email ? '<a href="mailto:' + esc(c.email) + '">✉️ Correo</a>' : '') + '</div>' : '') +
     '<label class="l">Tipo</label>' + pills('c_tipo', TIPOS_C.map(x => ({ v: x, t: (TIPO_IC[x] || '') + ' ' + x })), c.tipo) +
@@ -978,7 +978,7 @@ function analizar(n){
   const estancada = abierta && dAct > max;
   const proxVencida = abierta && !!n.proxima && !!n.fechaProx && n.fechaProx < h;
   const sinProx = abierta && !n.proxima;
-  const correos = I.filter(i => /correo/i.test(i.tipo)), ult = correos[correos.length - 1];
+  const correos = I.filter(i => /correo|whatsapp/i.test(i.tipo)), ult = correos[correos.length - 1];
   const sinResponder = abierta && ult && /recibido/i.test(ult.tipo) ? Math.max(0, diffDays(ult.fecha, h)) : null;
   const corpus = norm([n.notas, n.producto, c && c.notas, c && c.etiquetas].concat(I.slice(-15).map(i => i.detalle)).join(' '));
   const senales = SENALES.filter(x => x.re.test(corpus));
@@ -994,7 +994,7 @@ function recomendaciones(n, a){
   a = a || analizar(n);
   if (!a.abierta) return [];
   const R = [], idx = etapaIdx(n.etapa), nom = a.c && a.c.nombre ? String(a.c.nombre).split(' ')[0] : 'el cliente';
-  if (a.sinResponder != null) R.push({ ic: '⚡', c: '#F04461', t: nom + ' te escribió ' + (a.sinResponder ? 'hace ' + a.sinResponder + ' días' : 'hoy') + ' y no hay respuesta', d: 'Respóndele hoy: cada día sin respuesta enfría la venta.', acts: [['💬 Responder', 'wa:responder']] });
+  if (a.sinResponder != null) R.push({ ic: '⚡', c: '#F04461', t: nom + ' te escribió' + (/whatsapp/i.test((a.I.filter(i => /correo|whatsapp/i.test(i.tipo)).pop() || {}).tipo) ? ' por WhatsApp ' : ' ') + (a.sinResponder ? 'hace ' + a.sinResponder + ' días' : 'hoy') + ' y no hay respuesta', d: 'Respóndele hoy: cada día sin respuesta enfría la venta.', acts: [['💬 Responder', 'wa:responder']] });
   if (a.proxVencida) R.push({ ic: '⏰', c: '#F04461', t: 'Venció la próxima acción: «' + n.proxima + '» (' + fmt(n.fechaProx) + ')', d: 'Hazla hoy o reagéndala con una fecha realista.', acts: [['✅ Ya la hice', 'hecho-prox'], ['📅 Pasar a pasado mañana', 'reagendar']] });
   if (a.estancada){
     const muy = a.dAct > a.e.max * 3;
@@ -1132,7 +1132,7 @@ function oportunidades(){
 function dealCard(n, a, compact){
   const e = a.e, c = a.c, rec = recomendaciones(n, a)[0];
   return '<div class="deal" data-neg="' + esc(n.id) + '"><div class="row" style="gap:10px;align-items:flex-start"><span class="hd" style="background:' + saludCol(a.salud) + ';margin-top:6px"></span><div class="grow"><b style="font-size:15px">' + esc(n.titulo) + '</b>' +
-    '<div class="meta"><span class="tag" style="background:' + hexToRgba(e.c, .15) + ';color:' + e.c + '">' + e.ic + ' ' + esc(n.etapa) + '</span>' + (n.valor ? '<span class="tag">💰 ' + clpCorto(n.valor) + '</span>' : '') + (c ? '<span class="tag">👤 ' + esc(String(c.nombre || c.email).split(' ').slice(0, 2).join(' ')) + '</span>' : '') +
+    '<div class="meta"><span class="tag" style="background:' + hexToRgba(e.c, .15) + ';color:' + e.c + '">' + e.ic + ' ' + esc(n.etapa) + '</span>' + (n.valor ? '<span class="tag">💰 ' + clpCorto(n.valor) + '</span>' : '') + (/whatsapp/i.test(n.origen) ? '<span class="tag ok">💬 WhatsApp</span>' : '') + (c ? '<span class="tag">👤 ' + esc(String(c.nombre || c.email).split(' ').slice(0, 2).join(' ')) + '</span>' : '') +
     (a.abierta ? '<span class="tag ' + (a.estancada ? 'bad' : '') + '">⏱ ' + a.dEtapa + ' d en etapa</span>' : '') + '</div>' +
     (!compact && a.abierta && n.proxima ? '<div class="hint" style="margin:5px 0 0">➡️ ' + esc(n.proxima) + (n.fechaProx ? ' · ' + fmtRel(n.fechaProx) : '') + '</div>' : '') +
     (rec ? '<div class="why">' + rec.ic + ' ' + esc(rec.t) + '</div>' : '') + '</div>' +
@@ -1217,7 +1217,7 @@ function openNegocio(n, opt){
   const a = nuevo ? null : analizar(n), e = etapaDe(n), C = contactos().slice().sort((x, y) => String(x.nombre).localeCompare(String(y.nombre)));
   const R = nuevo ? [] : recomendaciones(n, a);
   const I = nuevo ? [] : a.I.slice().reverse();
-  const icTl = t => /correo/i.test(t) ? '✉️' : /reuni/i.test(t) ? '📅' : /tarea|acci/i.test(t) ? '✅' : /venta/i.test(t) ? '🏆' : /negoci/i.test(t) ? '🤝' : String(t || '').match(/\p{Extended_Pictographic}/u) ? String(t).match(/\p{Extended_Pictographic}/u)[0] : '📝';
+  const icTl = t => /whatsapp/i.test(t) ? '💬' : /correo/i.test(t) ? '✉️' : /reuni/i.test(t) ? '📅' : /tarea|acci/i.test(t) ? '✅' : /venta/i.test(t) ? '🏆' : /negoci/i.test(t) ? '🤝' : String(t || '').match(/\p{Extended_Pictographic}/u) ? String(t).match(/\p{Extended_Pictographic}/u)[0] : '📝';
   const campos = '<label class="l">Negociación</label><input type="text" id="ng_t" value="' + esc(n.titulo) + '" placeholder="Ej.: Juan Pérez – Turbo Levo">' +
     '<label class="l">Cliente</label><select id="ng_c"><option value="">— sin contacto —</option>' + C.map(c => '<option value="' + esc(c.id) + '"' + (c.id === n.contacto ? ' selected' : '') + '>' + esc(c.nombre || c.email) + (c.empresa ? ' · ' + esc(c.empresa) : '') + '</option>').join('') + '</select>' +
     '<label class="l">Producto / interés</label><input type="text" id="ng_p" value="' + esc(n.producto) + '" placeholder="Ej.: Turbo Levo Comp talla M">' +
@@ -1966,6 +1966,7 @@ function showSettings(){
     (deferredInstall ? '<div class="btns"><button class="btn" id="s_inst">📲 Instalar app en este dispositivo</button></div>' : '') +
     '<div class="card"><b>✨ Funciones extra</b> <span class="hint">(calendario, correo, subtareas, repetir)</span><div class="hint">' + esc(gTxt) + '</div><button class="btn sm sec" id="s_g">' + (g && !g.inactivo ? 'Ver sugerencias' : 'Cómo activarlas') + '</button></div>' +
     (extNivel() >= 2 ? '<div class="card"><b>📅 Recordatorios en tu calendario</b><div class="hint">Cada tarea pendiente con fecha está en el calendario «' + esc((S.ext && S.ext.calendario) || 'Organizador BlackLine') + '», con aviso en tu teléfono 10 min antes (a las 9:00, o a la hora que pongas: «a las 15:30»). Se actualiza solo cada hora y cuando cambias algo.</div><button class="btn sm sec" id="s_sinc">🔄 Sincronizar ahora</button></div>' : necesitaActualizar() ? '<div class="card"><b>⬆️ Hay una versión nueva del script</b><div class="hint">📅 Recordatorios y 📇 base de datos solo con contacto@blacklinechile.cl.</div><button class="btn sm" id="s_upd">Actualizar (2 min)</button></div>' : '') +
+    (extNivel() >= 6 ? '<div class="card"><b>💬 WhatsApp Business</b><div class="hint">' + (S.ext && S.ext.wa ? 'Conectado ✓ · último mensaje recibido ' + haceTxt(S.ext.wa.slice(0, 10)) + '. Cada mensaje crea o actualiza al cliente en la Base, queda en su historial y, si pregunta por precio, stock, talla o test ride, abre una negociación nueva.' : 'Aún no conectado. Con la conexión, cada mensaje crea o actualiza al cliente, queda en su historial y abre negociaciones solas.') + '</div><a class="btn sm sec" style="display:inline-block;text-decoration:none" href="https://github.com/SnowPv/Organizador/blob/main/docs/WHATSAPP.md" target="_blank">📖 Guía de conexión</a></div>' : '') +
     '<div class="card"><b>✨ Trucos para agregar rápido</b><div class="hint">• Fechas: <i>hoy, mañana, pasado mañana, el viernes, en 3 días, 15/10, 20 de octubre, la próxima semana</i><br>• Hora: <i>a las 10, 15:30</i><br>• Prioridad: <i>urgente</i> o <i>!</i> · <i>importante</i><br>• Categoría o área: <i>#ventas, #marketing, #personal</i><br>• Proyecto: <i>@levo</i><br>• Repetir: <i>cada lunes, todos los días, días hábiles, cada mes</i><br>• Toca 🎤 para dictar.</div></div>' +
     '<div class="btns"><button class="btn sec" id="s_re">Cambiar link o clave</button></div>' +
     '<div class="btns"><button class="btn bad" id="s_out">Desconectar este dispositivo</button></div>');
