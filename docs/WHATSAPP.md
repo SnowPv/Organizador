@@ -39,8 +39,8 @@ Cliente ──► WhatsApp Business (tu teléfono, sin cambios)
 | Telnyx | ~US$0,004 por mensaje, sin mensualidad (≈ US$1–4 al mes en una tienda). Revisa el precio actual en telnyx.com. |
 | Meta | Recibir mensajes y lo que envías desde la app del teléfono: gratis |
 | Puente en Cloudflare | Gratis |
-| Agente IA (Claude Opus 5.5) | ~US$0,03–0,08 por conversación analizada. El agente analiza cada conversación agrupando los mensajes, no uno por uno. Con unas 15 conversaciones activas al día son ~US$15–35 al mes. |
-| Agente IA en modo económico (Claude Haiku 5.5) | Unas 40 veces más barato (~US$1 al mes), con análisis menos profundo. Se cambia con una línea (Paso 5). |
+| Agente IA, **modo económico (por defecto): Claude Haiku 5.5** | ~US$0,001–0,003 por conversación analizada. Con unas 15 conversaciones activas al día es **menos de US$1–2 al mes**. El agente agrupa los mensajes de cada conversación, no los analiza uno por uno. |
+| Agente IA con más capacidad: Claude Sonnet 5.5 u Opus 5.5 | Infieren mejor en conversaciones largas o ambiguas. Opus cuesta ~US$0,03–0,08 por conversación (≈ US$15–35 al mes). Se cambia con una línea (Paso 5). |
 
 ---
 
@@ -48,7 +48,7 @@ Cliente ──► WhatsApp Business (tu teléfono, sin cambios)
 
 - **WhatsApp Business actualizado**, versión 2.24.17 o superior, usado **al menos 7 días** con este número.
 - Una **cuenta de Meta Business** (business.facebook.com) para Blackline, con su **página de Facebook**.
-- El historial antiguo **no** se importa con Telnyx. La base se arma desde el día de la conexión.
+- El historial antiguo **no** llega por Telnyx. Para las negociaciones en curso, **importa esos chats a mano** (ver *Importar chats antiguos*, más abajo).
 - Ojo con lo que cambia en la app del teléfono:
   - Las **listas de difusión** quedan solo de lectura.
   - Se desactivan los mensajes temporales, los de "ver una vez" y la ubicación en tiempo real.
@@ -88,7 +88,7 @@ En **Messaging → Messaging Profiles → (tu perfil) → Inbound / Webhook URL*
 2. En **API Keys → Create Key**, copia la clave (empieza con `sk-ant-`). **No la compartas con nadie, tampoco en este chat.**
 3. En Apps Script: **⚙️ Configuración del proyecto → Propiedades del script → Agregar propiedad**:
    - `ANTHROPIC_API_KEY` = tu clave.
-   - *(Opcional, modo económico)* `AGENTE_MODELO` = `claude-haiku-5-5`.
+   - *(Opcional, más capacidad)* `AGENTE_MODELO` = `claude-sonnet-5-5` o `claude-opus-5-5`. Sin esta propiedad, el agente usa Claude Haiku 5.5, el modo económico.
 4. **Actualiza el script Extras:** abre Extras.gs, presiona **Ctrl+A**, pega el código nuevo y guarda.
 5. Ejecuta **autorizarExtras** y acepta los permisos, incluido el de "conectarse a servicios externos". Esto programa al agente cada 10 minutos.
 6. **Implementar → Administrar implementaciones → ✏️ → Nueva versión → Implementar**.
@@ -100,6 +100,22 @@ Desde otro teléfono, escribe al WhatsApp de la tienda: *"Hola, ¿tienen la Turb
 - **Al instante:** el contacto aparece en 📇 Base y la negociación en 🤝 Negocios.
 - **En unos 15 minutos:** el agente completa la ficha (Turbo Vado, ciudad, 1,78 m), mueve la negociación a "Prueba / visita" y crea la tarea del test ride para el sábado a las 11:00. En la ficha del contacto verás "🧠 Lo que entendió el agente".
 - **Para no esperar:** en la ficha del contacto toca **🧠 Analizar ahora**.
+
+---
+
+## Importar chats antiguos (negociaciones en curso)
+
+El agente lee todo lo que está guardado de cada cliente: los chats importados más los mensajes nuevos que lleguen por Telnyx. Para sumar una conversación anterior a la conexión:
+
+**Desde el teléfono (lo más rápido):**
+1. En WhatsApp Business, abre el chat → **⋮ → Más → Exportar chat → Sin archivos**.
+2. En la lista para compartir, elige **Organizador**. La app tiene que estar instalada.
+3. La app muestra cuántos mensajes encontró. Confirma **quién eres tú** en el chat y elige el cliente (o crea uno nuevo con su teléfono), luego toca **Importar**.
+4. Si el agente está activo, analiza el chat en el momento: completa la ficha, crea o actualiza la negociación y agenda los compromisos que siguen pendientes.
+
+**Desde el PC:** envíate el archivo `.txt` exportado (por ejemplo por correo) y, en la app, entra a **📇 Base → 📥 Importar chat de WhatsApp** o al botón **📥 Importar chat** de la ficha del cliente.
+
+Si importas el mismo chat de nuevo más adelante, solo se agregan los mensajes nuevos. Cuando el cliente vuelva a escribir por WhatsApp, su mensaje se une al mismo contacto gracias al teléfono.
 
 ---
 

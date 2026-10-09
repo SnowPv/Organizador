@@ -339,7 +339,7 @@ async function api(action, extra){
 function apiX(op, extra){ return api('extra', Object.assign({ op }, extra || {})); }
 // Nivel 2 del script Extras: recordatorios y base de contactos. Nivel 3: la base solo usa contacto@blacklinechile.cl. Nivel 4: eventos de varios días.
 function extNivel(){ return S.extInactivo ? 0 : (S.ext && S.ext.nivel) || 1; }
-function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < 7; }
+function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < 8; }
 let sincTimer = null;
 // Después de cambiar tareas, el script actualiza los recordatorios del calendario (en segundo plano).
 function sincPronto(){
@@ -564,7 +564,7 @@ function viewInicio(){
     html += card('Ventas', '🤝', '<div class="kpis"><div class="kpi" style="--c:#FF8A4C"><b>' + clpCorto(m.abiertoV) + '</b><span>pipeline</span></div><div class="kpi" style="--c:#A44DF0"><b>' + clpCorto(m.ponderado) + '</b><span>pronóstico</span></div><div class="kpi" style="--c:#13B386"><b>' + clpCorto(m.gMesV) + '</b><span>ganado mes</span></div></div><button class="link" data-go="negocios">Abrir negociaciones →</button>', m.estancadas.length ? '🧊 ' + m.estancadas.length + ' estancadas' : abiertos().length + ' abiertas');
   }
   html += agendaHTML();
-  if (necesitaActualizar()) html += card('Nueva versión del script', '⬆️', '<div class="hint" style="margin-top:0">' + (extNivel() >= 5 ? '🧠 Agente de ventas con IA + conexión con WhatsApp Business (Telnyx): organiza tus chats como lo harías tú.' : extNivel() >= 3 ? '🤝 Activa la pestaña Negocios (pipeline de ventas con sugerencias) y detecta eventos de varios días.' : '📅 Recordatorios en tu calendario y 📇 base de datos solo con los correos de contacto@blacklinechile.cl.') + '</div><button class="btn sm" id="updBtn">Actualizar (2 min)</button>');
+  if (necesitaActualizar()) html += card('Nueva versión del script', '⬆️', '<div class="hint" style="margin-top:0">' + (extNivel() >= 7 ? '📥 Importar chats de WhatsApp (negociaciones en curso) y agente en modo económico (Claude Haiku 5.5).' : extNivel() >= 5 ? '🧠 Agente de ventas con IA + conexión con WhatsApp Business (Telnyx): organiza tus chats como lo harías tú.' : extNivel() >= 3 ? '🤝 Activa la pestaña Negocios (pipeline de ventas con sugerencias) y detecta eventos de varios días.' : '📅 Recordatorios en tu calendario y 📇 base de datos solo con los correos de contacto@blacklinechile.cl.') + '</div><button class="btn sm" id="updBtn">Actualizar (2 min)</button>');
   html += asistenteHTML();
   html += semanaStripHTML();
   const abierto = LS.statsOpen === '1';
@@ -791,7 +791,7 @@ function showExtrasSetup(){
 
 function showExtrasUpdate(){
   const raw = 'https://raw.githubusercontent.com/SnowPv/Organizador/main/apps-script/Extras.gs';
-  sheet('<h3>⬆️ Actualizar el script Extras</h3><div class="hint">Hay una versión nueva del script' + (extNivel() >= 5 ? ': 🧠 agente de ventas con IA y conexión con WhatsApp Business (Telnyx).' : extNivel() >= 3 ? ': 🤝 pestaña Negocios (pipeline de ventas con sugerencias) y eventos de varios días.' : ': 📅 recordatorios en tu calendario y 📇 base de datos armada solo con los correos que llegan por contacto@blacklinechile.cl.') + ' Son 3 pasos:</div>' +
+  sheet('<h3>⬆️ Actualizar el script Extras</h3><div class="hint">Hay una versión nueva del script' + (extNivel() >= 7 ? ': 📥 importar chats de WhatsApp y agente en modo económico (Claude Haiku 5.5).' : extNivel() >= 5 ? ': 🧠 agente de ventas con IA y conexión con WhatsApp Business (Telnyx).' : extNivel() >= 3 ? ': 🤝 pestaña Negocios (pipeline de ventas con sugerencias) y eventos de varios días.' : ': 📅 recordatorios en tu calendario y 📇 base de datos armada solo con los correos que llegan por contacto@blacklinechile.cl.') + ' Son 3 pasos:</div>' +
     '<div class="card"><b>1.</b> En Apps Script elimina <b>Extras.gs</b> (⋮ → Eliminar) y crea otro igual (<b>+ → Secuencia de comandos → Extras</b>). Toca <b>📋 Copiar código</b> y pégalo con el <b>«Pegar» de Chrome</b> (mantén presionado), no con el portapapeles del teclado. Guarda 💾.<div style="margin-top:8px"><button class="btn sm sec" id="gu1">📋 Copiar código</button> <a class="btn sm sec" style="text-decoration:none;display:inline-block" href="' + raw + '" target="_blank">Abrir archivo</a></div></div>' +
     '<div class="card"><b>2.</b> Arriba elige <b>autorizarExtras</b> y toca <b>Ejecutar</b>. Acepta los permisos nuevos (crear el calendario y programar tareas automáticas).</div>' +
     '<div class="card"><b>3.</b> <b>Implementar → Administrar implementaciones → ✏️ → Nueva versión → Implementar</b>.</div>' +
@@ -860,11 +860,12 @@ function agenteActivo(){ return extNivel() >= 7 && S.ext && S.ext.agente && S.ex
 function agenteHTML(c){
   if (!c || extNivel() < 7) return '';
   const g = agenteDe(c.id), tel = String(c.telefono || '').replace(/[^\d+]/g, '').replace(/^\+/, '').replace(/^9(\d{8})$/, '569$1');
-  if (!g.r && !agenteActivo()) return '';
+  if (!g.r && !agenteActivo() && extNivel() < 8) return '';
   return '<div class="card" style="background:linear-gradient(135deg,rgba(109,93,252,.08),rgba(255,92,138,.08));margin-top:12px"><b>🧠 Lo que entendió el agente</b>' +
-    (g.r ? '<div style="font-size:14px;line-height:1.45;margin-top:6px">' + esc(g.r.detalle) + '</div><div class="hint" style="margin:4px 0 0">' + fmtRel(g.r.fecha) + '</div>' : '<div class="hint">Aún no ha analizado conversaciones de este contacto.</div>') +
+    (g.r ? '<div style="font-size:14px;line-height:1.45;margin-top:6px">' + esc(g.r.detalle) + '</div><div class="hint" style="margin:4px 0 0">' + fmtRel(g.r.fecha) + '</div>' : '<div class="hint">' + (agenteActivo() ? 'Aún no ha analizado conversaciones de este contacto.' : 'Activa el agente (clave de Claude) para que lea sus chats. Mientras, puedes importar su chat.') + '</div>') +
     (g.idea ? '<div class="card" style="margin:10px 0 0;padding:10px 12px"><div class="hint" style="margin:0 0 4px">💬 Espera respuesta · idea:</div><div style="font-size:14px">' + esc(g.idea.detalle) + '</div>' + (tel ? '<a class="btn sm sec" style="display:inline-block;margin-top:8px;text-decoration:none" target="_blank" href="https://wa.me/' + esc(tel) + '?text=' + encodeURIComponent(g.idea.detalle) + '">Abrir WhatsApp con esta idea</a>' : '') + '</div>' : '') +
-    (agenteActivo() ? '<button class="btn sm sec" data-agente="' + esc(c.id) + '" style="margin-top:10px">🧠 Analizar ahora</button>' : '') + '</div>';
+    (agenteActivo() ? '<button class="btn sm sec" data-agente="' + esc(c.id) + '" style="margin-top:10px">🧠 Analizar ahora</button>' : '') +
+    (extNivel() >= 8 ? ' <button class="btn sm sec" data-impc="' + esc(c.id) + '" style="margin-top:10px">📥 Importar chat</button>' : '') + '</div>';
 }
 async function analizarAhora(id, btn){
   btn.disabled = true; btn.innerHTML = '<span class="spin"></span>Analizando…';
@@ -874,6 +875,83 @@ async function analizarAhora(id, btn){
     await Promise.all([loadBase(true), loadNeg(true)]); S.mutado = true;
     const c = contactoPorId(id); if (c && $('#layer').innerHTML) openContacto(c); load();
   } catch(e){ btn.disabled = false; btn.textContent = '🧠 Analizar ahora'; toast('No se pudo analizar: ' + e.message); }
+}
+// Lee un chat exportado desde WhatsApp («Exportar chat → Sin archivos»), formatos de Android y iPhone:
+// «9/10/26, 10:23 - Juan: hola» · «[09-10-2026 10:23:45] Juan: hola» · con «a. m./p. m.» o 24 h.
+const RE_LINEA = /^\[?(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{2,4}),?\s+(\d{1,2}):(\d{2})(?::\d{2})?\s*([ap])?\.?\s?m?\.?\]?\s*(?:[-–]\s*)?([^:]{1,60}?):\s([\s\S]*)$/i;
+const RE_SISTEMA = /^\[?\d{1,2}[\/.-]\d{1,2}[\/.-]\d{2,4},?\s+\d{1,2}:\d{2}/;
+function leerChatWhatsApp(txt){
+  const mensajes = [], autores = {};
+  String(txt || '').replace(/\r/g, '').split('\n').forEach(linea => {
+    const l = linea.replace(/[‎‏‪-‮]/g, ''), m = l.match(RE_LINEA);
+    if (m){
+      let d = +m[1], mo = +m[2], y = +m[3], h = +m[4];
+      if (mo > 12 && d <= 12){ const x = d; d = mo; mo = x; }
+      if (y < 100) y += 2000;
+      if (m[6]){ const pm = m[6].toLowerCase() === 'p'; if (pm && h < 12) h += 12; if (!pm && h === 12) h = 0; }
+      const autor = m[7].trim();
+      let texto = m[8].trim();
+      if (/^<?(multimedia omitid|media omitted|imagen omitida|video omitido|audio omitido|sticker omitido|documento omitido)/i.test(texto)) texto = '[multimedia]';
+      if (/^(se eliminó este mensaje|este mensaje fue eliminado|you deleted this message|null)$/i.test(texto)) return;
+      mensajes.push({ autor, fecha: y + '-' + String(mo).padStart(2, '0') + '-' + String(d).padStart(2, '0') + 'T' + String(h).padStart(2, '0') + ':' + m[5], texto });
+      autores[autor] = (autores[autor] || 0) + 1;
+    } else if (RE_SISTEMA.test(l)){ /* aviso del sistema (cifrado, cambios de grupo): se omite */ }
+    else if (mensajes.length && l.trim()) mensajes[mensajes.length - 1].texto += '\n' + l;
+  });
+  return { mensajes, autores };
+}
+function openImportar(pre){
+  pre = pre || {};
+  if (extNivel() < 8){ toast('Actualiza el script Extras para importar chats'); return showExtrasSetup(); }
+  sheet('<h3>📥 Importar chat de WhatsApp</h3><div class="hint">Para negociaciones en curso o clientes antiguos. En WhatsApp abre el chat → <b>⋮ → Más → Exportar chat → Sin archivos</b> y compártelo con <b>Organizador</b>. Desde el PC, sube el archivo .txt aquí.</div>' +
+    '<div id="imp_paso1"' + (pre.txt ? ' style="display:none"' : '') + '><label class="btn sec" style="display:block;text-align:center;margin-top:12px">📄 Elegir archivo .txt<input type="file" id="imp_f" accept=".txt,text/plain" style="display:none"></label></div><div id="imp_paso2"></div>');
+  const mostrar = (txt, archivo) => {
+    if (/^PK/.test(txt)){ toast('Ese archivo es un .zip: exporta el chat eligiendo «Sin archivos»'); return; }
+    const r = leerChatWhatsApp(txt), autores = Object.entries(r.autores).sort((a, b) => b[1] - a[1]);
+    if (!r.mensajes.length){ $('#imp_paso2').innerHTML = '<div class="empty">No encontré mensajes en ese archivo. ¿Es un chat exportado de WhatsApp?</div>'; return; }
+    $('#imp_paso1').style.display = 'none';
+    const yoGuardado = LS.yoWa || '', yo = autores.find(a => a[0] === yoGuardado) ? yoGuardado : (autores.find(a => /blackline|gonzalo/i.test(a[0])) || [''])[0];
+    const otro = (autores.find(a => a[0] !== yo) || [''])[0], mA = String(archivo || '').match(/^(?:chat de whatsapp con|whatsapp chat with|whatsapp chat -)\s*(.+?)(?:\.txt)?$/i), nomArchivo = mA ? mA[1].trim() : '';
+    const nombre = nomArchivo || otro, telDe = x => /^\+?[\d\s()-]{8,}$/.test(x) ? x.replace(/[^\d+]/g, '') : '';
+    const C = contactos().slice().sort((a, b) => String(a.nombre).localeCompare(String(b.nombre)));
+    const sugerido = pre.contacto || (C.find(c => norm(c.nombre) === norm(nombre)) || C.find(c => telDe(nombre) && String(c.telefono).replace(/\D/g, '').slice(-9) === telDe(nombre).replace(/\D/g, '').slice(-9)) || {}).id || '';
+    $('#imp_paso2').innerHTML = '<div class="card" style="margin-top:12px"><b>' + r.mensajes.length + ' mensajes</b><div class="hint">' + fmt(r.mensajes[0].fecha.slice(0, 10)) + ' → ' + fmt(r.mensajes[r.mensajes.length - 1].fecha.slice(0, 10)) + ' · ' + autores.map(a => esc(a[0]) + ' (' + a[1] + ')').join(' · ') + '</div>' + (autores.length > 2 ? '<div class="hint">⚠️ Parece un grupo: todos los que no seas tú se tomarán como el cliente.</div>' : '') + '</div>' +
+      '<label class="l">¿Quién eres tú en este chat?</label>' + pills('imp_yo', autores.map(a => ({ v: a[0], t: a[0] })), yo) +
+      '<label class="l">Cliente</label><select id="imp_c"><option value="">➕ Contacto nuevo</option>' + C.map(c => '<option value="' + esc(c.id) + '"' + (c.id === sugerido ? ' selected' : '') + '>' + esc(c.nombre || c.email) + (c.telefono ? ' · ' + esc(c.telefono) : '') + '</option>').join('') + '</select>' +
+      '<div id="imp_nuevo"' + (sugerido ? ' style="display:none"' : '') + '><label class="l">Nombre</label><input type="text" id="imp_n" value="' + esc(telDe(nombre) ? '' : nombre) + '"><label class="l">Teléfono (para unirlo con sus mensajes nuevos)</label><input type="text" id="imp_t" inputmode="tel" value="' + esc(telDe(nombre)) + '" placeholder="+56 9…"></div>' +
+      (agenteActivo() ? '<label class="row" style="margin-top:12px;gap:8px;font-size:14px;font-weight:600"><input type="checkbox" id="imp_ag" checked style="width:20px;height:20px"> 🧠 Que el agente lo analice al importar (ficha, negociación y tareas pendientes)</label>' : '<div class="hint">🧠 Con el agente activado, además se analiza solo al importar.</div>') +
+      '<div class="btns"><button class="btn" id="imp_ok">Importar ' + r.mensajes.length + ' mensajes</button></div>';
+    bindPills('imp_yo');
+    $('#imp_c').onchange = () => { $('#imp_nuevo').style.display = $('#imp_c').value ? 'none' : 'block'; };
+    $('#imp_ok').onclick = async () => {
+      const yoSel = val('imp_yo'); if (!yoSel){ toast('Elige quién eres tú'); return; }
+      LS.yoWa = yoSel;
+      const cid = $('#imp_c').value, c = cid ? contactoPorId(cid) : null;
+      const contacto = cid ? { id: cid, nombre: c && c.nombre, telefono: c && c.telefono } : { nombre: $('#imp_n').value.trim() || nombre, telefono: $('#imp_t').value.trim() };
+      const b = $('#imp_ok'), ag = $('#imp_ag') && $('#imp_ag').checked;
+      b.disabled = true; b.innerHTML = '<span class="spin"></span>' + (ag ? 'Importando y analizando…' : 'Importando…');
+      try {
+        const res = await apiX('importarChat', { contacto, mensajes: r.mensajes.map(m => ({ fecha: m.fecha, saliente: m.autor === yoSel, texto: m.texto })), analizar: ag });
+        toast('📥 ' + res.importados + ' mensajes importados' + (res.repetidos ? ' (' + res.repetidos + ' ya estaban)' : '') + (res.agente ? ' · 🧠 ' + (res.agente.cambios || []).slice(0, 2).join(' · ') : '') + (res.errorAgente ? ' · el agente no pudo: ' + res.errorAgente : ''));
+        S.mutado = true; await Promise.all([loadBase(true), loadNeg(true)]); closeSheet();
+        const c2 = contactoPorId(res.id); if (c2) openContacto(c2); load();
+      } catch(e){ b.disabled = false; b.textContent = 'Importar'; toast('No se pudo importar: ' + e.message); }
+    };
+  };
+  if (pre.txt) mostrar(pre.txt, pre.nombre);
+  $('#imp_f').onchange = async e => { const f = e.target.files[0]; if (f) mostrar(await f.text(), f.name); };
+}
+// Chat compartido desde WhatsApp hacia la app (lo deja el service worker).
+async function revisarCompartido(){
+  if (!/[?&]compartido=1/.test(location.search)) return;
+  history.replaceState(null, '', location.pathname);
+  try {
+    const cache = await caches.open('compartido'), r = await cache.match('chat.json');
+    if (!r) return;
+    const d = await r.json(); await cache.delete('chat.json');
+    const abrir = () => openImportar({ txt: d.txt, nombre: d.nombre });
+    if (S.data) abrir(); else setTimeout(abrir, 1500);
+  } catch(e){ toast('No pude leer el chat compartido'); }
 }
 function relacionadosHTML(t){
   const L = contactosDe(t); if (!L.length) return '';
@@ -897,6 +975,7 @@ function viewBase(){
     '<div class="hstat"><b>' + cuenta('Cliente') + '</b><span>clientes</span></div><div class="hstat"><b>' + cuenta('Proveedor') + '</b><span>proveed.</span></div>' +
     '<div class="hstat"><b>' + cuenta('Por clasificar') + '</b><span>por clasif.</span></div><div class="hstat"><b>' + frios.length + '</b><span>fríos</span></div></div></div>';
   html += '<div class="btns" style="margin-top:0"><button class="btn sec" id="bScan">🔄 Revisar Gmail y calendario</button><button class="btn" id="bNew">+ Nuevo</button></div>';
+  if (extNivel() >= 8) html += '<button class="quick" id="bImp" style="margin-top:8px"><b>📥</b>Importar chat de WhatsApp (negociaciones en curso)</button>';
   html += '<input type="text" id="bq" style="margin-top:12px" placeholder="🔎 Buscar nombre, empresa, interés…" value="' + esc(S.bq) + '">';
   html += '<div class="filters" style="margin-top:8px">' + filtros.map(f => '<button class="pill ' + (S.bf === f[0] ? 'on' : '') + '" data-bf="' + f[0] + '">' + f[1] + '</button>').join('') + '</div>';
   html += '<div class="card">' + (L.length ? L.map(c => '<div class="ct-row" data-c="' + esc(c.id) + '">' + avatar(c) + '<div class="grow"><b style="font-size:15px">' + esc(c.nombre || c.email) + '</b>' +
@@ -909,6 +988,7 @@ function viewBase(){
   $$('[data-bf]').forEach(b => b.onclick = () => { S.bf = b.dataset.bf; viewBase(); });
   $$('[data-c]').forEach(b => b.onclick = () => openContacto(contactoPorId(b.dataset.c)));
   $('#bNew').onclick = () => openContacto(null);
+  const bi = $('#bImp'); if (bi) bi.onclick = () => openImportar();
   $('#bScan').onclick = async e => {
     const b = e.target; b.disabled = true; b.innerHTML = '<span class="spin"></span>Revisando…';
     try { const r = await apiX('escanear'); toast('✓ ' + r.nuevos + ' contactos nuevos · ' + r.interacciones + ' interacciones'); await loadBase(true); render(); }
@@ -940,6 +1020,7 @@ function openContacto(c){
   bindPills('c_tipo'); bindTasks($('#layer'));
   const cn = $('#c_neg'); if (cn) cn.onclick = () => openNegocio(null, { contacto: c.id });
   $$('#layer [data-agente]').forEach(b => b.onclick = () => analizarAhora(b.dataset.agente, b));
+  $$('#layer [data-impc]').forEach(b => b.onclick = () => openImportar({ contacto: b.dataset.impc }));
   $$('#layer [data-neg]').forEach(b => b.onclick = () => openNegocio(negocios().find(x => x.id === b.dataset.neg)));
   $('#c_seg').onclick = () => { const n = $('#c_nom').value.trim() || c.nombre || c.email; openAdd({ texto: 'Seguimiento ' + n + ' mañana', notas: c.telefono ? '📞 ' + c.telefono : '' }); };
   $('#c_ok').onclick = async () => {
@@ -1283,6 +1364,7 @@ function openNegocio(n, opt){
   if (!nuevo){
     const ct = $('#ng_cto'); if (ct) ct.onclick = ev => { ev.preventDefault(); openContacto(a.c); };
     $$('#layer [data-agente]').forEach(b => b.onclick = () => analizarAhora(b.dataset.agente, b));
+  $$('#layer [data-impc]').forEach(b => b.onclick = () => openImportar({ contacto: b.dataset.impc }));
     $$('[data-ngk]').forEach(b => b.onclick = () => moverEtapa(n, b.dataset.ngk));
     const w = $('#ng_win'); if (w) w.onclick = () => moverEtapa(n, 'Ganada');
     const l = $('#ng_lose'); if (l) l.onclick = () => openPerdida(n);
@@ -2002,7 +2084,7 @@ function showSettings(){
     (deferredInstall ? '<div class="btns"><button class="btn" id="s_inst">📲 Instalar app en este dispositivo</button></div>' : '') +
     '<div class="card"><b>✨ Funciones extra</b> <span class="hint">(calendario, correo, subtareas, repetir)</span><div class="hint">' + esc(gTxt) + '</div><button class="btn sm sec" id="s_g">' + (g && !g.inactivo ? 'Ver sugerencias' : 'Cómo activarlas') + '</button></div>' +
     (extNivel() >= 2 ? '<div class="card"><b>📅 Recordatorios en tu calendario</b><div class="hint">Cada tarea pendiente con fecha está en el calendario «' + esc((S.ext && S.ext.calendario) || 'Organizador BlackLine') + '», con aviso en tu teléfono 10 min antes (a las 9:00, o a la hora que pongas: «a las 15:30»). Se actualiza solo cada hora y cuando cambias algo.</div><button class="btn sm sec" id="s_sinc">🔄 Sincronizar ahora</button></div>' : necesitaActualizar() ? '<div class="card"><b>⬆️ Hay una versión nueva del script</b><div class="hint">📅 Recordatorios y 📇 base de datos solo con contacto@blacklinechile.cl.</div><button class="btn sm" id="s_upd">Actualizar (2 min)</button></div>' : '') +
-    (extNivel() >= 7 ? '<div class="card"><b>🧠 Agente de ventas IA</b><div class="hint">' + (agenteActivo() ? 'Activo ✓ (' + esc(S.ext.agente.modelo) + ')' + (S.ext.agente.ultimo ? ' · último análisis ' + haceTxt(S.ext.agente.ultimo.slice(0, 10)) : '') + '. Cada 10 minutos lee las conversaciones nuevas de WhatsApp: crea y completa clientes, mueve negociaciones, agenda lo conversado como tareas y te sugiere qué responder. Nunca escribe a tus clientes.' : 'No activado: falta tu clave de Claude (ANTHROPIC_API_KEY) en las propiedades del script. Los pasos están en la guía.') + '</div></div>' : '') +
+    (extNivel() >= 7 ? '<div class="card"><b>🧠 Agente de ventas IA</b><div class="hint">' + (agenteActivo() ? 'Activo ✓ (' + esc(S.ext.agente.modelo) + (/haiku/.test(S.ext.agente.modelo) ? ', modo económico' : '') + ')' + (S.ext.agente.ultimo ? ' · último análisis ' + haceTxt(S.ext.agente.ultimo.slice(0, 10)) : '') + '. Cada 10 minutos lee las conversaciones nuevas de WhatsApp: crea y completa clientes, mueve negociaciones, agenda lo conversado como tareas y te sugiere qué responder. Nunca escribe a tus clientes.' : 'No activado: falta tu clave de Claude (ANTHROPIC_API_KEY) en las propiedades del script. Los pasos están en la guía.') + '</div>' + (extNivel() >= 8 ? '<button class="btn sm sec" id="s_imp">📥 Importar chat de WhatsApp</button>' : '') + '</div>' : '') +
     (extNivel() >= 6 ? '<div class="card"><b>💬 WhatsApp Business</b><div class="hint">' + (S.ext && S.ext.wa ? 'Conectado ✓ · último mensaje recibido ' + haceTxt(S.ext.wa.slice(0, 10)) + '. Cada mensaje crea o actualiza al cliente en la Base, queda en su historial y, si pregunta por precio, stock, talla o test ride, abre una negociación nueva.' : 'Aún no conectado. Con la conexión, cada mensaje crea o actualiza al cliente, queda en su historial y abre negociaciones solas.') + '</div><a class="btn sm sec" style="display:inline-block;text-decoration:none" href="https://github.com/SnowPv/Organizador/blob/main/docs/WHATSAPP.md" target="_blank">📖 Guía de conexión</a></div>' : '') +
     '<div class="card"><b>✨ Trucos para agregar rápido</b><div class="hint">• Fechas: <i>hoy, mañana, pasado mañana, el viernes, en 3 días, 15/10, 20 de octubre, la próxima semana</i><br>• Hora: <i>a las 10, 15:30</i><br>• Prioridad: <i>urgente</i> o <i>!</i> · <i>importante</i><br>• Categoría o área: <i>#ventas, #marketing, #personal</i><br>• Proyecto: <i>@levo</i><br>• Repetir: <i>cada lunes, todos los días, días hábiles, cada mes</i><br>• Toca 🎤 para dictar.</div></div>' +
     '<div class="btns"><button class="btn sec" id="s_re">Cambiar link o clave</button></div>' +
@@ -2011,6 +2093,7 @@ function showSettings(){
   $('#s_g').onclick = () => g && !g.inactivo ? openSugerencias() : showExtrasSetup();
   const ss2 = $('#s_sinc'); if (ss2) ss2.onclick = async () => { ss2.disabled = true; try { const r = await apiX('sinc'); toast('📅 ' + r.creados + ' nuevos · ' + r.actualizados + ' actualizados · ' + r.borrados + ' borrados'); } catch(e){ toast('No se pudo: ' + e.message); } ss2.disabled = false; };
   const su = $('#s_upd'); if (su) su.onclick = showExtrasUpdate;
+  const sim = $('#s_imp'); if (sim) sim.onclick = () => openImportar();
   $('#s_re').onclick = showSetup;
   $('#s_out').onclick = () => { if (confirm('Se borran el link y la clave de este dispositivo.')){ ['url', 'token', 'cache', 'googleCache', 'extCache', 'baseCache', 'negCache'].forEach(k => LS.removeItem(k)); S.data = null; S.google = null; closeSheet(); showSetup(); } };
 }
@@ -2027,7 +2110,7 @@ S.google = lsGet('googleCache', null);
 S.ext = lsGet('extCache', null);
 S.base = lsGet('baseCache', null);
 S.neg = lsGet('negCache', null);
-if (!LS.url || !LS.token) { render(); showSetup(); } else { render(); load(); }
+if (!LS.url || !LS.token) { render(); showSetup(); } else { render(); load(); revisarCompartido(); }
 </script>
 </body>
 </html>

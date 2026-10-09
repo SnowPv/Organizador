@@ -15,8 +15,8 @@
  * Para actualizar este archivo más adelante: reemplaza todo su contenido y repite los dos pasos anteriores.
  */
 
-const EX_VERSION = '2026-10-12';
-const EX_NIVEL = 7;      // la app lo usa para saber qué funciones tiene este script
+const EX_VERSION = '2026-10-13';
+const EX_NIVEL = 8;      // la app lo usa para saber qué funciones tiene este script
 const EX_HOJA = 'Tareas';
 const EX_PRIMERA = 4;
 const EX_ULTIMA = 400;
@@ -52,8 +52,9 @@ const EX_CAB_WA = ['Fecha', 'Dirección', 'Teléfono', 'Nombre', 'Mensaje', 'Tip
 const EX_WA_INTENCION = /precio|valor|cuanto|cotiz|disponib|stock|talla|test|probar|cuota|comprar|venden|tienen|mantencion|reserv|levo|turbo|vado|bici|ebike|e-bike/;
 const EX_WA_MODELOS = /(turbo\s*levo\s*sl|turbo\s*levo|levo\s*sl|levo|turbo\s*vado\s*sl|turbo\s*vado|vado|turbo\s*como|como\s*sl|turbo\s*creo|creo|kenevo|stumpjumper\s*evo|stumpjumper|epic\s*evo|epic|chisel|rockhopper|tarmac|roubaix|diverge|allez|status|enduro)/i;
 // Agente de ventas con IA (Claude). La clave va en Configuración del proyecto → Propiedades del script:
-// ANTHROPIC_API_KEY = tu clave de console.anthropic.com. Opcional: AGENTE_MODELO para usar otro modelo.
-const EX_AG_MODELO = 'claude-opus-5-5';
+// ANTHROPIC_API_KEY = tu clave de console.anthropic.com. Opcional: AGENTE_MODELO para usar otro modelo
+// (por ejemplo claude-sonnet-5-5 o claude-opus-5-5, más capaces y más caros).
+const EX_AG_MODELO = 'claude-haiku-5-5';
 const EX_AG_ESPERA_MIN = 3;        // espera a que la conversación se calme antes de analizarla
 const EX_AG_MAX_POR_RONDA = 6;     // conversaciones por ronda (cada 10 minutos)
 const EX_HOJA_AG = 'Agente';
@@ -98,6 +99,7 @@ function app_extra_(p) {
     case 'negocioNota': return ex_notaNegocio_(p);
     case 'whatsapp':   return ex_whatsapp_(p);
     case 'agente':     return ex_agente_(p.id);
+    case 'importarChat': return ex_importarChat_(p);
     default:           return { ok: false, error: 'op desconocida: ' + p.op };
   }
 }
@@ -671,6 +673,43 @@ function ex_whatsapp_(p) {
   return { ok: true, mensajes: nuevasI.length, contactosNuevos: nuevosC.length, leads: leads.length };
 }
 
+/* ---------- importar un chat exportado desde WhatsApp ---------- */
+// p.contacto = { id?, nombre, telefono }  ·  p.mensajes = [{ fecha: 'yyyy-MM-ddTHH:mm', saliente, texto }]  ·  p.analizar
+function ex_importarChat_(p) {
+  const tz = ex_tz_(), b = ex_baseHojas_(), wa = ex_hojaWa_(), pc = p.contacto || {};
+  const tel = String(pc.telefono || '').replace(/\D/g, ''), ult9 = function (t) { return String(t || '').replace(/\D/g, '').slice(-9); };
+  const filas = ex_filasContactos_(b.cs);
+  let id = String(pc.id || '');
+  if (!id && tel.length >= 8) { const f = filas.filter(function (r) { return ult9(r[5]) === ult9(tel); })[0]; if (f) id = String(f[0]); }
+  if (!id) {
+    id = tel.length >= 8 ? 'wa:+' + (tel.length === 9 ? '56' + tel : tel) : 'c-' + Date.now();
+    if (!filas.some(function (r) { return String(r[0]) === id; })) b.cs.appendRow([id, 'Por clasificar', pc.nombre || id, '', '', tel ? "'+" + (tel.length === 9 ? '56' + tel : tel) : '', '', '', '', 0, '📥 Chat importado', new Date()]);
+  } else if (tel.length >= 8) {
+    const i = filas.findIndex(function (r) { return String(r[0]) === id; });
+    if (i >= 0 && !ult9(filas[i][5])) b.cs.getRange(i + 2, 6).setValue("'+" + (tel.length === 9 ? '56' + tel : tel));
+  }
+  const nw = wa.getLastRow() - 1, ya = {};
+  (nw > 0 ? wa.getRange(2, 8, nw, 1).getValues() : []).forEach(function (r) { ya[String(r[0])] = true; });
+  const nombre = pc.nombre || id, nuevas = [];
+  (p.mensajes || []).slice(-800).forEach(function (m) {
+    if (!m || !m.texto || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(m.fecha)) return;
+    const clave = 'imp:' + ex_firma_(id + '|' + m.fecha + '|' + (m.saliente ? 1 : 0) + '|' + m.texto);
+    if (ya[clave]) return;
+    ya[clave] = true;
+    nuevas.push([Utilities.parseDate(m.fecha.replace('T', ' '), tz, 'yyyy-MM-dd HH:mm'), m.saliente ? 'Enviado' : 'Recibido', tel ? '+' + tel : '', nombre, String(m.texto).slice(0, 1000), 'importado', id, clave]);
+  });
+  if (nuevas.length) {
+    wa.getRange(wa.getLastRow() + 1, 1, nuevas.length, EX_CAB_WA.length).setValues(nuevas);
+    b.is.appendRow([new Date(), id, '📥 Chat importado', nuevas.length + ' mensajes de WhatsApp (' + Utilities.formatDate(nuevas[0][0], tz, 'dd/MM/yyyy') + ' a ' + Utilities.formatDate(nuevas[nuevas.length - 1][0], tz, 'dd/MM/yyyy') + ')', '', 'imp:' + id + ':' + Date.now()]);
+    ex_recalcular_(b.cs, b.is);
+  }
+  const out = { ok: true, id: id, importados: nuevas.length, repetidos: (p.mensajes || []).length - nuevas.length };
+  if (p.analizar && PropertiesService.getScriptProperties().getProperty('ANTHROPIC_API_KEY')) {
+    try { out.agente = ex_agente_(id); } catch (err) { out.errorAgente = err.message; }
+  }
+  return out;
+}
+
 /* ---------- agente de ventas con IA ---------- */
 const EX_AG_SISTEMA = [
   'Eres el asistente de ventas de Blackline Puerto Varas, tienda de bicicletas Specialized (e-bikes como Turbo Levo, Turbo Vado, Turbo Como, Kenevo; MTB como Stumpjumper, Epic, Chisel; ruta y gravel como Tarmac, Roubaix, Diverge), repuestos, accesorios y taller de mantención en Puerto Varas, Chile.',
@@ -686,6 +725,7 @@ const EX_AG_SISTEMA = [
   '7. Indicar si el cliente está esperando respuesta del encargado (su último mensaje no tiene respuesta).',
   '8. Proponer una idea breve de respuesta (tono cercano, chileno, profesional) solo si el cliente espera respuesta; si no, deja el texto vacío.',
   '',
+  'Si la conversación es antigua o fue importada, crea tareas solo para compromisos que sigan pendientes: si la fecha ya pasó y no hay señales de que se cumplió, agéndala para hoy; si ya se cumplió, no la crees.',
   'Reglas: no inventes datos que no estén en la conversación; si un dato no aparece, deja el texto vacío. No repitas tareas que ya existen en la lista de tareas abiertas que se te entrega. Escribe todo en español de Chile. Responde solo con el JSON pedido.'
 ].join('\n');
 
@@ -741,17 +781,19 @@ function ex_llamarClaude_(contexto) {
   const props = PropertiesService.getScriptProperties();
   const clave = props.getProperty('ANTHROPIC_API_KEY');
   if (!clave) throw new Error('falta ANTHROPIC_API_KEY en las propiedades del script');
+  const modelo = props.getProperty('AGENTE_MODELO') || EX_AG_MODELO, haiku = /haiku/.test(modelo);
   const cuerpo = {
-    model: props.getProperty('AGENTE_MODELO') || EX_AG_MODELO,
+    model: modelo,
     max_tokens: 8000,
-    fallbacks: 'default',
-    output_config: { effort: 'medium', format: { type: 'json_schema', schema: EX_AG_ESQUEMA } },
+    // Haiku: esfuerzo bajo (lo más barato). Opus/Sonnet: esfuerzo medio y respaldo automático si el modelo rechaza.
+    output_config: { effort: haiku ? 'low' : 'medium', format: { type: 'json_schema', schema: EX_AG_ESQUEMA } },
     system: [{ type: 'text', text: EX_AG_SISTEMA, cache_control: { type: 'ephemeral' } }],
     messages: [{ role: 'user', content: contexto }]
   };
+  const headers = { 'x-api-key': clave, 'anthropic-version': '2023-06-01' };
+  if (!haiku) { cuerpo.fallbacks = 'default'; headers['anthropic-beta'] = 'server-side-fallback-2026-07-01'; }
   const r = UrlFetchApp.fetch('https://api.anthropic.com/v1/messages', {
-    method: 'post', contentType: 'application/json', muteHttpExceptions: true, payload: JSON.stringify(cuerpo),
-    headers: { 'x-api-key': clave, 'anthropic-version': '2023-06-01', 'anthropic-beta': 'server-side-fallback-2026-07-01' }
+    method: 'post', contentType: 'application/json', muteHttpExceptions: true, payload: JSON.stringify(cuerpo), headers: headers
   });
   const j = JSON.parse(r.getContentText() || '{}');
   if (r.getResponseCode() !== 200) throw new Error('Claude respondió ' + r.getResponseCode() + ': ' + ((j.error && j.error.message) || '').slice(0, 200));
@@ -768,8 +810,8 @@ function ex_contextoAgente_(id) {
   const fmt = function (d) { return d instanceof Date ? Utilities.formatDate(d, tz, 'yyyy-MM-dd HH:mm') : String(d || ''); };
   const wa = ex_hojaWa_(), nw = wa.getLastRow() - 1;
   const chat = (nw > 0 ? wa.getRange(2, 1, nw, EX_CAB_WA.length).getValues() : []).filter(function (r) { return String(r[6]) === id; })
-    .sort(function (x, y) { return x[0] - y[0]; }).slice(-60)
-    .map(function (r) { return '[' + fmt(r[0]) + '] ' + (r[1] === 'Enviado' ? 'TIENDA' : 'CLIENTE') + ': ' + r[4]; });
+    .sort(function (x, y) { return x[0] - y[0]; }).slice(-150)
+    .map(function (r) { return '[' + fmt(r[0]) + '] ' + (r[1] === 'Enviado' ? 'TIENDA' : 'CLIENTE') + ': ' + String(r[4]).slice(0, 400); });
   const ni = b.is.getLastRow() - 1;
   const otras = (ni > 0 ? b.is.getRange(2, 1, ni, 4).getValues() : []).filter(function (r) { return String(r[1]) === id && !/whatsapp|agente/i.test(r[2]); })
     .sort(function (x, y) { return x[0] - y[0]; }).slice(-15).map(function (r) { return '[' + fmt(r[0]) + '] ' + r[2] + ': ' + r[3]; });
