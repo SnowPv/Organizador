@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#F6F5FB">
+<meta name="theme-color" content="#F4F5F7">
 <meta name="color-scheme" content="light only">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon-192.png">
@@ -11,17 +11,17 @@
 <title>Organizador</title>
 <style>
 :root{
-  --bg:#F6F5FB; --card:#FFFFFF; --ink:#1B1A2E; --muted:#7E7F92; --line:#ECEBF3; --soft:#F2F0FA;
-  --accent:#6D5DFC; --pink:#FF5C8A; --amber:#FFB547; --ok:#13B386; --warn:#F5A524; --bad:#F04461; --info:#3B9EFF;
-  --ok-ink:#0B8A66; --warn-ink:#A86A00; --bad-ink:#D42A49; --info-ink:#1F6FD1; --accent-ink:#5546E8;
-  --trabajo:#6D5DFC; --personal:#FF5C8A;
-  --grad:linear-gradient(135deg,#6D5DFC 0%,#A44DF0 48%,#FF5C8A 100%);
-  --grad-warm:linear-gradient(135deg,#FF8A4C 0%,#FF5C8A 100%);
-  --grad-cool:linear-gradient(135deg,#3B9EFF 0%,#6D5DFC 100%);
-  --grad-green:linear-gradient(135deg,#13B386 0%,#3FD2A8 100%);
-  --shadow-sm:0 1px 2px rgba(27,26,46,.05), 0 2px 8px -4px rgba(27,26,46,.08);
-  --shadow-md:0 10px 30px -10px rgba(27,26,46,.22);
-  --shadow-fab:0 12px 26px -8px rgba(164,77,240,.65);
+  /* Sistema de diseño sobrio: fondo gris claro, tarjetas blancas, un solo acento azul; los colores de estado solo para alertas */
+  --bg:#F4F5F7; --card:#FFFFFF; --ink:#1D2433; --muted:#667085; --line:#E4E7EC; --soft:#F2F4F7;
+  --accent:#2A78D6; --accent-ink:#1E5FB3; --accent-soft:#EAF2FC;
+  --ok:#12A06B; --warn:#E5A000; --bad:#D92D20; --info:#2A78D6;
+  --ok-ink:#0B7A51; --warn-ink:#9A6700; --bad-ink:#B42318; --info-ink:#1E5FB3;
+  --pink:#2A78D6; --amber:#E5A000; --trabajo:#2A78D6; --personal:#7A5AF8;
+  --grad:#2A78D6; --grad-warm:#2A78D6; --grad-cool:#2A78D6; --grad-green:#12A06B;
+  --shadow-sm:0 1px 2px rgba(16,24,40,.05);
+  --shadow-md:0 12px 32px -12px rgba(16,24,40,.25);
+  --shadow-fab:0 10px 24px -8px rgba(42,120,214,.6);
+  --s1:#BFD5F2; --s2:#93B8EA; --s3:#6198DF; --s4:#2A78D6; --s5:#1B57A6;
   color-scheme:light;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -354,6 +354,132 @@ textarea.note{min-height:56px;resize:vertical}
   .ct-row:hover{background:var(--soft);border-radius:12px}
 }
 @keyframes side{from{transform:translateX(48px);opacity:.4}}
+
+/* ---------- rediseño: tarjetas, widgets, ventanas ---------- */
+html,body{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
+.card{border-radius:16px;border:1px solid var(--line);box-shadow:none}
+.card h2 .em{display:none}
+.card h2{font-size:14.5px;font-weight:700}
+.hero{background:var(--card)!important;color:var(--ink);border:1px solid var(--line);box-shadow:none;border-radius:16px}
+.hero::before,.hero::after{display:none}
+.hero .hint{color:var(--muted)!important}
+.hero .hstat{background:var(--soft)}
+.tile{background:var(--card)!important;color:var(--ink);border:1px solid var(--line);box-shadow:none}
+.btn{box-shadow:none;border-radius:12px}
+.btn.sec{background:var(--card);border:1px solid var(--line)}
+.pill{border-radius:10px;padding:7px 12px;font-weight:600}
+.pill.on{background:var(--ink);border-color:var(--ink)}
+.tag{border-radius:8px;font-weight:600}
+.fab{border-radius:16px}
+.quick{border:1px solid var(--line);box-shadow:none;border-radius:14px}
+.quick b{background:var(--accent)}
+.kpi{border:1px solid var(--line);box-shadow:none;border-top:3px solid var(--c,var(--accent))}
+.nkpi,.kcard,.tablewrap{box-shadow:none;border:1px solid var(--line)}
+.kcol{background:#EEF0F3}
+.ico{width:18px;height:18px;flex:none;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;vertical-align:-3px}
+nav.bottom button span{filter:none!important}
+nav.bottom button span .ico{width:21px;height:21px}
+/* página de inicio en widgets */
+.ihead{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:2px 0 14px}
+.ihead .quick{margin:0;flex:1 1 260px}
+.ihead .btn{flex:none}
+.wgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px;align-items:start}
+.w{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;min-width:0}
+.w.span2{grid-column:span 2}
+@media (max-width:560px){.wgrid{grid-template-columns:1fr 1fr;gap:10px}.w{padding:14px;grid-column:1/-1}.w.half{grid-column:auto}.w.half .hbar{grid-template-columns:auto 1fr;}.w.half .hbar b{display:none}header.top h1{font-size:21px}}
+.wh{display:flex;align-items:center;gap:8px;margin:0 0 12px;font-weight:700;font-size:14.5px}
+.wh .ico{color:var(--muted)}
+.wh .go{margin-left:auto;border:0;background:none;color:var(--accent-ink);font-weight:600;font-size:13px;padding:2px 0;cursor:pointer}
+.wbig{font-size:26px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1.1}
+.wsub{font-size:12.5px;color:var(--muted);margin-top:3px}
+.wring{display:flex;align-items:center;gap:14px}
+.wring .rg{position:relative;flex:none}
+.wring .rg b{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:18px;font-weight:800;font-variant-numeric:tabular-nums}
+.wring .rg b small{font-size:10.5px;color:var(--muted);font-weight:600}
+.leg{display:flex;flex-direction:column;gap:6px;font-size:13px;min-width:0}
+.leg div{display:flex;align-items:center;gap:7px;white-space:nowrap}
+.leg i{width:8px;height:8px;border-radius:50%;flex:none}
+.leg b{margin-left:auto;font-variant-numeric:tabular-nums;padding-left:8px}
+.hbar{display:grid;grid-template-columns:minmax(70px,auto) 1fr auto;gap:6px 10px;align-items:center;font-size:12.5px;margin-top:10px}
+.hbar span{color:var(--muted);white-space:nowrap}
+.hbar b{font-variant-numeric:tabular-nums;font-weight:700;white-space:nowrap}
+.hbar .tr{height:8px;background:var(--soft);border-radius:4px;overflow:hidden}
+.hbar .tr i{display:block;height:100%;border-radius:4px}
+.meter{display:flex;height:10px;border-radius:5px;overflow:hidden;background:var(--soft);gap:2px;margin:10px 0 8px}
+.meter i{display:block;height:100%}
+.wl{display:flex;flex-direction:column}
+.wl .it{display:flex;gap:10px;align-items:center;padding:9px 0;border-top:1px solid var(--line);cursor:pointer;min-width:0}
+.wl .it:first-child{border-top:0;padding-top:2px}
+.wl .it .tx{flex:1;min-width:0;font-size:13.5px;font-weight:600;line-height:1.3}
+.wl .it .tx small{display:block;color:var(--muted);font-weight:500;font-size:12px;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wl .it .rt{flex:none;font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums;text-align:right}
+.dot{width:8px;height:8px;border-radius:50%;flex:none;display:inline-block}
+.bars{display:flex;align-items:flex-end;gap:4px;height:90px;position:relative;margin-top:6px}
+.bars i{flex:1;background:var(--s2);border-radius:4px 4px 0 0;min-height:2px;position:relative}
+.bars i.hit{background:var(--accent)}
+.bars i:hover::after{content:attr(data-t);position:absolute;bottom:100%;left:50%;transform:translate(-50%,-4px);background:var(--ink);color:#fff;font-size:11px;padding:3px 6px;border-radius:6px;white-space:nowrap;z-index:2}
+.bars u{position:absolute;left:0;right:0;border-top:1.5px dashed var(--muted);opacity:.6}
+.bx{display:flex;justify-content:space-between;font-size:10.5px;color:var(--muted);margin-top:4px}
+.sug2{display:flex;gap:10px;padding:10px 0;border-top:1px solid var(--line);align-items:flex-start}
+.sug2:first-child{border-top:0;padding-top:2px}
+.sug2 .tx{flex:1;font-size:13.5px;line-height:1.4}
+.sug2 .acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.sug2 .acts .btn{padding:6px 10px;font-size:12.5px}
+/* ventanas emergentes */
+.pop.wide{max-width:640px}
+.pop .ph{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.pop .ph h4{flex:1;margin:0}
+.pop .px{border:0;background:var(--soft);width:32px;height:32px;border-radius:50%;font-size:15px;color:var(--muted);cursor:pointer}
+@media (max-width:560px){.pop-bg{align-items:flex-end;padding:0}.pop{border-radius:20px 20px 0 0;max-height:90vh}}
+/* tarjeta de negociación simple */
+.kcard .top{display:flex;gap:8px;align-items:baseline}
+.kcard .top .nm{flex:1;min-width:0}
+.kcard .kv{font-weight:700;font-size:13.5px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.kcard .pr{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kcard .kf{display:flex;align-items:center;gap:7px;margin-top:9px;font-size:12.5px;color:var(--muted)}
+.kcard .kf .ktx{flex:1;min-width:0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.35}
+.kcard .kf{align-items:flex-start}
+.kcard .kf .ico{margin-top:1px}
+.kcard .kf.bad{color:var(--bad-ink);font-weight:600}
+.kcard .kp{font-variant-numeric:tabular-nums;font-weight:600;color:var(--muted)}
+.kcard .ks{font-size:11.5px;color:var(--muted);font-weight:600;margin-bottom:4px;display:flex;align-items:center;gap:6px}
+/* ficha de negociación */
+.dh{display:flex;gap:12px;align-items:center;margin:2px 0 12px}
+.dh h3{margin:0;font-size:20px}
+.dh .ds{color:var(--muted);font-size:13.5px;margin-top:2px}
+.stepper{display:flex;gap:3px;margin:4px 0 4px}
+.stepper button{flex:1;min-width:0;border:0;padding:10px 0 10px 8px;font-size:11.5px;font-weight:700;color:var(--muted);background:var(--soft);clip-path:polygon(0 0,88% 0,100% 50%,88% 100%,0 100%,12% 50%);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
+.stepper button:first-child{clip-path:polygon(0 0,88% 0,100% 50%,88% 100%,0 100%);padding-left:0}
+.stepper button.ok{background:var(--accent-soft);color:var(--accent-ink)}
+.stepper button.on{background:var(--accent);color:#fff}
+.stepper button:hover:not(.on){background:#DCE7F6}
+.shint{font-size:11.5px;color:var(--muted);margin:0 0 12px}
+.dact{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+.dact button{border:1px solid var(--line);background:var(--card);border-radius:12px;padding:10px 4px;font-weight:600;font-size:12.5px;display:flex;flex-direction:column;align-items:center;gap:5px;color:var(--ink);cursor:pointer}
+.dact button .ico{width:20px;height:20px;color:var(--accent)}
+.dact button.win .ico{color:var(--ok)}
+.dact button.lose .ico{color:var(--bad)}
+.dact button:hover{background:var(--soft)}
+.nextc{border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:12px;padding:12px 14px;background:var(--card);display:flex;gap:10px;align-items:center;margin-bottom:14px}
+.nextc.bad{border-left-color:var(--bad)}
+.nextc .tx{flex:1;min-width:0}
+.nextc .tx small{display:block;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.nextc .tx b{display:block;font-size:14.5px;margin-top:2px}
+.nextc .tx span{font-size:12.5px;color:var(--muted)}
+.nextc.bad .tx span{color:var(--bad-ink);font-weight:600}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin:0 0 14px;overflow-x:auto;scrollbar-width:none}
+.tabs button{border:0;background:none;padding:10px 12px;font-weight:600;font-size:13.5px;color:var(--muted);border-bottom:2px solid transparent;white-space:nowrap;cursor:pointer}
+.tabs button.on{color:var(--ink);border-bottom-color:var(--accent)}
+.mini3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.mini3 div{border:1px solid var(--line);border-radius:12px;padding:10px 12px;cursor:pointer}
+.mini3 small{display:flex;align-items:center;font-size:11.5px;color:var(--muted);font-weight:600}
+.mini3 b{display:block;font-size:19px;font-weight:800;margin-top:2px;font-variant-numeric:tabular-nums}
+.sth{display:flex;gap:12px;padding:10px 0;border-top:1px solid var(--line);align-items:center}
+.sth:first-child{border-top:0}
+.sth .bar{flex:1}
+.choice{display:flex;flex-wrap:wrap;gap:8px}
+.choice button{border:1px solid var(--line);background:var(--card);border-radius:10px;padding:9px 12px;font-weight:600;font-size:13.5px;cursor:pointer}
+.choice button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
 </style>
 </head>
 <body>
@@ -371,13 +497,13 @@ textarea.note{min-height:56px;resize:vertical}
 <button class="focus-pill" id="focusPill" hidden></button>
 <nav class="bottom">
   <div class="brand"><img src="icon-192.png" alt=""><div>Organizador<small>Blackline Puerto Varas</small></div></div>
-  <button data-tab="inicio"><span>🏠</span>Inicio</button>
-  <button data-tab="hoy"><span>☀️</span>Hoy</button>
-  <button data-tab="tareas"><span>📋</span>Tareas</button>
-  <button data-tab="semana"><span>🗓️</span>Semana</button>
-  <button data-tab="negocios"><span>🤝</span>Negocios</button>
-  <button data-tab="proy"><span>🚀</span>Proyectos</button>
-  <button data-tab="base"><span>📇</span>Base</button>
+  <button data-tab="inicio"><span data-ic="home"></span>Inicio</button>
+  <button data-tab="hoy"><span data-ic="sun"></span>Hoy</button>
+  <button data-tab="tareas"><span data-ic="check"></span>Tareas</button>
+  <button data-tab="semana"><span data-ic="cal"></span>Semana</button>
+  <button data-tab="negocios"><span data-ic="deal"></span>Negocios</button>
+  <button data-tab="proy"><span data-ic="flag"></span>Proyectos</button>
+  <button data-tab="base"><span data-ic="users"></span>Contactos</button>
 </nav>
 <div id="layer"></div>
 
@@ -510,9 +636,9 @@ async function updateTask(t, cambios){
 }
 
 /* ---------- cabecera y navegación ---------- */
-const TITLES = { inicio: 'Inicio', hoy: 'Hoy', tareas: 'Tareas', habitos: 'Hábitos', semana: 'Semana', proy: 'Proyectos', base: 'Base de datos', negocios: 'Negociaciones' };
+const TITLES = { inicio: 'Inicio', hoy: 'Hoy', tareas: 'Tareas', habitos: 'Hábitos', semana: 'Semana', proy: 'Proyectos', base: 'Contactos', negocios: 'Negociaciones' };
 function head(){
-  $('#hTitle').innerHTML = (S.tab === 'habitos' && S.subH === 'semana' ? 'Semana' : TITLES[S.tab]) + (S.offline ? '<span class="chip-off">sin conexión</span>' : '');
+  $('#hTitle').innerHTML = (S.tab === 'inicio' && S.data ? saludoTxt() : TITLES[S.tab]) + (S.offline ? '<span class="chip-off">sin conexión</span>' : '');
   $('#hSub').innerHTML = S.busy ? '<span class="spin"></span>Actualizando…' : fmtLong(hoy());
   $$('nav.bottom button').forEach(b => b.classList.toggle('on', b.dataset.tab === S.tab));
 }
@@ -643,49 +769,159 @@ function heroHTML(){
     '<div class="lvl"><div class="bar"><i style="width:' + Math.min(100, Math.round(enNivel / paraNivel * 100)) + '%"></i></div><small><span>' + enNivel + ' / ' + paraNivel + ' pts</span><span>siguiente nivel</span></small></div></div>';
 }
 
-/* ---------- vista: Inicio (panel) ---------- */
+
+/* ---------- íconos (línea, estilo sobrio) ---------- */
+const ICONS = {
+  home: '<path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/>',
+  sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+  check: '<rect x="3" y="3" width="18" height="18" rx="4"/><path d="m8 12 3 3 5-6"/>',
+  cal: '<rect x="3" y="4" width="18" height="17" rx="3"/><path d="M3 9h18M8 2v4M16 2v4"/>',
+  deal: '<path d="M3 7h18v12H3z"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M3 12h18"/>',
+  flag: '<path d="M5 21V4"/><path d="M5 4h11l-2 4 2 4H5"/>',
+  users: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14.5a6.5 6.5 0 0 1 3.5 5.5"/>',
+  chart: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
+  bolt: '<path d="M13 2 4 14h7l-1 8 9-12h-7z"/>',
+  spark: '<path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M18 6l-2.5 2.5M8.5 15.5 6 18"/>',
+  clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  plus: '<path d="M12 5v14M5 12h14"/>',
+  arrow: '<path d="M5 12h14M13 6l6 6-6 6"/>',
+  trophy: '<path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M17 5h3a3 3 0 0 1-3 4M7 5H4a3 3 0 0 0 3 4"/>',
+  x: '<circle cx="12" cy="12" r="9"/><path d="m9 9 6 6M15 9l-6 6"/>',
+  note: '<path d="M5 3h10l4 4v14H5z"/><path d="M9 12h6M9 16h6M9 8h3"/>',
+  box: '<path d="M3 7 12 3l9 4-9 4z"/><path d="M3 7v10l9 4 9-4V7"/><path d="M12 11v10"/>',
+  phone: '<path d="M5 3h4l2 5-2.5 1.5a11 11 0 0 0 6 6L16 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2z"/>',
+  target: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>'
+};
+function icon(n, cls){ return '<svg class="ico' + (cls ? ' ' + cls : '') + '" viewBox="0 0 24 24" aria-hidden="true">' + (ICONS[n] || '') + '</svg>'; }
+document.querySelectorAll('[data-ic]').forEach(e => { e.innerHTML = icon(e.dataset.ic); });
+/* ---------- ventanas emergentes (sub-ventanas sobre la pantalla o sobre la ficha) ---------- */
+function modal(titulo, cuerpo, opt){
+  opt = opt || {};
+  const bg = document.createElement('div'); bg.className = 'pop-bg';
+  bg.innerHTML = '<div class="pop' + (opt.wide ? ' wide' : '') + '" role="dialog"><div class="ph"><h4>' + titulo + '</h4><button class="px" aria-label="Cerrar">✕</button></div>' + cuerpo + '</div>';
+  const cerrar = () => bg.remove();
+  bg.onclick = e => { if (e.target === bg || e.target.closest('.px')) cerrar(); };
+  document.body.appendChild(bg);
+  return { el: bg.querySelector('.pop'), cerrar };
+}
+function cerrarModales(){ $$('.pop-bg').forEach(x => x.remove()); }
+/* ---------- gráficos simples (SVG) ---------- */
+function ringSVG(p, size, color){
+  size = size || 92; const r = size / 2 - 7, c = 2 * Math.PI * r;
+  return '<svg width="' + size + '" height="' + size + '" viewBox="0 0 ' + size + ' ' + size + '"><circle cx="' + size / 2 + '" cy="' + size / 2 + '" r="' + r + '" fill="none" stroke="#E9EDF3" stroke-width="10"/>' +
+    '<circle cx="' + size / 2 + '" cy="' + size / 2 + '" r="' + r + '" fill="none" stroke="' + (color || 'var(--accent)') + '" stroke-width="10" stroke-linecap="round" stroke-dasharray="' + (c * Math.max(0, Math.min(1, p))).toFixed(1) + ' ' + c.toFixed(1) + '" transform="rotate(-90 ' + size / 2 + ' ' + size / 2 + ')"/></svg>';
+}
+const SEQ = ['var(--s1)', 'var(--s2)', 'var(--s3)', 'var(--s4)', 'var(--s5)'];
+function saludoTxt(){ const hr = new Date().getHours(), nombre = params()['Tu nombre (para el saludo)']; return (hr < 12 ? 'Buenos días' : hr < 20 ? 'Buenas tardes' : 'Buenas noches') + (nombre ? ', ' + nombre : ''); }
+
+/* ---------- Inicio: panel de widgets (estilo "seller home") ---------- */
 function viewInicio(){
-  const h = hoy(), lista = paraHoy().sort((a, b) => puntaje(b).s - puntaje(a).s), hechas = hechasEl(h), venc = vencidas();
-  const enCurso = pendientes().filter(t => t.estado === 'En curso');
-  let html = heroHTML();
-  html += '<div class="tiles">' +
-    '<button class="tile" style="background:var(--grad-warm)" data-go="hoy"><span class="ic">☀️</span><b>' + lista.length + '</b><span>para hoy</span></button>' +
-    '<button class="tile" style="background:linear-gradient(135deg,#F04461,#FF7A59)" data-go="hoy"><span class="ic">⏰</span><b>' + venc.length + '</b><span>vencidas</span></button>' +
-    '<button class="tile" style="background:var(--grad-green)" data-go="hoy"><span class="ic">✅</span><b>' + hechas.length + '</b><span>hechas hoy</span></button>' +
-    '<button class="tile" style="background:var(--grad-cool)" data-go="tareas"><span class="ic">🔄</span><b>' + enCurso.length + '</b><span>en curso</span></button></div>';
-  html += '<button class="quick" id="qa"><b>+</b>Agregar tarea… <span style="margin-left:auto">🎤</span></button>';
-
-  html += '<div class="dash">';
-  const foco = enfoque(3);
-  html += card('Enfócate ahora' + ib('enfoque'), '🎯', foco.length ? foco.map(x => taskHTML(x.t, { why: x.why, play: true, compact: true })).join('') : '<div class="empty">No hay nada urgente. ¡Buen momento para planificar! 🌤️</div>');
-
-
-  if (extNivel() >= 5 && S.neg && negocios().length){
-    const m = metricasNeg();
-    html += card('Ventas', '🤝', '<div class="kpis"><div class="kpi" style="--c:#FF8A4C" data-info="pipeline"><b>' + clpCorto(m.abiertoV) + '</b><span>pipeline' + ib('pipeline') + '</span></div><div class="kpi" style="--c:#A44DF0" data-info="ponderado"><b>' + clpCorto(m.ponderado) + '</b><span>pronóstico' + ib('ponderado') + '</span></div><div class="kpi" style="--c:#13B386" data-info="ganadoMes"><b>' + clpCorto(m.gMesV) + '</b><span>ganado mes' + ib('ganadoMes') + '</span></div></div><button class="link" data-go="negocios">Abrir negociaciones →</button>', m.estancadas.length ? '🧊 ' + m.estancadas.length + ' estancadas' : abiertos().length + ' abiertas');
+  const h = hoy(), lista = paraHoy(), hechas = hechasEl(h), venc = vencidas(), enCurso = pendientes().filter(t => t.estado === 'En curso');
+  const totalHoy = lista.length + hechas.length;
+  let html = '<div class="ihead"><button class="quick" id="qa"><b>+</b>Agregar tarea… <span style="margin-left:auto">🎤</span></button>' +
+    '<button class="btn sec" id="planBtn">' + icon('spark') + ' Plan de la semana</button></div>';
+  if (necesitaActualizar()) html += '<div class="w" style="margin-bottom:14px;display:flex;gap:12px;align-items:center"><div class="grow"><b>Nueva versión del script</b><div class="wsub">' + (extNivel() >= 8 ? 'Conexión con Bsale: stock y precios reales en tus negociaciones y en el agente.' : 'Importar chats de WhatsApp y agente de IA.') + '</div></div><button class="btn sm" id="updBtn">Actualizar</button></div>';
+  html += '<div class="wgrid">';
+  // 1. Tareas de hoy (anillo: avance del día contra lo planificado)
+  html += '<div class="w" data-w="hoy"><div class="wh">' + icon('check') + 'Tareas de hoy<button class="go" data-go="hoy">Ver</button></div><div class="wring"><div class="rg">' + ringSVG(totalHoy ? hechas.length / totalHoy : 0, 86) + '<b>' + hechas.length + '/' + totalHoy + '<small>hechas</small></b></div>' +
+    '<div class="leg"><div><i style="background:var(--bad)"></i>Vencidas<b>' + venc.length + '</b></div><div><i style="background:var(--accent)"></i>Para hoy<b>' + lista.length + '</b></div><div><i style="background:var(--s2)"></i>En curso<b>' + enCurso.length + '</b></div></div></div></div>';
+  // 2. Pipeline (barras por etapa)
+  const hayNeg = extNivel() >= 5 && S.neg; let atenH = '';
+  if (hayNeg){
+    const m = metricasNeg(), A = abiertos(), maxV = Math.max(1, ...ETAPAS.map(e => A.filter(n => n.etapa === e.k).reduce((s, n) => s + (n.valor || 0), 0)));
+    html += '<div class="w half" data-w="pipe"><div class="wh">' + icon('chart') + 'Pipeline' + ib('pipeline') + '<button class="go" data-go="negocios">Ver</button></div><div class="wbig">' + clpCorto(m.abiertoV) + '</div><div class="wsub" data-info="ponderado">Pronóstico ' + clpCorto(m.ponderado) + ib('ponderado') + '</div>' +
+      '<div class="hbar">' + ETAPAS.map((e, i) => { const v = A.filter(n => n.etapa === e.k).reduce((s, n) => s + (n.valor || 0), 0); return '<span>' + e.corto + '</span><div class="tr"><i style="width:' + Math.max(v ? 4 : 0, v / maxV * 100) + '%;background:' + SEQ[i] + '"></i></div><b>' + (v ? clpCorto(v) : '–') + '</b>'; }).join('') + '</div></div>';
+    // 3. Negocios que requieren atención
+    const an = m.an, aten = an.filter(x => requiereAtencion(x.a)).sort((x, y) => y.a.prioridad - x.a.prioridad);
+    atenH = '<div class="w" data-w="aten"><div class="wh">' + icon('bolt') + 'Requieren atención' + ib('atencion') + '<button class="go" data-gonf="atencion">Ver</button></div><div class="wbig">' + aten.length + ' <span style="font-size:14px;color:var(--muted);font-weight:600">de ' + an.length + ' abiertos</span></div>' +
+      '<div class="meter"><i style="width:' + (an.length ? aten.length / an.length * 100 : 0) + '%;background:var(--bad)"></i><i style="flex:1;background:var(--s1)"></i></div>' +
+      '<div class="wl">' + (aten.length ? aten.slice(0, 3).map(x => '<div class="it" data-neg="' + esc(x.n.id) + '"><span class="dot" style="background:var(--bad)"></span><div class="tx">' + esc(x.a.c ? (x.a.c.nombre || x.a.c.email) : x.n.titulo) + '<small>' + esc(motivoAlerta(x.n, x.a)) + '</small></div></div>').join('') : '<div class="wsub">Todo al día ✓</div>') + '</div></div>';
   }
-  html += agendaHTML();
-  if (necesitaActualizar()) html += card('Nueva versión del script', '⬆️', '<div class="hint" style="margin-top:0">' + (extNivel() >= 8 ? '📦 Conexión con Bsale: stock y precios reales en tus negociaciones y en el agente de IA.' : extNivel() >= 7 ? '📥 Importar chats de WhatsApp (negociaciones en curso) y agente en modo económico (Claude Haiku 5.5).' : extNivel() >= 5 ? '🧠 Agente de ventas con IA + conexión con WhatsApp Business (Telnyx): organiza tus chats como lo harías tú.' : extNivel() >= 3 ? '🤝 Activa la pestaña Negocios (pipeline de ventas con sugerencias) y detecta eventos de varios días.' : '📅 Recordatorios en tu calendario y 📇 base de datos solo con los correos de contacto@blacklinechile.cl.') + '</div><button class="btn sm" id="updBtn">Actualizar (2 min)</button>');
-  html += asistenteHTML();
-  html += semanaStripHTML();
-  const abierto = LS.statsOpen === '1';
-  html += '<button class="stats-toggle" id="stt"><span>📊 Estadísticas y logros</span><span>' + (abierto ? '▲' : '▼') + '</span></button>';
-  if (abierto) html += statsHTML();
+  // 4. Contactos (barras por tipo)
+  if (S.base){
+    const C = contactos(), tipos = [['Cliente', 'Clientes'], ['Proveedor', 'Proveedores'], ['Por clasificar', 'Por clasificar']], maxC = Math.max(1, ...tipos.map(t => C.filter(c => c.tipo === t[0]).length));
+    const esperan = C.filter(c => agenteDe(c.id).idea).length;
+    html += '<div class="w half" data-w="ctos"><div class="wh">' + icon('users') + 'Contactos<button class="go" data-go="base">Ver</button></div><div class="wbig">' + C.length + '</div><div class="wsub">' + (esperan ? esperan + ' esperan tu respuesta' : 'en tu base') + '</div>' +
+      '<div class="hbar">' + tipos.map((t, i) => { const n = C.filter(c => c.tipo === t[0]).length; return '<span>' + t[1] + '</span><div class="tr"><i style="width:' + n / maxC * 100 + '%;background:' + ['var(--s4)', 'var(--s3)', 'var(--s1)'][i] + '"></i></div><b>' + n + '</b>'; }).join('') + '</div></div>';
+  }
+  html += atenH;
+  // 5. Mis tareas (cola de acción)
+  const foco = enfoque(5);
+  html += '<div class="w span2"><div class="wh">' + icon('target') + 'Mis próximas tareas' + ib('enfoque') + '<button class="go" data-go="hoy">Ver todas</button></div>' + (foco.length ? foco.map(x => taskHTML(x.t, { why: x.why, play: true, compact: true })).join('') : '<div class="empty">Nada urgente. Buen momento para planificar 🌤️</div>') + '</div>';
+  // 6. Agenda de hoy
+  html += agendaW();
+  // 7. Actividad 14 días (barras contra la meta)
+  const dias = (S.data.dias || []).slice(-14), meta = metaDiaria(), maxD = Math.max(meta, ...dias.map(d => d.completadas || 0), 1);
+  html += '<div class="w" data-w="act"><div class="wh">' + icon('chart') + 'Tareas completadas · 14 días<button class="go" id="statsBtn">Más</button></div><div class="bars"><u style="bottom:' + (meta / maxD * 100) + '%" title="Meta diaria"></u>' +
+    dias.map(d => '<i class="' + ((d.completadas || 0) >= meta ? 'hit' : '') + '" style="height:' + ((d.completadas || 0) / maxD * 100) + '%" data-t="' + esc(fmt(d.fecha)) + ': ' + (d.completadas || 0) + '"></i>').join('') + '</div><div class="bx"><span>' + (dias[0] ? fmt(dias[0].fecha) : '') + '</span><span data-info="meta">meta ' + meta + '/día' + ib('meta') + '</span><span>hoy</span></div></div>';
+  // 8. Asistente (sugerencias accionables)
+  const ins = insights().slice(0, 4);
+  html += '<div class="w span2"><div class="wh">' + icon('spark') + 'Sugerencias del asistente</div>' + (ins.length ? ins.map(i => '<div class="sug2"><span class="dot" style="background:' + i.c + ';margin-top:6px"></span><div class="tx">' + i.tx + (i.acts ? '<div class="acts">' + i.acts.map(a => '<button class="btn sm sec" data-act="' + esc(a[1]) + '">' + esc(a[0]) + '</button>').join('') + '</div>' : '') + '</div></div>').join('') : '<div class="wsub">Sin sugerencias por ahora ✓</div>') + '</div>';
+  // 9. Progreso (meta semanal, racha, nivel)
+  const ind = S.data.indicadores || {}, semana = +ind['Hechas esta semana'] || 0, metaSem = meta * 5;
+  html += '<div class="w"><div class="wh">' + icon('trophy') + 'Tu semana</div><div class="wring"><div class="rg">' + ringSVG(semana / metaSem, 86, 'var(--ok)') + '<b>' + semana + '<small>de ' + metaSem + '</small></b></div>' +
+    '<div class="leg"><div data-info="racha"><i style="background:var(--warn)"></i>Racha<b>' + (indicador('Racha') || 0) + ' d</b></div><div data-info="puntos"><i style="background:var(--accent)"></i>Puntos<b>' + (ind['Puntos totales'] || 0) + '</b></div><div data-info="nivel"><i style="background:var(--ok)"></i>Nivel<b>' + esc(ind['Nombre del nivel'] || '–') + '</b></div></div></div></div>';
   html += '</div>';
   $('#view').innerHTML = html;
   bindTasks($('#view'));
-  $$('[data-go]').forEach(b => b.onclick = () => go(b.dataset.go));
+  $$('[data-go]').forEach(b => b.onclick = e => { e.stopPropagation(); go(b.dataset.go); });
+  $$('[data-gonf]').forEach(b => b.onclick = e => { e.stopPropagation(); S.nf = b.dataset.gonf; S.nv = S.nv || 'lista'; go('negocios'); });
+  $$('#view [data-neg]').forEach(b => b.onclick = () => openNegocio(negocios().find(x => x.id === b.dataset.neg)));
   $('#qa').onclick = () => openAdd();
-  $('#stt').onclick = () => { LS.statsOpen = abierto ? '0' : '1'; viewInicio(); };
-  $$('[data-day]').forEach(b => b.onclick = () => openDia(b.dataset.day));
-  $('#bloqBtn').onclick = openBloqueo;
-  bindAsistente();
-  const sg = $('#sugBtn'); if (sg) sg.onclick = openSugerencias;
-  const b2 = $('#bloqBtn2'); if (b2) b2.onclick = openBloqueo;
-  const ga = $('#gAct'); if (ga) ga.onclick = showExtrasSetup;
+  $('#planBtn').onclick = openPlanSemana;
+  $('#statsBtn').onclick = () => { const m = modal('Estadísticas y logros', statsHTML(), { wide: true }); };
+  const w1 = $('[data-w="hoy"]'); if (w1) w1.onclick = e => { if (!e.target.closest('button')) openTareasHoy(); };
   const ub = $('#updBtn'); if (ub) ub.onclick = showExtrasUpdate;
+  const sg = $('#sugBtn'); if (sg) sg.onclick = openSugerencias;
+  const bl = $('#bloqBtn2'); if (bl) bl.onclick = openBloqueo;
+  bindAsistente();
+  // Cada lunes, la primera vez que abres la app, aparece el plan de la semana.
+  if (pd(h).getDay() === 1 && LS.planVisto !== h && S.base && (S.neg || extNivel() < 5) && !$('.pop-bg')){ LS.planVisto = h; setTimeout(openPlanSemana, 400); }
 }
-
+function agendaW(){
+  const g = S.google, h = hoy();
+  if (!g) return '<div class="w"><div class="wh">' + icon('cal') + 'Agenda de hoy</div><div class="wsub"><span class="spin"></span>Revisando tu calendario…</div></div>';
+  if (g.inactivo) return '<div class="w"><div class="wh">' + icon('cal') + 'Agenda de hoy</div><div class="wsub">Conecta tu calendario en ⚙️ Ajustes.</div></div>';
+  const ev = (g.eventos || []).filter(e => e.fecha === h), ahora = new Date().toTimeString().slice(0, 5), n = sugerencias().length;
+  return '<div class="w"><div class="wh">' + icon('cal') + 'Agenda de hoy<button class="go" id="bloqBtn2">＋ Evento</button></div><div class="wl">' +
+    (ev.length ? ev.map(e => { const now = !e.todoElDia && e.inicio <= ahora && e.fin > ahora; return '<div class="it"><span class="dot" style="background:' + (now ? 'var(--ok)' : 'var(--s3)') + '"></span><div class="tx">' + esc(e.titulo) + '<small>' + (e.todoElDia ? 'Todo el día' : esc(e.inicio) + (e.fin ? '–' + esc(e.fin) : '')) + (e.lugar ? ' · ' + esc(e.lugar) : '') + '</small></div></div>'; }).join('') : '<div class="wsub">Sin eventos hoy</div>') + '</div>' +
+    (n ? '<button class="btn sm sec" id="sugBtn" style="width:100%;margin-top:10px">' + n + ' sugerencias de calendario y correo</button>' : '') + '</div>';
+}
+function openTareasHoy(){
+  const L = vencidas().concat(paraHoy().filter(t => !vencidas().includes(t))).sort((a, b) => puntaje(b).s - puntaje(a).s);
+  const m = modal('Tareas de hoy', (L.length ? L.map(t => taskHTML(t)).join('') : '<div class="empty">Nada pendiente para hoy 🎉</div>') + '<div class="btns"><button class="btn sec" id="th_go">Abrir la pestaña Hoy</button></div>', { wide: true });
+  bindTasks(m.el); m.el.querySelector('#th_go').onclick = () => { m.cerrar(); go('hoy'); };
+}
+// Plan de la semana: lo primero que conviene revisar cada lunes, armado con tus datos.
+function openPlanSemana(){
+  const h = hoy(), fin = addDays(h, 6), P = pendientes();
+  const venc = vencidas(), semana = P.filter(t => t.limite && t.limite >= h && t.limite <= fin).sort((a, b) => a.limite.localeCompare(b.limite));
+  const an = S.neg ? metricasNeg().an : [], aten = an.filter(x => requiereAtencion(x.a)).sort((x, y) => y.a.prioridad - x.a.prioridad);
+  const cierres = an.filter(x => x.n.cierre && x.n.cierre >= h && x.n.cierre <= fin);
+  const esperan = S.base ? contactos().filter(c => agenteDe(c.id).idea) : [], frios = S.base ? contactosFrios().slice(0, 5) : [];
+  const ev = S.google && S.google.eventos ? S.google.eventos.filter(e => e.fecha >= h && e.fecha <= fin) : [];
+  const sec = (t, n, cuerpo) => '<div class="lab" style="font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin:16px 0 6px">' + t + ' · ' + n + '</div>' + cuerpo;
+  const it = (dotc, tx, sub, attr) => '<div class="it" ' + (attr || '') + '><span class="dot" style="background:' + dotc + '"></span><div class="tx">' + esc(tx) + '<small>' + esc(sub || '') + '</small></div></div>';
+  let html = '<p style="margin:4px 0 0;color:var(--muted);font-size:14px">Semana del ' + fmt(h) + ' al ' + fmt(fin) + '. Empieza por lo de arriba.</p>';
+  html += sec('Clientes que esperan respuesta', esperan.length, '<div class="wl">' + (esperan.length ? esperan.slice(0, 6).map(c => it('var(--bad)', c.nombre || c.email, 'Tiene una idea de respuesta en su ficha', 'data-cto="' + esc(c.id) + '"')).join('') : '<div class="wsub">Ninguno ✓</div>') + '</div>');
+  html += sec('Negocios que requieren atención', aten.length, '<div class="wl">' + (aten.length ? aten.slice(0, 6).map(x => it('var(--bad)', x.a.c ? (x.a.c.nombre || x.a.c.email) : x.n.titulo, motivoAlerta(x.n, x.a) + (x.n.valor ? ' · ' + clpCorto(x.n.valor) : ''), 'data-neg="' + esc(x.n.id) + '"')).join('') : '<div class="wsub">Ninguno ✓</div>') + '</div>');
+  if (cierres.length) html += sec('Cierres esperados esta semana', cierres.length, '<div class="wl">' + cierres.map(x => it('var(--ok)', x.n.titulo, fmt(x.n.cierre) + ' · ' + clpCorto(x.n.valor || 0), 'data-neg="' + esc(x.n.id) + '"')).join('') + '</div>');
+  html += sec('Tareas vencidas', venc.length, venc.length ? '<div class="wl">' + venc.slice(0, 5).map(t => it('var(--bad)', t.tarea, 'Venció ' + fmt(t.limite))).join('') + '</div><div class="btns" style="margin-top:8px"><button class="btn sm sec" data-act="venc-hoy">Mover todas a hoy</button></div>' : '<div class="wsub">Ninguna ✓</div>');
+  html += sec('Tareas con fecha esta semana', semana.length, '<div class="wl">' + (semana.length ? semana.slice(0, 8).map(t => it('var(--accent)', t.tarea, fmt(t.limite))).join('') : '<div class="wsub">Ninguna</div>') + '</div>');
+  if (ev.length) html += sec('Eventos de la semana', ev.length, '<div class="wl">' + ev.slice(0, 8).map(e => it('var(--s3)', e.titulo, fmt(e.fecha) + (e.todoElDia ? '' : ' · ' + e.inicio))).join('') + '</div>');
+  if (frios.length) html += sec('Clientes sin contacto hace más de 30 días', frios.length, '<div class="wl">' + frios.map(c => it('var(--s2)', c.nombre || c.email, haceTxt(c.ultima), 'data-cto="' + esc(c.id) + '"')).join('') + '</div>');
+  const m = modal('📋 Plan de la semana', html, { wide: true });
+  m.el.querySelectorAll('[data-neg]').forEach(b => b.onclick = () => { m.cerrar(); openNegocio(negocios().find(x => x.id === b.dataset.neg)); });
+  m.el.querySelectorAll('[data-cto]').forEach(b => b.onclick = () => { m.cerrar(); openContacto(contactoPorId(b.dataset.cto)); });
+  m.el.querySelectorAll('[data-act]').forEach(b => b.onclick = () => { m.cerrar(); reprogramar(vencidas(), hoy(), b); });
+}
+function motivoAlerta(n, a){
+  if (a.sinResponder != null) return 'Te escribió ' + (a.sinResponder ? 'hace ' + a.sinResponder + ' d' : 'hoy') + ' · sin respuesta';
+  if (a.proxVencida) return 'Próximo paso vencido (' + fmt(n.fechaProx) + ')';
+  if (a.estancada) return 'Sin actividad hace ' + a.dAct + ' d';
+  if (a.sinProx) return 'Sin próximo paso';
+  return '';
+}
 function agendaHTML(){
   const g = S.google, h = hoy();
   if (!g) return card('Agenda de hoy', '📅', '<div class="empty"><span class="spin"></span>Revisando tu calendario…</div>');
@@ -1245,13 +1481,13 @@ function openContacto(c){
 /* ---------- vista: Negocios (pipeline de ventas estilo CRM) ---------- */
 // Etapas del embudo: probabilidad base de cierre y días normales sin movimiento antes de considerarla estancada.
 const ETAPAS = [
-  { k: 'Nuevo', corto: 'Nuevo', ic: '🆕', p: .10, max: 2, c: '#8E8DA6', tip: 'Contáctalo hoy: responder rápido a un lead nuevo es lo que más aumenta la probabilidad de venta.', acc: [['💬 Primer mensaje', 'wa:primer']] },
-  { k: 'Contactado', corto: 'Contacto', ic: '💬', p: .20, max: 5, c: '#3B9EFF', tip: 'Descubre su necesidad: uso (enduro, trail, ruta), presupuesto, talla y para cuándo la quiere. Luego invítalo a probar.', acc: [['🚵 Agendar test ride', 'testride']] },
-  { k: 'Prueba / visita', corto: 'Prueba', ic: '🚵', p: .35, max: 7, c: '#20B8B0', tip: 'Después de la prueba, envía la cotización en menos de 24 horas, mientras la emoción sigue alta.', acc: [['📄 Tarea: enviar cotización', 'tarea:cotizacion']] },
-  { k: 'Cotización', corto: 'Cotiz.', ic: '📄', p: .55, max: 5, c: '#A44DF0', tip: 'Haz seguimiento a los 2–3 días: pregunta si tiene dudas y ofrece las opciones de pago.', acc: [['💬 Seguimiento', 'wa:seguimiento']] },
-  { k: 'Negociación', corto: 'Negoc.', ic: '🤝', p: .75, max: 7, c: '#FF8A4C', tip: 'Acuerda una fecha de cierre y ofrece un incentivo con plazo (accesorio o primera mantención sin costo).', acc: [['💬 Oferta de cierre', 'wa:oferta']] }
+  { k: 'Nuevo', corto: 'Nuevo', ic: '🆕', p: .10, max: 2, c: '#9DBDE9', sig: 'Enviar el primer mensaje', sd: 0, tip: 'Contáctalo hoy: responder rápido a un lead nuevo es lo que más aumenta la probabilidad de venta.', acc: [['💬 Primer mensaje', 'wa:primer']] },
+  { k: 'Contactado', corto: 'Contacto', ic: '💬', p: .20, max: 5, c: '#79A6E3', sig: 'Agendar test ride o visita', sd: 2, tip: 'Descubre su necesidad: uso (enduro, trail, ruta), presupuesto, talla y para cuándo la quiere. Luego invítalo a probar.', acc: [['🚵 Agendar test ride', 'testride']] },
+  { k: 'Prueba / visita', corto: 'Prueba', ic: '🚵', p: .35, max: 7, c: '#4F8DDC', sig: 'Enviar la cotización', sd: 1, tip: 'Después de la prueba, envía la cotización en menos de 24 horas, mientras la emoción sigue alta.', acc: [['📄 Tarea: enviar cotización', 'tarea:cotizacion']] },
+  { k: 'Cotización', corto: 'Cotiz.', ic: '📄', p: .55, max: 5, c: '#2A78D6', sig: 'Hacer seguimiento a la cotización', sd: 3, tip: 'Haz seguimiento a los 2–3 días: pregunta si tiene dudas y ofrece las opciones de pago.', acc: [['💬 Seguimiento', 'wa:seguimiento']] },
+  { k: 'Negociación', corto: 'Negoc.', ic: '🤝', p: .75, max: 7, c: '#1B57A6', sig: 'Acordar la fecha de cierre', sd: 2, tip: 'Acuerda una fecha de cierre y ofrece un incentivo con plazo (accesorio o primera mantención sin costo).', acc: [['💬 Oferta de cierre', 'wa:oferta']] }
 ];
-const ETAPA_FIN = { 'Ganada': { k: 'Ganada', corto: 'Ganada', ic: '🏆', c: '#13B386', p: 1 }, 'Perdida': { k: 'Perdida', corto: 'Perdida', ic: '❌', c: '#F04461', p: 0 } };
+const ETAPA_FIN = { 'Ganada': { k: 'Ganada', corto: 'Ganada', ic: '🏆', c: '#12A06B', p: 1 }, 'Perdida': { k: 'Perdida', corto: 'Perdida', ic: '❌', c: '#D92D20', p: 0 } };
 const MOTIVOS = ['Precio', 'Compró en otro lado', 'No respondió', 'Postergó la compra', 'Sin stock', 'Otro'];
 // Señales en notas, correos e intereses → consejo concreto (como los "insights" de los CRM grandes, pero con reglas de tu negocio).
 const SENALES = [
@@ -1367,6 +1603,117 @@ async function negAccion(acc, n, btn){
   }
   if (acc === 'tarea:cotizacion') return openAdd({ texto: 'Enviar cotización ' + (n.producto || '') + ' a ' + (c ? c.nombre : n.titulo) + ' mañana', notas: negTag(n) });
 }
+
+/* ---------- ficha de negociación (estilo CRM): etapas arriba, acciones claras, pestañas ---------- */
+function openDeal(n, opt){
+  opt = opt || {};
+  const a = analizar(n), e = a.e, c = a.c, idx = etapaIdx(n.etapa), tab = opt.tab || S.dtab || 'resumen';
+  S.dtab = tab;
+  const nombre = c ? (c.nombre || c.email) : n.titulo;
+  const I = a.I.slice().reverse();
+  let html = '<div id="ng_root" data-id="' + esc(n.id) + '"></div>' +
+    '<div class="dh">' + (c ? avatar(c, 46) : '<span class="av" style="width:46px;height:46px;font-size:16px;background:var(--s3)">' + esc(String(nombre).charAt(0).toUpperCase()) + '</span>') +
+    '<div style="min-width:0"><h3>' + esc(nombre) + '</h3><div class="ds">' + esc(n.producto || n.titulo) + (n.valor ? ' · <b style="color:var(--ink)">' + clp(n.valor) + '</b>' : '') + '</div></div></div>';
+  if (a.abierta){
+    html += '<div class="stepper">' + ETAPAS.map((x, i) => '<button class="' + (i === idx ? 'on' : i < idx ? 'ok' : '') + '" data-ngk="' + esc(x.k) + '" title="Mover a ' + esc(x.k) + '">' + x.corto + '</button>').join('') + '</div>' +
+      '<div class="shint">Etapa actual: <b>' + esc(n.etapa) + '</b> · ' + a.dEtapa + ' días en esta etapa. Toca otra etapa para moverla.</div>' +
+      '<div class="dact"><button id="dx_act">' + icon('note') + 'Registrar actividad</button><button id="dx_prox">' + icon('arrow') + 'Próximo paso</button><button class="win" id="ng_win">' + icon('trophy') + 'Ganada</button><button class="lose" id="ng_lose">' + icon('x') + 'Perdida</button></div>';
+    const vencido = a.proxVencida || a.sinResponder != null || !n.proxima;
+    html += '<div class="nextc' + (vencido ? ' bad' : '') + '"><div class="tx"><small>Próximo paso</small>' + (n.proxima ? '<b>' + esc(n.proxima) + '</b><span>' + (n.fechaProx ? (a.proxVencida ? 'Venció ' : '') + fmtLong(n.fechaProx) : 'sin fecha') + '</span>' : '<b>Sin próximo paso</b><span>Defínelo: los negocios sin siguiente paso son los que se pierden</span>') +
+      (a.sinResponder != null ? '<span style="display:block">⚡ El cliente escribió ' + (a.sinResponder ? 'hace ' + a.sinResponder + ' d' : 'hoy') + ' y no hay respuesta</span>' : '') + '</div>' +
+      (n.proxima ? '<button class="btn sm" id="dx_done">✓ Hecho</button>' : '<button class="btn sm" id="dx_prox2">Definir</button>') + '</div>';
+  } else {
+    html += '<div class="nextc ' + (n.estado === 'Perdida' ? 'bad' : '') + '"><div class="tx"><small>Estado</small><b>' + (n.estado === 'Ganada' ? '🏆 Ganada' : '❌ Perdida') + '</b><span>' + (n.motivo ? esc(n.motivo) : fmt(fechaCierre(n))) + '</span></div><button class="btn sm sec" id="ng_reopen">Reabrir</button></div>';
+  }
+  const tabs = [['resumen', 'Resumen'], ['actividad', 'Actividad (' + I.length + ')'], ['etapas', 'Etapas'], ['datos', 'Datos']].concat(bsaleActivo() ? [['stock', 'Stock']] : []);
+  html += '<div class="tabs">' + tabs.map(t => '<button class="' + (t[0] === tab ? 'on' : '') + '" data-dtab="' + t[0] + '">' + t[1] + '</button>').join('') + '</div><div id="dtab"></div>';
+  sheet(html);
+  dealTab(n, a, tab);
+  $$('[data-dtab]').forEach(b => b.onclick = () => { S.dtab = b.dataset.dtab; $$('[data-dtab]').forEach(x => x.classList.toggle('on', x === b)); dealTab(n, a, b.dataset.dtab); });
+  $$('[data-ngk]').forEach(b => b.onclick = () => moverEtapa(n, b.dataset.ngk));
+  const on = (id, f) => { const x = $('#' + id); if (x) x.onclick = f; };
+  on('dx_act', () => openActividad(n)); on('dx_prox', () => openProximo(n)); on('dx_prox2', () => openProximo(n));
+  on('ng_win', () => moverEtapa(n, 'Ganada')); on('ng_lose', () => openPerdida(n)); on('ng_reopen', () => moverEtapa(n, 'Negociación'));
+  on('dx_done', async () => { const b = $('#dx_done'); b.disabled = true; try { await apiX('negocioNota', { id: n.id, texto: '✅ ' + n.proxima, tipo: '✅ Acción' }); await apiX('negocio', { negocio: { id: n.id, proxima: '', fechaProx: '' } }); await loadNeg(true); toast('✓ Registrado. ¿Cuál es el siguiente paso?'); const n2 = negocios().find(x => x.id === n.id); openDeal(n2); openProximo(n2); } catch(e){ b.disabled = false; toast('No se pudo: ' + e.message); } });
+}
+function dealTab(n, a, tab){
+  const box = $('#dtab'), c = a.c, h = hoy();
+  if (tab === 'resumen'){
+    const R = recomendaciones(n, a).slice(0, 3);
+    box.innerHTML = (a.abierta ? '<div class="mini3"><div data-info="prob" data-ref="' + esc(n.id) + '"><small>Prob. de cierre' + ib('prob', n.id) + '</small><b>' + Math.round(a.prob * 100) + '%</b></div><div data-info="salud" data-ref="' + esc(n.id) + '"><small>Salud' + ib('salud', n.id) + '</small><b style="color:' + saludCol(a.salud) + '">' + a.salud + '</b></div><div data-info="dAct" data-ref="' + esc(n.id) + '"><small>Sin actividad' + ib('dAct', n.id) + '</small><b>' + a.dAct + ' d</b></div></div>' : '') +
+      agenteHTML(c) +
+      (R.length ? '<div class="lab" style="font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin:14px 0 4px">Qué hacer ahora</div><div>' + R.map(r => '<div class="sug2"><span class="dot" style="background:' + r.c + ';margin-top:6px"></span><div class="tx"><b>' + esc(r.t) + '</b><div style="color:var(--muted);font-size:13px;margin-top:2px">' + esc(r.d) + '</div>' + (r.acts ? '<div class="acts">' + r.acts.map(x => '<button class="btn sm sec" data-nga="' + esc(x[1]) + '">' + esc(x[0]) + '</button>').join('') + '</div>' : '') + '</div></div>').join('') + '</div>' : '') +
+      (c ? '<div class="lab" style="font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin:14px 0 6px">Contacto</div><div class="wl"><div class="it" id="dx_cto">' + avatar(c, 32) + '<div class="tx">' + esc(c.nombre || c.email) + '<small>' + esc([c.telefono, c.email].filter(Boolean).join(' · ')) + '</small></div><span class="rt">Ver ficha ›</span></div></div>' : '');
+    box.querySelectorAll('[data-nga]').forEach(b => b.onclick = () => negAccion(b.dataset.nga, n, b));
+    box.querySelectorAll('[data-agente]').forEach(b => b.onclick = () => analizarAhora(b.dataset.agente, b));
+    box.querySelectorAll('[data-impc]').forEach(b => b.onclick = () => openImportar({ contacto: b.dataset.impc }));
+    const ct = $('#dx_cto'); if (ct) ct.onclick = () => openContacto(c);
+  } else if (tab === 'actividad'){
+    const I = a.I.slice().reverse();
+    const icTl = t => /agente|idea/i.test(t) ? '🧠' : /whatsapp|chat/i.test(t) ? '💬' : /correo/i.test(t) ? '✉️' : /reuni/i.test(t) ? '📅' : /tarea|acci/i.test(t) ? '✅' : /venta/i.test(t) ? '🏆' : /negoci|etapa/i.test(t) ? '🔀' : '📝';
+    box.innerHTML = '<div class="smart" style="margin-bottom:10px"><input type="text" id="ng_nota" placeholder="Escribe una nota rápida (pidió cuotas, viene el sábado…)" autocomplete="off"><button class="mic" id="ng_nota_ok" aria-label="Guardar nota">＋</button></div>' +
+      (I.length ? '<div class="wl">' + I.slice(0, 40).map(i => '<div class="tl"><span class="ic">' + icTl(i.tipo) + '</span><div class="grow"><div style="font-size:14px;font-weight:600;line-height:1.4">' + esc(i.detalle) + '</div><div class="hint" style="margin:2px 0 0">' + esc(i.tipo) + ' · ' + (i.fecha ? fmtRel(i.fecha) : '') + '</div></div></div>').join('') + '</div>' : '<div class="empty">Aquí aparecen las notas, mensajes, correos y cambios de etapa.</div>');
+    const nota = () => { const t = $('#ng_nota').value.trim(); if (!t) return; $('#ng_nota_ok').disabled = true; negRegistrar(n, '📝 Nota', t); };
+    $('#ng_nota_ok').onclick = nota; $('#ng_nota').onkeydown = ev => { if (ev.key === 'Enter') nota(); };
+  } else if (tab === 'etapas'){
+    const hi = historialDe(n); if (!hi.length) hi.push({ f: n.creada || h, e: n.etapa });
+    const filas = hi.map((x, i) => { const hasta = hi[i + 1] ? hi[i + 1].f : (a.abierta ? h : x.f); return { e: x.e, desde: x.f, dias: Math.max(0, diffDays(x.f, hasta)), actual: !hi[i + 1] }; });
+    const maxD = Math.max(1, ...filas.map(f => f.dias));
+    box.innerHTML = '<div class="hint" style="margin-top:0">Recorrido del negocio por el embudo y cuántos días estuvo en cada etapa.</div><div>' + filas.map(f => { const et = ETAPA_FIN[f.e] || ETAPAS[Math.max(0, etapaIdx(f.e))]; return '<div class="sth"><span class="dot" style="background:' + et.c + '"></span><div style="width:120px;flex:none"><b style="font-size:13.5px">' + esc(f.e) + '</b><div class="hint" style="margin:0">' + fmt(f.desde) + '</div></div><div class="bar"><i style="width:' + (f.dias / maxD * 100) + '%;background:' + et.c + '"></i></div><b style="font-variant-numeric:tabular-nums;font-size:13px;width:56px;text-align:right">' + f.dias + ' d' + (f.actual && a.abierta ? '*' : '') + '</b></div>'; }).join('') + '</div>' +
+      (a.abierta ? '<div class="hint">* Etapa actual. Se considera estancada después de ' + (a.e.max || 7) + ' días sin actividad.' + ib('estancadas') + '</div>' : '') +
+      '<div class="hint">Creada el ' + fmt(n.creada || h) + (n.cierre ? ' · cierre esperado ' + fmt(n.cierre) : '') + '</div>';
+  } else if (tab === 'datos'){
+    const C = contactos().slice().sort((x, y) => String(x.nombre).localeCompare(String(y.nombre)));
+    box.innerHTML = '<label class="l" style="margin-top:0">Nombre de la negociación</label><input type="text" id="ng_t" value="' + esc(n.titulo) + '">' +
+      '<label class="l">Cliente</label><select id="ng_c"><option value="">— sin contacto —</option>' + C.map(x => '<option value="' + esc(x.id) + '"' + (x.id === n.contacto ? ' selected' : '') + '>' + esc(x.nombre || x.email) + '</option>').join('') + '</select>' +
+      '<label class="l">Producto / interés</label><input type="text" id="ng_p" value="' + esc(n.producto) + '">' +
+      '<label class="l">Valor estimado ($)</label><input type="text" id="ng_v" inputmode="numeric" value="' + (n.valor ? Math.round(n.valor).toLocaleString('es-CL') : '') + '">' +
+      '<label class="l">Cierre esperado</label><input type="date" id="ng_ci" value="' + esc(n.cierre) + '">' +
+      '<label class="l">Notas</label><textarea class="note" id="ng_n">' + esc(n.notas) + '</textarea><div class="btns"><button class="btn" id="dx_save">Guardar cambios</button></div>';
+    const vIn = $('#ng_v'); vIn.oninput = () => { const d = vIn.value.replace(/\D/g, ''); vIn.value = d ? (+d).toLocaleString('es-CL') : ''; };
+    $('#dx_save').onclick = async () => {
+      const b = $('#dx_save'); b.disabled = true;
+      try { await apiX('negocio', { negocio: { id: n.id, titulo: $('#ng_t').value.trim() || n.titulo, contacto: $('#ng_c').value, producto: $('#ng_p').value.trim(), valor: +($('#ng_v').value.replace(/\D/g, '')) || 0, cierre: $('#ng_ci').value, notas: $('#ng_n').value.trim() } }); await loadNeg(true); toast('Guardado ✓'); openDeal(negocios().find(x => x.id === n.id), { tab: 'datos' }); }
+      catch(e){ b.disabled = false; toast('No se pudo guardar: ' + e.message); }
+    };
+  } else if (tab === 'stock'){
+    box.innerHTML = '<div class="hint" style="margin-top:0">Disponibilidad y precio en Bsale de lo que busca el cliente.</div>' + stockBox(n.producto || '');
+    bindStock(); if (n.producto) buscarStock();
+  }
+}
+// Sub-ventana: registrar una actividad (con avance automático de etapa cuando corresponde).
+function openActividad(n){
+  let sel = 0;
+  const m = modal('Registrar actividad', '<div class="hint" style="margin-top:0">' + esc(n.titulo) + '</div><label class="l">¿Qué hiciste?</label><div class="choice">' + ACTIVIDADES.map((x, i) => '<button data-ac="' + i + '" class="' + (i === 0 ? 'on' : '') + '">' + x[0] + '</button>').join('') + '</div>' +
+    '<label class="l">Detalle (opcional)</label><textarea class="note" id="ac_t" placeholder="Ej.: quedó de venir el sábado a las 11"></textarea><div class="hint" id="ac_h"></div><div class="btns"><button class="btn" id="ac_ok">Registrar</button></div>');
+  const hint = () => { const x = ACTIVIDADES[sel], iS = etapaIdx(x[2]), iA = etapaIdx(n.etapa); m.el.querySelector('#ac_h').textContent = x[2] && iS > iA ? 'Al registrarla, la negociación avanza a «' + x[2] + '».' : ''; };
+  m.el.querySelectorAll('[data-ac]').forEach(b => b.onclick = () => { sel = +b.dataset.ac; m.el.querySelectorAll('[data-ac]').forEach(y => y.classList.toggle('on', y === b)); hint(); });
+  hint();
+  m.el.querySelector('#ac_ok').onclick = async () => { const x = ACTIVIDADES[sel], extra = m.el.querySelector('#ac_t').value.trim(); m.el.querySelector('#ac_ok').disabled = true; m.cerrar(); await negRegistrar(n, x[1], x[0].replace(/^\S+\s/, '') + (extra ? ': ' + extra : ''), x[2]); };
+}
+// Sub-ventana: definir el próximo paso (con tarea y recordatorio en el calendario).
+function openProximo(n, sug){
+  const h = hoy(), e = ETAPAS[Math.max(0, etapaIdx(n.etapa))];
+  const txt = sug ? sug.t : (n.proxima || e.sig || ''), fecha = sug ? addDays(h, sug.d) : (n.fechaProx || addDays(h, e.sd || 1));
+  const m = modal(sug ? 'Nueva etapa: ' + esc(n.etapa) + ' · ¿próximo paso?' : 'Próximo paso', '<div class="hint" style="margin-top:0">' + esc(n.titulo) + (sug ? ' · Te sugiero el paso típico de esta etapa; cámbialo si quieres.' : '') + '</div>' +
+    '<label class="l">¿Qué vas a hacer?</label><input type="text" id="px_t" value="' + esc(txt) + '" placeholder="Ej.: Llamar para agendar test ride">' +
+    '<label class="l">¿Cuándo?</label><div class="row"><input type="date" id="px_f" value="' + esc(fecha) + '" style="flex:1"><div class="choice" style="flex:none">' + [['Hoy', 0], ['Mañana', 1], ['+3', 3], ['+7', 7]].map(x => '<button data-pd="' + x[1] + '">' + x[0] + '</button>').join('') + '</div></div>' +
+    '<label class="row" style="margin-top:12px;gap:8px;font-size:14px;font-weight:600"><input type="checkbox" id="px_k" checked style="width:20px;height:20px"> Crear tarea con recordatorio en el calendario</label>' +
+    '<div class="btns">' + (sug ? '<button class="btn sec" id="px_no">Ahora no</button>' : '') + '<button class="btn" id="px_ok">Guardar próximo paso</button></div>');
+  m.el.querySelectorAll('[data-pd]').forEach(b => b.onclick = () => { m.el.querySelector('#px_f').value = addDays(h, +b.dataset.pd); });
+  const no = m.el.querySelector('#px_no'); if (no) no.onclick = m.cerrar;
+  setTimeout(() => { const x = m.el.querySelector('#px_t'); x.focus(); x.select(); }, 80);
+  m.el.querySelector('#px_ok').onclick = async () => {
+    const t = m.el.querySelector('#px_t').value.trim(), f = m.el.querySelector('#px_f').value; if (!t){ toast('Escribe el próximo paso'); return; }
+    m.el.querySelector('#px_ok').disabled = true;
+    try {
+      await apiX('negocio', { negocio: { id: n.id, proxima: t, fechaProx: f } });
+      if (m.el.querySelector('#px_k').checked) await api('add', { tarea: { tarea: '🤝 ' + t + ' – ' + n.titulo, area: 'Trabajo', categoria: (S.data.config.categorias.find(c => c.nombre === 'Ventas') || {}).nombre || '', proyecto: '', limite: f || h, urgente: 'No', importante: 'Sí', tamano: 'Pequeña', notas: negTag(n), estado: 'Pendiente' } });
+      m.cerrar(); toast('➡️ Próximo paso guardado'); await loadNeg(true); if (m.el.querySelector('#px_k').checked) S.mutado = true;
+      refrescarNeg(negocios().find(x => x.id === n.id));
+    } catch(err){ m.el.querySelector('#px_ok').disabled = false; toast('No se pudo guardar: ' + err.message); }
+  };
+}
 function refrescarNeg(n){ if ($('#layer').innerHTML && n && $('#ng_root') && $('#ng_root').dataset.id === n.id) openNegocio(n); else render(); }
 async function negRegistrar(n, tipo, texto, etapaSug){
   try {
@@ -1391,6 +1738,8 @@ async function moverEtapa(n, k){
     const n2 = negocios().find(x => x.id === n.id);
     if (k === 'Ganada' && n2) return openGanada(n2);
     refrescarNeg(n2);
+    const et = ETAPAS[etapaIdx(k)];
+    if (n2 && et && etapaIdx(k) > etapaIdx(antes)) openProximo(n2, { t: et.sig, d: et.sd || 1 });
   } catch(e){ n.etapa = antes; refrescarNeg(n); toast('No se pudo mover: ' + e.message); }
 }
 function openGanada(n){
@@ -1475,14 +1824,14 @@ function proxHTML(n, a){
 function kcardHTML(n, a, opt){
   opt = opt || {};
   const c = a.c, nombre = c ? (c.nombre || c.email) : n.titulo, sub = c ? (n.producto || n.titulo) : n.producto, i = etapaIdx(n.etapa);
-  return '<div class="kcard' + (requiereAtencion(a) ? ' alert' : '') + '" data-neg="' + esc(n.id) + '"' + (opt.drag ? ' draggable="true"' : '') + '>' +
-    (opt.etapa ? '<span class="tag" style="background:' + hexToRgba(a.e.c, .15) + ';color:' + a.e.c + ';display:inline-block;margin-bottom:6px">' + a.e.ic + ' ' + esc(n.etapa) + '</span>' : '') +
-    '<div class="nm">' + esc(nombre) + '</div>' + (sub && sub !== nombre ? '<div class="pr">' + esc(sub) + '</div>' : '') +
-    '<div class="vl">' + (n.valor ? clp(n.valor) : '<span style="color:var(--muted);font-weight:600;font-size:13px">Sin valor estimado</span>') + '</div>' +
-    proxHTML(n, a) +
-    '<div class="meta">' + (a.abierta ? '<span class="tag" data-info="prob" data-ref="' + esc(n.id) + '">🎯 ' + Math.round(a.prob * 100) + '%</span><span class="tag" data-info="salud" data-ref="' + esc(n.id) + '"><span class="hd" style="background:' + saludCol(a.salud) + ';width:8px;height:8px;margin-right:4px"></span>' + a.salud + '</span><span class="tag ' + (a.estancada ? 'bad' : '') + '" data-info="dEtapa" data-ref="' + esc(n.id) + '">⏱ ' + a.dEtapa + ' d</span>' : '') +
-      (/whatsapp/i.test(n.origen) ? '<span class="tag ok">💬</span>' : '') + '</div>' +
-    (opt.mv && i >= 0 ? '<div class="mv">' + (i > 0 ? '<button data-nmv="' + esc(n.id) + '" data-k="' + esc(ETAPAS[i - 1].k) + '">◀ ' + ETAPAS[i - 1].corto + '</button>' : '<span></span>') + '<button data-nmv="' + esc(n.id) + '" data-k="' + esc(i < ETAPAS.length - 1 ? ETAPAS[i + 1].k : 'Ganada') + '">' + (i < ETAPAS.length - 1 ? ETAPAS[i + 1].corto + ' ▶' : '🏆 Ganada') + '</button></div>' : '') + '</div>';
+  const alerta = requiereAtencion(a), mot = alerta ? motivoAlerta(n, a) : '';
+  const linea = !a.abierta ? (n.estado === 'Ganada' ? 'Ganada ' + fmt(fechaCierre(n)) : 'Perdida' + (n.motivo ? ' · ' + String(n.motivo).split(' · ')[0] : '')) : alerta ? mot : n.proxima ? n.proxima + (n.fechaProx ? ' · ' + fmtRel(n.fechaProx) : '') : '';
+  return '<div class="kcard' + (alerta ? ' alert' : '') + '" data-neg="' + esc(n.id) + '"' + (opt.drag ? ' draggable="true"' : '') + '>' +
+    (opt.etapa ? '<div class="ks"><span class="dot" style="background:' + a.e.c + '"></span>' + esc(n.etapa) + '</div>' : '') +
+    '<div class="top"><div class="nm">' + esc(nombre) + '</div><span class="kv">' + (n.valor ? clpCorto(n.valor) : '') + '</span></div>' +
+    (sub && sub !== nombre ? '<div class="pr">' + esc(sub) + '</div>' : '') +
+    '<div class="kf' + (alerta ? ' bad' : '') + '">' + icon(alerta ? 'bolt' : a.abierta ? 'arrow' : 'check') + '<span class="ktx">' + esc(linea) + '</span>' + (a.abierta ? '<span class="kp" data-info="prob" data-ref="' + esc(n.id) + '">' + Math.round(a.prob * 100) + '%</span>' : '') + '</div>' +
+    (opt.mv && i >= 0 ? '<div class="mv mob-only">' + (i > 0 ? '<button data-nmv="' + esc(n.id) + '" data-k="' + esc(ETAPAS[i - 1].k) + '">◀ ' + ETAPAS[i - 1].corto + '</button>' : '<span></span>') + '<button data-nmv="' + esc(n.id) + '" data-k="' + esc(i < ETAPAS.length - 1 ? ETAPAS[i + 1].k : 'Ganada') + '">' + (i < ETAPAS.length - 1 ? ETAPAS[i + 1].corto + ' ▶' : 'Ganada ▶') + '</button></div>' : '') + '</div>';
 }
 function viewNegocios(){
   if (S.extInactivo || extNivel() < 5){
@@ -1562,8 +1911,8 @@ function listaNegHTML(){
   if (!ANCHO()) return '<div class="klist">' + L.map(x => kcardHTML(x.n, x.a, { etapa: true })).join('') + '</div>' + pie;
   return '<div class="tablewrap"><table class="ntable"><thead><tr><th>Cliente · negociación</th><th>Etapa</th><th>Valor</th><th>Prob.' + ib('prob') + '</th><th>Salud' + ib('salud') + '</th><th>En etapa' + ib('dEtapa') + '</th><th>Próxima acción</th><th>Última actividad' + ib('dAct') + '</th></tr></thead><tbody>' +
     L.map(x => { const n = x.n, a = x.a, c = a.c, nombre = c ? (c.nombre || c.email) : n.titulo;
-      return '<tr data-neg="' + esc(n.id) + '"><td><div class="row" style="gap:10px">' + (c ? avatar(c, 34) : '<span class="av" style="width:34px;height:34px;font-size:13px;background:' + a.e.c + '">' + a.e.ic + '</span>') + '<div style="min-width:0"><b>' + esc(nombre) + '</b><div class="hint" style="margin:1px 0 0">' + esc(c ? (n.producto || n.titulo) : (n.producto || '')) + '</div></div></div></td>' +
-        '<td><span class="tag" style="background:' + hexToRgba(a.e.c, .15) + ';color:' + a.e.c + '">' + a.e.ic + ' ' + esc(n.etapa) + '</span></td>' +
+      return '<tr data-neg="' + esc(n.id) + '"><td><div class="row" style="gap:10px">' + (c ? avatar(c, 34) : '<span class="av" style="width:34px;height:34px;font-size:13px;background:var(--s3)">' + esc(String(nombre).charAt(0).toUpperCase()) + '</span>') + '<div style="min-width:0"><b>' + esc(nombre) + '</b><div class="hint" style="margin:1px 0 0">' + esc(c ? (n.producto || n.titulo) : (n.producto || '')) + '</div></div></div></td>' +
+        '<td style="white-space:nowrap"><span class="dot" style="background:' + a.e.c + ';margin-right:6px"></span>' + esc(n.etapa) + '</td>' +
         '<td style="font-weight:800;white-space:nowrap">' + (n.valor ? clp(n.valor) : '–') + '</td>' +
         '<td>' + (a.abierta ? '<span class="tag" data-info="prob" data-ref="' + esc(n.id) + '">' + Math.round(a.prob * 100) + '%</span>' : '–') + '</td>' +
         '<td>' + (a.abierta ? '<span class="tag" data-info="salud" data-ref="' + esc(n.id) + '"><span class="hd" style="background:' + saludCol(a.salud) + ';width:8px;height:8px;margin-right:4px"></span>' + a.salud + '</span>' : '–') + '</td>' +
@@ -1659,6 +2008,7 @@ function openStock(q){
 }
 function openNegocio(n, opt){
   opt = opt || {};
+  if (n && !opt.editar) return openDeal(n, opt);
   const nuevo = !n, h = hoy();
   if (nuevo){
     const c = opt.contacto ? contactoPorId(opt.contacto) : null;
