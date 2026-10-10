@@ -41,7 +41,10 @@
           "name": "chat",
           "accept": [
             "text/plain",
-            ".txt"
+            ".txt",
+            "application/zip",
+            "application/x-zip-compressed",
+            ".zip"
           ]
         }
       ]

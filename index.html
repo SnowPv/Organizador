@@ -900,18 +900,46 @@ function leerChatWhatsApp(txt){
   });
   return { mensajes, autores };
 }
+// Lee el archivo exportado de WhatsApp: .txt directo o .zip (saca el .txt de adentro, sin librerías).
+async function leerArchivoChat(blob, nombre){
+  const buf = new Uint8Array(await blob.arrayBuffer());
+  const limpio = n => String(n || '').replace(/\.(zip|txt)$/i, '');
+  if (!(buf[0] === 0x50 && buf[1] === 0x4B)) return { txt: new TextDecoder('utf-8').decode(buf), nombre: limpio(nombre) };
+  const dv = new DataView(buf.buffer, buf.byteOffset, buf.byteLength);
+  let fin = -1;
+  for (let i = buf.length - 22; i >= Math.max(0, buf.length - 66000); i--) if (dv.getUint32(i, true) === 0x06054b50){ fin = i; break; }
+  if (fin < 0) throw new Error('el .zip está dañado');
+  const total = dv.getUint16(fin + 10, true), utf = new TextDecoder('utf-8');
+  let pos = dv.getUint32(fin + 16, true); const txts = [];
+  for (let k = 0; k < total && dv.getUint32(pos, true) === 0x02014b50; k++){
+    const metodo = dv.getUint16(pos + 10, true), tam = dv.getUint32(pos + 20, true), ln = dv.getUint16(pos + 28, true), le = dv.getUint16(pos + 30, true), lc = dv.getUint16(pos + 32, true), local = dv.getUint32(pos + 42, true);
+    const n = utf.decode(buf.subarray(pos + 46, pos + 46 + ln));
+    if (/\.txt$/i.test(n) && !/__MACOSX/.test(n)) txts.push({ n, metodo, tam, local });
+    pos += 46 + ln + le + lc;
+  }
+  if (!txts.length) throw new Error('el .zip no trae el chat (.txt)');
+  const e = txts.find(x => /_chat\.txt$|chat de whatsapp|whatsapp chat/i.test(x.n)) || txts.sort((a, b) => b.tam - a.tam)[0];
+  const ini = e.local + 30 + dv.getUint16(e.local + 26, true) + dv.getUint16(e.local + 28, true), datos = buf.subarray(ini, ini + e.tam);
+  let bytes;
+  if (e.metodo === 0) bytes = datos;
+  else if (e.metodo === 8){
+    if (typeof DecompressionStream === 'undefined') throw new Error('este navegador no descomprime .zip; descomprímelo y sube el .txt');
+    bytes = new Uint8Array(await new Response(new Blob([datos]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).arrayBuffer());
+  } else throw new Error('formato de .zip no soportado');
+  const interno = limpio(e.n.split('/').pop());
+  return { txt: utf.decode(bytes), nombre: /^_?chat$/i.test(interno) ? limpio(nombre) : interno };
+}
 function openImportar(pre){
   pre = pre || {};
   if (extNivel() < 8){ toast('Actualiza el script Extras para importar chats'); return showExtrasSetup(); }
-  sheet('<h3>📥 Importar chat de WhatsApp</h3><div class="hint">Para negociaciones en curso o clientes antiguos. En WhatsApp abre el chat → <b>⋮ → Más → Exportar chat → Sin archivos</b> y compártelo con <b>Organizador</b>. Desde el PC, sube el archivo .txt aquí.</div>' +
-    '<div id="imp_paso1"' + (pre.txt ? ' style="display:none"' : '') + '><label class="btn sec" style="display:block;text-align:center;margin-top:12px">📄 Elegir archivo .txt<input type="file" id="imp_f" accept=".txt,text/plain" style="display:none"></label></div><div id="imp_paso2"></div>');
+  sheet('<h3>📥 Importar chat de WhatsApp</h3><div class="hint">Para negociaciones en curso o clientes antiguos. En WhatsApp abre el chat → <b>⋮ → Más → Exportar chat → Sin archivos</b> y compártelo con <b>Organizador</b>. Desde el PC, sube aquí el archivo .zip o .txt (la app lo descomprime sola).</div>' +
+    '<div id="imp_paso1"' + (pre.txt ? ' style="display:none"' : '') + '><label class="btn sec" style="display:block;text-align:center;margin-top:12px">📄 Elegir archivo (.zip o .txt)<input type="file" id="imp_f" accept=".zip,.txt,text/plain,application/zip,application/x-zip-compressed" style="display:none"></label></div><div id="imp_paso2"></div>');
   const mostrar = (txt, archivo) => {
-    if (/^PK/.test(txt)){ toast('Ese archivo es un .zip: exporta el chat eligiendo «Sin archivos»'); return; }
     const r = leerChatWhatsApp(txt), autores = Object.entries(r.autores).sort((a, b) => b[1] - a[1]);
     if (!r.mensajes.length){ $('#imp_paso2').innerHTML = '<div class="empty">No encontré mensajes en ese archivo. ¿Es un chat exportado de WhatsApp?</div>'; return; }
     $('#imp_paso1').style.display = 'none';
     const yoGuardado = LS.yoWa || '', yo = autores.find(a => a[0] === yoGuardado) ? yoGuardado : (autores.find(a => /blackline|gonzalo/i.test(a[0])) || [''])[0];
-    const otro = (autores.find(a => a[0] !== yo) || [''])[0], mA = String(archivo || '').match(/^(?:chat de whatsapp con|whatsapp chat with|whatsapp chat -)\s*(.+?)(?:\.txt)?$/i), nomArchivo = mA ? mA[1].trim() : '';
+    const otro = (autores.find(a => a[0] !== yo) || [''])[0], mA = String(archivo || '').match(/^(?:chat de whatsapp con|whatsapp chat with|whatsapp chat -)\s*(.+?)(?:\.(?:txt|zip))?$/i), nomArchivo = mA ? mA[1].trim() : '';
     const nombre = nomArchivo || otro, telDe = x => /^\+?[\d\s()-]{8,}$/.test(x) ? x.replace(/[^\d+]/g, '') : '';
     const C = contactos().slice().sort((a, b) => String(a.nombre).localeCompare(String(b.nombre)));
     const sugerido = pre.contacto || (C.find(c => norm(c.nombre) === norm(nombre)) || C.find(c => telDe(nombre) && String(c.telefono).replace(/\D/g, '').slice(-9) === telDe(nombre).replace(/\D/g, '').slice(-9)) || {}).id || '';
@@ -939,19 +967,21 @@ function openImportar(pre){
     };
   };
   if (pre.txt) mostrar(pre.txt, pre.nombre);
-  $('#imp_f').onchange = async e => { const f = e.target.files[0]; if (f) mostrar(await f.text(), f.name); };
+  $('#imp_f').onchange = async e => { const f = e.target.files[0]; if (!f) return; try { const r = await leerArchivoChat(f, f.name); mostrar(r.txt, r.nombre); } catch(err){ toast('No pude abrir el archivo: ' + err.message); } };
 }
 // Chat compartido desde WhatsApp hacia la app (lo deja el service worker).
 async function revisarCompartido(){
   if (!/[?&]compartido=1/.test(location.search)) return;
   history.replaceState(null, '', location.pathname);
   try {
-    const cache = await caches.open('compartido'), r = await cache.match('chat.json');
-    if (!r) return;
-    const d = await r.json(); await cache.delete('chat.json');
+    const cache = await caches.open('compartido'), rb = await cache.match('chat.bin'), r = rb ? null : await cache.match('chat.json');
+    if (!rb && !r) return;
+    let d;
+    if (rb){ d = await leerArchivoChat(await rb.blob(), decodeURIComponent(rb.headers.get('x-nombre') || '')); await cache.delete('chat.bin'); }
+    else { d = await r.json(); await cache.delete('chat.json'); }
     const abrir = () => openImportar({ txt: d.txt, nombre: d.nombre });
     if (S.data) abrir(); else setTimeout(abrir, 1500);
-  } catch(e){ toast('No pude leer el chat compartido'); }
+  } catch(e){ toast('No pude leer el chat compartido: ' + e.message); }
 }
 function relacionadosHTML(t){
   const L = contactosDe(t); if (!L.length) return '';

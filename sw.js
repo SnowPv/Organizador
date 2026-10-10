@@ -1,6 +1,6 @@
 // Guarda la "cáscara" de la app para que abra rápido y sin conexión.
 // Los datos siempre se piden a tu Sheet (nunca se guardan aquí).
-const CACHE = 'organizador-v7';
+const CACHE = 'organizador-v8';
 const COMPARTIDO = 'compartido';   // chat de WhatsApp compartido con la app, mientras la app lo lee
 const SHELL = ['./', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'icon-maskable-512.png'];
 
@@ -16,10 +16,13 @@ self.addEventListener('fetch', e => {
   if (req.method === 'POST' && url.origin === self.location.origin && url.searchParams.has('compartir')) {
     e.respondWith((async () => {
       const fd = await req.formData();
-      const f = fd.get('chat');
-      const txt = f && typeof f !== 'string' ? await f.text() : String(fd.get('text') || '');
-      const nombre = f && typeof f !== 'string' ? f.name : String(fd.get('title') || '');
-      await (await caches.open(COMPARTIDO)).put('chat.json', new Response(JSON.stringify({ txt, nombre })));
+      const f = fd.get('chat'), cache = await caches.open(COMPARTIDO);
+      if (f && typeof f !== 'string') {
+        // Se guarda tal cual (puede ser .txt o .zip); la app lo descomprime al abrirse.
+        await cache.put('chat.bin', new Response(f, { headers: { 'x-nombre': encodeURIComponent(f.name || '') } }));
+      } else {
+        await cache.put('chat.json', new Response(JSON.stringify({ txt: String(fd.get('text') || ''), nombre: String(fd.get('title') || '') })));
+      }
       return Response.redirect(new URL('./?compartido=1', self.registration.scope).href, 303);
     })());
     return;
