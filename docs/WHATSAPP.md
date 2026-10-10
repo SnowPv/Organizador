@@ -1,5 +1,7 @@
 # 💬🧠 WhatsApp Business + Agente de ventas IA · Organizador BlackLine
 
+> **Estado actual (octubre 2026):** el número de la tienda está conectado a **Kommo**, y un número solo puede estar en una plataforma con API a la vez. Por eso los **pasos 1 a 4 quedan en pausa** hasta que dejes Kommo. **Haz ahora el Paso 5** (actualizar el script y activar el agente). El Paso 6 se prueba **importando un chat exportado** y tocando 🧠 Analizar ahora.
+
 Con esta conexión, el organizador funciona como un **asistente de ventas que lee tu WhatsApp Business y lo organiza como lo harías tú**. **Nunca escribe a tus clientes.** Tú sigues respondiendo desde el teléfono como siempre.
 
 **Con cada mensaje (al instante):**
