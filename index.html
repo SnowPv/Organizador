@@ -932,8 +932,8 @@ async function leerArchivoChat(blob, nombre){
 function openImportar(pre){
   pre = pre || {};
   if (extNivel() < 8){ toast('Actualiza el script Extras para importar chats'); return showExtrasSetup(); }
-  sheet('<h3>📥 Importar chat de WhatsApp</h3><div class="hint">Para negociaciones en curso o clientes antiguos. En WhatsApp abre el chat → <b>⋮ → Más → Exportar chat → Sin archivos</b> y compártelo con <b>Organizador</b>. Desde el PC, sube aquí el archivo .zip o .txt (la app lo descomprime sola).</div>' +
-    '<div id="imp_paso1"' + (pre.txt ? ' style="display:none"' : '') + '><label class="btn sec" style="display:block;text-align:center;margin-top:12px">📄 Elegir archivo (.zip o .txt)<input type="file" id="imp_f" accept=".zip,.txt,text/plain,application/zip,application/x-zip-compressed" style="display:none"></label></div><div id="imp_paso2"></div>');
+  sheet('<h3>📥 Importar chat de WhatsApp</h3><div class="hint">Para negociaciones en curso o clientes antiguos. En WhatsApp abre el chat → <b>⋮ → Más → Exportar chat → Sin archivos</b> y compártelo con <b>Organizador</b>. Desde el PC, sube aquí los archivos .zip o .txt (puedes elegir varios a la vez; la app los descomprime sola).</div>' +
+    '<div id="imp_paso1"' + (pre.txt || pre.files ? ' style="display:none"' : '') + '><label class="btn sec" style="display:block;text-align:center;margin-top:12px">📄 Elegir archivos (.zip o .txt)<input type="file" id="imp_f" multiple accept=".zip,.txt,text/plain,application/zip,application/x-zip-compressed" style="display:none"></label></div><div id="imp_paso2"></div>');
   const mostrar = (txt, archivo) => {
     const r = leerChatWhatsApp(txt), autores = Object.entries(r.autores).sort((a, b) => b[1] - a[1]);
     if (!r.mensajes.length){ $('#imp_paso2').innerHTML = '<div class="empty">No encontré mensajes en ese archivo. ¿Es un chat exportado de WhatsApp?</div>'; return; }
@@ -966,20 +966,88 @@ function openImportar(pre){
       } catch(e){ b.disabled = false; b.textContent = 'Importar'; toast('No se pudo importar: ' + e.message); }
     };
   };
+  // Varios chats a la vez: se detecta quién eres tú (el que aparece en todos) y el cliente de cada archivo.
+  const mostrarVarios = async files => {
+    $('#imp_paso1').style.display = 'none';
+    $('#imp_paso2').innerHTML = '<div class="empty"><span class="spin"></span>Leyendo ' + files.length + ' archivos…</div>';
+    const chats = [];
+    for (const f of files){
+      try { const a = await leerArchivoChat(f, f.name), r = leerChatWhatsApp(a.txt); chats.push({ archivo: f.name, nombre: a.nombre, r, error: r.mensajes.length ? '' : 'no encontré mensajes' }); }
+      catch(err){ chats.push({ archivo: f.name, nombre: '', r: { mensajes: [], autores: {} }, error: err.message }); }
+    }
+    const ok = chats.filter(c => !c.error);
+    if (!ok.length){ $('#imp_paso2').innerHTML = '<div class="empty">No encontré chats de WhatsApp en esos archivos.</div>'; $('#imp_paso1').style.display = ''; return; }
+    const frec = {}; ok.forEach(c => Object.keys(c.r.autores).forEach(a => { frec[a] = (frec[a] || 0) + 1; }));
+    const cands = Object.entries(frec).sort((a, b) => b[1] - a[1]).slice(0, 6);
+    let yo = frec[LS.yoWa] ? LS.yoWa : (cands.find(a => /blackline|gonzalo/i.test(a[0])) || cands[0])[0];
+    const C = contactos(), telDe = x => /^\+?[\d\s()-]{8,}$/.test(x) ? x.replace(/[^\d+]/g, '') : '';
+    const destino = c => {
+      const otros = Object.entries(c.r.autores).filter(a => a[0] !== yo).sort((a, b) => b[1] - a[1]);
+      const mA = String(c.nombre || '').match(/^(?:chat de whatsapp con|whatsapp chat with|whatsapp chat -)\s*(.+?)$/i);
+      const nombre = (mA ? mA[1].trim() : '') || (otros[0] || [''])[0] || c.nombre, tel = telDe(nombre);
+      const ex = C.find(k => norm(k.nombre) === norm(nombre)) || (tel ? C.find(k => String(k.telefono).replace(/\D/g, '').slice(-9) === tel.replace(/\D/g, '').slice(-9)) : null);
+      return { nombre, tel, existente: ex || null, grupo: otros.length > 1, sinCliente: !otros.length };
+    };
+    const filas = () => chats.map((c, i) => {
+      if (c.error) return '<div class="row" style="gap:10px;padding:8px 0;border-bottom:1px solid var(--line)"><span>⚠️</span><div style="min-width:0"><b>' + esc(c.archivo) + '</b><div class="hint" style="margin:0">' + esc(c.error) + '</div></div></div>';
+      const d = destino(c);
+      return '<label class="row" style="gap:10px;padding:8px 0;border-bottom:1px solid var(--line);align-items:flex-start"><input type="checkbox" data-imx="' + i + '"' + (d.sinCliente ? '' : ' checked') + ' style="width:20px;height:20px;flex:0 0 auto;margin-top:2px"><div style="min-width:0"><b>' + esc(d.existente ? (d.existente.nombre || d.nombre) : (telDe(d.nombre) ? 'Contacto ' + d.nombre : d.nombre)) + '</b>' +
+        '<div class="hint" style="margin:0">' + c.r.mensajes.length + ' mensajes · ' + fmt(c.r.mensajes[c.r.mensajes.length - 1].fecha.slice(0, 10)) + ' · ' + (d.existente ? 'se une a su ficha' : '➕ contacto nuevo') + (d.grupo ? ' · ⚠️ parece un grupo' : '') + (d.sinCliente ? ' · solo hay mensajes tuyos' : '') + '</div></div></label>';
+    }).join('');
+    $('#imp_paso2').innerHTML = '<div class="card" style="margin-top:12px"><b>' + ok.length + ' chats listos</b>' + (chats.length > ok.length ? '<div class="hint">' + (chats.length - ok.length) + ' archivo(s) no se pudieron leer.</div>' : '') + '</div>' +
+      '<label class="l">¿Quién eres tú en estos chats?</label>' + pills('imp_yo', cands.map(a => ({ v: a[0], t: a[0] + ' (' + a[1] + ')' })), yo) +
+      '<div id="imp_lista" style="margin-top:8px">' + filas() + '</div>' +
+      (agenteActivo() ? '<label class="row" style="margin-top:12px;gap:8px;font-size:14px;font-weight:600"><input type="checkbox" id="imp_ag" checked style="width:20px;height:20px"> 🧠 Que el agente analice cada chat (tarda unos segundos por chat)</label>' : '') +
+      '<div class="btns"><button class="btn" id="imp_ok">Importar chats marcados</button></div>';
+    bindPills('imp_yo', v => { yo = v; $('#imp_lista').innerHTML = filas(); });
+    $('#imp_ok').onclick = async () => {
+      const marcados = [...$$('#imp_lista [data-imx]')].filter(x => x.checked).map(x => +x.dataset.imx);
+      if (!marcados.length){ toast('Marca al menos un chat'); return; }
+      LS.yoWa = yo;
+      const b = $('#imp_ok'), ag = $('#imp_ag') && $('#imp_ag').checked;
+      b.disabled = true; $$('#imp_paso2 input').forEach(x => x.disabled = true);
+      let msgs = 0, listos = 0; const fallos = [];
+      for (let k = 0; k < marcados.length; k++){
+        const c = chats[marcados[k]], d = destino(c);
+        b.innerHTML = '<span class="spin"></span>' + (ag ? 'Importando y analizando ' : 'Importando ') + (k + 1) + ' de ' + marcados.length + '…';
+        try {
+          const contacto = d.existente ? { id: d.existente.id, nombre: d.existente.nombre, telefono: d.existente.telefono } : { nombre: d.nombre, telefono: d.tel };
+          const res = await apiX('importarChat', { contacto, mensajes: c.r.mensajes.map(m => ({ fecha: m.fecha, saliente: m.autor === yo, texto: m.texto })), analizar: ag });
+          msgs += res.importados; listos++;
+          if (res.errorAgente) fallos.push(d.nombre + ': el agente no pudo (' + res.errorAgente + ')');
+        } catch(err){ fallos.push(d.nombre + ': ' + err.message); }
+      }
+      S.mutado = true; await Promise.all([loadBase(true), loadNeg(true)]); load();
+      $('#imp_paso2').innerHTML = '<div class="card" style="margin-top:12px"><b>📥 ' + listos + ' de ' + marcados.length + ' chats importados</b><div class="hint">' + msgs + ' mensajes nuevos' + (ag ? ' · 🧠 analizados por el agente' : '') + '.</div>' +
+        (fallos.length ? '<div class="hint">⚠️ ' + fallos.map(esc).join('<br>⚠️ ') + '</div>' : '') + '</div><div class="btns"><button class="btn" id="imp_fin">Ver la Base</button></div>';
+      $('#imp_fin').onclick = () => { closeSheet(); S.tab = 'base'; render(); };
+    };
+  };
   if (pre.txt) mostrar(pre.txt, pre.nombre);
-  $('#imp_f').onchange = async e => { const f = e.target.files[0]; if (!f) return; try { const r = await leerArchivoChat(f, f.name); mostrar(r.txt, r.nombre); } catch(err){ toast('No pude abrir el archivo: ' + err.message); } };
+  if (pre.files) mostrarVarios(pre.files);
+  $('#imp_f').onchange = async e => {
+    const fs = Array.from(e.target.files || []); if (!fs.length) return;
+    if (fs.length > 1) return mostrarVarios(fs);
+    try { const r = await leerArchivoChat(fs[0], fs[0].name); mostrar(r.txt, r.nombre); } catch(err){ toast('No pude abrir el archivo: ' + err.message); }
+  };
 }
 // Chat compartido desde WhatsApp hacia la app (lo deja el service worker).
 async function revisarCompartido(){
   if (!/[?&]compartido=1/.test(location.search)) return;
   history.replaceState(null, '', location.pathname);
   try {
-    const cache = await caches.open('compartido'), rb = await cache.match('chat.bin'), r = rb ? null : await cache.match('chat.json');
-    if (!rb && !r) return;
-    let d;
-    if (rb){ d = await leerArchivoChat(await rb.blob(), decodeURIComponent(rb.headers.get('x-nombre') || '')); await cache.delete('chat.bin'); }
-    else { d = await r.json(); await cache.delete('chat.json'); }
-    const abrir = () => openImportar({ txt: d.txt, nombre: d.nombre });
+    const cache = await caches.open('compartido'), claves = (await cache.keys()).filter(k => /chat\.bin/.test(k.url));
+    const files = [];
+    for (const k of claves){ const rb = await cache.match(k); files.push(new File([await rb.blob()], decodeURIComponent(rb.headers.get('x-nombre') || 'chat.txt'))); await cache.delete(k); }
+    const r = files.length ? null : await cache.match('chat.json');
+    if (!files.length && !r) return;
+    let abrir;
+    if (files.length > 1) abrir = () => openImportar({ files });
+    else {
+      const d = files.length ? await leerArchivoChat(files[0], files[0].name) : await r.json();
+      if (!files.length) await cache.delete('chat.json');
+      abrir = () => openImportar({ txt: d.txt, nombre: d.nombre });
+    }
     if (S.data) abrir(); else setTimeout(abrir, 1500);
   } catch(e){ toast('No pude leer el chat compartido: ' + e.message); }
 }
