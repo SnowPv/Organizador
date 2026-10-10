@@ -1,6 +1,6 @@
 // Guarda la "cáscara" de la app para que abra rápido y sin conexión.
 // Los datos siempre se piden a tu Sheet (nunca se guardan aquí).
-const CACHE = 'organizador-v12';
+const CACHE = 'organizador-v13';
 const COMPARTIDO = 'compartido';   // chat de WhatsApp compartido con la app, mientras la app lo lee
 const SHELL = ['./', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'icon-maskable-512.png'];
 

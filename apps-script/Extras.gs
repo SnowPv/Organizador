@@ -15,8 +15,8 @@
  * Para actualizar este archivo más adelante: reemplaza todo su contenido y repite los dos pasos anteriores.
  */
 
-const EX_VERSION = '2026-10-15';
-const EX_NIVEL = 9;      // la app lo usa para saber qué funciones tiene este script
+const EX_VERSION = '2026-10-16';
+const EX_NIVEL = 10;      // la app lo usa para saber qué funciones tiene este script
 const EX_HOJA = 'Tareas';
 const EX_PRIMERA = 4;
 const EX_ULTIMA = 400;
@@ -122,6 +122,7 @@ function app_extra_(p) {
     case 'agente':     return ex_agente_(p.id);
     case 'importarChat': return ex_importarChat_(p);
     case 'bsale':      return ex_bsale_(p);
+    case 'asistente':  return ex_asistente_(p);
     default:           return { ok: false, error: 'op desconocida: ' + p.op };
   }
 }
@@ -870,6 +871,47 @@ function ex_bsaleParaAgente_(texto) {
   } catch (e) { return '(no se pudo consultar Bsale: ' + e.message + ')'; }
 }
 
+/* ---------- asistente de IA para planificar el día y la semana ---------- */
+// La app arma el contexto (tareas, agenda, negociaciones) y el asistente devuelve un plan concreto. No cambia nada solo.
+const EX_AS_SISTEMA = {
+  dia: [
+    'Eres el asistente de productividad del encargado de Blackline Puerto Varas, tienda de bicicletas Specialized con taller. Atiende ventas, equipo (2 vendedores y 2 mecánicos), marketing, compras y clientes.',
+    'Con sus tareas pendientes, su agenda de hoy y sus negociaciones, arma un plan realista para HOY:',
+    '- bloques en orden, con hora sugerida (respeta los eventos del calendario y deja espacio para atender la tienda), máximo 7 bloques; agrupa tareas chicas parecidas en un solo bloque;',
+    '- primero lo vencido importante, los clientes que esperan respuesta y lo que mueve ventas; las tareas grandes en la mañana;',
+    '- si hay más trabajo que tiempo, propone qué mover a otro día (tareas no urgentes) y por qué;',
+    '- un consejo breve y concreto para el día.',
+    'Usa los nombres exactos de las tareas cuando las nombres. Español de Chile, directo y amable. Responde solo con el JSON pedido.'
+  ].join('\n'),
+  semana: [
+    'Eres el asistente de productividad y ventas del encargado de Blackline Puerto Varas (tienda de bicicletas Specialized con taller).',
+    'Con los datos de su semana (tareas hechas y pendientes, negociaciones, reflexión anterior) prepara su revisión semanal:',
+    '- un resumen de cómo le fue en 2 o 3 frases, con números;',
+    '- logros concretos (máximo 4);',
+    '- las 3 prioridades más importantes para la próxima semana, cada una con el porqué (piensa en ventas, clientes esperando, negocios estancados y tareas vencidas);',
+    '- riesgos o temas que se están quedando atrás (máximo 3).',
+    'No inventes datos. Español de Chile, directo. Responde solo con el JSON pedido.'
+  ].join('\n')
+};
+const EX_AS_ESQUEMA = {
+  dia: { type: 'object', additionalProperties: false, required: ['resumen', 'bloques', 'mover', 'consejo'], properties: {
+    resumen: { type: 'string' },
+    bloques: { type: 'array', items: { type: 'object', additionalProperties: false, required: ['hora', 'accion', 'motivo'], properties: { hora: { type: 'string' }, accion: { type: 'string' }, motivo: { type: 'string' } } } },
+    mover: { type: 'array', items: { type: 'object', additionalProperties: false, required: ['tarea', 'cuando', 'motivo'], properties: { tarea: { type: 'string' }, cuando: { type: 'string', enum: ['mañana', 'esta semana', 'próxima semana'] }, motivo: { type: 'string' } } } },
+    consejo: { type: 'string' } } },
+  semana: { type: 'object', additionalProperties: false, required: ['resumen', 'logros', 'prioridades', 'riesgos'], properties: {
+    resumen: { type: 'string' },
+    logros: { type: 'array', items: { type: 'string' } },
+    prioridades: { type: 'array', items: { type: 'object', additionalProperties: false, required: ['titulo', 'por_que'], properties: { titulo: { type: 'string' }, por_que: { type: 'string' } } } },
+    riesgos: { type: 'array', items: { type: 'string' } } } }
+};
+function ex_asistente_(p) {
+  const modo = p.modo === 'semana' ? 'semana' : 'dia';
+  const ctx = String(p.contexto || '').slice(0, 40000);
+  if (!ctx) throw new Error('sin contexto');
+  return { ok: true, modo: modo, r: ex_llamarClaude_(ctx, EX_AS_SISTEMA[modo], EX_AS_ESQUEMA[modo]) };
+}
+
 /* ---------- agente de ventas con IA ---------- */
 const EX_AG_SISTEMA = [
   'Eres el asistente de ventas de Blackline Puerto Varas, tienda de bicicletas Specialized (e-bikes como Turbo Levo, Turbo Vado, Turbo Como, Kenevo; MTB como Stumpjumper, Epic, Chisel; ruta y gravel como Tarmac, Roubaix, Diverge), repuestos, accesorios y taller de mantención en Puerto Varas, Chile.',
@@ -938,7 +980,7 @@ function ex_hojaAg_() {
 }
 
 // Llama a Claude con la conversación y devuelve el análisis (JSON validado por esquema).
-function ex_llamarClaude_(contexto) {
+function ex_llamarClaude_(contexto, sistema, esquema) {
   const props = PropertiesService.getScriptProperties();
   const clave = props.getProperty('ANTHROPIC_API_KEY');
   if (!clave) throw new Error('falta ANTHROPIC_API_KEY en las propiedades del script');
@@ -947,8 +989,8 @@ function ex_llamarClaude_(contexto) {
     model: modelo,
     max_tokens: 8000,
     // Haiku: esfuerzo bajo (lo más barato). Opus/Sonnet: esfuerzo medio y respaldo automático si el modelo rechaza.
-    output_config: { effort: haiku ? 'low' : 'medium', format: { type: 'json_schema', schema: EX_AG_ESQUEMA } },
-    system: [{ type: 'text', text: EX_AG_SISTEMA, cache_control: { type: 'ephemeral' } }],
+    output_config: { effort: haiku ? 'low' : 'medium', format: { type: 'json_schema', schema: esquema || EX_AG_ESQUEMA } },
+    system: [{ type: 'text', text: sistema || EX_AG_SISTEMA, cache_control: { type: 'ephemeral' } }],
     messages: [{ role: 'user', content: contexto }]
   };
   const headers = { 'x-api-key': clave, 'anthropic-version': '2023-06-01' };

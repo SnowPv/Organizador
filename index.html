@@ -480,6 +480,68 @@ nav.bottom button span .ico{width:21px;height:21px}
 .choice{display:flex;flex-wrap:wrap;gap:8px}
 .choice button{border:1px solid var(--line);background:var(--card);border-radius:10px;padding:9px 12px;font-weight:600;font-size:13.5px;cursor:pointer}
 .choice button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+/* ---------- pestañas rediseñadas ---------- */
+.task .t{font-weight:600}
+.tm{display:flex;flex-wrap:wrap;gap:4px 10px;margin-top:4px;font-size:12.5px;color:var(--muted)}
+.tm .d{font-weight:600;color:var(--ink)}
+.tm .d.bad{color:var(--bad-ink)} .tm .d.warn{color:var(--warn-ink)} .tm .d.ok{color:var(--ok-ink)}
+.task .why{color:var(--muted);font-weight:600}
+.play{background:var(--soft);color:var(--accent-ink)}
+.kstrip{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.ks1{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:12px;min-width:0;cursor:pointer}
+.ks1 b{display:block;font-size:20px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.1}
+.ks1 small{display:block;font-size:12px;color:var(--muted);font-weight:600;white-space:nowrap}
+@media (max-width:560px){.kstrip{grid-template-columns:1fr 1fr}}
+.tbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:0 0 12px}
+.tbar input,.tbar select{flex:1 1 200px;width:auto;min-width:0;padding:10px 13px}
+.tbar select{flex:0 1 190px}
+.tbar .views{margin:0;display:flex}
+.tbar .views button{padding:8px 12px}
+.cols2{display:grid;grid-template-columns:1fr;gap:14px;align-items:start}
+@media (min-width:1000px){.cols2{grid-template-columns:minmax(0,1.6fr) minmax(300px,1fr)}}
+.sec{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:6px 16px 10px;margin-bottom:14px}
+.sec > .sh{display:flex;align-items:center;gap:8px;padding:10px 0 4px;font-weight:700;font-size:14px}
+.sec > .sh .n{color:var(--muted);font-weight:600;font-size:13px}
+.sec > .sh .r{margin-left:auto;display:flex;gap:6px}
+.sec .task:first-of-type{border-top:0}
+.tl2{position:relative;padding-left:18px}
+.tl2::before{content:"";position:absolute;left:5px;top:6px;bottom:6px;width:2px;background:var(--line)}
+.tl2 .ev2{position:relative;padding:7px 0}
+.tl2 .ev2::before{content:"";position:absolute;left:-17px;top:12px;width:10px;height:10px;border-radius:50%;background:var(--card);border:2px solid var(--s3)}
+.tl2 .ev2.now::before{border-color:var(--ok);background:var(--ok)}
+.tl2 .ev2 b{font-size:13.5px;display:block}
+.tl2 .ev2 small{color:var(--muted);font-size:12px}
+.ttable td .t{font-weight:600;cursor:pointer}
+.ttable .chk{width:22px;height:22px}
+.ttable tr.grp td{background:var(--soft);font-size:11.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;padding:8px 14px}
+.mat{display:grid;grid-template-columns:1fr;gap:12px}
+@media (min-width:1000px){.mat{grid-template-columns:1fr 1fr}}
+.mat .sec{border-top:3px solid var(--qc);margin:0}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+.pcard{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;cursor:pointer}
+.pcard:hover{border-color:#C9D6EA}
+.pcard h4{margin:0;font-size:15.5px}
+.pbar{height:8px;background:var(--soft);border-radius:4px;position:relative;margin:12px 0 6px}
+.pbar i{display:block;height:100%;border-radius:4px;background:var(--accent)}
+.pbar u{position:absolute;top:-4px;width:2px;height:16px;background:var(--ink);opacity:.55}
+.pill2{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;padding:3px 9px;border-radius:999px;background:var(--soft);color:var(--muted)}
+.pill2.bad{background:#FDECEA;color:var(--bad-ink)} .pill2.ok{background:#E7F6EF;color:var(--ok-ink)}
+.gantt{display:grid;grid-template-columns:minmax(120px,200px) 1fr;gap:8px 12px;align-items:center;font-size:13px}
+.gantt .gt{height:14px;background:var(--soft);border-radius:7px;position:relative;overflow:hidden}
+.gantt .gt i{position:absolute;left:0;top:0;bottom:0;background:var(--s1);border-radius:7px}
+.gantt .gt b{position:absolute;left:0;top:4px;height:6px;background:var(--accent);border-radius:3px}
+.ai{border:1px solid #D7E4F7;background:linear-gradient(180deg,#F5F9FF,#FFFFFF);border-radius:16px;padding:14px 16px;margin-bottom:14px}
+.ai .wh .ico{color:var(--accent)}
+.blk{display:flex;gap:12px;padding:10px 0;border-top:1px solid var(--line)}
+.blk:first-child{border-top:0}
+.blk .hr{flex:none;width:58px;font-weight:700;font-size:13px;color:var(--accent-ink);font-variant-numeric:tabular-nums}
+.blk .tx{flex:1;font-size:14px;line-height:1.4}
+.blk .tx small{display:block;color:var(--muted);font-size:12.5px;margin-top:2px}
+.ctable td{cursor:pointer}
+.qa{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:0 0 14px}
+.qa a,.qa button{border:1px solid var(--line);background:var(--card);border-radius:12px;padding:10px 4px;font-weight:600;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:5px;color:var(--ink);text-decoration:none;cursor:pointer}
+.qa .ico{width:20px;height:20px;color:var(--accent)}
 </style>
 </head>
 <body>
@@ -546,7 +608,7 @@ const CAT_IC = { 'Ventas':'💰', 'Eventos':'🎪', 'Capacitaciones':'🎓', 'Ma
 const AREA_IC = { 'Trabajo':'💼', 'Personal':'🌿' };
 const AREA_COL = { 'Trabajo':'#6D5DFC', 'Personal':'#FF5C8A' };
 const EST_IC = { 'Pendiente':'⏳', 'En curso':'🔄', 'Esperando respuesta':'⌛', 'Pausada':'⏸️' };
-const QUAD = { 1: { c:'#F04461', n:'Hacer ya', ic:'🔥' }, 2: { c:'#3B9EFF', n:'Planificar', ic:'🗓️' }, 3: { c:'#FFB547', n:'Delegar', ic:'🤝' }, 4: { c:'#A3A2B5', n:'Posponer', ic:'💤' } };
+const QUAD = { 1: { c:'#D92D20', n:'Hacer ya', ic:'🔥' }, 2: { c:'#2A78D6', n:'Planificar', ic:'🗓️' }, 3: { c:'#E5A000', n:'Delegar', ic:'🤝' }, 4: { c:'#98A2B3', n:'Posponer', ic:'💤' } };
 const HAB_IC = [['ejercicio','🏃'],['bici','🚵'],['leer','📖'],['estudi','🧠'],['agua','💧'],['agenda','🗓️'],['pantalla','📵'],['dormir','😴'],['medit','🧘'],['comer','🥗']];
 function catIc(c){ return CAT_IC[c] || '🏷️'; }
 function areaCol(a){ return AREA_COL[a] || paletteColor(a); }
@@ -567,7 +629,7 @@ async function api(action, extra){
 function apiX(op, extra){ return api('extra', Object.assign({ op }, extra || {})); }
 // Nivel 2 del script Extras: recordatorios y base de contactos. Nivel 3: la base solo usa contacto@blacklinechile.cl. Nivel 4: eventos de varios días.
 function extNivel(){ return S.extInactivo ? 0 : (S.ext && S.ext.nivel) || 1; }
-function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < 9; }
+function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < 10; }
 let sincTimer = null;
 // Después de cambiar tareas, el script actualiza los recordatorios del calendario (en segundo plano).
 function sincPronto(){
@@ -717,22 +779,25 @@ function tagFecha(t){
   if (t.limite === addDays(h, 1)) return '<span class="tag info">📅 Mañana</span>';
   return '<span class="tag">📅 ' + fmt(t.limite) + '</span>';
 }
+function fechaTxt(t){
+  if (t.hecho) return ['ok', 'Hecha'];
+  if (!t.limite) return ['', ''];
+  const h = hoy();
+  if (t.limite < h) return ['bad', 'Vencida ' + fmt(t.limite)];
+  if (t.limite === h) return ['warn', 'Hoy'];
+  if (t.limite === addDays(h, 1)) return ['', 'Mañana'];
+  return ['', fmt(t.limite)];
+}
 function taskHTML(t, opt){
   opt = opt || {};
-  const idx = S.data.tareas.indexOf(t), q = QUAD[quadOf(t)];
-  const cc = t.categoria ? catCol(t.categoria) : null;
+  const idx = S.data.tareas.indexOf(t), q = quadOf(t), f = fechaTxt(t), L = t.subtareas || [];
+  const meta = [t.categoria, t.proyecto, L.length ? '☑ ' + L.filter(x => x.ok).length + '/' + L.length : '', t.repetir ? '↻ ' + t.repetir : '', t.estado && t.estado !== 'Pendiente' && !t.hecho ? t.estado : ''].filter(Boolean);
   return '<div class="task ' + (t.hecho ? 'done' : '') + '">' +
-    '<button class="chk ' + (t.hecho ? 'on' : '') + '" style="--q:' + q.c + '" data-tog="' + idx + '" aria-label="Marcar">' + (t.hecho ? '✓' : '') + '</button>' +
+    '<button class="chk ' + (t.hecho ? 'on' : '') + '" style="--q:' + (q === 1 ? 'var(--bad)' : '#C5CBD5') + '" data-tog="' + idx + '" aria-label="Marcar como hecha">' + (t.hecho ? '✓' : '') + '</button>' +
     '<div class="grow" data-open="' + idx + '"><div class="t">' + esc(t.tarea) + '</div>' +
-    (opt.why ? '<div class="why">✨ ' + esc(opt.why) + '</div>' : '') +
-    (opt.compact ? '' : '<div class="meta">' + tagFecha(t) +
-      (t.area ? '<span class="tag" style="background:' + hexToRgba(areaCol(t.area), .13) + ';color:' + areaCol(t.area) + '">' + (AREA_IC[t.area] || '') + ' ' + esc(t.area) + '</span>' : '') +
-      (t.categoria ? '<span class="tag" style="background:' + hexToRgba(cc, .13) + ';color:' + cc + '">' + catIc(t.categoria) + ' ' + esc(t.categoria) + '</span>' : '') +
-      (t.proyecto ? '<span class="tag">🚀 ' + esc(t.proyecto) + '</span>' : '') +
-      subTag(t) + (t.repetir ? '<span class="tag info">🔁 ' + esc(t.repetir) + '</span>' : '') +
-      (t.estado && t.estado !== 'Pendiente' && !t.hecho ? '<span class="tag">' + (EST_IC[t.estado] || '') + ' ' + esc(t.estado) + '</span>' : '') +
-      '</div>') +
-    '</div>' + (!t.hecho && opt.play ? '<button class="play" data-focus="' + idx + '" aria-label="Enfocar">▶</button>' : '') + '</div>';
+    (opt.why ? '<div class="why">' + esc(opt.why) + '</div>' : '') +
+    (opt.compact ? '' : (f[1] || meta.length ? '<div class="tm">' + (f[1] ? '<span class="d ' + f[0] + '">' + f[1] + '</span>' : '') + meta.map(m => '<span>' + esc(m) + '</span>').join('') + '</div>' : '')) +
+    '</div>' + (!t.hecho && opt.play ? '<button class="play" data-focus="' + idx + '" aria-label="Enfocarme en esta tarea">▶</button>' : '') + '</div>';
 }
 function subTag(t){
   const L = t.subtareas || []; if (!L.length) return '';
@@ -820,7 +885,7 @@ function viewInicio(){
   const totalHoy = lista.length + hechas.length;
   let html = '<div class="ihead"><button class="quick" id="qa"><b>+</b>Agregar tarea… <span style="margin-left:auto">🎤</span></button>' +
     '<button class="btn sec" id="planBtn">' + icon('spark') + ' Plan de la semana</button></div>';
-  if (necesitaActualizar()) html += '<div class="w" style="margin-bottom:14px;display:flex;gap:12px;align-items:center"><div class="grow"><b>Nueva versión del script</b><div class="wsub">' + (extNivel() >= 8 ? 'Conexión con Bsale: stock y precios reales en tus negociaciones y en el agente.' : 'Importar chats de WhatsApp y agente de IA.') + '</div></div><button class="btn sm" id="updBtn">Actualizar</button></div>';
+  if (necesitaActualizar()) html += '<div class="w" style="margin-bottom:14px;display:flex;gap:12px;align-items:center"><div class="grow"><b>Nueva versión del script</b><div class="wsub">' + (extNivel() >= 8 ? 'Asistente de IA para planificar tu día y tu semana, y conexión con Bsale (stock y precios).' : 'Importar chats de WhatsApp y agente de IA.') + '</div></div><button class="btn sm" id="updBtn">Actualizar</button></div>';
   html += '<div class="wgrid">';
   // 1. Tareas de hoy (anillo: avance del día contra lo planificado)
   html += '<div class="w" data-w="hoy"><div class="wh">' + icon('check') + 'Tareas de hoy<button class="go" data-go="hoy">Ver</button></div><div class="wring"><div class="rg">' + ringSVG(totalHoy ? hechas.length / totalHoy : 0, 86) + '<b>' + hechas.length + '/' + totalHoy + '<small>hechas</small></b></div>' +
@@ -1199,7 +1264,7 @@ function agenteHTML(c){
   if (!c || extNivel() < 7) return '';
   const g = agenteDe(c.id), tel = String(c.telefono || '').replace(/[^\d+]/g, '').replace(/^\+/, '').replace(/^9(\d{8})$/, '569$1');
   if (!g.r && !agenteActivo() && extNivel() < 8) return '';
-  return '<div class="card" style="background:linear-gradient(135deg,rgba(109,93,252,.08),rgba(255,92,138,.08));margin-top:12px"><b>🧠 Lo que entendió el agente</b>' +
+  return '<div class="ai"><div class="wh" style="margin:0">' + icon('spark') + 'Lo que entendió el agente</div>' +
     (g.r ? '<div style="font-size:14px;line-height:1.45;margin-top:6px">' + esc(g.r.detalle) + '</div><div class="hint" style="margin:4px 0 0">' + fmtRel(g.r.fecha) + '</div>' : '<div class="hint">' + (agenteActivo() ? 'Aún no ha analizado conversaciones de este contacto.' : 'Activa el agente (clave de Claude) para que lea sus chats. Mientras, puedes importar su chat.') + '</div>') +
     (g.idea ? '<div class="card" style="margin:10px 0 0;padding:10px 12px"><div class="hint" style="margin:0 0 4px">💬 Espera respuesta · idea:</div><div style="font-size:14px">' + esc(g.idea.detalle) + '</div>' + (tel ? '<a class="btn sm sec" style="display:inline-block;margin-top:8px;text-decoration:none" target="_blank" href="https://wa.me/' + esc(tel) + '?text=' + encodeURIComponent(g.idea.detalle) + '">Abrir WhatsApp con esta idea</a>' : '') + '</div>' : '') +
     (agenteActivo() ? '<button class="btn sm sec" data-agente="' + esc(c.id) + '" style="margin-top:10px">🧠 Analizar ahora</button>' : '') +
@@ -1405,34 +1470,34 @@ function viewBase(){
   let L = todos.filter(c => S.bf === 'todos' ? true : S.bf === 'esperan' ? !!agenteDe(c.id).idea : S.bf === 'frios' ? frios.includes(c) : S.bf === 'otros' ? !['Cliente', 'Proveedor', 'Por clasificar'].includes(c.tipo) : c.tipo === S.bf);
   if (q) L = L.filter(c => norm([c.nombre, c.empresa, c.email, c.telefono, c.etiquetas, c.notas].join(' ')).includes(q));
   L.sort((a, b) => (b.ultima || '').localeCompare(a.ultima || '') || String(a.nombre).localeCompare(String(b.nombre)));
-  const filtros = [['todos', '✨ Todos'], ['Cliente', '🛒 Clientes'], ['Proveedor', '📦 Proveedores'], ['Por clasificar', '❔ Por clasificar'], ['frios', '🧊 Sin contacto +30 d'], ['otros', '🔖 Otros']].concat(extNivel() >= 7 ? [['esperan', '💬 Esperan respuesta']] : []);
-  let html = '<div class="hero" style="background:linear-gradient(135deg,#FF5C8A,#FF8A4C)"><div class="hi">📇 Base de datos</div><div class="big">' + todos.length + ' contactos</div>' +
-    '<div class="hstats" style="grid-template-columns:repeat(4,1fr);position:relative;z-index:1">' +
-    '<div class="hstat"><b>' + cuenta('Cliente') + '</b><span>clientes</span></div><div class="hstat"><b>' + cuenta('Proveedor') + '</b><span>proveed.</span></div>' +
-    '<div class="hstat"><b>' + cuenta('Por clasificar') + '</b><span>por clasif.</span></div><div class="hstat"><b>' + frios.length + '</b><span>fríos</span></div></div></div>';
-  html += '<div class="btns" style="margin-top:0"><button class="btn sec" id="bScan">🔄 Revisar Gmail y calendario</button><button class="btn" id="bNew">+ Nuevo</button></div>';
-  if (extNivel() >= 8) html += '<button class="quick" id="bImp" style="margin-top:8px"><b>📥</b>Importar chat de WhatsApp (negociaciones en curso)</button>';
-  html += '<input type="text" id="bq" style="margin-top:12px" placeholder="🔎 Buscar nombre, empresa, interés…" value="' + esc(S.bq) + '">';
-  html += '<div class="filters" style="margin-top:8px">' + filtros.map(f => '<button class="pill ' + (S.bf === f[0] ? 'on' : '') + '" data-bf="' + f[0] + '">' + f[1] + '</button>').join('') + '</div>';
-  html += '<div class="card">' + (L.length ? L.map(c => '<div class="ct-row" data-c="' + esc(c.id) + '">' + avatar(c) + '<div class="grow"><b style="font-size:15px">' + esc(c.nombre || c.email) + '</b>' +
-    '<div class="meta" style="margin-top:4px"><span class="tag" style="background:' + hexToRgba(TIPO_COL[c.tipo] || '#7E7F92', .14) + ';color:' + (TIPO_COL[c.tipo] || '#7E7F92') + '">' + (TIPO_IC[c.tipo] || '') + ' ' + esc(c.tipo) + '</span>' + (c.empresa ? '<span class="tag">🏢 ' + esc(c.empresa) + '</span>' : '') + (c.etiquetas ? '<span class="tag">🏷️ ' + esc(String(c.etiquetas).slice(0, 28)) + '</span>' : '') + '</div></div>' +
-    '<div class="dk">' + esc(c.telefono || '') + '</div><div class="dk">' + esc(c.email || '') + '</div>' +
-    '<div class="ct-last">' + haceTxt(c.ultima) + '<br>' + (c.n ? c.n + ' 💬' : '') + '</div></div>').join('')
-    : '<div class="empty">' + (todos.length ? 'Nada con este filtro 🔍' : 'Aún no hay contactos.<br>Toca «Revisar Gmail y calendario» para armar tu base, o agrega uno a mano.') + '</div>') + '</div>';
-  html += '<div class="hint">Se actualiza sola cada 6 horas con los correos que llegan por contacto@blacklinechile.cl (incluye nombre y teléfono de los formularios web). Tus respuestas, reuniones y tareas con esas personas se suman a su historial. Marca un contacto como «Ignorar» para que no vuelva a aparecer.</div>';
+  const filtros = [['todos', 'Todos'], ['Cliente', 'Clientes'], ['Proveedor', 'Proveedores'], ['Por clasificar', 'Por clasificar'], ['frios', 'Sin contacto +30 d'], ['otros', 'Otros']].concat(extNivel() >= 7 ? [['esperan', 'Esperan respuesta']] : []);
+  const esperan = todos.filter(c => agenteDe(c.id).idea).length;
+  let html = '<div class="kstrip"><div class="ks1" data-bfj="todos"><div><b>' + todos.length + '</b><small>contactos</small></div></div><div class="ks1" data-bfj="Cliente"><div><b>' + cuenta('Cliente') + '</b><small>clientes</small></div></div>' +
+    '<div class="ks1" data-bfj="esperan"><div><b style="color:' + (esperan ? 'var(--bad-ink)' : 'inherit') + '">' + esperan + '</b><small>esperan respuesta</small></div></div><div class="ks1" data-bfj="frios"><div><b>' + frios.length + '</b><small>sin contacto +30 d</small></div></div></div>';
+  html += '<div class="tbar"><input type="text" id="bq" placeholder="🔎 Buscar nombre, empresa, teléfono o interés" value="' + esc(S.bq) + '"><select id="bfs">' + filtros.map(f => '<option value="' + f[0] + '"' + (S.bf === f[0] ? ' selected' : '') + '>' + f[1] + '</option>').join('') + '</select>' +
+    (extNivel() >= 8 ? '<button class="btn sm sec" id="bImp">📥 Importar chats</button>' : '') + '<button class="btn sm sec" id="bScan">↻ Revisar correo</button><button class="btn sm" id="bNew">＋ Nuevo</button></div>';
+  const negDe = c => negocios().filter(n => n.contacto === c.id && n.estado === 'Abierta')[0];
+  if (!L.length) html += '<div class="sec"><div class="empty">' + (todos.length ? 'Nada con este filtro 🔍' : 'Aún no hay contactos. Importa tus chats de WhatsApp o agrega uno a mano.') + '</div></div>';
+  else if (ANCHO()) html += '<div class="tablewrap"><table class="ntable ctable"><thead><tr><th>Nombre</th><th>Tipo</th><th>Teléfono</th><th>Correo</th><th>Negociación abierta</th><th>Última interacción</th></tr></thead><tbody>' +
+    L.map(c => { const n = negDe(c), idea = agenteDe(c.id).idea; return '<tr data-c="' + esc(c.id) + '"><td><div class="row" style="gap:10px">' + avatar(c, 32) + '<div style="min-width:0"><b>' + esc(c.nombre || c.email) + '</b>' + (c.empresa || c.etiquetas ? '<div class="hint" style="margin:1px 0 0">' + esc([c.empresa, c.etiquetas].filter(Boolean).join(' · ').slice(0, 60)) + '</div>' : '') + '</div></div></td>' +
+      '<td style="white-space:nowrap"><span class="dot" style="background:' + (TIPO_COL[c.tipo] || '#98A2B3') + ';margin-right:6px"></span>' + esc(c.tipo) + '</td><td style="white-space:nowrap">' + esc(c.telefono || '–') + '</td><td>' + esc(c.email || '–') + '</td>' +
+      '<td>' + (n ? '<span class="dot" style="background:' + etapaDe(n).c + ';margin-right:6px"></span>' + esc(n.etapa) + (n.valor ? ' · ' + clpCorto(n.valor) : '') : '<span class="hint">–</span>') + '</td><td style="white-space:nowrap">' + (idea ? '<span class="pill2 bad">Espera respuesta</span> ' : '') + haceTxt(c.ultima) + '</td></tr>'; }).join('') + '</tbody></table></div>';
+  else html += '<div class="sec">' + L.map(c => { const n = negDe(c), idea = agenteDe(c.id).idea; return '<div class="ct-row" data-c="' + esc(c.id) + '">' + avatar(c, 40) + '<div class="grow"><b style="font-size:14.5px">' + esc(c.nombre || c.email) + '</b><div class="tm"><span>' + esc(c.tipo) + '</span>' + (n ? '<span>' + esc(n.etapa) + (n.valor ? ' · ' + clpCorto(n.valor) : '') + '</span>' : '') + (idea ? '<span class="d bad">Espera respuesta</span>' : '') + '</div></div><div class="ct-last">' + haceTxt(c.ultima) + '</div></div>'; }).join('') + '</div>';
   $('#view').innerHTML = html;
   const bq = $('#bq'); bq.oninput = () => { S.bq = bq.value; const pos = bq.selectionStart; viewBase(); const b2 = $('#bq'); b2.focus(); b2.setSelectionRange(pos, pos); };
-  $$('[data-bf]').forEach(b => b.onclick = () => { S.bf = b.dataset.bf; viewBase(); });
+  $('#bfs').onchange = e => { S.bf = e.target.value; viewBase(); };
+  $$('[data-bfj]').forEach(b => b.onclick = () => { S.bf = b.dataset.bfj; viewBase(); });
   $$('[data-c]').forEach(b => b.onclick = () => openContacto(contactoPorId(b.dataset.c)));
   $('#bNew').onclick = () => openContacto(null);
   const bi = $('#bImp'); if (bi) bi.onclick = () => openImportar();
   $('#bScan').onclick = async e => {
     const b = e.target; b.disabled = true; b.innerHTML = '<span class="spin"></span>Revisando…';
     try { const r = await apiX('escanear'); toast('✓ ' + r.nuevos + ' contactos nuevos · ' + r.interacciones + ' interacciones'); await loadBase(true); render(); }
-    catch(err){ b.disabled = false; b.textContent = '🔄 Revisar Gmail y calendario'; toast('No se pudo revisar: ' + err.message); }
+    catch(err){ b.disabled = false; b.textContent = '↻ Revisar correo'; toast('No se pudo revisar: ' + err.message); }
   };
 }
-function openContacto(c){
+function openContacto(c, opt){
+  if (c && !(opt && opt.editar)) return openCto(c, opt);
   const nuevo = !c; c = c || { id: '', tipo: 'Cliente', nombre: '', empresa: '', email: '', telefono: '', etiquetas: '', notas: '' };
   const inter = nuevo ? [] : ((S.base && S.base.interacciones) || []).filter(i => i.id === c.id);
   const tareas = nuevo ? [] : tareasDe(c);
@@ -1475,6 +1540,69 @@ function openContacto(c){
       catch(e){ $('#c_nota_ok').disabled = false; toast('No se pudo anotar: ' + e.message); }
     };
     $('#c_nota_ok').onclick = anotar; $('#c_nota').onkeydown = e => { if (e.key === 'Enter') anotar(); };
+  }
+}
+
+/* ---------- ficha de contacto: acciones rápidas, próximo paso y pestañas ---------- */
+function openCto(c, opt){
+  opt = opt || {};
+  const tab = opt.tab || S.ctab || 'resumen'; S.ctab = tab;
+  const tel = String(c.telefono || '').replace(/[^\d+]/g, ''), wa = tel.replace(/^\+/, '').replace(/^9(\d{8})$/, '569$1');
+  const negs = negocios().filter(x => x.contacto === c.id), abierta = negs.find(x => x.estado === 'Abierta');
+  const tareas = tareasDe(c).filter(t => !t.hecho).sort(ordenar), inter = ((S.base && S.base.interacciones) || []).filter(i => i.id === c.id);
+  let html = '<div id="ct_root" data-id="' + esc(c.id) + '"></div><div class="dh">' + avatar(c, 50) + '<div style="min-width:0"><h3>' + esc(c.nombre || c.email) + '</h3><div class="ds"><span class="dot" style="background:' + (TIPO_COL[c.tipo] || '#98A2B3') + ';margin-right:5px"></span>' + esc(c.tipo) + (c.empresa ? ' · ' + esc(c.empresa) : '') + ' · ' + (c.n ? c.n + ' interacciones · ' : '') + 'última ' + haceTxt(c.ultima) + '</div></div></div>';
+  html += '<div class="qa">' + (tel ? '<a href="https://wa.me/' + esc(wa) + '" target="_blank">' + icon('note') + 'WhatsApp</a><a href="tel:' + esc(tel) + '">' + icon('phone') + 'Llamar</a>' : '<button disabled style="opacity:.45">' + icon('note') + 'WhatsApp</button><button disabled style="opacity:.45">' + icon('phone') + 'Llamar</button>') +
+    (c.email ? '<a href="mailto:' + esc(c.email) + '">' + icon('arrow') + 'Correo</a>' : '<button disabled style="opacity:.45">' + icon('arrow') + 'Correo</button>') + '<button id="ct_tk">' + icon('check') + 'Tarea</button><button id="ct_ng">' + icon('deal') + (abierta ? 'Negocio' : 'Nuevo negocio') + '</button></div>';
+  const t0 = tareas[0];
+  const vencP = t0 ? (t0.limite && t0.limite < hoy()) : abierta && abierta.proxima ? (abierta.fechaProx && abierta.fechaProx < hoy()) : true;
+  html += '<div class="nextc' + (vencP ? ' bad' : '') + '"><div class="tx"><small>Próximo paso</small>' + (t0 ? '<b>' + esc(t0.tarea) + '</b><span>' + (t0.limite ? (t0.limite < hoy() ? 'Venció ' : '') + fmtLong(t0.limite) : 'sin fecha') + '</span>' : abierta && abierta.proxima ? '<b>' + esc(abierta.proxima) + '</b><span>' + (abierta.fechaProx ? (abierta.fechaProx < hoy() ? 'Venció ' : '') + fmtLong(abierta.fechaProx) : '') + ' · de la negociación</span>' : '<b>Sin próximo paso</b><span>Agenda un seguimiento para no perder a este contacto</span>') + '</div>' + (t0 ? '<button class="btn sm" id="ct_done">✓ Hecho</button>' : '<button class="btn sm" id="ct_seg">Agendar</button>') + '</div>';
+  const tabs = [['resumen', 'Resumen'], ['actividad', 'Actividad (' + inter.length + ')'], ['negocios', 'Negocios (' + negs.length + ')'], ['datos', 'Datos']];
+  html += '<div class="tabs">' + tabs.map(t => '<button class="' + (t[0] === tab ? 'on' : '') + '" data-ctab="' + t[0] + '">' + t[1] + '</button>').join('') + '</div><div id="ctab"></div>';
+  sheet(html);
+  ctoTab(c, tab);
+  $$('[data-ctab]').forEach(b => b.onclick = () => { S.ctab = b.dataset.ctab; $$('[data-ctab]').forEach(x => x.classList.toggle('on', x === b)); ctoTab(c, b.dataset.ctab); });
+  const nombre = c.nombre || c.email;
+  $('#ct_tk').onclick = () => openAdd({ texto: 'Seguimiento ' + nombre + ' mañana', notas: c.telefono ? '📞 ' + c.telefono : '' });
+  $('#ct_ng').onclick = () => abierta ? openNegocio(abierta) : openNegocio(null, { contacto: c.id });
+  const sg = $('#ct_seg'); if (sg) sg.onclick = () => openAdd({ texto: 'Seguimiento ' + nombre + ' mañana', notas: c.telefono ? '📞 ' + c.telefono : '' });
+  const dn = $('#ct_done'); if (dn) dn.onclick = async () => { dn.disabled = true; await toggle(t0); openCto(contactoPorId(c.id) || c); };
+}
+function ctoTab(c, tab){
+  const box = $('#ctab');
+  if (tab === 'resumen'){
+    const tareas = tareasDe(c).filter(t => !t.hecho).sort(ordenar);
+    box.innerHTML = agenteHTML(c) + (c.etiquetas || c.notas ? '<div class="sec"><div class="sh">Lo que sabemos</div>' + (c.etiquetas ? '<div class="tm" style="margin:0 0 6px">' + String(c.etiquetas).split(',').map(x => '<span class="pill2">' + esc(x.trim()) + '</span>').join('') + '</div>' : '') + (c.notas ? '<div style="font-size:14px;line-height:1.45;padding-bottom:6px">' + esc(c.notas) + '</div>' : '') + '</div>' : '') +
+      '<div class="sec"><div class="sh">Tareas pendientes <span class="n">' + tareas.length + '</span></div>' + (tareas.length ? tareas.map(t => taskHTML(t)).join('') : '<div class="wsub" style="padding:4px 0 8px">Sin tareas con este contacto.</div>') + '</div>';
+    bindTasks(box);
+    box.querySelectorAll('[data-agente]').forEach(b => b.onclick = () => analizarAhora(b.dataset.agente, b));
+    box.querySelectorAll('[data-impc]').forEach(b => b.onclick = () => openImportar({ contacto: b.dataset.impc }));
+  } else if (tab === 'actividad'){
+    const inter = ((S.base && S.base.interacciones) || []).filter(i => i.id === c.id);
+    const icTl = t => /agente|idea/i.test(t) ? '🧠' : /whatsapp|chat/i.test(t) ? '💬' : /correo/i.test(t) ? '✉️' : /reuni/i.test(t) ? '📅' : /tarea/i.test(t) ? '✅' : /negoci|venta/i.test(t) ? '🤝' : '📝';
+    box.innerHTML = '<div class="smart" style="margin-bottom:10px"><input type="text" id="c_nota" placeholder="Anotar algo (vino a la tienda, pidió precio…)" autocomplete="off"><button class="mic" id="c_nota_ok" aria-label="Anotar">＋</button></div>' +
+      (inter.length ? '<div class="wl">' + inter.slice(0, 50).map(i => '<div class="tl"><span class="ic">' + icTl(i.tipo) + '</span><div class="grow"><div style="font-size:14px;font-weight:600;line-height:1.4">' + esc(i.detalle) + '</div><div class="hint" style="margin:2px 0 0">' + esc(i.tipo) + ' · ' + (i.fecha ? fmtRel(i.fecha) : '') + (i.link ? ' · <a href="' + esc(i.link) + '" target="_blank" style="color:var(--accent-ink)">abrir</a>' : '') + '</div></div></div>').join('') + '</div>' : '<div class="empty">Aquí aparecen los mensajes, correos, notas y reuniones.</div>');
+    const anotar = async () => { const tx = $('#c_nota').value.trim(); if (!tx) return; $('#c_nota_ok').disabled = true;
+      try { await apiX('nota', { id: c.id, texto: tx }); toast('📝 Anotado'); await loadBase(true); openCto(contactoPorId(c.id) || c, { tab: 'actividad' }); } catch(e){ $('#c_nota_ok').disabled = false; toast('No se pudo anotar: ' + e.message); } };
+    $('#c_nota_ok').onclick = anotar; $('#c_nota').onkeydown = e => { if (e.key === 'Enter') anotar(); };
+  } else if (tab === 'negocios'){
+    const negs = negocios().filter(x => x.contacto === c.id);
+    box.innerHTML = (negs.length ? '<div class="klist">' + negs.map(n => kcardHTML(n, analizar(n), { etapa: true })).join('') + '</div>' : '<div class="empty">Sin negociaciones con este contacto.</div>') + '<div class="btns"><button class="btn sec" id="ct_ng2">＋ Nueva negociación</button></div>';
+    box.querySelectorAll('[data-neg]').forEach(b => b.onclick = () => openNegocio(negocios().find(x => x.id === b.dataset.neg)));
+    $('#ct_ng2').onclick = () => openNegocio(null, { contacto: c.id });
+  } else {
+    box.innerHTML = '<label class="l" style="margin-top:0">Tipo</label>' + pills('c_tipo', TIPOS_C.map(x => ({ v: x, t: x })), c.tipo) +
+      '<label class="l">Nombre</label><input type="text" id="c_nom" value="' + esc(c.nombre) + '"><label class="l">Empresa</label><input type="text" id="c_emp" value="' + esc(c.empresa) + '">' +
+      '<label class="l">Teléfono</label><input type="text" id="c_tel" inputmode="tel" value="' + esc(c.telefono) + '"><label class="l">Correo</label><input type="text" id="c_mail" inputmode="email" value="' + esc(c.email) + '">' +
+      '<label class="l">Etiquetas / intereses</label><input type="text" id="c_tag" value="' + esc(c.etiquetas) + '" placeholder="Levo talla M, club Pichijuán…"><label class="l">Notas</label><textarea class="note" id="c_not">' + esc(c.notas) + '</textarea>' +
+      '<div class="btns"><button class="btn" id="c_ok">Guardar cambios</button></div><div class="hint">Marca el tipo «Ignorar» para que este contacto no vuelva a aparecer.</div>';
+    bindPills('c_tipo');
+    $('#c_ok').onclick = async () => {
+      const d = { id: c.id, tipo: val('c_tipo') || 'Por clasificar', nombre: $('#c_nom').value.trim(), empresa: $('#c_emp').value.trim(), email: $('#c_mail').value.trim(), telefono: $('#c_tel').value.trim(), etiquetas: $('#c_tag').value.trim(), notas: $('#c_not').value.trim() };
+      if (!d.nombre && !d.email){ toast('Ponle al menos un nombre'); return; }
+      $('#c_ok').disabled = true;
+      try { await apiX('contacto', { contacto: d }); toast(d.tipo === 'Ignorar' ? '🚫 No volverá a aparecer' : 'Guardado ✓'); await loadBase(true); if (d.tipo === 'Ignorar'){ closeSheet(); render(); } else openCto(contactoPorId(c.id) || c, { tab: 'datos' }); }
+      catch(e){ $('#c_ok').disabled = false; toast('No se pudo guardar: ' + e.message); }
+    };
   }
 }
 
@@ -2078,73 +2206,116 @@ function openNegocio(n, opt){
 
 /* ---------- vista: Hoy ---------- */
 function viewHoy(){
-  const h = hoy(), P = pendientes(), venc = vencidas().sort(ordenar);
+  const h = hoy(), P = pendientes(), venc = vencidas().sort((a, b) => puntaje(b).s - puntaje(a).s);
   const hoyL = P.filter(t => t.limite === h).sort((a, b) => puntaje(b).s - puntaje(a).s);
   const curso = P.filter(t => t.estado === 'En curso' && !(t.limite && t.limite <= h));
-  const hechas = hechasEl(h);
+  const hechas = hechasEl(h), total = hoyL.length + hechas.length;
+  const ev = S.google && S.google.eventos ? S.google.eventos.filter(e => e.fecha === h) : [];
   const prox = P.filter(t => t.limite > h && t.limite <= addDays(h, 7)).sort(ordenar);
-  let html = heroHTML();
-  html += '<button class="quick" id="qa" style="margin-top:0"><b>+</b>Agregar para hoy…</button>';
-  if (venc.length) html += card('Vencidas', '⏰', venc.map(t => taskHTML(t, { play: true })).join('') + '<div class="btns" style="margin-top:8px"><button class="btn sm sec" id="vH">Mover todas a hoy</button><button class="btn sm sec" id="vM">A mañana</button></div>', venc.length);
-  html += card('Para hoy', '☀️', hoyL.length ? hoyL.map(t => taskHTML(t, { play: true })).join('') : '<div class="empty">Nada con fecha de hoy 🎉<br>Toca + para agregar algo.</div>', hoyL.length);
-  if (curso.length) html += card('En curso', '🔄', curso.map(t => taskHTML(t, { play: true })).join(''), curso.length);
-  if (hechas.length) html += card('Hechas hoy', '✅', hechas.map(t => taskHTML(t)).join(''), hechas.length);
-  if (prox.length) html += card('Próximos 7 días', '🔭', prox.map(t => taskHTML(t)).join(''), prox.length);
+  const oc = ocupados()[h];
+  let html = '<div class="kstrip"><div class="ks1"><div class="rg" style="position:relative">' + ringSVG(total ? hechas.length / total : 0, 46) + '</div><div><b>' + hechas.length + '/' + total + '</b><small>hechas hoy</small></div></div>' +
+    '<div class="ks1" data-jump="sv"><div><b style="color:' + (venc.length ? 'var(--bad-ink)' : 'inherit') + '">' + venc.length + '</b><small>vencidas</small></div></div><div class="ks1" data-jump="sh"><div><b>' + hoyL.length + '</b><small>para hoy</small></div></div><div class="ks1"><div><b>' + ev.length + '</b><small>eventos hoy</small></div></div></div>';
+  html += '<div class="ihead"><button class="quick" id="qa"><b>+</b>Agregar para hoy…</button><button class="btn" id="aiDia">' + icon('spark') + ' Planificar mi día</button></div>';
+  if (oc) html += '<div class="nextc" style="margin-bottom:14px"><div class="tx"><small>Día ocupado</small><b>' + esc(oc.titulo) + '</b><span>Haz solo lo urgente; el asistente puede mover lo demás.</span></div></div>';
+  let izq = '';
+  if (venc.length) izq += '<div class="sec" id="sv"><div class="sh" style="color:var(--bad-ink)">Vencidas <span class="n">' + venc.length + '</span><span class="r"><button class="btn sm sec" id="vH">Mover a hoy</button><button class="btn sm sec" id="vM">A mañana</button></span></div>' + venc.map(t => taskHTML(t, { play: true })).join('') + '</div>';
+  izq += '<div class="sec" id="sh"><div class="sh">Para hoy <span class="n">' + hoyL.length + '</span></div>' + (hoyL.length ? hoyL.map(t => taskHTML(t, { play: true })).join('') : '<div class="empty">Nada con fecha de hoy. Toca + para agregar algo.</div>') + '</div>';
+  if (curso.length) izq += '<div class="sec"><div class="sh">En curso <span class="n">' + curso.length + '</span></div>' + curso.map(t => taskHTML(t, { play: true })).join('') + '</div>';
+  if (hechas.length) izq += '<details class="sec"><summary class="sh" style="cursor:pointer;list-style:none">Hechas hoy <span class="n">' + hechas.length + '</span></summary>' + hechas.map(t => taskHTML(t)).join('') + '</details>';
+  const ahora = new Date().toTimeString().slice(0, 5);
+  let der = '<div class="sec"><div class="sh">' + icon('cal') + ' Agenda de hoy<span class="r"><button class="btn sm sec" id="bloqH">＋ Evento</button></span></div>' + (ev.length ? '<div class="tl2">' + ev.map(e => '<div class="ev2 ' + (!e.todoElDia && e.inicio <= ahora && e.fin > ahora ? 'now' : '') + '"><b>' + esc(e.titulo) + '</b><small>' + (e.todoElDia ? 'Todo el día' : esc(e.inicio) + '–' + esc(e.fin)) + (e.lugar ? ' · ' + esc(e.lugar) : '') + '</small></div>').join('') + '</div>' : '<div class="wsub" style="padding:4px 0 8px">Sin eventos en el calendario.</div>') + '</div>';
+  der += '<div class="sec"><div class="sh">Próximos 7 días <span class="n">' + prox.length + '</span></div>' + (prox.length ? prox.slice(0, 8).map(t => taskHTML(t)).join('') : '<div class="wsub" style="padding:4px 0 8px">Nada programado.</div>') + '</div>';
+  html += '<div class="cols2"><div>' + izq + '</div><div>' + der + '</div></div>';
   $('#view').innerHTML = html; bindTasks($('#view'));
   $('#qa').onclick = () => openAdd({ limite: h });
+  $('#aiDia').onclick = planificarDia;
+  $('#bloqH').onclick = openBloqueo;
+  $$('[data-jump]').forEach(b => b.onclick = () => { const x = $('#' + b.dataset.jump); if (x) x.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
   if (venc.length){ $('#vH').onclick = e => reprogramar(venc, h, e.target); $('#vM').onclick = e => reprogramar(venc, addDays(h, 1), e.target); }
 }
-
+/* ---------- asistente de IA: planificar el día / revisar la semana ---------- */
+function iaDisponible(){ return extNivel() >= 10 && agenteActivo(); }
+function contextoDia(){
+  const h = hoy(), P = pendientes().map(t => ({ t, p: puntaje(t) })).sort((a, b) => b.p.s - a.p.s).slice(0, 40);
+  const ev = S.google && S.google.eventos ? S.google.eventos.filter(e => e.fecha === h) : [];
+  const an = S.neg ? metricasNeg().an.filter(x => requiereAtencion(x.a)) : [];
+  const esperan = S.base ? contactos().filter(c => agenteDe(c.id).idea).map(c => c.nombre || c.email) : [];
+  return ['Hoy es ' + fmtLong(h) + ', son las ' + new Date().toTimeString().slice(0, 5) + '. Meta diaria: ' + metaDiaria() + ' tareas. Ya hizo hoy: ' + hechasEl(h).length + '.',
+    ocupados()[h] ? 'DÍA OCUPADO: ' + ocupados()[h].titulo : '',
+    '', 'AGENDA DE HOY:', ev.length ? ev.map(e => '- ' + (e.todoElDia ? 'todo el día' : e.inicio + '-' + e.fin) + ' ' + e.titulo).join('\n') : '(sin eventos)',
+    '', 'TAREAS PENDIENTES (ordenadas por urgencia):', P.map(x => '- "' + x.t.tarea + '" | ' + (x.t.limite ? (x.t.limite < h ? 'vencida ' + x.t.limite : x.t.limite === h ? 'vence hoy' : 'vence ' + x.t.limite) : 'sin fecha') + ' | ' + QUAD[quadOf(x.t)].n + ' | tamaño ' + (x.t.tamano || '-') + ' | ' + (x.t.estado || 'Pendiente') + (x.t.categoria ? ' | ' + x.t.categoria : '')).join('\n'),
+    '', 'NEGOCIACIONES QUE REQUIEREN ATENCIÓN:', an.length ? an.map(x => '- ' + x.n.titulo + ': ' + motivoAlerta(x.n, x.a) + (x.n.valor ? ' (' + clpCorto(x.n.valor) + ')' : '')).join('\n') : '(ninguna)',
+    '', 'CLIENTES QUE ESPERAN RESPUESTA: ' + (esperan.length ? esperan.join(', ') : 'ninguno')].join('\n');
+}
+async function planificarDia(){
+  if (!iaDisponible()){
+    const foco = enfoque(6);
+    const m = modal(icon('spark') + ' Plan sugerido para hoy', '<div class="hint" style="margin-top:0">Orden sugerido según vencimiento, prioridad y lo que ya empezaste.' + (extNivel() < 10 ? ' Con la nueva versión del script y tu clave de Claude, el asistente de IA arma el plan con horarios.' : '') + '</div>' + foco.map((x, i) => '<div class="blk"><span class="hr">' + (i + 1) + '.</span><div class="tx">' + esc(x.t.tarea) + '<small>' + esc(x.why) + '</small></div></div>').join(''), { wide: true });
+    return;
+  }
+  const m = modal(icon('spark') + ' Tu plan para hoy', '<div class="empty"><span class="spin"></span>El asistente está armando tu día…</div>', { wide: true });
+  try {
+    const r = (await apiX('asistente', { modo: 'dia', contexto: contextoDia() })).r;
+    m.el.querySelector('.empty').outerHTML = '<p style="margin:2px 0 10px">' + esc(r.resumen) + '</p>' + r.bloques.map(b => '<div class="blk"><span class="hr">' + esc(b.hora) + '</span><div class="tx">' + esc(b.accion) + '<small>' + esc(b.motivo) + '</small></div></div>').join('') +
+      (r.mover.length ? '<div class="lab" style="font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin:16px 0 6px">Sugiere mover</div>' + r.mover.map((x, i) => { const t = S.data.tareas.find(y => !y.hecho && norm(y.tarea) === norm(x.tarea)); return '<div class="blk"><span class="hr">' + esc(x.cuando) + '</span><div class="tx">' + esc(x.tarea) + '<small>' + esc(x.motivo) + '</small></div>' + (t ? '<button class="btn sm sec" data-mvia="' + i + '">Mover</button>' : '') + '</div>'; }).join('') : '') +
+      (r.consejo ? '<div class="nextc" style="margin-top:14px"><div class="tx"><small>Consejo</small><b style="font-weight:600">' + esc(r.consejo) + '</b></div></div>' : '');
+    m.el.querySelectorAll('[data-mvia]').forEach(b => b.onclick = async () => {
+      const x = r.mover[+b.dataset.mvia], t = S.data.tareas.find(y => !y.hecho && norm(y.tarea) === norm(x.tarea)); if (!t) return;
+      const f = x.cuando === 'mañana' ? addDays(hoy(), 1) : x.cuando === 'esta semana' ? proximoLibre(addDays(hoy(), 1)) : nextMonday(hoy());
+      b.disabled = true; try { await updateTask(t, { limite: f }); b.textContent = '✓ ' + fmt(f); load(); } catch(e){ b.disabled = false; toast('No se pudo mover: ' + e.message); }
+    });
+  } catch(e){ m.el.querySelector('.empty').innerHTML = 'No se pudo armar el plan: ' + esc(e.message); }
+}
 /* ---------- vista: Tareas (lista, tablero y matriz) ---------- */
 function viewTareas(){
   const d = S.data, h = hoy();
   let L = d.tareas.filter(t => S.verHechas ? true : !t.hecho);
-  if (S.filtro !== 'todas') L = L.filter(t => t.area === S.filtro || t.categoria === S.filtro);
+  if (S.filtro !== 'todas') L = L.filter(t => t.area === S.filtro || t.categoria === S.filtro || t.proyecto === S.filtro);
   if (S.q){ const q = norm(S.q); L = L.filter(t => norm(t.tarea + ' ' + (t.proyecto || '') + ' ' + (t.categoria || '') + ' ' + (t.notas || '')).includes(q)); }
   L.sort((a, b) => (a.hecho - b.hecho) || ordenar(a, b));
-  const filtros = ['todas'].concat(d.config.areas);
-  let html = '<input type="text" id="q" placeholder="🔎 Buscar tarea, proyecto, categoría o nota" value="' + esc(S.q) + '">' +
-    '<div class="filters" style="margin-top:8px">' + filtros.map(a => '<button class="pill ' + (S.filtro === a ? 'on' : '') + '" data-f="' + esc(a) + '">' + (a === 'todas' ? '✨ Todas' : (AREA_IC[a] || '') + ' ' + esc(a)) + '</button>').join('') +
-    d.config.categorias.map(c => '<button class="pill ' + (S.filtro === c.nombre ? 'on' : '') + '" data-f="' + esc(c.nombre) + '">' + catIc(c.nombre) + ' ' + esc(c.nombre) + '</button>').join('') +
-    '<button class="pill ' + (S.verHechas ? 'on' : '') + '" id="vh">✅ Ver hechas</button></div>' +
-    '<div class="views">' + [['lista', '☰ Lista'], ['tablero', '▦ Tablero'], ['matriz', '⊞ Matriz']].map(v => '<button class="' + (S.vista === v[0] ? 'on' : '') + '" data-v="' + v[0] + '">' + v[1] + '</button>').join('') + '</div>';
+  const opciones = [['todas', 'Todas las áreas y categorías']].concat(d.config.areas.map(a => [a, 'Área: ' + a]), d.config.categorias.map(c => [c.nombre, 'Categoría: ' + c.nombre]), (d.proyectos || []).map(p => [p.nombre, 'Proyecto: ' + p.nombre]));
+  let html = '<div class="tbar"><input type="text" id="q" placeholder="🔎 Buscar tarea, proyecto o nota" value="' + esc(S.q) + '"><select id="tf">' + opciones.map(o => '<option value="' + esc(o[0]) + '"' + (S.filtro === o[0] ? ' selected' : '') + '>' + esc(o[1]) + '</option>').join('') + '</select>' +
+    '<div class="views">' + [['lista', 'Lista'], ['tablero', 'Tablero'], ['matriz', 'Matriz']].map(v => '<button class="' + (S.vista === v[0] ? 'on' : '') + '" data-v="' + v[0] + '">' + v[1] + '</button>').join('') + '</div>' +
+    '<button class="pill ' + (S.verHechas ? 'on' : '') + '" id="vh">Ver hechas</button><button class="btn sm" id="tNew">＋ Nueva</button></div>';
+  const grupos = [['Vencidas', t => !t.hecho && t.limite && t.limite < h, 'bad'], ['Hoy', t => !t.hecho && t.limite === h], ['Próximas', t => !t.hecho && t.limite > h], ['Sin fecha', t => !t.hecho && !t.limite], ['Hechas', t => t.hecho]];
   if (S.vista === 'tablero') html += tableroHTML(L.filter(t => !t.hecho));
   else if (S.vista === 'matriz') html += matrizHTML(L.filter(t => !t.hecho));
-  else {
-    const grupos = [['Vencidas', '⏰', t => !t.hecho && t.limite && t.limite < h], ['Hoy', '☀️', t => !t.hecho && t.limite === h], ['Próximas', '📅', t => !t.hecho && t.limite > h], ['Sin fecha', '📌', t => !t.hecho && !t.limite], ['Hechas', '✅', t => t.hecho]];
-    grupos.forEach(g => { const items = L.filter(g[2]); if (items.length) html += card(g[0], g[1], items.map(t => taskHTML(t, { play: !t.hecho })).join(''), items.length); });
-    if (!L.length) html += '<div class="empty">No hay tareas con este filtro 🔍</div>';
-  }
+  else if (!L.length) html += '<div class="empty">No hay tareas con este filtro 🔍</div>';
+  else if (ANCHO()){
+    html += '<div class="tablewrap"><table class="ntable ttable"><thead><tr><th style="width:40px"></th><th>Tarea</th><th>Fecha</th><th>Categoría</th><th>Proyecto</th><th>Estado</th><th>Prioridad</th></tr></thead><tbody>' +
+      grupos.map(g => { const items = L.filter(g[1]); if (!items.length) return ''; return '<tr class="grp"><td colspan="7">' + g[0] + ' · ' + items.length + '</td></tr>' + items.map(t => { const idx = d.tareas.indexOf(t), f = fechaTxt(t), q = QUAD[quadOf(t)];
+        return '<tr><td><button class="chk ' + (t.hecho ? 'on' : '') + '" style="--q:' + (quadOf(t) === 1 ? 'var(--bad)' : '#C5CBD5') + '" data-tog="' + idx + '">' + (t.hecho ? '✓' : '') + '</button></td><td data-open="' + idx + '"><span class="t">' + esc(t.tarea) + '</span>' + ((t.subtareas || []).length ? ' <span class="pill2">☑ ' + t.subtareas.filter(x => x.ok).length + '/' + t.subtareas.length + '</span>' : '') + (t.repetir ? ' <span class="pill2">↻ ' + esc(t.repetir) + '</span>' : '') + '</td>' +
+          '<td style="white-space:nowrap"><span class="tm" style="margin:0"><span class="d ' + f[0] + '">' + (f[1] || '–') + '</span></span></td><td>' + esc(t.categoria || '–') + '</td><td>' + esc(t.proyecto || '–') + '</td><td>' + esc(t.hecho ? 'Hecha' : t.estado || 'Pendiente') + '</td><td style="white-space:nowrap"><span class="dot" style="background:' + q.c + ';margin-right:6px"></span>' + q.n + '</td></tr>'; }).join(''); }).join('') + '</tbody></table></div>';
+  } else grupos.forEach(g => { const items = L.filter(g[1]); if (items.length) html += '<div class="sec"><div class="sh"' + (g[2] ? ' style="color:var(--bad-ink)"' : '') + '>' + g[0] + ' <span class="n">' + items.length + '</span></div>' + items.map(t => taskHTML(t, { play: !t.hecho })).join('') + '</div>'; });
   $('#view').innerHTML = html; bindTasks($('#view'));
   const q = $('#q'); q.oninput = () => { S.q = q.value; const pos = q.selectionStart; viewTareas(); const q2 = $('#q'); q2.focus(); q2.setSelectionRange(pos, pos); };
-  $$('[data-f]').forEach(b => b.onclick = () => { S.filtro = b.dataset.f; viewTareas(); });
+  $('#tf').onchange = e => { S.filtro = e.target.value; viewTareas(); };
   $$('[data-v]').forEach(b => b.onclick = () => { S.vista = LS.vista = b.dataset.v; viewTareas(); });
   $('#vh').onclick = () => { S.verHechas = !S.verHechas; viewTareas(); };
+  $('#tNew').onclick = () => openAdd();
   $$('[data-mv]').forEach(b => b.onclick = async e => {
     e.stopPropagation();
     const t = S.data.tareas[+b.dataset.mv], est = b.dataset.est;
     if (t.row == null){ toast('Espera a que se sincronice'); return; }
     const antes = t.estado; t.estado = est; viewTareas();
-    try { await updateTask(t, { estado: est }); toast((EST_IC[est] || '') + ' Movida a ' + est); load(); }
+    try { await updateTask(t, { estado: est }); toast('Movida a ' + est); load(); }
     catch(err){ t.estado = antes; viewTareas(); toast('No se pudo mover: ' + err.message); }
   });
 }
 function tableroHTML(L){
   const E = S.data.config.estados.length ? S.data.config.estados : ['Pendiente', 'En curso', 'Esperando respuesta', 'Pausada'];
-  return '<div class="board">' + E.map((e, i) => {
+  return '<div class="kb" style="--ncol:' + E.length + '">' + E.map((e, i) => {
     const items = L.filter(t => (t.estado || 'Pendiente') === e);
-    return '<div class="col"><h4><span>' + (EST_IC[e] || '•') + ' ' + esc(e) + '</span><span style="color:var(--muted)">' + items.length + '</span></h4>' +
-      (items.length ? items.map(t => {
-        const idx = S.data.tareas.indexOf(t);
-        return '<div class="kc" style="--c:' + (t.categoria ? catCol(t.categoria) : QUAD[quadOf(t)].c) + '" data-open="' + idx + '"><div class="t">' + esc(t.tarea) + '</div><div class="meta">' + tagFecha(t) + (t.categoria ? '<span class="tag">' + catIc(t.categoria) + ' ' + esc(t.categoria) + '</span>' : '') + subTag(t) + (t.repetir ? '<span class="tag info">🔁</span>' : '') + '</div>' +
-          '<div class="mv">' + (i > 0 ? '<button data-mv="' + idx + '" data-est="' + esc(E[i - 1]) + '">◀ ' + esc(E[i - 1]) + '</button>' : '<span></span>') + (i < E.length - 1 ? '<button data-mv="' + idx + '" data-est="' + esc(E[i + 1]) + '">' + esc(E[i + 1]) + ' ▶</button>' : '') + '</div></div>';
-      }).join('') : '<div class="hint" style="text-align:center">Vacío</div>') + '</div>';
-  }).join('') + '</div><div class="hint">Desliza hacia el lado para ver todas las columnas. Usa ◀ ▶ para mover una tarea de estado.</div>';
+    return '<div class="kcol" style="--c:' + SEQ[Math.min(4, i + 1)] + '"><div class="kcol-h"><b><span>' + esc(e) + '</span><span>' + items.length + '</span></b></div><div class="kcards">' +
+      (items.length ? items.map(t => { const idx = S.data.tareas.indexOf(t), f = fechaTxt(t);
+        return '<div class="kcard' + (f[0] === 'bad' ? ' alert' : '') + '" data-open="' + idx + '"><div class="nm">' + esc(t.tarea) + '</div><div class="kf' + (f[0] === 'bad' ? ' bad' : '') + '">' + icon('clock') + '<span class="ktx">' + (f[1] || 'Sin fecha') + (t.categoria ? ' · ' + esc(t.categoria) : '') + '</span></div>' +
+          '<div class="mv mob-only">' + (i > 0 ? '<button data-mv="' + idx + '" data-est="' + esc(E[i - 1]) + '">◀ ' + esc(E[i - 1]) + '</button>' : '<span></span>') + (i < E.length - 1 ? '<button data-mv="' + idx + '" data-est="' + esc(E[i + 1]) + '">' + esc(E[i + 1]) + ' ▶</button>' : '') + '</div></div>'; }).join('') : '<div class="hint" style="text-align:center;padding:12px 0">Vacío</div>') + '</div></div>';
+  }).join('') + '</div>';
 }
 function matrizHTML(L){
-  return [1, 2, 3, 4].map(n => { const q = QUAD[n], items = L.filter(t => quadOf(t) === n).sort(ordenar);
-    return '<div class="qbox card" style="--qc:' + q.c + '"><h4>' + q.ic + ' ' + q.n + ' · ' + items.length + '</h4>' + (items.length ? items.map(t => taskHTML(t, { compact: true })).join('') : '<div class="hint">Nada aquí.</div>') + '</div>';
-  }).join('') + '<div class="hint">Matriz de Eisenhower: urgente + importante = hacer ya; solo importante = planificar; solo urgente = delegar; ninguno = posponer.</div>';
+  return '<div class="mat">' + [1, 2, 3, 4].map(n => { const q = QUAD[n], items = L.filter(t => quadOf(t) === n).sort(ordenar);
+    return '<div class="sec" style="--qc:' + q.c + '"><div class="sh">' + q.n + ' <span class="n">' + items.length + '</span><span class="r" style="font-size:12px;color:var(--muted);font-weight:500">' + ['Urgente e importante', 'Importante, no urgente', 'Urgente, no importante', 'Ni urgente ni importante'][n - 1] + '</span></div>' + (items.length ? items.map(t => taskHTML(t, { compact: false })).join('') : '<div class="wsub" style="padding:4px 0 8px">Nada aquí.</div>') + '</div>';
+  }).join('') + '</div>';
 }
 
 /* ---------- estadísticas ---------- */
@@ -2256,57 +2427,113 @@ function bindSubH(){ $$('[data-subh]').forEach(b => b.onclick = () => { S.subH =
 function viewSemana(){
   const s = S.data.semana;
   if (!s){ $('#view').innerHTML = '<div class="empty">No encuentro la hoja Semana.</div>'; return; }
-  const actual = s.semanas.find(w => w.fecha === s.semanaDel) || s.semanas.find(w => w.fecha >= s.semanaDel) || null;
-  const historial = s.semanas.filter(w => w !== actual && (w.hechas || w.puntos || w.bien || w.mal)).slice(-4).reverse();
+  const h = hoy(), actual = s.semanas.find(w => w.fecha === s.semanaDel) || s.semanas.find(w => w.fecha >= s.semanaDel) || null;
+  const historial = s.semanas.filter(w => w !== actual && (w.hechas || w.puntos || w.bien || w.mal)).slice(-8);
   const listos = s.checklist.filter(c => c.hecho).length;
-  let html = '<div class="hero" style="background:var(--grad-cool)"><div class="hi">🗓️ Semana del ' + esc(s.semanaDel) + '</div><div class="big">' + s.hechas + ' tareas · ' + s.puntos + ' puntos</div>' +
-    '<div class="lvl"><div class="bar"><i style="width:' + (s.checklist.length ? listos / s.checklist.length * 100 : 0) + '%"></i></div><small><span>Revisión semanal</span><span>' + listos + '/' + s.checklist.length + '</span></small></div></div>';
-  html += card('Checklist de la revisión', '✅', s.checklist.map(c => '<div class="checklist-item ' + (c.hecho ? 'done' : '') + '"><button class="chk ' + (c.hecho ? 'on' : '') + '" style="--q:#3B9EFF" data-chk="' + c.row + '" data-v="' + (c.hecho ? 0 : 1) + '">' + (c.hecho ? '✓' : '') + '</button><span class="ct">' + esc(c.texto) + '</span></div>').join(''));
-  html += card('Reflexión de esta semana', '🧭',
-    '<label class="l">🙂 ¿Qué salió bien?</label><textarea class="note" id="sm_bien">' + esc(actual ? actual.bien : '') + '</textarea>' +
-    '<label class="l">⚠️ ¿Qué se trabó?</label><textarea class="note" id="sm_mal">' + esc(actual ? actual.mal : '') + '</textarea>' +
-    '<label class="l">🎯 Prioridades de la próxima semana</label><textarea class="note" id="sm_prio">' + esc(actual ? actual.prioridades : '') + '</textarea>' +
-    '<label class="l">⚡ Energía (1 a 5)</label><div class="seg" id="sm_en">' + [1,2,3,4,5].map(n => '<button type="button" class="pill ' + (actual && actual.energia === n ? 'on' : '') + '" data-v="' + n + '">' + '⚡'.repeat(n) + '</button>').join('') + '</div>' +
-    '<div class="btns"><button class="btn" id="sm_ok">Guardar reflexión</button></div>');
-  if (historial.length) html += card('Semanas anteriores', '📚', historial.map(w => {
-    const tot = Math.max(1, w.trabajo + w.personal);
-    return '<div class="weekcard"><div class="row" style="justify-content:space-between"><b>' + esc(w.fecha) + '</b><span>' + (w.energia ? '⚡'.repeat(w.energia) : '') + '</span></div>' +
-      '<div class="hint" style="margin:4px 0">' + w.hechas + ' hechas · ' + w.puntos + ' puntos</div>' +
-      '<div style="display:flex;height:8px;border-radius:99px;overflow:hidden"><i style="width:' + (w.trabajo/tot*100) + '%;background:var(--trabajo)"></i><i style="width:' + (w.personal/tot*100) + '%;background:var(--personal)"></i></div>' +
-      (w.bien ? '<div class="hint">🙂 ' + esc(w.bien) + '</div>' : '') + (w.mal ? '<div class="hint">⚠️ ' + esc(w.mal) + '</div>' : '') + '</div>';
-  }).join(''));
-  $('#view').innerHTML = html;
+  const ganadas = S.neg ? negocios().filter(n => n.estado === 'Ganada' && fechaCierre(n) >= s.semanaDel) : [];
+  const dias = (S.data.dias || []).filter(d => d.fecha >= s.semanaDel).slice(0, 7), meta = metaDiaria(), maxD = Math.max(meta, 1, ...dias.map(d => d.completadas || 0));
+  const paso = S.sPaso || 1;
+  let html = '<div class="kstrip"><div class="ks1"><div><b>' + s.hechas + '</b><small>tareas hechas</small></div></div><div class="ks1"><div><b>' + s.puntos + '</b><small>puntos</small></div></div>' +
+    '<div class="ks1"><div><b>' + (ganadas.length ? clpCorto(ganadas.reduce((x, n) => x + (n.valor || 0), 0)) : '0') + '</b><small>ventas ganadas (' + ganadas.length + ')</small></div></div><div class="ks1"><div><b style="color:' + (vencidas().length ? 'var(--bad-ink)' : 'inherit') + '">' + vencidas().length + '</b><small>tareas vencidas</small></div></div></div>';
+  html += '<div class="ihead"><div class="views" style="margin:0;display:flex;flex:1 1 300px">' + [[1, '1 · Revisa'], [2, '2 · Pon al día'], [3, '3 · Planifica']].map(x => '<button class="' + (paso === x[0] ? 'on' : '') + '" data-paso="' + x[0] + '" style="flex:1">' + x[1] + '</button>').join('') + '</div><button class="btn" id="aiSem">' + icon('spark') + ' Revisión con IA</button></div>';
+  let cuerpo = '';
+  if (paso === 1){
+    cuerpo += '<div class="w" style="margin-bottom:14px"><div class="wh">' + icon('chart') + 'Tareas por día · semana del ' + esc(fmt(s.semanaDel)) + '</div><div class="bars" style="height:110px"><u style="bottom:' + (meta / maxD * 100) + '%"></u>' + dias.map(d => '<i class="' + ((d.completadas || 0) >= meta ? 'hit' : '') + '" style="height:' + ((d.completadas || 0) / maxD * 100) + '%" data-t="' + esc(fmt(d.fecha)) + ': ' + (d.completadas || 0) + '"></i>').join('') + '</div><div class="bx">' + dias.map(d => '<span>' + DIAS[pd(d.fecha).getDay()] + '</span>').join('') + '</div></div>';
+    if (historial.length){ const mx = Math.max(1, ...historial.map(w => w.hechas)); cuerpo += '<div class="w" style="margin-bottom:14px"><div class="wh">' + icon('chart') + 'Semanas anteriores</div><div class="hbar">' + historial.slice().reverse().map(w => '<span>' + esc(fmt(w.fecha)) + '</span><div class="tr"><i style="width:' + (w.hechas / mx * 100) + '%;background:var(--s3)"></i></div><b>' + w.hechas + ' · ' + (w.energia ? '⚡' + w.energia : '') + '</b>').join('') + '</div></div>'; }
+    cuerpo += '<div class="sec"><div class="sh">¿Qué salió bien y qué se trabó?</div><label class="l" style="margin-top:4px">Salió bien</label><textarea class="note" id="sm_bien">' + esc(actual ? actual.bien : '') + '</textarea><label class="l">Se trabó</label><textarea class="note" id="sm_mal">' + esc(actual ? actual.mal : '') + '</textarea>' +
+      '<label class="l">Energía</label><div class="seg" id="sm_en">' + [1, 2, 3, 4, 5].map(n => '<button type="button" class="pill ' + (actual && actual.energia === n ? 'on' : '') + '" data-v="' + n + '">' + n + '</button>').join('') + '</div><div class="btns"><button class="btn sec" id="sm_ok1">Guardar</button><button class="btn" data-paso="2">Siguiente →</button></div></div>';
+  } else if (paso === 2){
+    cuerpo += '<div class="sec"><div class="sh">Checklist de la revisión <span class="n">' + listos + '/' + s.checklist.length + '</span></div>' + s.checklist.map(c => '<div class="checklist-item ' + (c.hecho ? 'done' : '') + '"><button class="chk ' + (c.hecho ? 'on' : '') + '" style="--q:var(--accent)" data-chk="' + c.row + '" data-v="' + (c.hecho ? 0 : 1) + '">' + (c.hecho ? '✓' : '') + '</button><span class="ct">' + esc(c.texto) + '</span></div>').join('') + '</div>';
+    const venc = vencidas(), sinProx = S.neg ? metricasNeg().an.filter(x => x.a.sinProx || x.a.proxVencida) : [], esperando = pendientes().filter(t => t.estado === 'Esperando respuesta');
+    cuerpo += '<div class="sec"><div class="sh" style="color:var(--bad-ink)">Tareas vencidas <span class="n">' + venc.length + '</span>' + (venc.length ? '<span class="r"><button class="btn sm sec" id="sv1">Mover a esta semana</button></span>' : '') + '</div>' + (venc.length ? venc.slice(0, 8).map(t => taskHTML(t)).join('') : '<div class="wsub" style="padding:4px 0 8px">Ninguna ✓</div>') + '</div>';
+    cuerpo += '<div class="sec"><div class="sh">Esperando respuesta de otros <span class="n">' + esperando.length + '</span></div>' + (esperando.length ? esperando.map(t => taskHTML(t)).join('') : '<div class="wsub" style="padding:4px 0 8px">Nada pendiente de terceros.</div>') + '</div>';
+    cuerpo += '<div class="sec"><div class="sh">Negocios sin próximo paso o con el paso vencido <span class="n">' + sinProx.length + '</span></div><div class="wl">' + (sinProx.length ? sinProx.map(x => '<div class="it" data-neg="' + esc(x.n.id) + '"><span class="dot" style="background:var(--bad)"></span><div class="tx">' + esc(x.n.titulo) + '<small>' + esc(motivoAlerta(x.n, x.a)) + '</small></div><span class="rt">Definir ›</span></div>').join('') : '<div class="wsub" style="padding:4px 0 8px">Todos tienen próximo paso ✓</div>') + '</div></div>';
+    cuerpo += '<div class="btns"><button class="btn sec" data-paso="1">← Atrás</button><button class="btn" data-paso="3">Siguiente →</button></div>';
+  } else {
+    cuerpo += '<div class="sec"><div class="sh">Prioridades de la próxima semana</div><div class="hint" style="margin-top:0">Escribe 3 objetivos concretos (ej.: cerrar la venta de Juan, publicar el reel de la Levo). Usa «Revisión con IA» si quieres sugerencias.</div><textarea class="note" id="sm_prio" style="min-height:110px">' + esc(actual ? actual.prioridades : '') + '</textarea><div class="btns"><button class="btn sec" data-paso="2">← Atrás</button><button class="btn" id="sm_ok3">Guardar y terminar</button></div></div>';
+  }
+  html += cuerpo;
+  $('#view').innerHTML = html; bindTasks($('#view'));
+  $$('[data-paso]').forEach(b => b.onclick = async () => { await guardarSemana(actual, true); S.sPaso = +b.dataset.paso; viewSemana(); window.scrollTo(0, 0); });
+  $('#aiSem').onclick = () => revisionIA(actual);
+  $$('#view [data-neg]').forEach(b => b.onclick = () => { const n = negocios().find(x => x.id === b.dataset.neg); if (n) openProximo(n); });
+  const sv1 = $('#sv1'); if (sv1) sv1.onclick = e => reprogramar(vencidas(), proximoLibre(hoy()), e.target);
   $$('[data-chk]').forEach(b => b.onclick = async () => {
     const v = b.dataset.v === '1'; b.disabled = true;
     try { await api('semanaChecklist', { row: +b.dataset.chk, valor: v }); if (v) vibrar(20); await load(); }
     catch(e){ b.disabled = false; toast('No se pudo guardar: ' + e.message); }
   });
-  if (actual) {
-    bindPills('sm_en');
-    $('#sm_ok').onclick = async () => {
-      $('#sm_ok').disabled = true;
-      try { await api('semanaGuardar', { row: actual.row, campos: { bien: $('#sm_bien').value.trim(), mal: $('#sm_mal').value.trim(), prioridades: $('#sm_prio').value.trim(), energia: val('sm_en') } }); toast('Reflexión guardada ✓'); await load(); }
-      catch(e){ $('#sm_ok').disabled = false; toast('No se pudo guardar: ' + e.message); }
-    };
-  }
+  if ($('#sm_en')) bindPills('sm_en');
+  const o1 = $('#sm_ok1'); if (o1) o1.onclick = () => guardarSemana(actual);
+  const o3 = $('#sm_ok3'); if (o3) o3.onclick = async () => { await guardarSemana(actual); confetti(60); S.sPaso = 1; };
+}
+async function guardarSemana(actual, silencio){
+  if (!actual) return;
+  const campos = {}, g = (id, k) => { const x = $('#' + id); if (x) campos[k] = x.value.trim(); };
+  g('sm_bien', 'bien'); g('sm_mal', 'mal'); g('sm_prio', 'prioridades'); if ($('#sm_en')) campos.energia = val('sm_en');
+  if (!Object.keys(campos).length) return;
+  const cambio = Object.keys(campos).some(k => String(actual[k] || '') !== String(campos[k] || ''));
+  if (!cambio){ if (!silencio) toast('Sin cambios'); return; }
+  try { await api('semanaGuardar', { row: actual.row, campos }); Object.assign(actual, campos); if (!silencio) toast('Guardado ✓'); }
+  catch(e){ toast('No se pudo guardar: ' + e.message); }
+}
+async function revisionIA(actual){
+  const s = S.data.semana, h = hoy();
+  const base = () => {
+    const an = S.neg ? metricasNeg() : null;
+    return ['Semana del ' + s.semanaDel + '. Hoy es ' + fmtLong(h) + '.', 'Tareas hechas esta semana: ' + s.hechas + '; puntos: ' + s.puntos + '; meta diaria: ' + metaDiaria() + '.',
+      'Tareas vencidas: ' + vencidas().map(t => '"' + t.tarea + '" (' + t.limite + ')').join('; '),
+      'Tareas de la próxima semana: ' + pendientes().filter(t => t.limite && t.limite > h && t.limite <= addDays(h, 10)).map(t => '"' + t.tarea + '" (' + t.limite + ')').join('; '),
+      an ? 'Pipeline abierto ' + clp(an.abiertoV) + ', ganado este mes ' + clp(an.gMesV) + '. Negocios: ' + an.an.map(x => x.n.titulo + ' [' + x.n.etapa + ', ' + clpCorto(x.n.valor || 0) + (requiereAtencion(x.a) ? ', ' + motivoAlerta(x.n, x.a) : '') + ']').join('; ') : '',
+      'Proyectos: ' + (S.data.proyectos || []).map(p => p.nombre + ' (' + pct(p.avance) + '% avance, ' + (p.ritmo || '') + ')').join('; '),
+      actual ? 'Reflexión anotada: salió bien: ' + (actual.bien || '-') + '; se trabó: ' + (actual.mal || '-') : ''].join('\n');
+  };
+  if (!iaDisponible()){ toast(extNivel() < 10 ? 'Actualiza el script para usar la revisión con IA' : 'Falta tu clave de Claude (ANTHROPIC_API_KEY)'); return; }
+  const m = modal(icon('spark') + ' Revisión semanal con IA', '<div class="empty"><span class="spin"></span>Revisando tu semana…</div>', { wide: true });
+  try {
+    const r = (await apiX('asistente', { modo: 'semana', contexto: base() })).r;
+    const lab = t => '<div class="lab" style="font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin:16px 0 6px">' + t + '</div>';
+    m.el.querySelector('.empty').outerHTML = '<p style="margin:2px 0 6px">' + esc(r.resumen) + '</p>' +
+      (r.logros.length ? lab('Logros') + r.logros.map(x => '<div class="blk"><span class="hr" style="width:20px;color:var(--ok)">✓</span><div class="tx">' + esc(x) + '</div></div>').join('') : '') +
+      lab('Prioridades para la próxima semana') + r.prioridades.map((x, i) => '<div class="blk"><span class="hr" style="width:20px">' + (i + 1) + '</span><div class="tx"><b>' + esc(x.titulo) + '</b><small>' + esc(x.por_que) + '</small></div><button class="btn sm sec" data-pt="' + i + '">＋ Tarea</button></div>').join('') +
+      (r.riesgos.length ? lab('Ojo con') + r.riesgos.map(x => '<div class="blk"><span class="hr" style="width:20px;color:var(--bad)">!</span><div class="tx">' + esc(x) + '</div></div>').join('') : '') +
+      '<div class="btns"><button class="btn" id="ai_use">Usar estas prioridades</button></div>';
+    m.el.querySelectorAll('[data-pt]').forEach(b => b.onclick = () => { m.cerrar(); openAdd({ texto: r.prioridades[+b.dataset.pt].titulo + ' esta semana' }); });
+    m.el.querySelector('#ai_use').onclick = async () => { if (actual){ await api('semanaGuardar', { row: actual.row, campos: { prioridades: r.prioridades.map((x, i) => (i + 1) + '. ' + x.titulo).join('\n') } }).catch(() => {}); actual.prioridades = r.prioridades.map((x, i) => (i + 1) + '. ' + x.titulo).join('\n'); } m.cerrar(); S.sPaso = 3; viewSemana(); toast('Prioridades guardadas ✓'); };
+  } catch(e){ m.el.querySelector('.empty').innerHTML = 'No se pudo revisar: ' + esc(e.message); }
 }
 
 /* ---------- vista: Proyectos ---------- */
+function tareasProyecto(p){ return S.data.tareas.filter(t => t.proyecto === p.nombre); }
 function projCard(p){
-  const av = Math.min(1, p.avance || 0), ti = p.tiempo, col = paletteColor(p.nombre);
-  const atrasado = ti != null && ti - av > .15;
-  return '<div class="card proj" style="--c:' + col + '"><div class="row"><div class="grow"><b style="font-size:16px">🚀 ' + esc(p.nombre) + '</b><div class="hint" style="margin:3px 0 0">' + esc(p.objetivo || '') + '</div></div><span class="tag ' + (atrasado ? 'bad' : 'ok') + '">' + esc(p.ritmo || (atrasado ? 'Atrasado' : 'En ritmo')) + '</span></div>' +
-    '<div class="bar" style="margin:12px 0 6px;height:10px"><i style="width:' + pct(av) + '%;background:' + col + '"></i>' + (ti != null ? '<u style="left:calc(' + pct(ti) + '% - 1px)"></u>' : '') + '</div>' +
-    '<div class="row hint" style="justify-content:space-between;margin:0"><span>' + pct(av) + '% avance · ' + p.hechas + '/' + p.tareas + ' tareas</span><span>' + (p.dias != null ? (p.dias >= 0 ? '⏳ ' + p.dias + ' días' : '⌛ vencido') : '') + '</span></div>' +
-    (p.resultado ? '<div class="hint">🎯 ' + esc(p.resultado) + '</div>' : '') +
-    '<button class="link" data-padd="' + esc(p.nombre) + '">+ Agregar tarea a este proyecto</button></div>';
+  const av = Math.min(1, p.avance || 0), ti = p.tiempo, atrasado = p.ritmo ? /atras/i.test(p.ritmo) : (ti != null && ti - av > .15);
+  const sig = tareasProyecto(p).filter(t => !t.hecho).sort(ordenar)[0];
+  return '<div class="pcard" data-proy="' + esc(p.nombre) + '"><div class="row" style="align-items:flex-start"><div class="grow"><h4>' + esc(p.nombre) + '</h4><div class="wsub">' + esc(p.objetivo || p.categoria || '') + '</div></div><span class="pill2 ' + (atrasado ? 'bad' : 'ok') + '">' + esc(p.ritmo || (atrasado ? 'Atrasado' : 'En ritmo')) + '</span></div>' +
+    '<div class="pbar"><i style="width:' + pct(av) + '%"></i>' + (ti != null ? '<u style="left:calc(' + pct(Math.min(1, ti)) + '% - 1px)" title="Tiempo transcurrido"></u>' : '') + '</div>' +
+    '<div class="row" style="justify-content:space-between;font-size:12.5px;color:var(--muted)"><span><b style="color:var(--ink)">' + pct(av) + '%</b> · ' + p.hechas + '/' + p.tareas + ' tareas</span><span>' + (p.dias != null ? (p.dias >= 0 ? p.dias + ' días restantes' : 'Plazo vencido') : '') + '</span></div>' +
+    '<div class="kf" style="margin-top:10px;font-size:12.5px;color:' + (sig ? 'var(--ink)' : 'var(--bad-ink)') + ';display:flex;gap:6px;align-items:center">' + icon('arrow') + '<span style="flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + (sig ? esc(sig.tarea) : 'Sin próxima tarea') + '</span></div></div>';
 }
 function viewProy(){
-  const P = S.data.proyectos;
-  $('#view').innerHTML = '<div class="btns" style="margin:8px 0 0"><button class="btn" id="np">+ Nuevo proyecto</button></div>' +
-    (P.length ? P.map(projCard).join('') : '<div class="empty">Aún no hay proyectos.<br>Crea el primero con el botón de arriba.</div>');
+  const P = S.data.proyectos || [];
+  let html = '<div class="ihead"><div class="grow wsub" style="font-size:13.5px">La barra muestra el avance; la marca negra, el tiempo transcurrido. Si la marca va delante de la barra, el proyecto va atrasado.</div><button class="btn" id="np">＋ Nuevo proyecto</button></div>';
+  if (P.length){
+    html += '<div class="w" style="margin-bottom:14px"><div class="wh">' + icon('chart') + 'Línea de tiempo</div><div class="gantt">' + P.map(p => '<span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + esc(p.nombre) + '</span><div class="gt" title="Tiempo transcurrido ' + pct(Math.min(1, p.tiempo || 0)) + '% · avance ' + pct(Math.min(1, p.avance || 0)) + '%"><i style="width:' + pct(Math.min(1, p.tiempo || 0)) + '%"></i><b style="width:' + pct(Math.min(1, p.avance || 0)) + '%"></b></div>').join('') + '</div><div class="bx" style="justify-content:flex-start;gap:16px"><span><span class="dot" style="background:var(--s1)"></span> tiempo transcurrido</span><span><span class="dot" style="background:var(--accent)"></span> avance</span></div></div>';
+    html += '<div class="pgrid">' + P.map(projCard).join('') + '</div>';
+  } else html += '<div class="empty">Aún no hay proyectos. Crea el primero con el botón de arriba.</div>';
+  $('#view').innerHTML = html;
   $('#np').onclick = openProyecto;
-  $$('[data-padd]').forEach(b => b.onclick = () => openAdd({ proyecto: b.dataset.padd }));
+  $$('[data-proy]').forEach(b => b.onclick = () => openProyDetalle((S.data.proyectos || []).find(x => x.nombre === b.dataset.proy)));
+}
+function openProyDetalle(p){
+  if (!p) return;
+  const T = tareasProyecto(p), pend = T.filter(t => !t.hecho).sort(ordenar), hechas = T.filter(t => t.hecho);
+  sheet('<div class="dh"><span class="av" style="width:46px;height:46px;background:var(--s3)">' + icon('flag') + '</span><div><h3>' + esc(p.nombre) + '</h3><div class="ds">' + esc([p.area, p.categoria].filter(Boolean).join(' · ')) + '</div></div></div>' +
+    '<div class="mini3"><div><small>Avance</small><b>' + pct(Math.min(1, p.avance || 0)) + '%</b></div><div><small>Tiempo usado</small><b>' + (p.tiempo != null ? pct(Math.min(1, p.tiempo)) + '%' : '–') + '</b></div><div><small>Plazo</small><b>' + (p.dias != null ? (p.dias >= 0 ? p.dias + ' d' : 'vencido') : '–') + '</b></div></div>' +
+    (p.objetivo ? '<div class="nextc"><div class="tx"><small>Objetivo</small><b style="font-weight:600">' + esc(p.objetivo) + '</b>' + (p.resultado ? '<span>Resultado esperado: ' + esc(p.resultado) + '</span>' : '') + '</div></div>' : '') +
+    '<div class="sec"><div class="sh">Tareas pendientes <span class="n">' + pend.length + '</span><span class="r"><button class="btn sm" id="pd_add">＋ Tarea</button></span></div>' + (pend.length ? pend.map(t => taskHTML(t, { play: true })).join('') : '<div class="wsub" style="padding:4px 0 8px">Sin tareas pendientes. Agrega la próxima para que el proyecto avance.</div>') + '</div>' +
+    (hechas.length ? '<details class="sec"><summary class="sh" style="cursor:pointer;list-style:none">Hechas <span class="n">' + hechas.length + '</span></summary>' + hechas.map(t => taskHTML(t)).join('') + '</details>' : ''));
+  bindTasks($('#layer'));
+  $('#pd_add').onclick = () => openAdd({ proyecto: p.nombre });
 }
 
 /* ---------- hojas modales ---------- */
