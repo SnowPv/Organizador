@@ -1284,24 +1284,37 @@ async function analizarAhora(id, btn){
 const RE_LINEA = /^\[?(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{2,4}),?\s+(\d{1,2}):(\d{2})(?::\d{2})?\s*([ap])?\.?\s?m?\.?\]?\s*(?:[-–]\s*)?([^:]{1,60}?):\s([\s\S]*)$/i;
 const RE_SISTEMA = /^\[?\d{1,2}[\/.-]\d{1,2}[\/.-]\d{2,4},?\s+\d{1,2}:\d{2}/;
 function leerChatWhatsApp(txt){
-  const mensajes = [], autores = {};
+  const crudos = [];
   String(txt || '').replace(/\r/g, '').split('\n').forEach(linea => {
     const l = linea.replace(/[‎‏‪-‮]/g, ''), m = l.match(RE_LINEA);
-    if (m){
-      let d = +m[1], mo = +m[2], y = +m[3], h = +m[4];
-      if (mo > 12 && d <= 12){ const x = d; d = mo; mo = x; }
-      if (y < 100) y += 2000;
-      if (m[6]){ const pm = m[6].toLowerCase() === 'p'; if (pm && h < 12) h += 12; if (!pm && h === 12) h = 0; }
-      const autor = m[7].trim();
-      let texto = m[8].trim();
-      if (/^<?(multimedia omitid|media omitted|imagen omitida|video omitido|audio omitido|sticker omitido|documento omitido)/i.test(texto)) texto = '[multimedia]';
-      if (/^(se eliminó este mensaje|este mensaje fue eliminado|you deleted this message|null)$/i.test(texto)) return;
-      mensajes.push({ autor, fecha: y + '-' + String(mo).padStart(2, '0') + '-' + String(d).padStart(2, '0') + 'T' + String(h).padStart(2, '0') + ':' + m[5], texto });
-      autores[autor] = (autores[autor] || 0) + 1;
-    } else if (RE_SISTEMA.test(l)){ /* aviso del sistema (cifrado, cambios de grupo): se omite */ }
-    else if (mensajes.length && l.trim()) mensajes[mensajes.length - 1].texto += '\n' + l;
+    if (m) crudos.push({ m });
+    else if (RE_SISTEMA.test(l)){ /* aviso del sistema (cifrado, cambios de grupo): se omite */ }
+    else if (crudos.length && l.trim()) crudos[crudos.length - 1].extra = (crudos[crudos.length - 1].extra || '') + '\n' + l;
   });
-  return { mensajes, autores };
+  // Orden de la fecha: día/mes (Chile) o mes/día (teléfono en inglés). Se decide con todo el archivo, no línea por línea.
+  const anio = y => (+y < 100 ? +y + 2000 : +y);
+  let diaPrimero = true;
+  if (crudos.some(c => +c.m[1] > 12)) diaPrimero = true;
+  else if (crudos.some(c => +c.m[2] > 12)) diaPrimero = false;
+  else {
+    const manana = addDays(hoy(), 1), fut = dp => crudos.filter(c => { const d = dp ? +c.m[1] : +c.m[2], mo = dp ? +c.m[2] : +c.m[1]; return anio(c.m[3]) + '-' + String(mo).padStart(2, '0') + '-' + String(d).padStart(2, '0') > manana; }).length;
+    const desorden = dp => { let n = 0, prev = ''; crudos.forEach(c => { const d = dp ? +c.m[1] : +c.m[2], mo = dp ? +c.m[2] : +c.m[1], f = anio(c.m[3]) + '-' + String(mo).padStart(2, '0') + '-' + String(d).padStart(2, '0'); if (f < prev) n++; prev = f; }); return n; };
+    const a = fut(true) * 1000 + desorden(true), b = fut(false) * 1000 + desorden(false);
+    diaPrimero = a <= b;
+  }
+  const mensajes = [], autores = {};
+  crudos.forEach(c => {
+    const m = c.m;
+    let d = diaPrimero ? +m[1] : +m[2], mo = diaPrimero ? +m[2] : +m[1], y = anio(m[3]), h = +m[4];
+    if (m[6]){ const pm = m[6].toLowerCase() === 'p'; if (pm && h < 12) h += 12; if (!pm && h === 12) h = 0; }
+    const autor = m[7].trim();
+    let texto = (m[8] + (c.extra || '')).trim();
+    if (/^<?(multimedia omitid|media omitted|imagen omitida|video omitido|audio omitido|sticker omitido|documento omitido)/i.test(texto)) texto = '[multimedia]';
+    if (/^(se eliminó este mensaje|este mensaje fue eliminado|you deleted this message|null)$/i.test(texto)) return;
+    mensajes.push({ autor, fecha: y + '-' + String(mo).padStart(2, '0') + '-' + String(d).padStart(2, '0') + 'T' + String(h).padStart(2, '0') + ':' + m[5], texto });
+    autores[autor] = (autores[autor] || 0) + 1;
+  });
+  return { mensajes, autores, diaPrimero };
 }
 // Lee el archivo exportado de WhatsApp: .txt directo o .zip (saca el .txt de adentro, sin librerías).
 async function leerArchivoChat(blob, nombre){

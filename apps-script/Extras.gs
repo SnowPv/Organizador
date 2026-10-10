@@ -15,7 +15,7 @@
  * Para actualizar este archivo más adelante: reemplaza todo su contenido y repite los dos pasos anteriores.
  */
 
-const EX_VERSION = '2026-10-16';
+const EX_VERSION = '2026-10-17';
 const EX_NIVEL = 10;      // la app lo usa para saber qué funciones tiene este script
 const EX_HOJA = 'Tareas';
 const EX_PRIMERA = 4;
@@ -707,12 +707,20 @@ function ex_importarChat_(p) {
   if (!id && tel.length >= 8) { const f = filas.filter(function (r) { return ult9(r[5]) === ult9(tel); })[0]; if (f) id = String(f[0]); }
   if (!id) {
     id = tel.length >= 8 ? 'wa:+' + (tel.length === 9 ? '56' + tel : tel) : 'c-' + Date.now();
-    if (!filas.some(function (r) { return String(r[0]) === id; })) b.cs.appendRow([id, 'Por clasificar', pc.nombre || id, '', '', tel ? "'+" + (tel.length === 9 ? '56' + tel : tel) : '', '', '', '', 0, '📥 Chat importado', new Date()]);
+    const nom = String(pc.nombre || id), seguro = /^[+=@-]/.test(nom) ? "'" + nom : nom;
+    if (!filas.some(function (r) { return String(r[0]) === id; })) b.cs.appendRow([id, 'Por clasificar', seguro, '', '', tel ? "'+" + (tel.length === 9 ? '56' + tel : tel) : '', '', '', '', 0, '📥 Chat importado', new Date()]);
   } else if (tel.length >= 8) {
     const i = filas.findIndex(function (r) { return String(r[0]) === id; });
     if (i >= 0 && !ult9(filas[i][5])) b.cs.getRange(i + 2, 6).setValue("'+" + (tel.length === 9 ? '56' + tel : tel));
   }
-  const nw = wa.getLastRow() - 1, ya = {};
+  let nw = wa.getLastRow() - 1;
+  // Un chat exportado trae toda la historia: los mensajes importados antes de este contacto se reemplazan.
+  if (nw > 0) {
+    const previos = wa.getRange(2, 6, nw, 2).getValues();
+    for (let k = previos.length - 1; k >= 0; k--) if (String(previos[k][1]) === id && previos[k][0] === 'importado') wa.deleteRow(k + 2);
+    nw = wa.getLastRow() - 1;
+  }
+  const ya = {};
   (nw > 0 ? wa.getRange(2, 8, nw, 1).getValues() : []).forEach(function (r) { ya[String(r[0])] = true; });
   const nombre = pc.nombre || id, nuevas = [];
   (p.mensajes || []).slice(-800).forEach(function (m) {
@@ -1045,7 +1053,7 @@ function ex_aplicarAgente_(id, ctx, a) {
   const b = ex_baseHojas_(), filas = ex_filasContactos_(b.cs), i = filas.findIndex(function (r) { return String(r[0]) === id; });
   const cambios = [], c = filas[i], ac = a.contacto || {};
   // Contacto: completa lo que falta, sin pisar lo que tú ya definiste.
-  if (ac.nombre && (/^\+?\d[\d\s]+$/.test(String(c[2])) || !c[2])) { b.cs.getRange(i + 2, 3).setValue(ac.nombre); cambios.push('nombre: ' + ac.nombre); }
+  if (ac.nombre && (/^\+?[\d\s()-]+$/.test(String(c[2])) || /^#(ERROR!|NAME\?|VALUE!)/.test(String(c[2])) || !c[2])) { b.cs.getRange(i + 2, 3).setValue(ac.nombre); cambios.push('nombre: ' + ac.nombre); }
   if (ac.tipo && ac.tipo !== 'Por clasificar' && (c[1] === 'Por clasificar' || !c[1])) { b.cs.getRange(i + 2, 2).setValue(ac.tipo); cambios.push('tipo: ' + ac.tipo); }
   if (ac.email && !c[4]) { b.cs.getRange(i + 2, 5).setValue(ac.email.toLowerCase()); cambios.push('correo'); }
   const tags = String(c[6] || '').split(',').map(function (t) { return t.trim(); }).filter(String);
