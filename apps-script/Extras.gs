@@ -15,8 +15,8 @@
  * Para actualizar este archivo más adelante: reemplaza todo su contenido y repite los dos pasos anteriores.
  */
 
-const EX_VERSION = '2026-10-17';
-const EX_NIVEL = 10;      // la app lo usa para saber qué funciones tiene este script
+const EX_VERSION = '2026-10-18';
+const EX_NIVEL = 11;      // la app lo usa para saber qué funciones tiene este script
 const EX_HOJA = 'Tareas';
 const EX_PRIMERA = 4;
 const EX_ULTIMA = 400;
@@ -41,7 +41,7 @@ const EX_CAB_INTER = ['Fecha', 'Contacto (ID)', 'Tipo', 'Detalle', 'Link', 'Clav
 // Solo los correos que llegan por el correo de la tienda crean contactos.
 const EX_CORREO_TIENDA = 'contacto@blacklinechile.cl';
 const EX_DIAS_ESCANEO_INICIAL = 90;     // la primera vez revisa 90 días hacia atrás; después, solo lo nuevo
-const EX_IGNORAR_RE = /no-?reply|notific|mailer|newsletter|bounce|news@|marketing@|alerts?@|calendar-|@.*(mailchimp|sendgrid|hubspot)/i;
+const EX_IGNORAR_RE = /no-?reply|no-?responder|notific|mailer|newsletter|bounce|news@|marketing@|alerts?@|calendar-|ofertas@|promo|mensajeria@|transferencias@|serviciodetransferencias|facturacion@|factura|boleta|cobranza|recordatorios@|dte|@.*(mailchimp|sendgrid|hubspot|shopifyemail|mercadopago|mercadolibre|facebookmail|instagram|linkedin|tiktok|google\.com|apple\.com|microsoft|amazon|paypal|bci\.cl|santander|bancochile|bancoestado|scotiabank|itau|bancofalabella|bancoripley|bice|security\.cl|transbank|webpay|flow\.cl|khipu|entel|movistar|claro\.cl|wom\.cl|vtr|sii\.cl|duemint|desis|bsale)/i;
 // Negociaciones (pipeline de ventas).
 const EX_HOJA_NEG = 'Negociaciones';
 const EX_CAB_NEG = ['ID', 'Negociación', 'Contacto (ID)', 'Etapa', 'Valor ($)', 'Producto / interés', 'Creada', 'Cierre esperado', 'Próxima acción', 'Fecha próxima acción', 'Estado', 'Motivo de pérdida', 'Notas', 'Historial de etapas', 'Última actividad', 'Origen'];
@@ -123,6 +123,8 @@ function app_extra_(p) {
     case 'importarChat': return ex_importarChat_(p);
     case 'bsale':      return ex_bsale_(p);
     case 'asistente':  return ex_asistente_(p);
+    case 'instagram':  return ex_instagram_(p);
+    case 'contenido':  return ex_contenido_(p);
     default:           return { ok: false, error: 'op desconocida: ' + p.op };
   }
 }
@@ -156,6 +158,7 @@ function ex_leer_() {
   const pr = PropertiesService.getScriptProperties();
   return { ok: true, version: EX_VERSION, nivel: EX_NIVEL, filas: filas, calendario: EX_CAL_NOMBRE, wa: pr.getProperty('EX_WA_ULTIMO') || '',
     bsale: { activo: !!pr.getProperty('BSALE_TOKEN'), sinc: pr.getProperty('EX_BSALE_SINC') || '' },
+    instagram: { activo: !!pr.getProperty('IG_TOKEN'), usuario: pr.getProperty('IG_USUARIO') || '', sinc: pr.getProperty('EX_IG_SINC') || '' },
     agente: { activo: !!pr.getProperty('ANTHROPIC_API_KEY'), modelo: pr.getProperty('AGENTE_MODELO') || EX_AG_MODELO, ultimo: pr.getProperty('EX_AG_ULTIMO') || '' } };
 }
 
@@ -375,6 +378,20 @@ function ex_datosCorreo_(texto) {
 }
 
 // Limpia lo que haya armado una versión anterior que leía todo tu correo personal (se hace una sola vez).
+// Saca de la base los correos automáticos (bancos, pagos, redes sociales, facturas) que hayan entrado antes del filtro.
+function ex_limpiarAutomaticos_(b) {
+  const filas = ex_filasContactos_(b.cs);
+  const quedan = filas.filter(function (r) { return r[0] && !(String(r[10]).indexOf('✉️') === 0 && EX_IGNORAR_RE.test(String(r[0]))); });
+  if (quedan.length === filas.length) return 0;
+  const ids = {}; quedan.forEach(function (r) { ids[String(r[0])] = true; });
+  const ni = b.is.getLastRow() - 1;
+  const inter = (ni > 0 ? b.is.getRange(2, 1, ni, EX_CAB_INTER.length).getValues() : []).filter(function (r) { return !String(r[1]).match(/@/) || ids[String(r[1])]; });
+  b.cs.getRange(2, 1, filas.length, EX_CAB_CONTACTOS.length).clearContent();
+  if (ni > 0) b.is.getRange(2, 1, ni, EX_CAB_INTER.length).clearContent();
+  if (quedan.length) b.cs.getRange(2, 1, quedan.length, EX_CAB_CONTACTOS.length).setValues(quedan);
+  if (inter.length) b.is.getRange(2, 1, inter.length, EX_CAB_INTER.length).setValues(inter);
+  return filas.length - quedan.length;
+}
 function ex_purgarAntiguos_(b) {
   const filas = ex_filasContactos_(b.cs);
   const quedan = filas.filter(function (r) { return r[0] && ['✉️ Gmail', '📅 Calendario'].indexOf(String(r[10])) < 0; });
@@ -397,6 +414,7 @@ function ex_escanearBase_() {
   const tienda = EX_CORREO_TIENDA.toLowerCase();
   const primera = !props.getProperty('EX_ESCANEO_TIENDA');
   if (primera) ex_purgarAntiguos_(b);
+  ex_limpiarAutomaticos_(b);
   const dias = primera ? EX_DIAS_ESCANEO_INICIAL : 4;
   const desde = Date.now() - dias * 86400000;
   const contactos = {};
@@ -879,6 +897,124 @@ function ex_bsaleParaAgente_(texto) {
   } catch (e) { return '(no se pudo consultar Bsale: ' + e.message + ')'; }
 }
 
+/* ---------- Instagram (API oficial de Meta, gratis): métricas diarias y publicaciones ---------- */
+// Configuración (Propiedades del script): IG_TOKEN = token de larga duración de "API setup with Instagram login".
+// El script lo renueva solo cada 30 días (dura 60). Los datos quedan en las hojas "Instagram" e "IG Publicaciones".
+const EX_IG_API = 'https://graph.instagram.com/v25.0';
+const EX_CAB_IG = ['Fecha', 'Seguidores', 'Siguiendo', 'Publicaciones', 'Alcance', 'Vistas', 'Interacciones', 'Cuentas que interactuaron', 'Toques en links'];
+const EX_CAB_IGP = ['ID', 'Fecha', 'Tipo', 'Formato', 'Texto', 'Link', 'Me gusta', 'Comentarios', 'Guardados', 'Compartidos', 'Alcance', 'Vistas', 'Interacciones', 'Tiempo medio reel (s)', 'Actualizado'];
+const EX_CAB_CONT = ['ID', 'Fecha', 'Formato', 'Tema', 'Idea / guion', 'Texto sugerido', 'Hashtags', 'Objetivo', 'Por qué ahora', 'Estado', 'Creado'];
+function ex_igToken_() {
+  const pr = PropertiesService.getScriptProperties(), t = pr.getProperty('IG_TOKEN');
+  if (!t) return '';
+  const ult = new Date(pr.getProperty('IG_TOKEN_RENOVADO') || 0).getTime();
+  if (Date.now() - ult > 30 * 86400000) {
+    try {
+      const r = UrlFetchApp.fetch('https://graph.instagram.com/refresh_access_token?grant_type=ig_refresh_token&access_token=' + encodeURIComponent(t), { muteHttpExceptions: true });
+      const j = JSON.parse(r.getContentText() || '{}');
+      if (j.access_token) { pr.setProperty('IG_TOKEN', j.access_token); pr.setProperty('IG_TOKEN_RENOVADO', new Date().toISOString()); return j.access_token; }
+    } catch (e) {}
+  }
+  return t;
+}
+function ex_igUrl_(ruta, tok) { return EX_IG_API + ruta + (ruta.indexOf('?') >= 0 ? '&' : '?') + 'access_token=' + encodeURIComponent(tok); }
+function ex_igGet_(ruta, tok) {
+  const r = UrlFetchApp.fetch(ex_igUrl_(ruta, tok), { muteHttpExceptions: true }), j = JSON.parse(r.getContentText() || '{}');
+  if (j.error) throw new Error('Instagram: ' + (j.error.message || 'error') + (j.error.code ? ' (' + j.error.code + ')' : ''));
+  return j;
+}
+function ex_igVarias_(rutas, tok) {
+  const out = [];
+  for (let i = 0; i < rutas.length; i += 20) UrlFetchApp.fetchAll(rutas.slice(i, i + 20).map(function (r) { return { url: ex_igUrl_(r, tok), muteHttpExceptions: true }; })).forEach(function (x) {
+    try { const j = JSON.parse(x.getContentText() || '{}'); out.push(j.error ? null : j); } catch (e) { out.push(null); }
+  });
+  return out;
+}
+function ex_hojaCab_(nombre, cab) {
+  const ss = SpreadsheetApp.getActive();
+  let sh = ss.getSheetByName(nombre);
+  if (!sh) { sh = ss.insertSheet(nombre); sh.getRange(1, 1, 1, cab.length).setValues([cab]).setFontWeight('bold'); sh.setFrozenRows(1); }
+  return sh;
+}
+function ex_igValor_(j, metrica) {
+  const m = ((j && j.data) || []).filter(function (x) { return x.name === metrica; })[0];
+  if (!m) return '';
+  if (m.total_value) return m.total_value.value;
+  return m.values && m.values[0] ? m.values[0].value : '';
+}
+// Copia a la hoja las métricas de la cuenta (por día) y las últimas publicaciones con sus métricas.
+function ex_igSinc_() {
+  const tok = ex_igToken_(); if (!tok) throw new Error('falta IG_TOKEN en las propiedades del script');
+  const tz = ex_tz_(), pr = PropertiesService.getScriptProperties();
+  const yo = ex_igGet_('/me?fields=user_id,username,followers_count,follows_count,media_count', tok);
+  pr.setProperty('IG_USUARIO', yo.username || '');
+  // Días: ayer (y los últimos 30 la primera vez), una consulta por día.
+  const sh = ex_hojaCab_('Instagram', EX_CAB_IG), n = sh.getLastRow() - 1;
+  const filas = n > 0 ? sh.getRange(2, 1, n, EX_CAB_IG.length).getValues() : [];
+  const idx = {}; filas.forEach(function (r, i) { idx[r[0] instanceof Date ? Utilities.formatDate(r[0], tz, 'yyyy-MM-dd') : String(r[0]).replace(/^'/, '')] = i; });
+  const hoy0 = ex_aFecha_(ex_hoyYmd_(tz), tz).getTime(), dias = [];
+  for (let k = n > 0 ? 3 : 30; k >= 1; k--) dias.push(new Date(hoy0 - k * 86400000));
+  const met = 'reach,views,total_interactions,accounts_engaged,profile_links_taps';
+  const res = ex_igVarias_(dias.map(function (d) { const s0 = Math.floor(d.getTime() / 1000); return '/me/insights?metric=' + met + '&period=day&metric_type=total_value&since=' + s0 + '&until=' + (s0 + 86400); }), tok);
+  dias.forEach(function (d, k) {
+    const f = Utilities.formatDate(d, tz, 'yyyy-MM-dd'), j = res[k], ayer = k === dias.length - 1;
+    const fila = [f, ayer ? yo.followers_count : '', ayer ? yo.follows_count : '', ayer ? yo.media_count : '', ex_igValor_(j, 'reach'), ex_igValor_(j, 'views'), ex_igValor_(j, 'total_interactions'), ex_igValor_(j, 'accounts_engaged'), ex_igValor_(j, 'profile_links_taps')];
+    if (idx[f] != null) { const prev = filas[idx[f]]; for (let c = 1; c < fila.length; c++) if (fila[c] === '' && prev[c] !== '') fila[c] = prev[c]; filas[idx[f]] = fila; }
+    else { idx[f] = filas.length; filas.push(fila); }
+  });
+  filas.sort(function (a, b) { return String(a[0] instanceof Date ? Utilities.formatDate(a[0], tz, 'yyyy-MM-dd') : a[0]).localeCompare(String(b[0] instanceof Date ? Utilities.formatDate(b[0], tz, 'yyyy-MM-dd') : b[0])); });
+  if (filas.length) sh.getRange(2, 1, filas.length, EX_CAB_IG.length).setValues(filas.map(function (r) { return [r[0] instanceof Date ? Utilities.formatDate(r[0], tz, 'yyyy-MM-dd') : "'" + String(r[0]).replace(/^'/, '')].concat(r.slice(1)); }));
+  // Publicaciones: las últimas 60 con sus métricas.
+  let media = [], url = '/me/media?fields=id,caption,media_type,media_product_type,permalink,timestamp,like_count,comments_count&limit=50';
+  for (let pag = 0; pag < 2 && url; pag++) { const j = ex_igGet_(url, tok); media = media.concat(j.data || []); url = j.paging && j.paging.next ? j.paging.next.replace(/^https:\/\/graph\.instagram\.com\/v[\d.]+/, '').replace(/[&?]access_token=[^&]*/, '') : ''; }
+  media = media.slice(0, 60);
+  const ins = ex_igVarias_(media.map(function (m) { return '/' + m.id + '/insights?metric=' + (m.media_product_type === 'REELS' ? 'reach,saved,shares,views,total_interactions,ig_reels_avg_watch_time' : 'reach,saved,shares,views,total_interactions'); }), tok);
+  const ahora = new Date(), filasP = media.map(function (m, k) {
+    const j = ins[k], wt = ex_igValor_(j, 'ig_reels_avg_watch_time');
+    return [m.id, Utilities.formatDate(new Date(m.timestamp), tz, 'yyyy-MM-dd HH:mm'), m.media_type || '', m.media_product_type || '', String(m.caption || '').slice(0, 500), m.permalink || '', m.like_count || 0, m.comments_count || 0,
+      ex_igValor_(j, 'saved'), ex_igValor_(j, 'shares'), ex_igValor_(j, 'reach'), ex_igValor_(j, 'views'), ex_igValor_(j, 'total_interactions'), wt !== '' ? Math.round(wt / 100) / 10 : '', ahora];
+  });
+  const sp = ex_hojaCab_('IG Publicaciones', EX_CAB_IGP);
+  if (sp.getLastRow() > 1) sp.getRange(2, 1, sp.getLastRow() - 1, EX_CAB_IGP.length).clearContent();
+  if (filasP.length) sp.getRange(2, 1, filasP.length, EX_CAB_IGP.length).setValues(filasP.map(function (r) { r[0] = "'" + r[0]; r[1] = "'" + r[1]; return r; }));
+  pr.setProperty('EX_IG_SINC', new Date().toISOString());
+  return { usuario: yo.username, seguidores: yo.followers_count, publicaciones: filasP.length, dias: dias.length };
+}
+function ex_instagram_(p) {
+  const pr = PropertiesService.getScriptProperties();
+  if (!pr.getProperty('IG_TOKEN')) return { ok: true, activo: false };
+  let sinc = null;
+  if (p.sinc) sinc = ex_igSinc_();
+  const tz = ex_tz_(), sh = ex_hojaCab_('Instagram', EX_CAB_IG), n = sh.getLastRow() - 1, sp = ex_hojaCab_('IG Publicaciones', EX_CAB_IGP), np = sp.getLastRow() - 1;
+  const f = function (v) { return v instanceof Date ? Utilities.formatDate(v, tz, 'yyyy-MM-dd') : String(v).replace(/^'/, ''); };
+  const dias = (n > 0 ? sh.getRange(Math.max(2, n - 88), 1, Math.min(n, 90), EX_CAB_IG.length).getValues() : []).map(function (r) { return { fecha: f(r[0]), seguidores: r[1], alcance: r[4], vistas: r[5], interacciones: r[6], cuentas: r[7], links: r[8] }; });
+  const posts = (np > 0 ? sp.getRange(2, 1, np, EX_CAB_IGP.length).getValues() : []).map(function (r) { return { id: String(r[0]).replace(/^'/, ''), fecha: r[1] instanceof Date ? Utilities.formatDate(r[1], tz, 'yyyy-MM-dd HH:mm') : String(r[1]).replace(/^'/, ''), tipo: r[2], formato: r[3], texto: r[4], link: r[5], likes: +r[6] || 0, comentarios: +r[7] || 0, guardados: +r[8] || 0, compartidos: +r[9] || 0, alcance: +r[10] || 0, vistas: +r[11] || 0, interacciones: +r[12] || 0, reelSeg: r[13] }; });
+  return { ok: true, activo: true, usuario: pr.getProperty('IG_USUARIO') || '', sinc: pr.getProperty('EX_IG_SINC') || '', dias: dias, posts: posts, resultado: sinc };
+}
+// Calendario de contenido (hoja "Contenido"): listar, guardar ideas y cambiar su estado.
+function ex_contenido_(p) {
+  const tz = ex_tz_(), sh = ex_hojaCab_('Contenido', EX_CAB_CONT);
+  if (p.accion === 'guardar') {
+    const filas = (p.items || []).map(function (x, k) { return ['ct-' + Date.now() + '-' + k, "'" + String(x.fecha || ''), x.formato || '', x.tema || '', x.idea || '', x.texto || '', x.hashtags || '', x.objetivo || '', x.por_que || '', x.estado || 'Planificado', new Date()]; });
+    if (filas.length) sh.getRange(sh.getLastRow() + 1, 1, filas.length, EX_CAB_CONT.length).setValues(filas);
+  } else if (p.accion === 'estado') {
+    const n = sh.getLastRow() - 1, ids = n > 0 ? sh.getRange(2, 1, n, 1).getValues() : [];
+    const i = ids.findIndex(function (r) { return String(r[0]) === String(p.id); });
+    if (i >= 0) { sh.getRange(i + 2, 10).setValue(p.estado); if (p.fecha) sh.getRange(i + 2, 2).setValue("'" + p.fecha); }
+  }
+  const n = sh.getLastRow() - 1;
+  const items = (n > 0 ? sh.getRange(2, 1, n, EX_CAB_CONT.length).getValues() : []).filter(function (r) { return r[0]; }).map(function (r) {
+    return { id: String(r[0]), fecha: r[1] instanceof Date ? Utilities.formatDate(r[1], tz, 'yyyy-MM-dd') : String(r[1]).replace(/^'/, ''), formato: r[2], tema: r[3], idea: r[4], texto: r[5], hashtags: r[6], objetivo: r[7], por_que: r[8], estado: r[9] };
+  });
+  return { ok: true, items: items };
+}
+// Ejecútala una vez después de guardar IG_TOKEN: trae los datos y muestra el resultado.
+function probarInstagram() {
+  PropertiesService.getScriptProperties().setProperty('IG_TOKEN_RENOVADO', new Date().toISOString());
+  const r = ex_igSinc_();
+  Logger.log('Instagram conectado ✓ · @' + r.usuario + ' · ' + r.seguidores + ' seguidores · ' + r.publicaciones + ' publicaciones · ' + r.dias + ' días de métricas');
+}
+
 /* ---------- asistente de IA para planificar el día y la semana ---------- */
 // La app arma el contexto (tareas, agenda, negociaciones) y el asistente devuelve un plan concreto. No cambia nada solo.
 const EX_AS_SISTEMA = {
@@ -890,6 +1026,15 @@ const EX_AS_SISTEMA = {
     '- si hay más trabajo que tiempo, propone qué mover a otro día (tareas no urgentes) y por qué;',
     '- un consejo breve y concreto para el día.',
     'Usa los nombres exactos de las tareas cuando las nombres. Español de Chile, directo y amable. Responde solo con el JSON pedido.'
+  ].join('\n'),
+  contenido: [
+    'Eres el estratega de contenido de Instagram de Blackline Puerto Varas, tienda de bicicletas Specialized (e-bikes Turbo Levo, Vado, Kenevo; MTB, ruta y gravel), repuestos y taller, en Puerto Varas, Chile (lago Llanquihue, volcanes, senderos como Pichijuán; muchos clientes argentinos de Bariloche y Villa La Angostura).',
+    'Con lo que pasa en la tienda (agenda, proyectos, productos que más piden los clientes, ventas recientes, tareas de marketing) y las métricas de Instagram (qué formatos y días funcionan mejor), arma un calendario de contenido para las próximas 2 semanas:',
+    '- 3 o 4 publicaciones por semana, mezclando Reels (prioridad si funcionan mejor), carruseles, historias y posts;',
+    '- cada idea atada a algo real y actual de la tienda (un evento, un producto con demanda, una entrega, el taller, la temporada, un test ride), nunca genérica;',
+    '- elige el día según los días que mejor funcionan; no repitas ideas ya planificadas;',
+    '- para cada una: formato, tema corto, la idea o guion en 2 a 4 frases (qué se graba o muestra), un texto sugerido para la publicación (tono cercano, chileno, con llamado a la acción como escribir por WhatsApp o pasar a probarla), 3 a 6 hashtags, el objetivo y por qué ahora.',
+    'No inventes precios ni promociones que no estén en los datos. Responde solo con el JSON pedido.'
   ].join('\n'),
   semana: [
     'Eres el asistente de productividad y ventas del encargado de Blackline Puerto Varas (tienda de bicicletas Specialized con taller).',
@@ -907,6 +1052,11 @@ const EX_AS_ESQUEMA = {
     bloques: { type: 'array', items: { type: 'object', additionalProperties: false, required: ['hora', 'accion', 'motivo'], properties: { hora: { type: 'string' }, accion: { type: 'string' }, motivo: { type: 'string' } } } },
     mover: { type: 'array', items: { type: 'object', additionalProperties: false, required: ['tarea', 'cuando', 'motivo'], properties: { tarea: { type: 'string' }, cuando: { type: 'string', enum: ['mañana', 'esta semana', 'próxima semana'] }, motivo: { type: 'string' } } } },
     consejo: { type: 'string' } } },
+  contenido: { type: 'object', additionalProperties: false, required: ['resumen', 'ideas'], properties: {
+    resumen: { type: 'string' },
+    ideas: { type: 'array', items: { type: 'object', additionalProperties: false, required: ['fecha', 'formato', 'tema', 'idea', 'texto', 'hashtags', 'objetivo', 'por_que'], properties: {
+      fecha: { type: 'string' }, formato: { type: 'string', enum: ['Reel', 'Carrusel', 'Historia', 'Post'] }, tema: { type: 'string' }, idea: { type: 'string' }, texto: { type: 'string' }, hashtags: { type: 'string' },
+      objetivo: { type: 'string', enum: ['Ventas', 'Comunidad', 'Alcance', 'Educación', 'Postventa'] }, por_que: { type: 'string' } } } } } },
   semana: { type: 'object', additionalProperties: false, required: ['resumen', 'logros', 'prioridades', 'riesgos'], properties: {
     resumen: { type: 'string' },
     logros: { type: 'array', items: { type: 'string' } },
@@ -914,7 +1064,7 @@ const EX_AS_ESQUEMA = {
     riesgos: { type: 'array', items: { type: 'string' } } } }
 };
 function ex_asistente_(p) {
-  const modo = p.modo === 'semana' ? 'semana' : 'dia';
+  const modo = ['semana', 'contenido'].indexOf(p.modo) >= 0 ? p.modo : 'dia';
   const ctx = String(p.contexto || '').slice(0, 40000);
   if (!ctx) throw new Error('sin contexto');
   return { ok: true, modo: modo, r: ex_llamarClaude_(ctx, EX_AS_SISTEMA[modo], EX_AS_ESQUEMA[modo]) };
@@ -1142,6 +1292,8 @@ function ex_tareaBase() {
   if (!ex_cuentaVigente_()) return;
   ex_conLock_(ex_escanearBase_);
   if (ex_bsaleToken_()) { try { ex_bsaleCatalogo_(); } catch (e) { console.log('Bsale: ' + e.message); } }   // renueva el catálogo una vez al día
+  const pr = PropertiesService.getScriptProperties();
+  if (pr.getProperty('IG_TOKEN') && String(pr.getProperty('EX_IG_SINC') || '').slice(0, 10) !== new Date().toISOString().slice(0, 10)) { try { ex_igSinc_(); } catch (e) { console.log('Instagram: ' + e.message); } }
 }
 function ex_tareaAgente() { if (ex_cuentaVigente_()) ex_rondaAgente_(); }
 

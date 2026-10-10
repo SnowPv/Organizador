@@ -94,7 +94,7 @@ header.top small{display:block;color:var(--muted);font-size:13px;margin-top:2px;
 
 /* navegación */
 nav.bottom{position:fixed;left:8px;right:8px;bottom:calc(10px + env(safe-area-inset-bottom));background:color-mix(in srgb, var(--card) 92%, transparent);backdrop-filter:blur(12px);border-radius:24px;padding:6px 4px;display:flex;justify-content:space-around;z-index:8;box-shadow:var(--shadow-md);border:1px solid var(--line);max-width:720px;margin:0 auto}
-nav.bottom button{flex:1;min-width:0;border:0;background:none;padding:4px 0;color:var(--muted);font-size:10px;font-weight:700;border-radius:16px;display:flex;flex-direction:column;align-items:center;gap:1px}
+nav.bottom button{flex:1;min-width:0;border:0;background:none;padding:4px 0;color:var(--muted);font-size:9.5px;font-weight:700;border-radius:16px;display:flex;flex-direction:column;align-items:center;gap:1px}
 nav.bottom button span{display:flex;align-items:center;justify-content:center;font-size:19px;line-height:1;width:38px;height:30px;border-radius:12px;filter:grayscale(.6);opacity:.75;transition:all .2s}
 nav.bottom button.on{color:var(--accent-ink)}
 nav.bottom button.on span{background:var(--soft);filter:none;opacity:1;transform:translateY(-1px)}
@@ -499,6 +499,8 @@ nav.bottom button span .ico{width:21px;height:21px}
 .tbar .views{margin:0;display:flex}
 .tbar .views button{padding:8px 12px}
 .cols2{display:grid;grid-template-columns:1fr;gap:14px;align-items:start}
+.cols2 > *{min-width:0}
+#view{min-width:0;overflow-x:clip}
 @media (min-width:1000px){.cols2{grid-template-columns:minmax(0,1.6fr) minmax(300px,1fr)}}
 .sec{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:6px 16px 10px;margin-bottom:14px}
 .sec > .sh{display:flex;align-items:center;gap:8px;padding:10px 0 4px;font-weight:700;font-size:14px}
@@ -566,6 +568,7 @@ nav.bottom button span .ico{width:21px;height:21px}
   <button data-tab="negocios"><span data-ic="deal"></span>Negocios</button>
   <button data-tab="proy"><span data-ic="flag"></span>Proyectos</button>
   <button data-tab="base"><span data-ic="users"></span>Contactos</button>
+  <button data-tab="redes"><span data-ic="camera"></span>Redes</button>
 </nav>
 <div id="layer"></div>
 
@@ -629,7 +632,7 @@ async function api(action, extra){
 function apiX(op, extra){ return api('extra', Object.assign({ op }, extra || {})); }
 // Nivel 2 del script Extras: recordatorios y base de contactos. Nivel 3: la base solo usa contacto@blacklinechile.cl. Nivel 4: eventos de varios días.
 function extNivel(){ return S.extInactivo ? 0 : (S.ext && S.ext.nivel) || 1; }
-function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < 10; }
+function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < 11; }
 let sincTimer = null;
 // Después de cambiar tareas, el script actualiza los recordatorios del calendario (en segundo plano).
 function sincPronto(){
@@ -675,6 +678,7 @@ async function load(){
     if (S.mutado){ S.mutado = false; sincPronto(); }
     await loadBase(false);
     await loadNeg(false);
+    await loadIG(false);
     if (!$('#layer').innerHTML) render();
   });
   loadGoogle(false);
@@ -698,7 +702,7 @@ async function updateTask(t, cambios){
 }
 
 /* ---------- cabecera y navegación ---------- */
-const TITLES = { inicio: 'Inicio', hoy: 'Hoy', tareas: 'Tareas', habitos: 'Hábitos', semana: 'Semana', proy: 'Proyectos', base: 'Contactos', negocios: 'Negociaciones' };
+const TITLES = { inicio: 'Inicio', hoy: 'Hoy', tareas: 'Tareas', habitos: 'Hábitos', semana: 'Semana', proy: 'Proyectos', base: 'Contactos', redes: 'Redes sociales', negocios: 'Negociaciones' };
 function head(){
   $('#hTitle').innerHTML = (S.tab === 'inicio' && S.data ? saludoTxt() : TITLES[S.tab]) + (S.offline ? '<span class="chip-off">sin conexión</span>' : '');
   $('#hSub').innerHTML = S.busy ? '<span class="spin"></span>Actualizando…' : fmtLong(hoy());
@@ -713,7 +717,7 @@ $('#fab').onclick = () => { try { openAdd(); } catch(e){ toast('No se pudo abrir
 function render(){
   head();
   if (!S.data){ $('#view').innerHTML = '<div class="empty"><span class="spin"></span>Cargando…</div>'; return; }
-  ({ inicio: viewInicio, hoy: viewHoy, tareas: viewTareas, habitos: () => S.subH === 'semana' ? viewSemana() : viewHabitos(), semana: viewSemana, proy: viewProy, base: viewBase, negocios: viewNegocios })[S.tab]();
+  ({ inicio: viewInicio, hoy: viewHoy, tareas: viewTareas, habitos: () => S.subH === 'semana' ? viewSemana() : viewHabitos(), semana: viewSemana, proy: viewProy, base: viewBase, negocios: viewNegocios, redes: viewRedes })[S.tab]();
   focusPill();
 }
 
@@ -855,7 +859,8 @@ const ICONS = {
   note: '<path d="M5 3h10l4 4v14H5z"/><path d="M9 12h6M9 16h6M9 8h3"/>',
   box: '<path d="M3 7 12 3l9 4-9 4z"/><path d="M3 7v10l9 4 9-4V7"/><path d="M12 11v10"/>',
   phone: '<path d="M5 3h4l2 5-2.5 1.5a11 11 0 0 0 6 6L16 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2z"/>',
-  target: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>'
+  target: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',
+  camera: '<rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/>'
 };
 function icon(n, cls){ return '<svg class="ico' + (cls ? ' ' + cls : '') + '" viewBox="0 0 24 24" aria-hidden="true">' + (ICONS[n] || '') + '</svg>'; }
 document.querySelectorAll('[data-ic]').forEach(e => { e.innerHTML = icon(e.dataset.ic); });
@@ -885,7 +890,7 @@ function viewInicio(){
   const totalHoy = lista.length + hechas.length;
   let html = '<div class="ihead"><button class="quick" id="qa"><b>+</b>Agregar tarea… <span style="margin-left:auto">🎤</span></button>' +
     '<button class="btn sec" id="planBtn">' + icon('spark') + ' Plan de la semana</button></div>';
-  if (necesitaActualizar()) html += '<div class="w" style="margin-bottom:14px;display:flex;gap:12px;align-items:center"><div class="grow"><b>Nueva versión del script</b><div class="wsub">' + (extNivel() >= 8 ? 'Asistente de IA para planificar tu día y tu semana, y conexión con Bsale (stock y precios).' : 'Importar chats de WhatsApp y agente de IA.') + '</div></div><button class="btn sm" id="updBtn">Actualizar</button></div>';
+  if (necesitaActualizar()) html += '<div class="w" style="margin-bottom:14px;display:flex;gap:12px;align-items:center"><div class="grow"><b>Nueva versión del script</b><div class="wsub">' + (extNivel() >= 10 ? 'Instagram: métricas diarias y calendario de contenido con IA. También filtra los correos automáticos de bancos y pagos.' : extNivel() >= 8 ? 'Asistente de IA para planificar tu día y tu semana, Instagram y conexión con Bsale.' : 'Importar chats de WhatsApp y agente de IA.') + '</div></div><button class="btn sm" id="updBtn">Actualizar</button></div>';
   html += '<div class="wgrid">';
   // 1. Tareas de hoy (anillo: avance del día contra lo planificado)
   html += '<div class="w" data-w="hoy"><div class="wh">' + icon('check') + 'Tareas de hoy<button class="go" data-go="hoy">Ver</button></div><div class="wring"><div class="rg">' + ringSVG(totalHoy ? hechas.length / totalHoy : 0, 86) + '<b>' + hechas.length + '/' + totalHoy + '<small>hechas</small></b></div>' +
@@ -922,6 +927,13 @@ function viewInicio(){
   // 8. Asistente (sugerencias accionables)
   const ins = insights().slice(0, 4);
   html += '<div class="w span2"><div class="wh">' + icon('spark') + 'Sugerencias del asistente</div>' + (ins.length ? ins.map(i => '<div class="sug2"><span class="dot" style="background:' + i.c + ';margin-top:6px"></span><div class="tx">' + i.tx + (i.acts ? '<div class="acts">' + i.acts.map(a => '<button class="btn sm sec" data-act="' + esc(a[1]) + '">' + esc(a[0]) + '</button>').join('') + '</div>' : '') + '</div></div>').join('') : '<div class="wsub">Sin sugerencias por ahora ✓</div>') + '</div>';
+  // Instagram (si está conectado)
+  if (igActivo() && S.ig){
+    const m = igMetricas(), D = m.D.slice(-14), mx = Math.max(1, ...D.map(d => +d.alcance || 0)), sig = (S.cont || []).filter(x => x.fecha >= h && x.estado === 'Planificado').sort((a, b) => a.fecha.localeCompare(b.fecha))[0];
+    html += '<div class="w" data-w="ig"><div class="wh">' + icon('camera') + 'Instagram<button class="go" data-go="redes">Ver</button></div><div class="wbig">' + (m.seg != null ? m.seg.toLocaleString('es-CL') : '–') + ' <span style="font-size:13px;color:var(--muted);font-weight:600">seguidores' + (m.dSeg != null ? ' · ' + (m.dSeg >= 0 ? '+' : '') + m.dSeg + ' en 28 d' : '') + '</span></div>' +
+      '<div class="bars" style="height:50px">' + D.map(d => '<i style="height:' + ((+d.alcance || 0) / mx * 100) + '%" data-t="' + esc(fmt(d.fecha)) + ': ' + (+d.alcance || 0) + '"></i>').join('') + '</div><div class="wsub">Alcance diario · 14 días</div>' +
+      '<div class="wl" style="margin-top:8px"><div class="it" data-go="redes"><span class="dot" style="background:var(--accent)"></span><div class="tx">' + (sig ? esc(sig.tema) + '<small>' + esc(fmt(sig.fecha)) + ' · ' + esc(sig.formato) + '</small>' : 'Sin contenido planificado<small>Genera tu calendario con el asistente</small>') + '</div></div></div></div>';
+  }
   // 9. Progreso (meta semanal, racha, nivel)
   const ind = S.data.indicadores || {}, semana = +ind['Hechas esta semana'] || 0, metaSem = meta * 5;
   html += '<div class="w"><div class="wh">' + icon('trophy') + 'Tu semana</div><div class="wring"><div class="rg">' + ringSVG(semana / metaSem, 86, 'var(--ok)') + '<b>' + semana + '<small>de ' + metaSem + '</small></b></div>' +
@@ -1619,6 +1631,123 @@ function ctoTab(c, tab){
   }
 }
 
+/* ---------- Redes: Instagram (métricas) y calendario de contenido con IA ---------- */
+function igActivo(){ return extNivel() >= 11 && !!(S.ext && S.ext.instagram && S.ext.instagram.activo); }
+async function loadIG(forzar){
+  if (!igActivo()) return;
+  if (!forzar && S.ig && Date.now() - S.igAt < 10 * 60000) return;
+  try { const [a, b] = await Promise.all([apiX('instagram'), apiX('contenido')]); S.ig = a; S.cont = b.items || []; S.igAt = Date.now(); lsSet('igCache', { ig: S.ig, cont: S.cont }); }
+  catch(e){ if (!S.ig){ const c = lsGet('igCache', null); if (c){ S.ig = c.ig; S.cont = c.cont; } } }
+}
+const FMT_IG = { REELS: 'Reel', FEED: 'Post / carrusel', STORY: 'Historia' };
+function igMetricas(){
+  const I = S.ig || { dias: [], posts: [] }, D = I.dias || [], h = hoy();
+  const ult = D.slice(-28), prev = D.slice(-56, -28), sum = (L, k) => L.reduce((s, d) => s + (+d[k] || 0), 0);
+  const conSeg = D.filter(d => d.seguidores !== '' && d.seguidores != null), seg = conSeg.length ? +conSeg[conSeg.length - 1].seguidores : null;
+  const seg30 = conSeg.filter(d => d.fecha <= addDays(h, -28)), segAntes = seg30.length ? +seg30[seg30.length - 1].seguidores : null;
+  const alc = sum(ult, 'alcance'), inter = sum(ult, 'interacciones');
+  const P = (I.posts || []).filter(x => x.fecha.slice(0, 10) >= addDays(h, -90));
+  const porFmt = {}; P.forEach(x => { const k = FMT_IG[x.formato] || x.formato || 'Otro'; (porFmt[k] = porFmt[k] || []).push(x); });
+  const porDia = [0, 1, 2, 3, 4, 5, 6].map(d => { const L = P.filter(x => pd(x.fecha.slice(0, 10)).getDay() === d); return { d, n: L.length, prom: L.length ? L.reduce((s, x) => s + x.interacciones, 0) / L.length : 0 }; });
+  return { D, seg, dSeg: seg != null && segAntes != null ? seg - segAntes : null, alc, alcPrev: sum(prev, 'alcance'), inter, tasa: alc ? inter / alc : null, P, porFmt, porDia, links: sum(ult, 'links') };
+}
+function viewRedes(){
+  if (S.extInactivo || extNivel() < 11){
+    $('#view').innerHTML = '<div class="sec" style="padding:20px"><div class="wh">' + icon('camera') + 'Instagram y calendario de contenido</div><p style="margin:0 0 12px;line-height:1.5">Conecta Instagram con la API oficial de Meta (gratis): la app guarda tus métricas todos los días y el asistente arma un calendario de contenido con lo que está pasando en la tienda.</p><button class="btn" id="rAct">Actualizar el script</button></div>';
+    $('#rAct').onclick = showExtrasUpdate; return;
+  }
+  if (!igActivo()){
+    $('#view').innerHTML = '<div class="sec" style="padding:20px"><div class="wh">' + icon('camera') + 'Conecta tu Instagram</div><p style="margin:0 0 10px;line-height:1.5">Falta el token de Instagram en el script (propiedad <b>IG_TOKEN</b>). Son unos 15 minutos y es gratis: la guía está en <b>docs/INSTAGRAM.md</b> del repositorio.</p><ol style="margin:0 0 12px;padding-left:20px;line-height:1.7;font-size:14px"><li>Cuenta de Instagram profesional (empresa o creador).</li><li>App en developers.facebook.com con el producto Instagram → «API setup with Instagram login» → generar token.</li><li>Guardar el token en Propiedades del script como IG_TOKEN y ejecutar <b>probarInstagram</b>.</li></ol><a class="btn sec" href="https://github.com/SnowPv/Organizador/blob/main/docs/INSTAGRAM.md" target="_blank" style="display:inline-block;text-decoration:none">Abrir la guía</a></div>';
+    return;
+  }
+  if (!S.ig){ $('#view').innerHTML = '<div class="empty"><span class="spin"></span>Cargando Instagram…</div>'; loadIG(true).then(() => { if (S.tab === 'redes') render(); }); return; }
+  const m = igMetricas(), h = hoy();
+  const ks = (key, v, l, extra) => '<div class="ks1" data-info="' + key + '"><div><b>' + v + '</b><small>' + l + ib(key) + '</small>' + (extra || '') + '</div></div>';
+  const delta = (a, b) => b ? '<small style="color:' + (a >= b ? 'var(--ok-ink)' : 'var(--bad-ink)') + '">' + (a >= b ? '▲ ' : '▼ ') + Math.abs(Math.round((a - b) / b * 100)) + '% vs 28 d antes</small>' : '';
+  let html = '<div class="kstrip">' + ks('igSeg', m.seg != null ? m.seg.toLocaleString('es-CL') : '–', 'seguidores', m.dSeg != null ? '<small style="color:' + (m.dSeg >= 0 ? 'var(--ok-ink)' : 'var(--bad-ink)') + '">' + (m.dSeg >= 0 ? '+' : '') + m.dSeg + ' en 28 días</small>' : '') +
+    ks('igAlc', m.alc.toLocaleString('es-CL'), 'alcance 28 días', delta(m.alc, m.alcPrev)) + ks('igInter', m.inter.toLocaleString('es-CL'), 'interacciones 28 días') + ks('igTasa', m.tasa != null ? (m.tasa * 100).toFixed(1) + '%' : '–', 'tasa de interacción') + '</div>';
+  html += '<div class="ihead"><div class="grow wsub" style="font-size:13px">@' + esc(S.ig.usuario || '') + ' · actualizado ' + (S.ig.sinc ? haceTxt(S.ig.sinc.slice(0, 10)) : 'nunca') + '</div><button class="btn sm sec" id="igSinc">↻ Actualizar ahora</button><button class="btn" id="igPlan">' + icon('spark') + ' Calendario de contenido</button></div>';
+  // alcance diario
+  const D = m.D.slice(-30), maxA = Math.max(1, ...D.map(d => +d.alcance || 0));
+  let izq = '<div class="w" style="margin-bottom:14px"><div class="wh">' + icon('chart') + 'Alcance por día · 30 días' + ib('igAlc') + '</div><div class="bars" style="height:120px">' + D.map(d => '<i style="height:' + ((+d.alcance || 0) / maxA * 100) + '%" data-t="' + esc(fmt(d.fecha)) + ': ' + (+d.alcance || 0).toLocaleString('es-CL') + '"></i>').join('') + '</div><div class="bx"><span>' + (D[0] ? fmt(D[0].fecha) : '') + '</span><span>ayer</span></div></div>';
+  // calendario de contenido
+  const C = (S.cont || []).filter(x => x.estado !== 'Descartado').sort((a, b) => a.fecha.localeCompare(b.fecha));
+  const prox = C.filter(x => x.fecha >= h && x.estado !== 'Publicado'), pasadas = C.filter(x => x.fecha < h && x.estado !== 'Publicado');
+  izq += '<div class="sec"><div class="sh">' + icon('cal') + ' Calendario de contenido <span class="n">' + prox.length + ' próximas</span><span class="r"><button class="btn sm sec" id="igNew">＋ Idea</button></span></div>' +
+    (pasadas.length ? '<div class="hint" style="color:var(--bad-ink)">' + pasadas.length + ' publicaciones planificadas ya pasaron su fecha sin marcarse como publicadas.</div>' : '') +
+    (prox.length || pasadas.length ? '<div class="wl">' + pasadas.concat(prox).map(x => '<div class="it" data-ct="' + esc(x.id) + '"><span class="dot" style="background:' + (x.fecha < h ? 'var(--bad)' : x.formato === 'Reel' ? 'var(--accent)' : 'var(--s2)') + '"></span><div class="tx">' + esc(x.tema || x.idea) + '<small>' + esc(fmt(x.fecha)) + ' · ' + esc(x.formato) + (x.objetivo ? ' · ' + esc(x.objetivo) : '') + '</small></div><span class="rt">' + esc(x.estado) + '</span></div>').join('') + '</div>' : '<div class="wsub" style="padding:4px 0 10px">Sin publicaciones planificadas. Toca «Calendario de contenido» y el asistente te propone las próximas 2 semanas según lo que pasa en la tienda.</div>') + '</div>';
+  // qué funciona
+  const fm = Object.entries(m.porFmt).map(([k, L]) => [k, L.length, L.reduce((s, x) => s + x.interacciones, 0) / L.length, L.reduce((s, x) => s + x.alcance, 0) / L.length]).sort((a, b) => b[2] - a[2]);
+  const maxF = Math.max(1, ...fm.map(x => x[2])), maxDi = Math.max(1, ...m.porDia.map(x => x.prom));
+  let der = '<div class="w" style="margin-bottom:14px"><div class="wh">' + icon('target') + 'Qué funciona · 90 días' + ib('igFunciona') + '</div><div class="wsub">Interacciones promedio por publicación</div><div class="hbar">' + (fm.length ? fm.map(x => '<span>' + esc(x[0]) + ' (' + x[1] + ')</span><div class="tr"><i style="width:' + (x[2] / maxF * 100) + '%;background:var(--s4)"></i></div><b>' + Math.round(x[2]) + '</b>').join('') : '<span>Sin datos</span><div></div><b></b>') + '</div>' +
+    '<div class="wsub" style="margin-top:14px">Por día de publicación</div><div class="hbar">' + [1, 2, 3, 4, 5, 6, 0].map(d => { const x = m.porDia[d]; return '<span>' + DIAS_L[d] + '</span><div class="tr"><i style="width:' + (x.prom / maxDi * 100) + '%;background:var(--s3)"></i></div><b>' + (x.n ? Math.round(x.prom) : '–') + '</b>'; }).join('') + '</div></div>';
+  const top = m.P.slice().sort((a, b) => b.interacciones - a.interacciones || b.likes - a.likes).slice(0, 6);
+  der += '<div class="sec"><div class="sh">Mejores publicaciones · 90 días</div><div class="wl">' + (top.length ? top.map(x => '<a class="it" href="' + esc(x.link) + '" target="_blank" style="text-decoration:none;color:inherit"><span class="dot" style="background:' + (x.formato === 'REELS' ? 'var(--accent)' : 'var(--s2)') + '"></span><div class="tx">' + esc(String(x.texto || '(sin texto)').split('\n')[0].slice(0, 70)) + '<small>' + esc(fmt(x.fecha.slice(0, 10))) + ' · ' + esc(FMT_IG[x.formato] || x.formato) + ' · alcance ' + x.alcance.toLocaleString('es-CL') + ' · ' + x.guardados + ' guardados</small></div><span class="rt"><b style="color:var(--ink)">' + x.interacciones + '</b><br>interacc.</span></a>').join('') : '<div class="wsub" style="padding:4px 0 10px">Aún no hay publicaciones sincronizadas.</div>') + '</div></div>';
+  html += '<div class="cols2"><div>' + izq + '</div><div>' + der + '</div></div>';
+  $('#view').innerHTML = html;
+  $('#igSinc').onclick = async e => { const b = e.target.closest('button'); b.disabled = true; b.innerHTML = '<span class="spin"></span>Actualizando…'; try { const r = await apiX('instagram', { sinc: 1 }); S.ig = r; toast('Instagram actualizado ✓ · ' + (r.resultado ? r.resultado.publicaciones + ' publicaciones' : '')); render(); } catch(err){ b.disabled = false; b.textContent = '↻ Actualizar ahora'; toast('No se pudo: ' + err.message); } };
+  $('#igPlan').onclick = planContenido;
+  $('#igNew').onclick = () => openIdea(null);
+  $$('[data-ct]').forEach(b => b.onclick = () => openIdea((S.cont || []).find(x => x.id === b.dataset.ct)));
+}
+function contextoContenido(){
+  const h = hoy(), m = igMetricas();
+  const ev = S.google && S.google.eventos ? S.google.eventos.filter(e => e.fecha >= h && e.fecha <= addDays(h, 21)) : [];
+  const interes = {}; contactos().forEach(c => String(c.etiquetas || '').split(',').map(x => x.trim()).filter(Boolean).forEach(x => { interes[x] = (interes[x] || 0) + 1; }));
+  const an = S.neg ? metricasNeg().an : [], gan = negocios().filter(n => n.estado === 'Ganada' && fechaCierre(n) >= addDays(h, -30));
+  const mk = pendientes().filter(t => /marketing|redes|reel|instagram|evento|salida/i.test((t.categoria || '') + ' ' + t.tarea));
+  const fm = Object.entries(m.porFmt).map(([k, L]) => k + ': ' + L.length + ' publicaciones, ' + Math.round(L.reduce((s, x) => s + x.interacciones, 0) / L.length) + ' interacciones y ' + Math.round(L.reduce((s, x) => s + x.alcance, 0) / L.length) + ' de alcance promedio');
+  return ['Hoy es ' + fmtLong(h) + '. Planifica desde mañana por 2 semanas (fechas en formato AAAA-MM-DD).',
+    '', 'INSTAGRAM @' + ((S.ig && S.ig.usuario) || '') + ': ' + (m.seg != null ? m.seg + ' seguidores' : '') + '; alcance 28 días ' + m.alc + '; interacciones 28 días ' + m.inter + '.',
+    'Por formato (90 días): ' + (fm.join('; ') || 'sin datos'),
+    'Por día de la semana (interacciones promedio): ' + m.porDia.filter(x => x.n).map(x => DIAS_L[x.d] + ' ' + Math.round(x.prom)).join(', '),
+    'Mejores publicaciones: ' + m.P.slice().sort((a, b) => b.interacciones - a.interacciones).slice(0, 5).map(x => '[' + (FMT_IG[x.formato] || x.formato) + ', ' + x.interacciones + ' interacc.] ' + String(x.texto || '').split('\n')[0].slice(0, 90)).join(' | '),
+    '', 'AGENDA PRÓXIMAS 3 SEMANAS:', ev.length ? ev.map(e => '- ' + e.fecha + ' ' + e.titulo + (e.lugar ? ' (' + e.lugar + ')' : '')).join('\n') : '(sin eventos)',
+    '', 'PROYECTOS: ' + (S.data.proyectos || []).map(p => p.nombre + ' — ' + (p.objetivo || '')).join('; '),
+    'TAREAS DE MARKETING/EVENTOS PENDIENTES: ' + (mk.map(t => t.tarea + (t.limite ? ' (' + t.limite + ')' : '')).join('; ') || 'ninguna'),
+    'LO QUE MÁS PIDEN LOS CLIENTES (etiquetas de contactos): ' + Object.entries(interes).sort((a, b) => b[1] - a[1]).slice(0, 15).map(x => x[0] + ' (' + x[1] + ')').join(', '),
+    'NEGOCIACIONES ABIERTAS (producto): ' + an.slice(0, 20).map(x => x.n.producto || x.n.titulo).join('; '),
+    'VENTAS ÚLTIMOS 30 DÍAS: ' + (gan.map(n => n.producto || n.titulo).join('; ') || 'ninguna registrada'),
+    'YA PLANIFICADO (no repetir): ' + ((S.cont || []).filter(x => x.fecha >= h && x.estado !== 'Descartado').map(x => x.fecha + ' ' + x.formato + ': ' + x.tema).join('; ') || 'nada')].join('\n');
+}
+async function planContenido(){
+  if (!iaDisponible()){ toast('Falta tu clave de Claude (ANTHROPIC_API_KEY) para usar el asistente'); return; }
+  const md = modal(icon('spark') + ' Calendario de contenido · 2 semanas', '<div class="empty"><span class="spin"></span>El asistente está revisando la tienda y tus métricas…</div>', { wide: true });
+  try {
+    const r = (await apiX('asistente', { modo: 'contenido', contexto: contextoContenido() })).r;
+    md.el.querySelector('.empty').outerHTML = '<p style="margin:2px 0 8px">' + esc(r.resumen) + '</p>' + r.ideas.map((x, i) => '<div class="blk"><label style="display:flex;gap:10px;flex:1;cursor:pointer"><input type="checkbox" data-ii="' + i + '" checked style="width:20px;height:20px;margin-top:2px;flex:none"><span class="hr" style="width:64px">' + esc(fmt(x.fecha)) + '<br><span style="color:var(--muted);font-weight:600">' + esc(x.formato) + '</span></span><span class="tx"><b>' + esc(x.tema) + '</b><small>' + esc(x.idea) + '</small><small style="color:var(--accent-ink)">Por qué ahora: ' + esc(x.por_que) + '</small></span></label></div>').join('') +
+      '<label class="row" style="margin-top:12px;gap:8px;font-size:14px;font-weight:600"><input type="checkbox" id="ii_tk" checked style="width:20px;height:20px"> Crear una tarea por publicación (preparar/grabar el día antes)</label><div class="btns"><button class="btn" id="ii_ok">Guardar en el calendario</button></div>';
+    md.el.querySelector('#ii_ok').onclick = async () => {
+      const sel = [...md.el.querySelectorAll('[data-ii]')].filter(x => x.checked).map(x => r.ideas[+x.dataset.ii]); if (!sel.length){ toast('Marca al menos una'); return; }
+      const b = md.el.querySelector('#ii_ok'); b.disabled = true; b.innerHTML = '<span class="spin"></span>Guardando…';
+      try {
+        const res = await apiX('contenido', { accion: 'guardar', items: sel }); S.cont = res.items;
+        if (md.el.querySelector('#ii_tk').checked) for (const x of sel) await api('add', { tarea: { tarea: (x.formato === 'Reel' ? 'Grabar reel: ' : 'Preparar ' + x.formato.toLowerCase() + ': ') + x.tema, area: 'Trabajo', categoria: (S.data.config.categorias.find(c => c.nombre === 'Marketing') || {}).nombre || '', proyecto: '', limite: addDays(x.fecha, -1) < hoy() ? hoy() : addDays(x.fecha, -1), urgente: 'No', importante: 'Sí', tamano: 'Mediana', notas: '📸 Contenido ' + x.fecha + ' · ' + x.idea, estado: 'Pendiente' } });
+        md.cerrar(); toast('📅 ' + sel.length + ' publicaciones en tu calendario'); S.mutado = true; load(); render();
+      } catch(e){ b.disabled = false; b.textContent = 'Guardar en el calendario'; toast('No se pudo guardar: ' + e.message); }
+    };
+  } catch(e){ md.el.querySelector('.empty').innerHTML = 'No se pudo armar el calendario: ' + esc(e.message); }
+}
+function openIdea(x){
+  const nueva = !x; x = x || { fecha: addDays(hoy(), 1), formato: 'Reel', tema: '', idea: '', texto: '', hashtags: '', objetivo: 'Ventas', estado: 'Planificado' };
+  const md = modal(nueva ? 'Nueva publicación' : esc(x.tema || 'Publicación'), nueva ?
+    '<label class="l" style="margin-top:0">Tema</label><input type="text" id="id_t" placeholder="Ej.: Test ride de la Levo en Pichijuán"><label class="l">Fecha</label><input type="date" id="id_f" value="' + esc(x.fecha) + '"><label class="l">Formato</label><div class="choice" id="id_fm">' + ['Reel', 'Carrusel', 'Historia', 'Post'].map(f => '<button data-f="' + f + '" class="' + (f === 'Reel' ? 'on' : '') + '">' + f + '</button>').join('') + '</div><label class="l">Idea</label><textarea class="note" id="id_i"></textarea><div class="btns"><button class="btn" id="id_ok">Guardar</button></div>' :
+    '<div class="tm" style="margin:0 0 10px"><span class="d">' + esc(fmtLong(x.fecha)) + '</span><span>' + esc(x.formato) + '</span><span>' + esc(x.objetivo) + '</span><span class="pill2">' + esc(x.estado) + '</span></div>' +
+    (x.idea ? '<div class="lab" style="font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;margin:8px 0 4px">Idea / guion</div><p style="margin:0;line-height:1.5">' + esc(x.idea) + '</p>' : '') +
+    (x.texto ? '<div class="lab" style="font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;margin:14px 0 4px">Texto sugerido</div><div class="calc" style="background:var(--soft);border-radius:12px;padding:12px;white-space:pre-wrap;font-size:14px">' + esc(x.texto + (x.hashtags ? '\n\n' + x.hashtags : '')) + '</div><button class="btn sm sec" id="id_cp" style="margin-top:8px">Copiar texto</button>' : '') +
+    (x.por_que ? '<p class="hint">Por qué ahora: ' + esc(x.por_que) + '</p>' : '') +
+    '<div class="btns"><button class="btn sec" data-es="Descartado">Descartar</button><button class="btn sec" data-es="Planificado">Planificado</button><button class="btn" data-es="Publicado" style="background:var(--ok)">✓ Publicado</button></div>', { wide: !nueva });
+  if (nueva){
+    md.el.querySelectorAll('[data-f]').forEach(b => b.onclick = () => md.el.querySelectorAll('[data-f]').forEach(y => y.classList.toggle('on', y === b)));
+    md.el.querySelector('#id_ok').onclick = async () => { const t = md.el.querySelector('#id_t').value.trim(); if (!t){ toast('Ponle un tema'); return; }
+      const fm = (md.el.querySelector('#id_fm .on') || {}).dataset.f || 'Reel';
+      try { const r = await apiX('contenido', { accion: 'guardar', items: [{ fecha: md.el.querySelector('#id_f').value, formato: fm, tema: t, idea: md.el.querySelector('#id_i').value.trim(), objetivo: '', estado: 'Planificado' }] }); S.cont = r.items; md.cerrar(); render(); } catch(e){ toast('No se pudo guardar: ' + e.message); } };
+    return;
+  }
+  const cp = md.el.querySelector('#id_cp'); if (cp) cp.onclick = async () => { try { await navigator.clipboard.writeText(x.texto + (x.hashtags ? '\n\n' + x.hashtags : '')); toast('Texto copiado ✓'); } catch(e){ toast('No se pudo copiar'); } };
+  md.el.querySelectorAll('[data-es]').forEach(b => b.onclick = async () => { b.disabled = true; try { const r = await apiX('contenido', { accion: 'estado', id: x.id, estado: b.dataset.es }); S.cont = r.items; md.cerrar(); if (b.dataset.es === 'Publicado') confetti(40); render(); } catch(e){ b.disabled = false; toast('No se pudo: ' + e.message); } });
+}
+
 /* ---------- vista: Negocios (pipeline de ventas estilo CRM) ---------- */
 // Etapas del embudo: probabilidad base de cierre y días normales sin movimiento antes de considerarla estancada.
 const ETAPAS = [
@@ -2103,6 +2232,11 @@ const INFO = {
   embudo: { t: '🔻 Embudo de ventas', d: 'Cada barra muestra cuántas negociaciones abiertas hay en cada etapa y cuánto suman. El «% avanza» indica, de todas las negociaciones que alguna vez llegaron a una etapa, cuántas pasaron a la siguiente. Sirve para ver en qué etapa se te caen las ventas.' },
   oportunidades: { t: '💡 Oportunidades detectadas', d: 'Contactos (clientes o por clasificar) que en los últimos 30 días hablaron de algo de compra (precio, cotización, test ride, cuotas, talla, reserva, Levo…) y no tienen una negociación abierta. Toca «＋ Negocio» para crearla.' },
   temperatura: { t: '🌡️ Temperatura', d: 'La pone el agente de IA al leer la conversación: caliente (quiere comprar pronto), tibio (interesado, sin apuro), frío (poco interés o no responde) o sin intención (no es una venta). Es su lectura de la conversación, no una fórmula.' },
+  igSeg: { t: '👥 Seguidores', d: 'Seguidores actuales de tu cuenta de Instagram. Lo de abajo es cuánto cambió en los últimos 28 días (se calcula con la foto diaria que guarda el script; los primeros días puede no haber dato anterior).' },
+  igAlc: { t: '📣 Alcance', d: 'Cuántas cuentas distintas vieron tu contenido (publicaciones, reels e historias). Es la suma del alcance diario de los últimos 28 días que entrega Instagram, comparada con los 28 días anteriores. Ojo: una misma cuenta puede contarse en varios días.' },
+  igInter: { t: '❤️ Interacciones', d: 'Me gusta, comentarios, guardados, compartidos y respuestas que recibió tu contenido en los últimos 28 días, según Instagram.' },
+  igTasa: { t: '📊 Tasa de interacción', d: 'Interacciones ÷ alcance de los últimos 28 días. Indica qué parte de quienes ven tu contenido reacciona. Entre 1% y 5% es lo habitual; más alto es muy bueno.' },
+  igFunciona: { t: '🎯 Qué funciona', d: 'Promedio de interacciones por publicación de los últimos 90 días, separado por formato (reels vs posts y carruseles) y por el día de la semana en que se publicó. El asistente usa esto para elegir formato y día en tu calendario de contenido.' },
   meta: { t: '🎯 Meta diaria', d: 'Cuántas tareas quieres completar cada día. Se cambia en tu Sheet → pestaña Config → «Meta diaria de tareas».', calc: () => [['Tu meta', metaDiaria() + ' tareas'], ['Hechas hoy', hechasEl(hoy()).length]] },
   racha: { t: '🔥 Racha', d: 'Días hábiles seguidos (lunes a viernes) en que cumpliste tu meta diaria. Si hoy todavía no la cumples, no se corta: se cuenta hasta ayer. La calcula tu Sheet (pestaña Config).' },
   puntos: { t: '⭐ Puntos', d: 'Cada tarea completada suma puntos según su tamaño. Si era urgente e importante («Hacer ya»), vale el doble. Los valores se cambian en tu Sheet → Config.', tabla: () => [['Pequeña', '5 pts'], ['Mediana', '10 pts'], ['Grande', '25 pts'], ['«Hacer ya» (urgente e importante)', '× 2']] },
@@ -3039,6 +3173,7 @@ if (LS.cache) { try { S.data = JSON.parse(LS.cache); } catch(e){} }
 S.google = lsGet('googleCache', null);
 S.ext = lsGet('extCache', null);
 S.base = lsGet('baseCache', null);
+{ const c = lsGet('igCache', null); if (c){ S.ig = c.ig; S.cont = c.cont; } }
 S.neg = lsGet('negCache', null);
 if (!LS.url || !LS.token) { render(); showSetup(); } else { render(); load(); revisarCompartido(); }
 </script>
