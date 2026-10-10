@@ -15,8 +15,8 @@
  * Para actualizar este archivo más adelante: reemplaza todo su contenido y repite los dos pasos anteriores.
  */
 
-const EX_VERSION = '2026-10-14';
-const EX_NIVEL = 8;      // la app lo usa para saber qué funciones tiene este script
+const EX_VERSION = '2026-10-15';
+const EX_NIVEL = 9;      // la app lo usa para saber qué funciones tiene este script
 const EX_HOJA = 'Tareas';
 const EX_PRIMERA = 4;
 const EX_ULTIMA = 400;
@@ -121,6 +121,7 @@ function app_extra_(p) {
     case 'whatsapp':   return ex_whatsapp_(p);
     case 'agente':     return ex_agente_(p.id);
     case 'importarChat': return ex_importarChat_(p);
+    case 'bsale':      return ex_bsale_(p);
     default:           return { ok: false, error: 'op desconocida: ' + p.op };
   }
 }
@@ -153,6 +154,7 @@ function ex_leer_() {
   }
   const pr = PropertiesService.getScriptProperties();
   return { ok: true, version: EX_VERSION, nivel: EX_NIVEL, filas: filas, calendario: EX_CAL_NOMBRE, wa: pr.getProperty('EX_WA_ULTIMO') || '',
+    bsale: { activo: !!pr.getProperty('BSALE_TOKEN'), sinc: pr.getProperty('EX_BSALE_SINC') || '' },
     agente: { activo: !!pr.getProperty('ANTHROPIC_API_KEY'), modelo: pr.getProperty('AGENTE_MODELO') || EX_AG_MODELO, ultimo: pr.getProperty('EX_AG_ULTIMO') || '' } };
 }
 
@@ -731,6 +733,143 @@ function ex_importarChat_(p) {
   return out;
 }
 
+/* ---------- Bsale: catálogo, stock y precios ---------- */
+// Configuración (Propiedades del script): BSALE_TOKEN (obligatorio), BSALE_LISTA (id de la lista de precios, opcional),
+// BSALE_URL (opcional; por defecto la API de Chile).
+const EX_HOJA_BSALE = 'Bsale';
+const EX_CAB_BSALE = ['ID variante', 'ID producto', 'Producto', 'Variante', 'SKU', 'Código de barras'];
+function ex_bsaleToken_() { return PropertiesService.getScriptProperties().getProperty('BSALE_TOKEN') || ''; }
+function ex_bsaleUrl_(ruta) { return (PropertiesService.getScriptProperties().getProperty('BSALE_URL') || 'https://api.bsale.io/v1') + ruta; }
+function ex_bsalePeticion_(ruta) { return { url: ex_bsaleUrl_(ruta), headers: { access_token: ex_bsaleToken_() }, muteHttpExceptions: true }; }
+function ex_bsaleGet_(ruta) {
+  const r = UrlFetchApp.fetch(ex_bsaleUrl_(ruta), ex_bsalePeticion_(ruta));
+  if (r.getResponseCode() === 401) throw new Error('Bsale rechazó el token (401): revisa BSALE_TOKEN');
+  if (r.getResponseCode() !== 200) throw new Error('Bsale respondió ' + r.getResponseCode());
+  return JSON.parse(r.getContentText());
+}
+// Varias consultas a la vez (en grupos de 20); devuelve null en las que fallan.
+function ex_bsaleVarias_(rutas) {
+  const out = [];
+  for (let i = 0; i < rutas.length; i += 20) {
+    UrlFetchApp.fetchAll(rutas.slice(i, i + 20).map(ex_bsalePeticion_)).forEach(function (r) {
+      try { out.push(r.getResponseCode() === 200 ? JSON.parse(r.getContentText()) : null); } catch (e) { out.push(null); }
+    });
+  }
+  return out;
+}
+// Todas las páginas de una lista de Bsale (50 por página).
+function ex_bsaleTodo_(ruta) {
+  const sep = ruta.indexOf('?') >= 0 ? '&' : '?', primera = ex_bsaleGet_(ruta + sep + 'limit=50&offset=0');
+  const items = (primera.items || []).slice(), total = Math.min(+primera.count || 0, 20000), rutas = [];
+  for (let off = 50; off < total; off += 50) rutas.push(ruta + sep + 'limit=50&offset=' + off);
+  ex_bsaleVarias_(rutas).forEach(function (j) { if (j && j.items) Array.prototype.push.apply(items, j.items); });
+  return items;
+}
+function ex_hojaBsale_() {
+  const ss = SpreadsheetApp.getActive();
+  let sh = ss.getSheetByName(EX_HOJA_BSALE);
+  if (!sh) { sh = ss.insertSheet(EX_HOJA_BSALE); sh.getRange(1, 1, 1, EX_CAB_BSALE.length).setValues([EX_CAB_BSALE]).setFontWeight('bold'); sh.setFrozenRows(1); }
+  return sh;
+}
+// Copia el catálogo de Bsale (productos y variantes activas) a la hoja "Bsale" para buscar rápido.
+function ex_bsaleSincCatalogo_() {
+  if (!ex_bsaleToken_()) throw new Error('falta BSALE_TOKEN en las propiedades del script');
+  const nombres = {};
+  ex_bsaleTodo_('/products.json?state=0').forEach(function (p) { nombres[String(p.id)] = p.name; });
+  const filas = ex_bsaleTodo_('/variants.json?state=0').filter(function (v) { return v.product && nombres[String(v.product.id)]; }).map(function (v) {
+    return [String(v.id), String(v.product.id), nombres[String(v.product.id)], v.description || '', "'" + (v.code || ''), "'" + (v.barCode || '')];
+  });
+  const sh = ex_hojaBsale_();
+  if (sh.getLastRow() > 1) sh.getRange(2, 1, sh.getLastRow() - 1, EX_CAB_BSALE.length).clearContent();
+  if (filas.length) sh.getRange(2, 1, filas.length, EX_CAB_BSALE.length).setValues(filas);
+  PropertiesService.getScriptProperties().setProperty('EX_BSALE_SINC', new Date().toISOString());
+  return filas.length;
+}
+function ex_bsaleCatalogo_() {
+  const sh = ex_hojaBsale_(), n = sh.getLastRow() - 1, props = PropertiesService.getScriptProperties();
+  const viejo = Date.now() - new Date(props.getProperty('EX_BSALE_SINC') || 0).getTime() > 24 * 3600000;
+  if (n <= 0 || viejo) { ex_bsaleSincCatalogo_(); return ex_bsaleCatalogo_Leer_(); }
+  return ex_bsaleCatalogo_Leer_();
+}
+function ex_bsaleCatalogo_Leer_() {
+  const sh = ex_hojaBsale_(), n = sh.getLastRow() - 1;
+  return (n > 0 ? sh.getRange(2, 1, n, EX_CAB_BSALE.length).getValues() : []).map(function (r) {
+    return { id: String(r[0]), prod: String(r[1]), producto: String(r[2]), variante: String(r[3]), sku: String(r[4]), barra: String(r[5]) };
+  });
+}
+// Búsqueda por texto ("levo comp m", un SKU o un código de barras): primero las variantes que calzan con más palabras.
+function ex_bsaleBuscar_(q, max) {
+  const cat = ex_bsaleCatalogo_(), palabras = ex_norm_(q).split(/[^a-z0-9]+/).filter(Boolean);
+  if (!palabras.length) return [];
+  const exacto = cat.filter(function (v) { return v.sku && ex_norm_(v.sku) === ex_norm_(q).trim() || v.barra && v.barra === String(q).trim(); });
+  if (exacto.length) return exacto.slice(0, max || 12);
+  const puntaje = cat.map(function (v) {
+    const tx = ' ' + ex_norm_(v.producto + ' ' + v.variante + ' ' + v.sku).replace(/[^a-z0-9]+/g, ' ') + ' ';
+    let pts = 0;
+    palabras.forEach(function (w) { if (w.length <= 2 || /^\d+$/.test(w) ? tx.indexOf(' ' + w + ' ') >= 0 : tx.indexOf(w) >= 0) pts++; });
+    return { v: v, pts: pts };
+  }).filter(function (x) { return x.pts > 0; });
+  const mejor = puntaje.reduce(function (m, x) { return Math.max(m, x.pts); }, 0);
+  return puntaje.filter(function (x) { return x.pts === mejor; }).sort(function (a, b) { return a.v.producto.localeCompare(b.v.producto); }).slice(0, max || 12).map(function (x) { return x.v; });
+}
+// Stock por sucursal y precio (con IVA) en vivo para una lista de variantes.
+function ex_bsaleStock_(variantes) {
+  if (!variantes.length) return [];
+  const props = PropertiesService.getScriptProperties(), cache = CacheService.getScriptCache();
+  let suc = JSON.parse(cache.get('bsale_suc') || 'null');
+  if (!suc) { suc = {}; try { ex_bsaleTodo_('/offices.json').forEach(function (o) { suc[String(o.id)] = o.name; }); cache.put('bsale_suc', JSON.stringify(suc), 21600); } catch (e) {} }
+  let lista = props.getProperty('BSALE_LISTA');
+  if (!lista) { try { const l = ex_bsaleGet_('/price_lists.json?state=0&limit=1'); lista = l.items && l.items[0] ? String(l.items[0].id) : ''; if (lista) props.setProperty('BSALE_LISTA', lista); } catch (e) {} }
+  const stocks = ex_bsaleVarias_(variantes.map(function (v) { return '/stocks.json?variantid=' + v.id + '&limit=50'; }));
+  const precios = lista ? ex_bsaleVarias_(variantes.map(function (v) { return '/price_lists/' + lista + '/details.json?variantid=' + v.id; })) : [];
+  return variantes.map(function (v, i) {
+    const S = (stocks[i] && stocks[i].items) || [], pr = precios[i] && precios[i].items && precios[i].items[0];
+    const sucursales = S.map(function (x) { return { nombre: suc[String(x.office && x.office.id)] || ('Sucursal ' + (x.office && x.office.id)), disp: +x.quantityAvailable || 0 }; });
+    return { id: v.id, producto: v.producto, variante: v.variante, sku: v.sku, precio: pr ? Math.round(+pr.variantValueWithTaxes || 0) : null,
+      total: sucursales.reduce(function (s, x) { return s + x.disp; }, 0), sucursales: sucursales };
+  });
+}
+// Ejecútala una vez después de guardar BSALE_TOKEN: copia el catálogo y muestra cuántas variantes encontró.
+function probarBsale() {
+  const n = ex_bsaleSincCatalogo_();
+  const ej = ex_bsaleStock_(ex_bsaleCatalogo_Leer_().slice(0, 1))[0];
+  Logger.log('Bsale conectado ✓ · ' + n + ' variantes en el catálogo' + (ej ? ' · ejemplo: ' + ej.producto + ' ' + ej.variante + ' → disponible ' + ej.total + (ej.precio ? ', $' + ej.precio : '') : ''));
+}
+function ex_bsale_(p) {
+  if (!ex_bsaleToken_()) return { ok: true, activo: false };
+  if (p.sinc) return { ok: true, activo: true, catalogo: ex_bsaleSincCatalogo_() };
+  const v = ex_bsaleBuscar_(String(p.q || ''), Math.min(+p.max || 12, 25));
+  return { ok: true, activo: true, items: ex_bsaleStock_(v), sinc: PropertiesService.getScriptProperties().getProperty('EX_BSALE_SINC') || '' };
+}
+// Para el agente: productos del catálogo que se nombran en la conversación (por las palabras más distintivas de cada nombre).
+function ex_bsaleParaAgente_(texto) {
+  if (!ex_bsaleToken_()) return '';
+  try {
+    const cat = ex_bsaleCatalogo_(), tx = ' ' + ex_norm_(texto).replace(/[^a-z0-9]+/g, ' ') + ' ';
+    const porProd = {}, df = {};
+    cat.forEach(function (v) { (porProd[v.prod] = porProd[v.prod] || []).push(v); });
+    const prods = Object.keys(porProd);
+    const palabrasDe = {};
+    prods.forEach(function (id) {
+      const ws = {}; ex_norm_(porProd[id][0].producto).split(/[^a-z0-9]+/).forEach(function (w) { if (w.length >= 3 && !/^\d+$/.test(w)) ws[w] = 1; });
+      palabrasDe[id] = Object.keys(ws); palabrasDe[id].forEach(function (w) { df[w] = (df[w] || 0) + 1; });
+    });
+    const N = prods.length || 1;
+    const top = prods.map(function (id) {
+      let pts = 0, n = 0;
+      palabrasDe[id].forEach(function (w) { if (df[w] <= Math.max(2, N * 0.15) && tx.indexOf(' ' + w + ' ') >= 0) { pts += Math.log(N / df[w]); n++; } });
+      return { id: id, pts: pts * n };
+    }).filter(function (x) { return x.pts > 0; }).sort(function (a, b) { return b.pts - a.pts; }).slice(0, 4);
+    if (!top.length) return '';
+    const vars = []; top.forEach(function (x) { Array.prototype.push.apply(vars, porProd[x.id].slice(0, 8)); });
+    const st = ex_bsaleStock_(vars.slice(0, 24));
+    return st.map(function (s) {
+      return '- ' + s.producto + (s.variante ? ' | ' + s.variante : '') + (s.sku ? ' | SKU ' + s.sku : '') + ' | disponible: ' + s.total +
+        (s.sucursales.length > 1 ? ' (' + s.sucursales.map(function (x) { return x.nombre + ' ' + x.disp; }).join(', ') + ')' : '') + (s.precio ? ' | precio $' + s.precio.toLocaleString('es-CL') : '');
+    }).join('\n');
+  } catch (e) { return '(no se pudo consultar Bsale: ' + e.message + ')'; }
+}
+
 /* ---------- agente de ventas con IA ---------- */
 const EX_AG_SISTEMA = [
   'Eres el asistente de ventas de Blackline Puerto Varas, tienda de bicicletas Specialized (e-bikes como Turbo Levo, Turbo Vado, Turbo Como, Kenevo; MTB como Stumpjumper, Epic, Chisel; ruta y gravel como Tarmac, Roubaix, Diverge), repuestos, accesorios y taller de mantención en Puerto Varas, Chile.',
@@ -747,6 +886,7 @@ const EX_AG_SISTEMA = [
   '8. Proponer una idea breve de respuesta (tono cercano, chileno, profesional) solo si el cliente espera respuesta; si no, deja el texto vacío.',
   '',
   'Si la conversación es antigua o fue importada, crea tareas solo para compromisos que sigan pendientes: si la fecha ya pasó y no hay señales de que se cumplió, agéndala para hoy; si ya se cumplió, no la crees.',
+  'Si se entrega STOCK EN BSALE, úsalo: di en el resumen si lo que pide está disponible (modelo y talla), menciona la disponibilidad real en la idea de respuesta y en la próxima acción, y si no hay stock de lo pedido sugiere la alternativa disponible más parecida o encargarla. Nunca prometas stock que no aparece.',
   'Reglas: no inventes datos que no estén en la conversación; si un dato no aparece, deja el texto vacío. No repitas tareas que ya existen en la lista de tareas abiertas que se te entrega. Escribe todo en español de Chile. Responde solo con el JSON pedido.'
 ].join('\n');
 
@@ -847,7 +987,8 @@ function ex_contextoAgente_(id) {
     '', 'OTRAS INTERACCIONES:', otras.length ? otras.join('\n') : '(ninguna)',
     '', 'CONVERSACIÓN DE WHATSAPP (más antigua primero):', chat.length ? chat.join('\n') : '(sin mensajes)'
   ].join('\n');
-  return { contexto: contexto, c: c, neg: neg };
+  const stock = ex_bsaleParaAgente_(chat.slice(-60).join(' ') + ' ' + (neg ? neg[5] : '') + ' ' + c[6]);
+  return { contexto: stock ? contexto + '\n\nSTOCK EN BSALE (consultado ahora, productos que se mencionan):\n' + stock : contexto, c: c, neg: neg };
 }
 
 // Analiza la conversación de un contacto y aplica los cambios al CRM (desde la app: ya corre con el Sheet tomado).
@@ -947,7 +1088,11 @@ function ex_conLock_(fn) {
   try { fn(); } finally { lock.releaseLock(); }
 }
 function ex_tareaHoraria() { if (ex_cuentaVigente_()) ex_conLock_(ex_sincCalendario_); }
-function ex_tareaBase() { if (ex_cuentaVigente_()) ex_conLock_(ex_escanearBase_); }
+function ex_tareaBase() {
+  if (!ex_cuentaVigente_()) return;
+  ex_conLock_(ex_escanearBase_);
+  if (ex_bsaleToken_()) { try { ex_bsaleCatalogo_(); } catch (e) { console.log('Bsale: ' + e.message); } }   // renueva el catálogo una vez al día
+}
 function ex_tareaAgente() { if (ex_cuentaVigente_()) ex_rondaAgente_(); }
 
 /* ---------- hábitos: mes nuevo ---------- */

@@ -30,14 +30,14 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:calc(92px + env(safe-ar
 main{padding-bottom:24px;display:block}
 button,input,select,textarea{font:inherit;color:inherit}
 button{cursor:pointer}
-.wrap{max-width:720px;margin:0 auto;padding:0 16px}
+.wrap{max-width:760px;margin:0 auto;padding:0 18px}
 header.top{position:sticky;top:0;z-index:5;background:linear-gradient(var(--bg) 72%, transparent);padding:14px 0 10px;display:flex;align-items:center;justify-content:space-between}
 header.top h1{font-size:24px;margin:0;font-weight:800;letter-spacing:-.02em}
 header.top small{display:block;color:var(--muted);font-size:13px;margin-top:2px;font-weight:500}
 .icon-btn{border:0;background:var(--card);box-shadow:var(--shadow-sm);width:40px;height:40px;border-radius:13px;font-size:17px;color:var(--ink)}
 .chip-off{background:rgba(245,165,36,.16);color:var(--warn-ink);border-radius:999px;padding:3px 10px;font-size:11px;margin-left:8px;font-weight:700;vertical-align:middle}
-.card{background:var(--card);border-radius:22px;padding:16px;margin:12px 0;box-shadow:var(--shadow-sm)}
-.card h2{font-size:13px;letter-spacing:.02em;color:var(--ink);margin:0 0 10px;font-weight:800;display:flex;align-items:center;gap:8px}
+.card{background:var(--card);border-radius:22px;padding:18px;margin:14px 0;box-shadow:var(--shadow-sm)}
+.card h2{font-size:14px;letter-spacing:.01em;color:var(--ink);margin:0 0 12px;font-weight:800;display:flex;align-items:center;gap:8px}
 .card h2 .ct{margin-left:auto;font-size:11.5px;color:var(--muted);font-weight:700}
 .card h2 .em{font-size:17px}
 .row{display:flex;align-items:center;gap:12px}
@@ -94,7 +94,7 @@ header.top small{display:block;color:var(--muted);font-size:13px;margin-top:2px;
 
 /* navegación */
 nav.bottom{position:fixed;left:8px;right:8px;bottom:calc(10px + env(safe-area-inset-bottom));background:color-mix(in srgb, var(--card) 92%, transparent);backdrop-filter:blur(12px);border-radius:24px;padding:6px 4px;display:flex;justify-content:space-around;z-index:8;box-shadow:var(--shadow-md);border:1px solid var(--line);max-width:720px;margin:0 auto}
-nav.bottom button{flex:1;min-width:0;border:0;background:none;padding:4px 0;color:var(--muted);font-size:9.5px;font-weight:700;border-radius:16px;display:flex;flex-direction:column;align-items:center;gap:1px}
+nav.bottom button{flex:1;min-width:0;border:0;background:none;padding:4px 0;color:var(--muted);font-size:10px;font-weight:700;border-radius:16px;display:flex;flex-direction:column;align-items:center;gap:1px}
 nav.bottom button span{display:flex;align-items:center;justify-content:center;font-size:19px;line-height:1;width:38px;height:30px;border-radius:12px;filter:grayscale(.6);opacity:.75;transition:all .2s}
 nav.bottom button.on{color:var(--accent-ink)}
 nav.bottom button.on span{background:var(--soft);filter:none;opacity:1;transform:translateY(-1px)}
@@ -195,7 +195,7 @@ svg text{fill:var(--muted);font-size:9px;font-weight:600}
 .views{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;background:var(--soft);padding:4px;border-radius:15px;margin:10px 0 2px}
 .views button{border:0;background:none;border-radius:11px;padding:8px 4px;font-weight:800;font-size:13px;color:var(--muted)}
 .views button.on{background:var(--card);color:var(--ink);box-shadow:var(--shadow-sm)}
-.board{display:flex;gap:10px;overflow-x:auto;padding:6px 2px 10px;scroll-snap-type:x mandatory;margin:0 -16px;padding-left:16px;padding-right:16px}
+.board{display:flex;gap:10px;overflow-x:auto;padding:6px 2px 10px;scroll-snap-type:x mandatory;margin:0 -18px;padding-left:18px;padding-right:18px}
 .col{flex:none;width:78%;max-width:300px;background:var(--soft);border-radius:20px;padding:10px;scroll-snap-align:start}
 .col h4{margin:2px 4px 8px;font-size:13px;font-weight:800;display:flex;justify-content:space-between}
 .kc{background:var(--card);border-radius:15px;padding:10px 11px;margin-bottom:8px;box-shadow:var(--shadow-sm);border-left:4px solid var(--c)}
@@ -253,6 +253,107 @@ textarea.note{min-height:56px;resize:vertical}
 .timer b span{font-size:13px;color:var(--muted);font-weight:700;letter-spacing:0}
 .confetti{position:fixed;top:-12px;width:9px;height:14px;z-index:50;border-radius:2px;pointer-events:none;animation:fall 1.6s cubic-bezier(.2,.6,.4,1) forwards}
 @keyframes fall{to{transform:translate(var(--dx),105vh) rotate(var(--r));opacity:.2}}
+
+/* ---------- ⓘ qué significa ---------- */
+.ib{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;border:1.5px solid currentColor;font-size:10px;font-weight:800;font-style:normal;font-family:Georgia,serif;opacity:.5;margin-left:6px;vertical-align:1px;cursor:pointer;line-height:1;flex:none}
+[data-info]{cursor:pointer}
+.pop-bg{position:fixed;inset:0;background:rgba(15,14,23,.45);z-index:45;display:flex;align-items:center;justify-content:center;padding:18px;animation:fd .15s ease}
+.pop{background:var(--card);border-radius:22px;max-width:480px;width:100%;max-height:86vh;overflow:auto;padding:22px;box-shadow:var(--shadow-md);animation:up .2s ease}
+.pop h4{margin:0 0 4px;font-size:18px;font-weight:800;letter-spacing:-.01em}
+.pop p{margin:8px 0;font-size:14.5px;line-height:1.55}
+.pop .lab{font-size:11px;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.05em;margin:14px 0 6px}
+.pop .calc{background:var(--soft);border-radius:14px;padding:6px 14px;font-size:13.5px}
+.pop .calc .ln{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-top:1px solid var(--line)}
+.pop .calc .ln:first-child{border-top:0}
+.pop .calc .ln b{font-variant-numeric:tabular-nums;white-space:nowrap}
+.pop .calc .ln.tot{font-weight:800}
+/* ---------- negociaciones (pipeline tipo CRM) ---------- */
+.nkpis{display:flex;gap:10px;overflow-x:auto;padding:2px 2px 8px;margin:0 -2px;scrollbar-width:none}
+.nkpi{flex:1 0 150px;background:var(--card);border-radius:18px;padding:12px 14px;box-shadow:var(--shadow-sm)}
+.nkpi small{display:flex;align-items:center;font-size:12px;color:var(--muted);font-weight:700;white-space:nowrap}
+.nkpi b{display:block;font-size:21px;font-weight:800;margin-top:4px;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.nkpi span{display:block;font-size:11.5px;color:var(--muted);font-weight:600;margin-top:1px}
+.ntool{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:10px 0 6px}
+.ntool .views{margin:0;flex:none;display:flex}
+.ntool .views button{padding:8px 12px}
+.ntool input{flex:1 1 140px;width:auto;min-width:0;padding:11px 14px}
+@media (max-width:999px){.ntool .views{width:100%}.ntool .views button{flex:1}}
+.hstat span{white-space:nowrap}
+.kb{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;margin:4px -18px 0;padding:4px 18px 14px}
+.kcol{flex:none;width:85%;max-width:330px;background:var(--soft);border-radius:18px;scroll-snap-align:start;display:flex;flex-direction:column;overflow:hidden}
+.kcol-h{background:var(--card);border-top:4px solid var(--c);padding:10px 14px 9px}
+.kcol-h b{font-size:13.5px;font-weight:800;display:flex;justify-content:space-between;gap:8px}
+.kcol-h small{display:flex;align-items:center;color:var(--muted);font-weight:700;font-size:12px;margin-top:2px}
+.kcards{display:flex;flex-direction:column;gap:8px;padding:10px;min-height:60px}
+.kcard{background:var(--card);border-radius:14px;padding:11px 12px;box-shadow:var(--shadow-sm);cursor:pointer;border-left:4px solid transparent;transition:box-shadow .15s}
+.kcard:hover{box-shadow:var(--shadow-md)}
+.kcard.alert{border-left-color:var(--bad)}
+.kcard .nm{font-weight:750;font-size:14.5px;line-height:1.3;word-break:break-word}
+.kcard .pr{font-size:12.5px;color:var(--muted);margin-top:2px;line-height:1.35;word-break:break-word}
+.kcard .vl{font-weight:800;font-size:14.5px;margin-top:7px;font-variant-numeric:tabular-nums}
+.kcard .nx{font-size:12.5px;margin-top:7px;color:var(--info-ink);font-weight:650;line-height:1.35}
+.kcard .nx.bad{color:var(--bad-ink)}
+.kcard .meta{margin-top:8px}
+.kcard .mv{display:flex;justify-content:space-between;margin-top:9px}
+.kcard .mv button{border:0;background:var(--soft);border-radius:9px;padding:6px 11px;font-weight:800;font-size:12px;color:var(--ink)}
+.kcard.drag{opacity:.35}
+.kcol.over{outline:2px dashed var(--accent);outline-offset:-3px}
+.klist{display:flex;flex-direction:column;gap:10px;margin-top:8px}
+.tablewrap{overflow-x:auto;background:var(--card);border-radius:20px;box-shadow:var(--shadow-sm);margin:10px 0}
+.ntable{width:100%;border-collapse:collapse;font-size:14px}
+.ntable th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:800;padding:12px 14px;border-bottom:1px solid var(--line);white-space:nowrap}
+.ntable td{padding:12px 14px;border-bottom:1px solid var(--line);vertical-align:middle}
+.ntable tr:last-child td{border-bottom:0}
+.ntable tr[data-neg]{cursor:pointer}
+.ntable tr[data-neg]:hover td{background:var(--soft)}
+.ntable .nx{font-size:13px;font-weight:650;color:var(--info-ink)}
+.ntable .nx.bad{color:var(--bad-ink)}
+.brand{display:none}
+.dk{display:none}
+.dk-only{display:none}
+/* ---------- pantalla grande (PC): menú lateral y todo el ancho ---------- */
+@media (min-width:1000px){
+  body{padding-left:240px;padding-bottom:28px}
+  .wrap{max-width:none;padding:0 36px}
+  header.top{padding:24px 0 16px;background:var(--bg)}
+  header.top h1{font-size:28px}
+  nav.bottom{top:0;bottom:0;left:0;right:auto;width:240px;max-width:none;margin:0;border-radius:0;flex-direction:column;justify-content:flex-start;gap:3px;padding:20px 14px;background:var(--card);backdrop-filter:none;border:0;border-right:1px solid var(--line);box-shadow:none}
+  nav.bottom .brand{display:flex;align-items:center;gap:10px;padding:4px 8px 22px;font-weight:800;font-size:15px;line-height:1.2;letter-spacing:-.01em}
+  nav.bottom .brand img{width:36px;height:36px;border-radius:10px}
+  nav.bottom .brand small{display:block;font-size:11.5px;color:var(--muted);font-weight:600}
+  nav.bottom button{flex:none;flex-direction:row;justify-content:flex-start;gap:12px;font-size:14.5px;padding:7px 10px;border-radius:13px;color:var(--ink);font-weight:650}
+  nav.bottom button span{width:34px;height:34px;font-size:18px;filter:none;opacity:.9}
+  nav.bottom button:hover{background:var(--soft)}
+  nav.bottom button.on{background:var(--soft);color:var(--accent-ink);font-weight:800}
+  nav.bottom button.on span{background:var(--card);box-shadow:var(--shadow-sm)}
+  .fab{right:36px;bottom:36px}
+  .focus-pill{left:276px;bottom:40px}
+  .toast{bottom:40px;left:calc(50% + 120px)}
+  .backdrop{justify-content:flex-end;align-items:stretch}
+  .sheet{max-width:640px;max-height:none;height:100%;border-radius:0;padding:24px 30px 30px;animation:side .22s ease;box-shadow:-24px 0 48px -24px rgba(27,26,46,.35)}
+  .sheet::before{display:none}
+  .sheet-x{margin:-4px -6px 0 8px}
+  .dash{columns:2 460px;column-gap:22px}
+  .dash > *{break-inside:avoid}
+  .dash > .card{margin:0 0 22px}
+  .dash > .stats-toggle{margin:0 0 22px}
+  .tiles{gap:14px}
+  .tile{padding:16px 14px}
+  .tile b{font-size:28px}
+  .tile span{font-size:12px}
+  .hero{padding:24px 26px}
+  .kb{display:grid;grid-template-columns:repeat(var(--ncol,6),minmax(168px,1fr));overflow-x:auto;margin:4px 0 0;padding:4px 0 14px;scroll-snap-type:none}
+  .kcol{width:auto;max-width:none;max-height:calc(100vh - 300px)}
+  .kcards{overflow-y:auto;flex:1}
+  .kcard .mv{display:none}
+  .dk{display:block}
+  .dk-only{display:block}
+  .mob-only{display:none !important}
+  .ct-row .dk{flex:none;width:200px;font-size:13px;color:var(--muted);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .ct-row{padding:12px 6px}
+  .ct-row:hover{background:var(--soft);border-radius:12px}
+}
+@keyframes side{from{transform:translateX(48px);opacity:.4}}
 </style>
 </head>
 <body>
@@ -269,6 +370,7 @@ textarea.note{min-height:56px;resize:vertical}
 <button class="fab" id="fab" aria-label="Agregar tarea">+</button>
 <button class="focus-pill" id="focusPill" hidden></button>
 <nav class="bottom">
+  <div class="brand"><img src="icon-192.png" alt=""><div>Organizador<small>Blackline Puerto Varas</small></div></div>
   <button data-tab="inicio"><span>🏠</span>Inicio</button>
   <button data-tab="hoy"><span>☀️</span>Hoy</button>
   <button data-tab="tareas"><span>📋</span>Tareas</button>
@@ -284,7 +386,7 @@ textarea.note{min-height:56px;resize:vertical}
 const $ = s => document.querySelector(s);
 const $$ = s => document.querySelectorAll(s);
 const LS = window.localStorage;
-let S = { data: null, tab: 'inicio', filtro: 'todas', q: '', verHechas: false, vista: LS.vista || 'lista', offline: false, busy: false, google: null, googleBusy: false, googleAt: 0, ext: null, extInactivo: false, base: null, baseAt: 0, bf: 'todos', bq: '', mutado: false, subH: 'habitos', neg: null, negAt: 0, nv: LS.nv || 'resumen', nf: 'abiertas', nq: '' };
+let S = { data: null, tab: 'inicio', filtro: 'todas', q: '', verHechas: false, vista: LS.vista || 'lista', offline: false, busy: false, google: null, googleBusy: false, googleAt: 0, ext: null, extInactivo: false, base: null, baseAt: 0, bf: 'todos', bq: '', mutado: false, subH: 'habitos', neg: null, negAt: 0, nv: LS.nv2 || '', nf: 'abiertas', nq: '' };
 let deferredInstall = null;
 
 /* ---------- utilidades ---------- */
@@ -339,7 +441,7 @@ async function api(action, extra){
 function apiX(op, extra){ return api('extra', Object.assign({ op }, extra || {})); }
 // Nivel 2 del script Extras: recordatorios y base de contactos. Nivel 3: la base solo usa contacto@blacklinechile.cl. Nivel 4: eventos de varios días.
 function extNivel(){ return S.extInactivo ? 0 : (S.ext && S.ext.nivel) || 1; }
-function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < 8; }
+function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < 9; }
 let sincTimer = null;
 // Después de cambiar tareas, el script actualiza los recordatorios del calendario (en segundo plano).
 function sincPronto(){
@@ -536,8 +638,8 @@ function heroHTML(){
   return '<div class="hero"><div class="hi">' + esc(saludo) + (nombre ? ', ' + esc(nombre) : '') + ' 👋</div><div class="big">' + frase + '</div>' +
     (oc ? '<div class="busy-band">🔒 Hoy: ' + esc(oc.titulo) + (oc.todoElDia ? ' · todo el día' : ' · ' + esc(oc.inicio) + '–' + esc(oc.fin)) + '</div>' : '') +
     '<div class="in"><div class="ring">' + ring(p, '#fff', 'rgba(255,255,255,.25)') + '<b>' + hechas.length + '<span>de ' + total + ' hoy</span></b></div>' +
-    '<div class="hstats"><div class="hstat"><b>🔥 ' + esc(racha) + '</b><span>racha (días)</span></div><div class="hstat"><b>⭐ ' + esc(puntos) + '</b><span>puntos</span></div>' +
-    '<div class="hstat"><b>🎯 ' + hechas.length + '/' + meta + '</b><span>meta diaria</span></div><div class="hstat"><b>🏅 ' + esc(nivel) + '</b><span>nivel ' + esc(ind['Nivel'] || 1) + '</span></div></div></div>' +
+    '<div class="hstats"><div class="hstat" data-info="racha"><b>🔥 ' + esc(racha) + '</b><span>racha (días)' + ib('racha') + '</span></div><div class="hstat" data-info="puntos"><b>⭐ ' + esc(puntos) + '</b><span>puntos' + ib('puntos') + '</span></div>' +
+    '<div class="hstat" data-info="meta"><b>🎯 ' + hechas.length + '/' + meta + '</b><span>meta diaria' + ib('meta') + '</span></div><div class="hstat" data-info="nivel"><b>🏅 ' + esc(nivel) + '</b><span>nivel ' + esc(ind['Nivel'] || 1) + ib('nivel') + '</span></div></div></div>' +
     '<div class="lvl"><div class="bar"><i style="width:' + Math.min(100, Math.round(enNivel / paraNivel * 100)) + '%"></i></div><small><span>' + enNivel + ' / ' + paraNivel + ' pts</span><span>siguiente nivel</span></small></div></div>';
 }
 
@@ -553,23 +655,23 @@ function viewInicio(){
     '<button class="tile" style="background:var(--grad-cool)" data-go="tareas"><span class="ic">🔄</span><b>' + enCurso.length + '</b><span>en curso</span></button></div>';
   html += '<button class="quick" id="qa"><b>+</b>Agregar tarea… <span style="margin-left:auto">🎤</span></button>';
 
+  html += '<div class="dash">';
   const foco = enfoque(3);
-  html += card('Enfócate ahora', '🎯', foco.length ? foco.map(x => taskHTML(x.t, { why: x.why, play: true, compact: true })).join('') : '<div class="empty">No hay nada urgente. ¡Buen momento para planificar! 🌤️</div>');
+  html += card('Enfócate ahora' + ib('enfoque'), '🎯', foco.length ? foco.map(x => taskHTML(x.t, { why: x.why, play: true, compact: true })).join('') : '<div class="empty">No hay nada urgente. ¡Buen momento para planificar! 🌤️</div>');
 
-  html += card('Resumen de hoy', '☀️', (lista.length ? lista.slice(0, 5).map(t => taskHTML(t)).join('') : '<div class="empty">Nada pendiente para hoy 🎉</div>') +
-    '<button class="link" data-go="hoy">' + (lista.length > 5 ? 'Ver las ' + lista.length + ' tareas de hoy →' : 'Abrir Hoy →') + '</button>', lista.length + ' pendientes');
 
   if (extNivel() >= 5 && S.neg && negocios().length){
     const m = metricasNeg();
-    html += card('Ventas', '🤝', '<div class="kpis"><div class="kpi" style="--c:#FF8A4C"><b>' + clpCorto(m.abiertoV) + '</b><span>pipeline</span></div><div class="kpi" style="--c:#A44DF0"><b>' + clpCorto(m.ponderado) + '</b><span>pronóstico</span></div><div class="kpi" style="--c:#13B386"><b>' + clpCorto(m.gMesV) + '</b><span>ganado mes</span></div></div><button class="link" data-go="negocios">Abrir negociaciones →</button>', m.estancadas.length ? '🧊 ' + m.estancadas.length + ' estancadas' : abiertos().length + ' abiertas');
+    html += card('Ventas', '🤝', '<div class="kpis"><div class="kpi" style="--c:#FF8A4C" data-info="pipeline"><b>' + clpCorto(m.abiertoV) + '</b><span>pipeline' + ib('pipeline') + '</span></div><div class="kpi" style="--c:#A44DF0" data-info="ponderado"><b>' + clpCorto(m.ponderado) + '</b><span>pronóstico' + ib('ponderado') + '</span></div><div class="kpi" style="--c:#13B386" data-info="ganadoMes"><b>' + clpCorto(m.gMesV) + '</b><span>ganado mes' + ib('ganadoMes') + '</span></div></div><button class="link" data-go="negocios">Abrir negociaciones →</button>', m.estancadas.length ? '🧊 ' + m.estancadas.length + ' estancadas' : abiertos().length + ' abiertas');
   }
   html += agendaHTML();
-  if (necesitaActualizar()) html += card('Nueva versión del script', '⬆️', '<div class="hint" style="margin-top:0">' + (extNivel() >= 7 ? '📥 Importar chats de WhatsApp (negociaciones en curso) y agente en modo económico (Claude Haiku 5.5).' : extNivel() >= 5 ? '🧠 Agente de ventas con IA + conexión con WhatsApp Business (Telnyx): organiza tus chats como lo harías tú.' : extNivel() >= 3 ? '🤝 Activa la pestaña Negocios (pipeline de ventas con sugerencias) y detecta eventos de varios días.' : '📅 Recordatorios en tu calendario y 📇 base de datos solo con los correos de contacto@blacklinechile.cl.') + '</div><button class="btn sm" id="updBtn">Actualizar (2 min)</button>');
+  if (necesitaActualizar()) html += card('Nueva versión del script', '⬆️', '<div class="hint" style="margin-top:0">' + (extNivel() >= 8 ? '📦 Conexión con Bsale: stock y precios reales en tus negociaciones y en el agente de IA.' : extNivel() >= 7 ? '📥 Importar chats de WhatsApp (negociaciones en curso) y agente en modo económico (Claude Haiku 5.5).' : extNivel() >= 5 ? '🧠 Agente de ventas con IA + conexión con WhatsApp Business (Telnyx): organiza tus chats como lo harías tú.' : extNivel() >= 3 ? '🤝 Activa la pestaña Negocios (pipeline de ventas con sugerencias) y detecta eventos de varios días.' : '📅 Recordatorios en tu calendario y 📇 base de datos solo con los correos de contacto@blacklinechile.cl.') + '</div><button class="btn sm" id="updBtn">Actualizar (2 min)</button>');
   html += asistenteHTML();
   html += semanaStripHTML();
   const abierto = LS.statsOpen === '1';
   html += '<button class="stats-toggle" id="stt"><span>📊 Estadísticas y logros</span><span>' + (abierto ? '▲' : '▼') + '</span></button>';
   if (abierto) html += statsHTML();
+  html += '</div>';
   $('#view').innerHTML = html;
   bindTasks($('#view'));
   $$('[data-go]').forEach(b => b.onclick = () => go(b.dataset.go));
@@ -1056,7 +1158,7 @@ function relacionadosHTML(t){
   return '<label class="l">👤 Relacionado con</label><div class="seg">' + L.map(c => '<button type="button" class="pill" data-cto="' + esc(c.id) + '">' + (TIPO_IC[c.tipo] || '') + ' ' + esc(c.nombre || c.email) + '</button>').join('') + '</div>';
 }
 function viewBase(){
-  if (S.extInactivo || necesitaActualizar()){
+  if (S.extInactivo || extNivel() < 2){
     $('#view').innerHTML = '<div class="hero" style="background:linear-gradient(135deg,#FF5C8A,#FF8A4C)"><div class="hi">📇 Base de datos</div><div class="big">Tu memoria de clientes y proveedores</div><div class="hint" style="color:#fff">La app revisa los correos que llegan por contacto@blacklinechile.cl y arma sola una ficha por cliente con todo su historial. Te avisa a quién hacerle seguimiento.</div></div>' +
       '<div class="btns"><button class="btn" id="bAct">' + (S.extInactivo ? 'Activar funciones extra' : '⬆️ Actualizar el script (2 min)') + '</button></div>';
     $('#bAct').onclick = showExtrasSetup; return;
@@ -1078,6 +1180,7 @@ function viewBase(){
   html += '<div class="filters" style="margin-top:8px">' + filtros.map(f => '<button class="pill ' + (S.bf === f[0] ? 'on' : '') + '" data-bf="' + f[0] + '">' + f[1] + '</button>').join('') + '</div>';
   html += '<div class="card">' + (L.length ? L.map(c => '<div class="ct-row" data-c="' + esc(c.id) + '">' + avatar(c) + '<div class="grow"><b style="font-size:15px">' + esc(c.nombre || c.email) + '</b>' +
     '<div class="meta" style="margin-top:4px"><span class="tag" style="background:' + hexToRgba(TIPO_COL[c.tipo] || '#7E7F92', .14) + ';color:' + (TIPO_COL[c.tipo] || '#7E7F92') + '">' + (TIPO_IC[c.tipo] || '') + ' ' + esc(c.tipo) + '</span>' + (c.empresa ? '<span class="tag">🏢 ' + esc(c.empresa) + '</span>' : '') + (c.etiquetas ? '<span class="tag">🏷️ ' + esc(String(c.etiquetas).slice(0, 28)) + '</span>' : '') + '</div></div>' +
+    '<div class="dk">' + esc(c.telefono || '') + '</div><div class="dk">' + esc(c.email || '') + '</div>' +
     '<div class="ct-last">' + haceTxt(c.ultima) + '<br>' + (c.n ? c.n + ' 💬' : '') + '</div></div>').join('')
     : '<div class="empty">' + (todos.length ? 'Nada con este filtro 🔍' : 'Aún no hay contactos.<br>Toca «Revisar Gmail y calendario» para armar tu base, o agrega uno a mano.') + '</div>') + '</div>';
   html += '<div class="hint">Se actualiza sola cada 6 horas con los correos que llegan por contacto@blacklinechile.cl (incluye nombre y teléfono de los formularios web). Tus respuestas, reuniones y tareas con esas personas se suman a su historial. Marca un contacto como «Ignorar» para que no vuelva a aparecer.</div>';
@@ -1330,7 +1433,8 @@ function metricasNeg(){
     gMes, gMesV: gMes.reduce((s, n) => s + (n.valor || 0), 0), tasa: g90.length + p90.length ? g90.length / (g90.length + p90.length) : null,
     ciclo: ciclo.length ? Math.round(ciclo.reduce((s, x) => s + x, 0) / ciclo.length) : null,
     ticket: ganadas.length ? ganadas.reduce((s, n) => s + (n.valor || 0), 0) / ganadas.length : null,
-    estancadas: an.filter(x => x.a.estancada), alcanzo, meses, motivos
+    estancadas: an.filter(x => x.a.estancada), alcanzo, meses, motivos,
+    g90: g90.length, p90: p90.length, nGan: ganadas.length, totalGan: ganadas.reduce((s, n) => s + (n.valor || 0), 0)
   };
 }
 // Contactos con señales de compra y sin negociación abierta.
@@ -1349,7 +1453,36 @@ function dealCard(n, a, compact){
     (a.abierta ? '<span class="tag ' + (a.estancada ? 'bad' : '') + '">⏱ ' + a.dEtapa + ' d en etapa</span>' : '') + '</div>' +
     (!compact && a.abierta && n.proxima ? '<div class="hint" style="margin:5px 0 0">➡️ ' + esc(n.proxima) + (n.fechaProx ? ' · ' + fmtRel(n.fechaProx) : '') + '</div>' : '') +
     (rec ? '<div class="why">' + rec.ic + ' ' + esc(rec.t) + '</div>' : '') + '</div>' +
-    (a.abierta ? '<div class="ct-last">' + Math.round(a.prob * 100) + '%<br><small>prob.</small></div>' : '') + '</div></div>';
+    (a.abierta ? '<div class="ct-last" data-info="prob" data-ref="' + esc(n.id) + '">' + Math.round(a.prob * 100) + '%<br><small>prob. ⓘ</small></div>' : '') + '</div></div>';
+}
+const ANCHO = () => window.matchMedia('(min-width:1000px)').matches;
+function ib(key, ref){ return '<i class="ib" data-info="' + key + '"' + (ref ? ' data-ref="' + esc(ref) + '"' : '') + ' role="button" aria-label="¿Qué significa?">i</i>'; }
+function fechaCierre(n){ const hi = historialDe(n); return hi.length ? hi[hi.length - 1].f : (n.actividad || hoy()); }
+function requiereAtencion(a){ return a.abierta && (a.sinResponder != null || a.proxVencida || a.estancada || a.sinProx); }
+function negFiltrados(){
+  const q = norm(S.nq);
+  let L = negocios().map(n => ({ n, a: analizar(n) }));
+  L = L.filter(x => S.nf === 'todas' ? true : S.nf === 'abiertas' ? x.a.abierta : S.nf === 'atencion' ? requiereAtencion(x.a) : S.nf === 'estancadas' ? x.a.estancada : S.nf === 'ganadas' ? x.n.estado === 'Ganada' : x.n.estado === 'Perdida');
+  if (q) L = L.filter(x => norm([x.n.titulo, x.n.producto, x.n.notas, x.a.c && x.a.c.nombre, x.a.c && x.a.c.telefono, x.a.c && x.a.c.email].join(' ')).includes(q));
+  return L.sort((x, y) => y.a.prioridad - x.a.prioridad || (y.n.valor || 0) - (x.n.valor || 0));
+}
+function proxHTML(n, a){
+  if (!a.abierta) return '';
+  if (a.sinResponder != null) return '<div class="nx bad">⚡ Te escribió ' + (a.sinResponder ? 'hace ' + a.sinResponder + ' d' : 'hoy') + ' y no hay respuesta</div>';
+  if (n.proxima) return '<div class="nx ' + (a.proxVencida ? 'bad' : '') + '">➡️ ' + esc(n.proxima) + (n.fechaProx ? ' · ' + fmtRel(n.fechaProx) : '') + '</div>';
+  return '<div class="nx bad">🧭 Sin próxima acción</div>';
+}
+function kcardHTML(n, a, opt){
+  opt = opt || {};
+  const c = a.c, nombre = c ? (c.nombre || c.email) : n.titulo, sub = c ? (n.producto || n.titulo) : n.producto, i = etapaIdx(n.etapa);
+  return '<div class="kcard' + (requiereAtencion(a) ? ' alert' : '') + '" data-neg="' + esc(n.id) + '"' + (opt.drag ? ' draggable="true"' : '') + '>' +
+    (opt.etapa ? '<span class="tag" style="background:' + hexToRgba(a.e.c, .15) + ';color:' + a.e.c + ';display:inline-block;margin-bottom:6px">' + a.e.ic + ' ' + esc(n.etapa) + '</span>' : '') +
+    '<div class="nm">' + esc(nombre) + '</div>' + (sub && sub !== nombre ? '<div class="pr">' + esc(sub) + '</div>' : '') +
+    '<div class="vl">' + (n.valor ? clp(n.valor) : '<span style="color:var(--muted);font-weight:600;font-size:13px">Sin valor estimado</span>') + '</div>' +
+    proxHTML(n, a) +
+    '<div class="meta">' + (a.abierta ? '<span class="tag" data-info="prob" data-ref="' + esc(n.id) + '">🎯 ' + Math.round(a.prob * 100) + '%</span><span class="tag" data-info="salud" data-ref="' + esc(n.id) + '"><span class="hd" style="background:' + saludCol(a.salud) + ';width:8px;height:8px;margin-right:4px"></span>' + a.salud + '</span><span class="tag ' + (a.estancada ? 'bad' : '') + '" data-info="dEtapa" data-ref="' + esc(n.id) + '">⏱ ' + a.dEtapa + ' d</span>' : '') +
+      (/whatsapp/i.test(n.origen) ? '<span class="tag ok">💬</span>' : '') + '</div>' +
+    (opt.mv && i >= 0 ? '<div class="mv">' + (i > 0 ? '<button data-nmv="' + esc(n.id) + '" data-k="' + esc(ETAPAS[i - 1].k) + '">◀ ' + ETAPAS[i - 1].corto + '</button>' : '<span></span>') + '<button data-nmv="' + esc(n.id) + '" data-k="' + esc(i < ETAPAS.length - 1 ? ETAPAS[i + 1].k : 'Ganada') + '">' + (i < ETAPAS.length - 1 ? ETAPAS[i + 1].corto + ' ▶' : '🏆 Ganada') + '</button></div>' : '') + '</div>';
 }
 function viewNegocios(){
   if (S.extInactivo || extNivel() < 5){
@@ -1358,67 +1491,171 @@ function viewNegocios(){
     $('#ngAct').onclick = showExtrasSetup; return;
   }
   if (!S.neg){ $('#view').innerHTML = '<div class="empty"><span class="spin"></span>Cargando tus negociaciones…</div>'; Promise.all([loadNeg(true), loadBase(false)]).then(() => { if (S.tab === 'negocios') render(); }); return; }
-  const vistas = [['resumen', '📊 Resumen'], ['pipeline', '▦ Pipeline'], ['lista', '☰ Lista']];
-  let html = '<div class="views" style="margin-top:4px">' + vistas.map(v => '<button class="' + (S.nv === v[0] ? 'on' : '') + '" data-nv="' + v[0] + '">' + v[1] + '</button>').join('') + '</div>';
-  html += '<div class="btns" style="margin-top:10px"><button class="btn" id="ngNew">＋ Nueva negociación</button></div>';
-  if (S.nv === 'pipeline') html += pipelineHTML(); else if (S.nv === 'lista') html += listaNegHTML(); else html += resumenNegHTML();
+  if (!S.nv) S.nv = ANCHO() ? 'pipeline' : 'lista';
+  const m = metricasNeg(), A = m.an, aten = A.filter(x => requiereAtencion(x.a)).length;
+  const kp = (key, label, val, sub) => '<div class="nkpi" data-info="' + key + '"><small>' + label + ib(key) + '</small><b>' + val + '</b><span>' + sub + '</span></div>';
+  let html = '<div class="nkpis">' + kp('pipeline', '💼 Pipeline abierto', clpCorto(m.abiertoV), A.length + ' negocios abiertos') + kp('ponderado', '🔮 Pronóstico', clpCorto(m.ponderado), 'ponderado por probabilidad') +
+    kp('ganadoMes', '🏆 Ganado este mes', clpCorto(m.gMesV), m.gMes.length + ' ventas') + kp('tasa', '🎯 Tasa de cierre', m.tasa == null ? '–' : Math.round(m.tasa * 100) + '%', 'últimos 90 días') + kp('atencion', '⚡ Requieren atención', aten, 'de ' + A.length + ' abiertos') + '</div>';
+  const vistas = [['pipeline', '▦ Pipeline'], ['lista', '☰ Lista'], ['resumen', '📊 Resumen']];
+  const filtros = [['abiertas', 'Abiertas'], ['atencion', '⚡ Atención'], ['estancadas', '🧊 Estancadas'], ['ganadas', '🏆 Ganadas'], ['perdidas', '❌ Perdidas'], ['todas', 'Todas']];
+  html += '<div class="ntool"><div class="views">' + vistas.map(v => '<button class="' + (S.nv === v[0] ? 'on' : '') + '" data-nv="' + v[0] + '">' + v[1] + '</button>').join('') + '</div>' +
+    (S.nv !== 'resumen' ? '<input type="text" id="nq" placeholder="🔎 Buscar cliente, producto o teléfono…" value="' + esc(S.nq) + '">' : '<span class="grow"></span>') +
+    (bsaleActivo() ? '<button class="btn sm sec" id="ngStock">📦 Stock</button>' : '') + '<button class="btn sm" id="ngNew">＋ Nueva</button></div>';
+  if (S.nv !== 'resumen') html += '<div class="filters">' + filtros.map(f => '<button class="pill ' + (S.nf === f[0] ? 'on' : '') + '" data-nf="' + f[0] + '">' + f[1] + '</button>').join('') + '</div>';
+  html += S.nv === 'pipeline' ? pipelineHTML() : S.nv === 'lista' ? listaNegHTML() : resumenNegHTML(m);
   $('#view').innerHTML = html;
-  $$('[data-nv]').forEach(b => b.onclick = () => { S.nv = LS.nv = b.dataset.nv; viewNegocios(); });
+  $$('[data-nv]').forEach(b => b.onclick = () => { S.nv = LS.nv2 = b.dataset.nv; viewNegocios(); });
   $('#ngNew').onclick = () => openNegocio(null);
-  $$('[data-neg]').forEach(b => b.onclick = () => openNegocio(negocios().find(x => x.id === b.dataset.neg)));
+  const st = $('#ngStock'); if (st) st.onclick = () => openStock('');
+  $$('#view [data-neg]').forEach(b => b.onclick = () => openNegocio(negocios().find(x => x.id === b.dataset.neg)));
   $$('[data-nmv]').forEach(b => b.onclick = e => { e.stopPropagation(); moverEtapa(negocios().find(x => x.id === b.dataset.nmv), b.dataset.k); });
   $$('[data-nf]').forEach(b => b.onclick = () => { S.nf = b.dataset.nf; viewNegocios(); });
   $$('[data-opc]').forEach(b => b.onclick = () => openNegocio(null, { contacto: b.dataset.opc }));
   const q = $('#nq'); if (q) q.oninput = () => { S.nq = q.value; const pos = q.selectionStart; viewNegocios(); const q2 = $('#nq'); q2.focus(); q2.setSelectionRange(pos, pos); };
+  // Arrastrar y soltar entre columnas (PC)
+  $$('.kcard[draggable]').forEach(c => { c.ondragstart = e => { e.dataTransfer.setData('text/plain', c.dataset.neg); c.classList.add('drag'); }; c.ondragend = () => c.classList.remove('drag'); });
+  $$('.kcol').forEach(col => {
+    col.ondragover = e => { e.preventDefault(); col.classList.add('over'); };
+    col.ondragleave = e => { if (!col.contains(e.relatedTarget)) col.classList.remove('over'); };
+    col.ondrop = e => { e.preventDefault(); col.classList.remove('over'); const n = negocios().find(x => x.id === e.dataTransfer.getData('text/plain')); if (n && n.etapa !== col.dataset.k) moverEtapa(n, col.dataset.k); };
+  });
 }
-function resumenNegHTML(){
-  const m = metricasNeg(), A = m.an;
-  if (!negocios().length) return '<div class="card"><div class="empty">🤝 Aún no hay negociaciones.<br>Crea la primera con el botón de arriba, desde la ficha de un contacto o desde las oportunidades que detecte la app.</div></div>' + oportunidadesHTML();
-  const kp = (v, l, c) => '<div class="kpi" style="--c:' + c + '"><b>' + v + '</b><span>' + l + '</span></div>';
-  let html = '<div class="hero" style="background:linear-gradient(135deg,#FF8A4C,#FF5C8A 60%,#A44DF0)"><div class="hi">🤝 Pipeline abierto · ' + A.length + ' negocios</div><div class="big" style="font-size:30px;margin-bottom:6px">' + clp(m.abiertoV) + '</div>' +
-    '<div class="hstats" style="position:relative;z-index:1"><div class="hstat"><b>' + clpCorto(m.ponderado) + '</b><span>pronóstico ponderado</span></div><div class="hstat"><b>' + clpCorto(m.gMesV) + '</b><span>ganado este mes (' + m.gMes.length + ')</span></div></div></div>';
-  html += '<div class="kpis">' + kp(m.tasa == null ? '–' : Math.round(m.tasa * 100) + '%', '🎯 tasa de cierre (90 d)', '#13B386') + kp(m.ciclo == null ? '–' : m.ciclo + ' d', '⏱ ciclo de venta', '#3B9EFF') + kp(m.ticket == null ? '–' : clpCorto(m.ticket), '🧾 ticket promedio', '#A44DF0') + '</div>';
-  const top = A.slice().sort((x, y) => y.a.prioridad - x.a.prioridad).slice(0, 3);
-  if (top.length) html += card('Prioridades de hoy', '🎯', top.map(x => dealCard(x.n, x.a)).join(''), m.estancadas.length ? '🧊 ' + m.estancadas.length + ' estancadas' : '');
-  // embudo
+function resumenNegHTML(m){
+  m = m || metricasNeg(); const A = m.an;
+  if (!negocios().length) return '<div class="card"><div class="empty">🤝 Aún no hay negociaciones.<br>Crea la primera con «＋ Nueva», desde la ficha de un contacto o importando chats de WhatsApp.</div></div>' + oportunidadesHTML();
+  const kp = (key, v, l, c) => '<div class="kpi" style="--c:' + c + '" data-info="' + key + '"><b>' + v + '</b><span>' + l + ib(key) + '</span></div>';
+  let html = '<div class="dash">';
+  html += card('Indicadores', '📊', '<div class="kpis">' + kp('ciclo', m.ciclo == null ? '–' : m.ciclo + ' d', '⏱ ciclo de venta', '#3B9EFF') + kp('ticket', m.ticket == null ? '–' : clpCorto(m.ticket), '🧾 ticket promedio', '#A44DF0') + kp('estancadas', m.estancadas.length, '🧊 estancadas', '#F04461') + '</div>');
+  const top = A.slice().sort((x, y) => y.a.prioridad - x.a.prioridad).slice(0, 4);
+  if (top.length) html += card('Prioridades de hoy' + ib('prioridad'), '🎯', top.map(x => dealCard(x.n, x.a)).join(''));
   const maxC = Math.max(1, ...ETAPAS.map(e => A.filter(x => x.n.etapa === e.k).length));
-  html += card('Embudo de ventas', '🔻', '<div class="fun">' + ETAPAS.map((e, i) => {
+  html += card('Embudo de ventas' + ib('embudo'), '🔻', '<div class="fun">' + ETAPAS.map((e, i) => {
     const L = A.filter(x => x.n.etapa === e.k), v = L.reduce((s, x) => s + (x.n.valor || 0), 0), w = 46 + 54 * (1 - i / ETAPAS.length) * (0.35 + 0.65 * L.length / maxC);
     const cv = i < ETAPAS.length - 1 && m.alcanzo[i] ? Math.round(m.alcanzo[i + 1] / m.alcanzo[i] * 100) : null;
     return '<div class="fr" style="width:' + w.toFixed(0) + '%;background:' + e.c + '"><span>' + e.ic + ' ' + e.corto + '</span><span>' + L.length + ' · ' + clpCorto(v) + '</span></div>' + (cv != null ? '<div class="cv">↓ ' + cv + '% avanza</div>' : '');
-  }).join('') + '<div class="fr" style="width:40%;background:#13B386;justify-content:center">🏆 ' + negocios().filter(n => n.estado === 'Ganada').length + ' ganadas</div></div><div class="hint">El % muestra cuántos negocios que llegaron a una etapa pasaron a la siguiente (histórico).</div>');
+  }).join('') + '<div class="fr" style="width:40%;background:#13B386;justify-content:center">🏆 ' + negocios().filter(n => n.estado === 'Ganada').length + ' ganadas</div></div>');
   const mx = Math.max(1, ...m.meses.map(x => x.v));
   html += card('Ventas ganadas · 6 meses', '📈', '<div class="mbar">' + m.meses.map(x => '<div>' + (x.v ? clpCorto(x.v) : '') + '<i style="height:' + Math.max(2, x.v / mx * 80) + '%"></i>' + x.nom + '</div>').join('') + '</div>');
   const mot = Object.entries(m.motivos).sort((a, b) => b[1] - a[1]);
   if (mot.length){ const mm = Math.max(...mot.map(x => x[1])); html += card('Por qué se pierden', '❌', mot.map(([k, v]) => '<div class="hb"><div class="n"><span>' + esc(k) + '</span><span>' + v + '</span></div><div class="b"><i style="width:' + (v / mm * 100) + '%;background:#F04461"></i></div></div>').join('')); }
-  return html + oportunidadesHTML();
+  return html + oportunidadesHTML() + '</div>';
 }
 function oportunidadesHTML(){
   const O = oportunidades(); if (!O.length) return '';
-  return card('Oportunidades detectadas', '💡', O.map(x => '<div class="sug"><span class="ic">' + avatar(x.c, 38) + '</span><div class="grow"><div class="tt">' + esc(x.c.nombre || x.c.email) + '</div><div class="st">' + esc((x.rec[0] && x.rec[0].detalle) || x.c.etiquetas || '') + '</div></div><button class="btn sm" data-opc="' + esc(x.c.id) + '">＋ Negocio</button></div>').join('') + '<div class="hint">Contactos con señales de compra (precio, test ride, cuotas…) en los últimos 30 días y sin negociación abierta.</div>');
+  return card('Oportunidades detectadas' + ib('oportunidades'), '💡', O.map(x => '<div class="sug"><span class="ic">' + avatar(x.c, 38) + '</span><div class="grow"><div class="tt">' + esc(x.c.nombre || x.c.email) + '</div><div class="st">' + esc((x.rec[0] && x.rec[0].detalle) || x.c.etiquetas || '') + '</div></div><button class="btn sm" data-opc="' + esc(x.c.id) + '">＋ Negocio</button></div>').join(''));
 }
 function pipelineHTML(){
-  const h = hoy(), cols = ETAPAS.concat([ETAPA_FIN.Ganada]);
-  return '<div class="board">' + cols.map((e, i) => {
-    const L = negocios().filter(n => n.etapa === e.k && (e.k !== 'Ganada' || diffDays(historialDe(n).slice(-1)[0] ? historialDe(n).slice(-1)[0].f : h, h) <= 30));
-    const v = L.reduce((s, n) => s + (n.valor || 0), 0);
-    return '<div class="col"><h4><span>' + e.ic + ' ' + esc(e.k) + '</span><span style="color:var(--muted)">' + L.length + ' · ' + clpCorto(v) + '</span></h4>' +
-      (L.length ? L.map(n => { const a = analizar(n);
-        return '<div class="kc" style="--c:' + (a.estancada ? '#F04461' : e.c) + '" data-neg="' + esc(n.id) + '"><div class="row" style="gap:6px"><span class="hd" style="background:' + saludCol(a.salud) + '"></span><div class="t grow">' + esc(n.titulo) + '</div></div>' +
-          '<div class="meta">' + (n.valor ? '<span class="tag">💰 ' + clpCorto(n.valor) + '</span>' : '') + (a.abierta ? '<span class="tag ' + (a.estancada ? 'bad' : '') + '">⏱ ' + a.dEtapa + ' d</span>' : '') + (n.proxima && a.abierta ? '<span class="tag ' + (a.proxVencida ? 'bad' : 'info') + '">➡️ ' + esc(String(n.proxima).slice(0, 22)) + '</span>' : '') + '</div>' +
-          (i < ETAPAS.length ? '<div class="mv">' + (i > 0 ? '<button data-nmv="' + esc(n.id) + '" data-k="' + esc(ETAPAS[i - 1].k) + '">◀</button>' : '<span></span>') + '<button data-nmv="' + esc(n.id) + '" data-k="' + esc(i < ETAPAS.length - 1 ? ETAPAS[i + 1].k : 'Ganada') + '">' + (i < ETAPAS.length - 1 ? ETAPAS[i + 1].corto + ' ▶' : '🏆 Ganada') + '</button></div>' : '') + '</div>';
-      }).join('') : '<div class="hint" style="text-align:center">Vacío</div>') + '</div>';
-  }).join('') + '</div><div class="hint">Desliza para ver todas las etapas. Borde rojo = estancada. El punto de color es la salud del negocio.</div>';
+  const h = hoy(), L = negFiltrados(), dk = ANCHO();
+  const cols = ETAPAS.concat([ETAPA_FIN.Ganada]).concat(['perdidas', 'todas'].includes(S.nf) ? [ETAPA_FIN.Perdida] : []);
+  return '<div class="kb" style="--ncol:' + cols.length + '">' + cols.map((e, i) => {
+    let C = L.filter(x => x.n.etapa === e.k);
+    if (e.k === 'Ganada' && S.nf !== 'ganadas') C = C.filter(x => diffDays(fechaCierre(x.n), h) <= 30);
+    const v = C.reduce((s, x) => s + (x.n.valor || 0), 0);
+    return '<div class="kcol" data-k="' + esc(e.k) + '" style="--c:' + e.c + '"><div class="kcol-h"><b><span>' + e.ic + ' ' + esc(e.k) + '</span><span>' + C.length + '</span></b><small>' + clp(v) + (i < ETAPAS.length ? ' · ' + Math.round(e.p * 100) + '% base' + ib('prob') : e.k === 'Ganada' && S.nf !== 'ganadas' ? ' · últimos 30 días' : '') + '</small></div>' +
+      '<div class="kcards">' + (C.length ? C.map(x => kcardHTML(x.n, x.a, { drag: dk, mv: i < ETAPAS.length })).join('') : '<div class="hint" style="text-align:center;padding:14px 0">Sin negocios</div>') + '</div></div>';
+  }).join('') + '</div><div class="hint">' + (dk ? 'Arrastra una tarjeta a otra columna para cambiar su etapa. ' : 'Desliza hacia el lado para ver todas las etapas. ') + 'Borde rojo = requiere atención. Toca cualquier número o ⓘ para saber qué significa.</div>';
 }
 function listaNegHTML(){
-  const q = norm(S.nq), filtros = [['abiertas', '🔥 Abiertas'], ['estancadas', '🧊 Estancadas'], ['ganadas', '🏆 Ganadas'], ['perdidas', '❌ Perdidas'], ['todas', '✨ Todas']];
-  let L = negocios().map(n => ({ n, a: analizar(n) }));
-  L = L.filter(x => S.nf === 'todas' ? true : S.nf === 'abiertas' ? x.a.abierta : S.nf === 'estancadas' ? x.a.estancada : S.nf === 'ganadas' ? x.n.estado === 'Ganada' : x.n.estado === 'Perdida');
-  if (q) L = L.filter(x => norm([x.n.titulo, x.n.producto, x.n.notas, x.a.c && x.a.c.nombre].join(' ')).includes(q));
-  L.sort((x, y) => y.a.prioridad - x.a.prioridad || (y.n.valor || 0) - (x.n.valor || 0));
-  return '<input type="text" id="nq" style="margin-top:12px" placeholder="🔎 Buscar cliente, producto, nota…" value="' + esc(S.nq) + '">' +
-    '<div class="filters" style="margin-top:8px">' + filtros.map(f => '<button class="pill ' + (S.nf === f[0] ? 'on' : '') + '" data-nf="' + f[0] + '">' + f[1] + '</button>').join('') + '</div>' +
-    '<div class="card">' + (L.length ? L.map(x => dealCard(x.n, x.a)).join('') : '<div class="empty">Nada con este filtro 🔍</div>') + '</div><div class="hint">Ordenadas por prioridad: primero lo urgente (sin responder, acción vencida, estancadas) y lo de mayor valor.</div>';
+  const L = negFiltrados();
+  if (!L.length) return '<div class="card"><div class="empty">Nada con este filtro 🔍</div></div>';
+  const pie = '<div class="hint">' + L.length + ' negociaciones · ordenadas por prioridad' + ib('prioridad') + '</div>';
+  if (!ANCHO()) return '<div class="klist">' + L.map(x => kcardHTML(x.n, x.a, { etapa: true })).join('') + '</div>' + pie;
+  return '<div class="tablewrap"><table class="ntable"><thead><tr><th>Cliente · negociación</th><th>Etapa</th><th>Valor</th><th>Prob.' + ib('prob') + '</th><th>Salud' + ib('salud') + '</th><th>En etapa' + ib('dEtapa') + '</th><th>Próxima acción</th><th>Última actividad' + ib('dAct') + '</th></tr></thead><tbody>' +
+    L.map(x => { const n = x.n, a = x.a, c = a.c, nombre = c ? (c.nombre || c.email) : n.titulo;
+      return '<tr data-neg="' + esc(n.id) + '"><td><div class="row" style="gap:10px">' + (c ? avatar(c, 34) : '<span class="av" style="width:34px;height:34px;font-size:13px;background:' + a.e.c + '">' + a.e.ic + '</span>') + '<div style="min-width:0"><b>' + esc(nombre) + '</b><div class="hint" style="margin:1px 0 0">' + esc(c ? (n.producto || n.titulo) : (n.producto || '')) + '</div></div></div></td>' +
+        '<td><span class="tag" style="background:' + hexToRgba(a.e.c, .15) + ';color:' + a.e.c + '">' + a.e.ic + ' ' + esc(n.etapa) + '</span></td>' +
+        '<td style="font-weight:800;white-space:nowrap">' + (n.valor ? clp(n.valor) : '–') + '</td>' +
+        '<td>' + (a.abierta ? '<span class="tag" data-info="prob" data-ref="' + esc(n.id) + '">' + Math.round(a.prob * 100) + '%</span>' : '–') + '</td>' +
+        '<td>' + (a.abierta ? '<span class="tag" data-info="salud" data-ref="' + esc(n.id) + '"><span class="hd" style="background:' + saludCol(a.salud) + ';width:8px;height:8px;margin-right:4px"></span>' + a.salud + '</span>' : '–') + '</td>' +
+        '<td>' + (a.abierta ? '<span class="tag ' + (a.estancada ? 'bad' : '') + '" data-info="dEtapa" data-ref="' + esc(n.id) + '">' + a.dEtapa + ' d</span>' : '–') + '</td>' +
+        '<td style="max-width:300px">' + (proxHTML(n, a) || '<span class="hint">' + esc(n.estado) + '</span>') + '</td>' +
+        '<td style="white-space:nowrap" data-info="dAct" data-ref="' + esc(n.id) + '">' + haceTxt(a.ultAct) + '</td></tr>'; }).join('') + '</tbody></table></div>' + pie;
+}
+/* ---------- ⓘ qué significa cada número ---------- */
+function negPorId(id){ return negocios().find(x => x.id === id); }
+function dec(x){ return x.toFixed(2).replace('.', ','); }
+function saludDesglose(n){
+  const a = analizar(n), max = a.e.max || 7, h = hoy(), L = [['Parte en', '100']];
+  const ina = Math.min(55, a.dAct / max * 35);
+  if (ina > 0.5) L.push([a.dAct + ' días sin actividad (lo esperado en «' + n.etapa + '» es máximo ' + max + ')', '−' + Math.round(ina)]);
+  if (a.proxVencida) L.push(['Venció la próxima acción', '−15']);
+  if (a.sinProx) L.push(['No tiene próxima acción', '−10']);
+  if (a.sinResponder != null) L.push(['El cliente escribió y no hay respuesta', '−15']);
+  if (a.I.filter(i => diffDays(i.fecha, h) <= 14).length >= 2) L.push(['2 o más actividades en los últimos 14 días', '+8']);
+  if (n.cierre && n.cierre >= h) L.push(['Fecha de cierre esperada vigente (' + fmt(n.cierre) + ')', '+4']);
+  L.push(['Salud', a.salud + ' / 100']);
+  return L;
+}
+const INFO = {
+  prob: { t: '🎯 Probabilidad de cierre', d: 'Qué tan probable es que la negociación termine en venta. No la inventa una IA: es una fórmula con dos ingredientes, la etapa en que está y la salud del negocio.',
+    f: 'Probabilidad = % base de la etapa × (0,55 + 0,45 × salud ÷ 100). Con salud 100 se queda con el % base completo; con salud muy baja baja hasta poco más de la mitad.',
+    tabla: () => [['% base de cada etapa', '']].concat(ETAPAS.map(e => [e.ic + ' ' + e.k, Math.round(e.p * 100) + '%'])),
+    calc: n => { const a = analizar(n), f = 0.55 + 0.45 * a.salud / 100; return [['% base de la etapa «' + n.etapa + '»', Math.round(a.e.p * 100) + '%'], ['Salud del negocio', a.salud + ' / 100'], ['Factor: 0,55 + 0,45 × ' + a.salud + ' ÷ 100', dec(f)], ['Probabilidad: ' + Math.round(a.e.p * 100) + '% × ' + dec(f), Math.round(a.prob * 100) + '%']]; } },
+  salud: { t: '❤️ Salud del negocio (0 a 100)', d: 'Mide si la negociación sigue viva. Parte en 100, se le restan puntos por inactividad y descuidos, y se le suman por actividad reciente. Verde: 70 o más · amarillo: 40 a 69 · rojo: menos de 40.',
+    f: 'Hasta −55 por días sin actividad (según lo esperado en la etapa) · −15 si venció la próxima acción · −10 si no hay próxima acción · −15 si el cliente escribió y no hay respuesta · +8 si hubo 2 o más actividades en 14 días · +4 si la fecha de cierre sigue vigente. Mínimo 5, máximo 100.', calc: saludDesglose },
+  dEtapa: { t: '⏱ Días en la etapa', d: 'Cuántos días lleva la negociación en su etapa actual, desde el último cambio de etapa (o desde que se creó, si nunca cambió).',
+    calc: n => { const a = analizar(n), hi = historialDe(n); return [['Último cambio de etapa', hi.length ? fmt(hi[hi.length - 1].f) : 'ninguno (creada ' + fmt(n.creada) + ')'], ['Días en «' + n.etapa + '»', a.dEtapa + ' d'], ['Se considera estancada después de', (a.e.max || 7) + ' d sin actividad']]; } },
+  dAct: { t: '🕑 Última actividad', d: 'Lo último que pasó con este negocio: una nota, un correo, un mensaje de WhatsApp, una actividad registrada o un cambio de etapa. Si pasan más días que lo esperado para la etapa, queda estancada.',
+    calc: n => { const a = analizar(n); return [['Última actividad', fmt(a.ultAct)], ['Días sin actividad', a.dAct + ' d'], ['Máximo esperado en «' + n.etapa + '»', (a.e.max || 7) + ' d']]; } },
+  estancadas: { t: '🧊 Negociación estancada', d: 'Una negociación abierta queda estancada cuando pasa más días sin actividad que el máximo esperado para su etapa.', tabla: () => ETAPAS.map(e => [e.ic + ' ' + e.k, 'más de ' + e.max + ' días']) },
+  prioridad: { t: '⚡ Orden por prioridad', d: 'Las negociaciones se ordenan para que veas primero lo que no puede esperar.', f: 'Puntos de urgencia: ⚡ cliente sin respuesta +4 · ⏰ próxima acción vencida +3 · 🧊 estancada +2 · próxima acción para hoy +2 · fecha de cierre pasada +1. Con la misma urgencia, va primero la de mayor valor × probabilidad.' },
+  atencion: { t: '⚡ Requieren atención', d: 'Negociaciones abiertas con al menos una alerta: el cliente escribió y no hay respuesta, la próxima acción venció, está estancada o no tiene próxima acción. En el pipeline tienen el borde rojo. Usa el filtro «⚡ Atención» para verlas juntas.' },
+  pipeline: { t: '💼 Pipeline abierto', d: 'La suma del valor estimado de todas las negociaciones abiertas (ni ganadas ni perdidas). Es todo lo que podrías vender si cerraras todo.',
+    calc: () => { const A = abiertos(); return ETAPAS.map(e => { const L = A.filter(n => n.etapa === e.k); return [e.ic + ' ' + e.k + ' (' + L.length + ')', clp(L.reduce((s, n) => s + (n.valor || 0), 0))]; }).concat([['Total', clp(A.reduce((s, n) => s + (n.valor || 0), 0))]]); } },
+  ponderado: { t: '🔮 Pronóstico ponderado', d: 'Lo que es realista esperar vender: cada negociación abierta aporta su valor multiplicado por su probabilidad de cierre. Una de $10.000.000 con 50% aporta $5.000.000.', f: 'Pronóstico = suma de (valor × probabilidad) de las negociaciones abiertas.',
+    calc: () => { const m = metricasNeg(); return m.an.slice().sort((x, y) => (y.n.valor || 0) * y.a.prob - (x.n.valor || 0) * x.a.prob).filter(x => x.n.valor).slice(0, 8).map(x => [x.n.titulo + ': ' + clpCorto(x.n.valor) + ' × ' + Math.round(x.a.prob * 100) + '%', clpCorto(x.n.valor * x.a.prob)]).concat([['Total pronóstico', clp(m.ponderado)]]); } },
+  ganadoMes: { t: '🏆 Ganado este mes', d: 'La suma del valor de las negociaciones que marcaste 🏆 Ganada durante este mes (cuenta el día en que la marcaste ganada).',
+    calc: () => { const m = metricasNeg(); return m.gMes.map(n => [n.titulo, clp(n.valor || 0)]).concat([['Total', clp(m.gMesV)]]); } },
+  tasa: { t: '🎯 Tasa de cierre (90 días)', d: 'De las negociaciones que terminaron en los últimos 90 días, qué porcentaje ganaste. Las abiertas no cuentan.', f: 'Tasa = ganadas ÷ (ganadas + perdidas), solo de las cerradas en los últimos 90 días.',
+    calc: () => { const m = metricasNeg(); return [['Ganadas (90 días)', m.g90], ['Perdidas (90 días)', m.p90], ['Tasa de cierre', m.tasa == null ? 'aún sin datos' : Math.round(m.tasa * 100) + '%']]; } },
+  ciclo: { t: '⏱ Ciclo de venta', d: 'Cuántos días demora en promedio una venta: desde que creas la negociación hasta que la marcas ganada.', calc: () => { const m = metricasNeg(); return [['Ventas ganadas consideradas', m.nGan], ['Promedio', m.ciclo == null ? 'aún sin datos' : m.ciclo + ' días']]; } },
+  ticket: { t: '🧾 Ticket promedio', d: 'El valor promedio de las negociaciones ganadas.', calc: () => { const m = metricasNeg(); return [['Ventas ganadas', m.nGan], ['Suma de esas ventas', clp(m.totalGan)], ['Ticket promedio', m.ticket == null ? 'aún sin datos' : clp(m.ticket)]]; } },
+  embudo: { t: '🔻 Embudo de ventas', d: 'Cada barra muestra cuántas negociaciones abiertas hay en cada etapa y cuánto suman. El «% avanza» indica, de todas las negociaciones que alguna vez llegaron a una etapa, cuántas pasaron a la siguiente. Sirve para ver en qué etapa se te caen las ventas.' },
+  oportunidades: { t: '💡 Oportunidades detectadas', d: 'Contactos (clientes o por clasificar) que en los últimos 30 días hablaron de algo de compra (precio, cotización, test ride, cuotas, talla, reserva, Levo…) y no tienen una negociación abierta. Toca «＋ Negocio» para crearla.' },
+  temperatura: { t: '🌡️ Temperatura', d: 'La pone el agente de IA al leer la conversación: caliente (quiere comprar pronto), tibio (interesado, sin apuro), frío (poco interés o no responde) o sin intención (no es una venta). Es su lectura de la conversación, no una fórmula.' },
+  meta: { t: '🎯 Meta diaria', d: 'Cuántas tareas quieres completar cada día. Se cambia en tu Sheet → pestaña Config → «Meta diaria de tareas».', calc: () => [['Tu meta', metaDiaria() + ' tareas'], ['Hechas hoy', hechasEl(hoy()).length]] },
+  racha: { t: '🔥 Racha', d: 'Días hábiles seguidos (lunes a viernes) en que cumpliste tu meta diaria. Si hoy todavía no la cumples, no se corta: se cuenta hasta ayer. La calcula tu Sheet (pestaña Config).' },
+  puntos: { t: '⭐ Puntos', d: 'Cada tarea completada suma puntos según su tamaño. Si era urgente e importante («Hacer ya»), vale el doble. Los valores se cambian en tu Sheet → Config.', tabla: () => [['Pequeña', '5 pts'], ['Mediana', '10 pts'], ['Grande', '25 pts'], ['«Hacer ya» (urgente e importante)', '× 2']] },
+  nivel: { t: '🏅 Nivel', d: 'Subes un nivel cada 100 puntos: Novato, Aprendiz, En marcha, Enfocado, Productivo, Imparable, Experto, Maestro y Leyenda. Los puntos por nivel se cambian en tu Sheet → Config.', calc: () => { const ind = S.data.indicadores || {}; return [['Puntos totales', ind['Puntos totales'] || 0], ['Nivel actual', (ind['Nivel'] || 1) + ' · ' + (ind['Nombre del nivel'] || '')], ['Puntos dentro del nivel', (ind['Puntos dentro del nivel actual'] || 0) + ' de ' + (params()['Puntos para subir de nivel'] || 100)]]; } },
+  enfoque: { t: '🎯 Enfócate ahora', d: 'Las 3 tareas que conviene hacer primero, según un puntaje que suma: vencimiento (vencida, hoy, mañana), cuadrante (urgente e importante primero), si ya la empezaste y la hora del día (tareas grandes en la mañana, rápidas al final de la tarde). Las que están esperando respuesta o pausadas bajan.' }
+};
+function openInfo(key, ref){
+  const x = INFO[key]; if (!x) return;
+  const n = ref ? negPorId(ref) : null;
+  let filas = null;
+  try { filas = x.calc ? (n ? x.calc(n) : x.calc.length === 0 ? x.calc() : null) : null; } catch(e){ filas = null; }
+  const tabla = (L, cls) => '<div class="calc">' + L.map((r, i) => '<div class="ln' + (cls && i === L.length - 1 ? ' tot' : '') + '"><span>' + esc(String(r[0])) + '</span><b>' + esc(String(r[1])) + '</b></div>').join('') + '</div>';
+  const bg = document.createElement('div'); bg.className = 'pop-bg';
+  bg.innerHTML = '<div class="pop" role="dialog"><h4>' + x.t + '</h4>' + (n ? '<div class="hint" style="margin:0">' + esc(n.titulo) + '</div>' : '') + '<p>' + x.d + '</p>' +
+    (filas && filas.length ? '<div class="lab">' + (n ? 'Cómo se calculó en este negocio' : 'Con tus datos de hoy') + '</div>' + tabla(filas, true) : '') +
+    (x.f ? '<div class="lab">Fórmula</div><p style="font-size:13.5px;color:var(--muted)">' + x.f + '</p>' : '') +
+    (x.tabla ? '<div class="lab">Valores</div>' + tabla(x.tabla()) : '') +
+    '<div class="btns"><button class="btn sec">Entendido</button></div></div>';
+  bg.onclick = e => { if (e.target === bg || e.target.closest('.btn')) bg.remove(); };
+  document.body.appendChild(bg);
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-info]'); if (!b) return;
+  e.preventDefault(); e.stopPropagation(); openInfo(b.dataset.info, b.dataset.ref);
+}, true);
+/* ---------- Bsale: stock y precios ---------- */
+function bsaleActivo(){ return extNivel() >= 9 && !!(S.ext && S.ext.bsale && S.ext.bsale.activo); }
+function stockBox(q){ return bsaleActivo() ? '<div class="smart"><input type="text" id="bs_q" value="' + esc(q || '') + '" placeholder="Modelo, talla o SKU (ej.: levo comp m)" autocomplete="off"><button class="mic" id="bs_go" aria-label="Buscar en Bsale">🔎</button></div><div id="bs_res"></div>' : ''; }
+async function buscarStock(){
+  const q = $('#bs_q').value.trim(), box = $('#bs_res'); if (!q) return;
+  box.innerHTML = '<div class="hint"><span class="spin"></span>Consultando Bsale…</div>';
+  try {
+    const r = await apiX('bsale', { q });
+    if (!r.activo){ box.innerHTML = '<div class="hint">Bsale no está conectado: falta BSALE_TOKEN en las propiedades del script.</div>'; return; }
+    box.innerHTML = !r.items.length ? '<div class="hint">No encontré productos con esas palabras en el catálogo de Bsale. Prueba con menos palabras o con el SKU.</div>' :
+      '<div class="card" style="margin:8px 0 0">' + r.items.map(x => '<div class="tl"><span class="ic" style="background:' + (x.total > 0 ? 'rgba(19,179,134,.15)' : 'rgba(240,68,97,.12)') + '">' + (x.total > 0 ? '✅' : '⛔') + '</span><div class="grow"><div style="font-weight:700;font-size:14px;line-height:1.35">' + esc(x.producto) + (x.variante ? ' · ' + esc(x.variante) : '') + '</div>' +
+        '<div class="hint" style="margin:2px 0 0">' + (x.total > 0 ? '<b style="color:var(--ok-ink)">' + x.total + ' disponible' + (x.total === 1 ? '' : 's') + '</b>' : '<b style="color:var(--bad-ink)">Sin stock</b>') + (x.sucursales.length > 1 ? ' · ' + x.sucursales.map(o => esc(o.nombre) + ': ' + o.disp).join(' · ') : '') + (x.precio ? ' · ' + clp(x.precio) : '') + (x.sku ? ' · SKU ' + esc(x.sku) : '') + '</div></div></div>').join('') + '</div><div class="hint">Disponible = stock menos lo reservado en documentos pendientes. Consultado recién en Bsale; precio con IVA de tu lista de precios.</div>';
+  } catch(e){ box.innerHTML = '<div class="hint">No se pudo consultar Bsale: ' + esc(e.message) + '</div>'; }
+}
+function bindStock(){ const b = $('#bs_go'); if (!b) return; b.onclick = buscarStock; $('#bs_q').onkeydown = e => { if (e.key === 'Enter') buscarStock(); }; }
+function openStock(q){
+  sheet('<h3>📦 Stock en Bsale</h3><div class="hint">Busca por modelo, talla, color o SKU. Ves lo disponible en cada sucursal y el precio de venta.</div>' + stockBox(q));
+  bindStock(); setTimeout(() => { const x = $('#bs_q'); if (x) x.focus(); }, 100); if (q) buscarStock();
 }
 function openNegocio(n, opt){
   opt = opt || {};
@@ -1445,9 +1682,10 @@ function openNegocio(n, opt){
     '<div class="stages">' + ETAPAS.map((x, i) => '<button style="--c:' + x.c + '" class="' + (x.k === n.etapa ? 'on' : (etapaIdx(n.etapa) > i || n.estado === 'Ganada') ? 'ok' : '') + '" data-ngk="' + esc(x.k) + '">' + x.corto + '</button>').join('') + '</div>' +
     (a.abierta ? '<div class="btns" style="margin-top:4px"><button class="btn sm" id="ng_win" style="background:var(--grad-green)">🏆 Ganada</button><button class="btn sm sec" id="ng_lose">❌ Perdida</button></div>'
       : '<div class="card" style="background:' + hexToRgba(e.c, .12) + '"><b>' + e.ic + ' ' + esc(n.estado) + '</b>' + (n.motivo ? '<div class="hint">Motivo: ' + esc(n.motivo) + '</div>' : '') + '<button class="btn sm sec" id="ng_reopen" style="margin-top:8px">↩️ Reabrir</button></div>') +
-    (a.abierta ? '<div class="kpis" style="margin-top:12px"><div class="kpi" style="--c:' + saludCol(a.salud) + '"><b>' + a.salud + '</b><span>salud</span></div><div class="kpi" style="--c:' + e.c + '"><b>' + Math.round(a.prob * 100) + '%</b><span>prob. de cierre</span></div><div class="kpi" style="--c:' + (a.estancada ? '#F04461' : '#3B9EFF') + '"><b>' + a.dAct + ' d</b><span>sin actividad</span></div></div>' : '') +
+    (a.abierta ? '<div class="kpis" style="margin-top:12px"><div class="kpi" style="--c:' + saludCol(a.salud) + '" data-info="salud" data-ref="' + esc(n.id) + '"><b>' + a.salud + '</b><span>salud' + ib('salud', n.id) + '</span></div><div class="kpi" style="--c:' + e.c + '" data-info="prob" data-ref="' + esc(n.id) + '"><b>' + Math.round(a.prob * 100) + '%</b><span>prob. de cierre' + ib('prob', n.id) + '</span></div><div class="kpi" style="--c:' + (a.estancada ? '#F04461' : '#3B9EFF') + '" data-info="dAct" data-ref="' + esc(n.id) + '"><b>' + a.dAct + ' d</b><span>sin actividad' + ib('dAct', n.id) + '</span></div></div>' : '') +
     agenteHTML(a.c) +
     (R.length ? '<label class="l">🧠 Qué hacer ahora</label><div class="card" style="margin:0">' + R.map((r, i) => '<div class="rec"><span class="ic" style="background:' + hexToRgba(r.c, .15) + '">' + r.ic + '</span><div class="grow"><div style="font-weight:750;font-size:14px;line-height:1.35">' + esc(r.t) + '</div><div class="hint" style="margin:3px 0 0">' + esc(r.d) + '</div>' + (r.acts ? '<div class="acts" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">' + r.acts.map(x => '<button class="btn sm sec" data-nga="' + esc(x[1]) + '">' + esc(x[0]) + '</button>').join('') + '</div>' : '') + '</div></div>').join('') + '</div>' : '') +
+    (bsaleActivo() ? '<label class="l">📦 Stock en Bsale</label>' + stockBox(n.producto || '') : '') +
     '<label class="l">📝 Registrar actividad</label><div class="chips2">' + ACTIVIDADES.map((x, i) => '<button data-nact="' + i + '">' + x[0] + '</button>').join('') + '</div>' +
     '<div class="smart" style="margin-top:6px"><input type="text" id="ng_nota" placeholder="Qué pasó (pidió cuotas, viene el sábado…)" autocomplete="off"><button class="mic" id="ng_nota_ok" aria-label="Registrar">＋</button></div>' +
     prox + '<details class="more"><summary>✏️ Editar datos</summary>' + campos + '</details>' +
@@ -1464,6 +1702,7 @@ function openNegocio(n, opt){
     $$('#layer [data-agente]').forEach(b => b.onclick = () => analizarAhora(b.dataset.agente, b));
   $$('#layer [data-impc]').forEach(b => b.onclick = () => openImportar({ contacto: b.dataset.impc }));
     $$('[data-ngk]').forEach(b => b.onclick = () => moverEtapa(n, b.dataset.ngk));
+    bindStock();
     const w = $('#ng_win'); if (w) w.onclick = () => moverEtapa(n, 'Ganada');
     const l = $('#ng_lose'); if (l) l.onclick = () => openPerdida(n);
     const ro = $('#ng_reopen'); if (ro) ro.onclick = () => moverEtapa(n, 'Negociación');
@@ -2182,6 +2421,7 @@ function showSettings(){
     (deferredInstall ? '<div class="btns"><button class="btn" id="s_inst">📲 Instalar app en este dispositivo</button></div>' : '') +
     '<div class="card"><b>✨ Funciones extra</b> <span class="hint">(calendario, correo, subtareas, repetir)</span><div class="hint">' + esc(gTxt) + '</div><button class="btn sm sec" id="s_g">' + (g && !g.inactivo ? 'Ver sugerencias' : 'Cómo activarlas') + '</button></div>' +
     (extNivel() >= 2 ? '<div class="card"><b>📅 Recordatorios en tu calendario</b><div class="hint">Cada tarea pendiente con fecha está en el calendario «' + esc((S.ext && S.ext.calendario) || 'Organizador BlackLine') + '», con aviso en tu teléfono 10 min antes (a las 9:00, o a la hora que pongas: «a las 15:30»). Se actualiza solo cada hora y cuando cambias algo.</div><button class="btn sm sec" id="s_sinc">🔄 Sincronizar ahora</button></div>' : necesitaActualizar() ? '<div class="card"><b>⬆️ Hay una versión nueva del script</b><div class="hint">📅 Recordatorios y 📇 base de datos solo con contacto@blacklinechile.cl.</div><button class="btn sm" id="s_upd">Actualizar (2 min)</button></div>' : '') +
+    (extNivel() >= 9 ? '<div class="card"><b>📦 Bsale</b><div class="hint">' + (bsaleActivo() ? 'Conectado ✓' + (S.ext.bsale.sinc ? ' · catálogo actualizado ' + haceTxt(S.ext.bsale.sinc.slice(0, 10)) : '') + '. El agente revisa stock y precio de lo que pide cada cliente, y en cada negociación puedes consultar el stock. El catálogo se actualiza solo una vez al día.' : 'No conectado: falta tu token de Bsale (BSALE_TOKEN) en las propiedades del script. Los pasos están en la guía.') + '</div>' + (bsaleActivo() ? '<div class="btns" style="margin-top:8px"><button class="btn sm sec" id="s_bs">📦 Buscar stock</button><button class="btn sm sec" id="s_bsc">🔄 Actualizar catálogo</button></div>' : '') + '</div>' : '') +
     (extNivel() >= 7 ? '<div class="card"><b>🧠 Agente de ventas IA</b><div class="hint">' + (agenteActivo() ? 'Activo ✓ (' + esc(S.ext.agente.modelo) + (/haiku/.test(S.ext.agente.modelo) ? ', modo económico' : '') + ')' + (S.ext.agente.ultimo ? ' · último análisis ' + haceTxt(S.ext.agente.ultimo.slice(0, 10)) : '') + '. Cada 10 minutos lee las conversaciones nuevas de WhatsApp: crea y completa clientes, mueve negociaciones, agenda lo conversado como tareas y te sugiere qué responder. Nunca escribe a tus clientes.' : 'No activado: falta tu clave de Claude (ANTHROPIC_API_KEY) en las propiedades del script. Los pasos están en la guía.') + '</div>' + (extNivel() >= 8 ? '<button class="btn sm sec" id="s_imp">📥 Importar chat de WhatsApp</button>' : '') + '</div>' : '') +
     (extNivel() >= 6 ? '<div class="card"><b>💬 WhatsApp Business</b><div class="hint">' + (S.ext && S.ext.wa ? 'Conectado ✓ · último mensaje recibido ' + haceTxt(S.ext.wa.slice(0, 10)) + '. Cada mensaje crea o actualiza al cliente en la Base, queda en su historial y, si pregunta por precio, stock, talla o test ride, abre una negociación nueva.' : 'Aún no conectado. Con la conexión, cada mensaje crea o actualiza al cliente, queda en su historial y abre negociaciones solas.') + '</div><a class="btn sm sec" style="display:inline-block;text-decoration:none" href="https://github.com/SnowPv/Organizador/blob/main/docs/WHATSAPP.md" target="_blank">📖 Guía de conexión</a></div>' : '') +
     '<div class="card"><b>✨ Trucos para agregar rápido</b><div class="hint">• Fechas: <i>hoy, mañana, pasado mañana, el viernes, en 3 días, 15/10, 20 de octubre, la próxima semana</i><br>• Hora: <i>a las 10, 15:30</i><br>• Prioridad: <i>urgente</i> o <i>!</i> · <i>importante</i><br>• Categoría o área: <i>#ventas, #marketing, #personal</i><br>• Proyecto: <i>@levo</i><br>• Repetir: <i>cada lunes, todos los días, días hábiles, cada mes</i><br>• Toca 🎤 para dictar.</div></div>' +
@@ -2192,6 +2432,8 @@ function showSettings(){
   const ss2 = $('#s_sinc'); if (ss2) ss2.onclick = async () => { ss2.disabled = true; try { const r = await apiX('sinc'); toast('📅 ' + r.creados + ' nuevos · ' + r.actualizados + ' actualizados · ' + r.borrados + ' borrados'); } catch(e){ toast('No se pudo: ' + e.message); } ss2.disabled = false; };
   const su = $('#s_upd'); if (su) su.onclick = showExtrasUpdate;
   const sim = $('#s_imp'); if (sim) sim.onclick = () => openImportar();
+  const sbs = $('#s_bs'); if (sbs) sbs.onclick = () => openStock('');
+  const sbc = $('#s_bsc'); if (sbc) sbc.onclick = async () => { sbc.disabled = true; sbc.innerHTML = '<span class="spin"></span>Actualizando…'; try { const r = await apiX('bsale', { sinc: 1 }); toast('📦 Catálogo actualizado: ' + r.catalogo + ' variantes'); await loadExtras(); } catch(e){ toast('No se pudo: ' + e.message); } sbc.disabled = false; sbc.textContent = '🔄 Actualizar catálogo'; };
   $('#s_re').onclick = showSetup;
   $('#s_out').onclick = () => { if (confirm('Se borran el link y la clave de este dispositivo.')){ ['url', 'token', 'cache', 'googleCache', 'extCache', 'baseCache', 'negCache'].forEach(k => LS.removeItem(k)); S.data = null; S.google = null; closeSheet(); showSetup(); } };
 }
