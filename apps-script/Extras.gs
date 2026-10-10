@@ -15,7 +15,7 @@
  * Para actualizar este archivo más adelante: reemplaza todo su contenido y repite los dos pasos anteriores.
  */
 
-const EX_VERSION = '2026-10-13';
+const EX_VERSION = '2026-10-14';
 const EX_NIVEL = 8;      // la app lo usa para saber qué funciones tiene este script
 const EX_HOJA = 'Tareas';
 const EX_PRIMERA = 4;
@@ -79,6 +79,27 @@ function autorizarExtras() {
   ex_instalarTriggers_();
   UrlFetchApp.fetch('https://api.anthropic.com/v1/models', { muteHttpExceptions: true });   // pide el permiso para conectarse a Claude
   Logger.log('Listo. Calendario de recordatorios: ' + cal.getName() + ' · correos sin leer: ' + sinLeer + ' · tareas automáticas programadas.');
+}
+
+// Cambia la cuenta de Google que usa el organizador: correos, calendario y recordatorios.
+// Ejecútala estando conectado con la cuenta que quieres usar (por ejemplo, la de la tienda) y luego
+// crea una implementación nueva (Implementar → Nueva implementación) con esa misma cuenta.
+function usarEstaCuenta() {
+  const props = PropertiesService.getScriptProperties(), cuenta = Session.getEffectiveUser().getEmail();
+  props.deleteProperty('EX_CAL_ID');           // el calendario de recordatorios se crea en esta cuenta
+  props.deleteProperty('EX_ESCANEO_TIENDA');   // la base vuelve a revisar los correos (ahora de esta cuenta)
+  props.setProperty('EX_CUENTA', cuenta);      // las tareas automáticas de la cuenta anterior se apagan solas
+  autorizarExtras();
+  Logger.log('Listo: el organizador ahora usa ' + cuenta + '. Falta: Implementar → Nueva implementación → Aplicación web, y pegar el link nuevo en la app.');
+}
+// Si el organizador se pasó a otra cuenta, las tareas automáticas de esta cuenta se borran y no hacen nada.
+function ex_cuentaVigente_() {
+  const c = PropertiesService.getScriptProperties().getProperty('EX_CUENTA');
+  if (!c || c === Session.getEffectiveUser().getEmail()) return true;
+  ScriptApp.getProjectTriggers().forEach(function (t) {
+    if (['ex_tareaHoraria', 'ex_tareaBase', 'ex_tareaAgente'].indexOf(t.getHandlerFunction()) >= 0) ScriptApp.deleteTrigger(t);
+  });
+  return false;
 }
 
 function app_extra_(p) {
@@ -925,9 +946,9 @@ function ex_conLock_(fn) {
   if (!lock.tryLock(30000)) return;
   try { fn(); } finally { lock.releaseLock(); }
 }
-function ex_tareaHoraria() { ex_conLock_(ex_sincCalendario_); }
-function ex_tareaBase() { ex_conLock_(ex_escanearBase_); }
-function ex_tareaAgente() { ex_rondaAgente_(); }
+function ex_tareaHoraria() { if (ex_cuentaVigente_()) ex_conLock_(ex_sincCalendario_); }
+function ex_tareaBase() { if (ex_cuentaVigente_()) ex_conLock_(ex_escanearBase_); }
+function ex_tareaAgente() { if (ex_cuentaVigente_()) ex_rondaAgente_(); }
 
 /* ---------- hábitos: mes nuevo ---------- */
 // Guarda el resumen del mes que termina en "Historial hábitos" y deja la grilla lista para el mes actual.

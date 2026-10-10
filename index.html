@@ -272,7 +272,7 @@ textarea.note{min-height:56px;resize:vertical}
   <button data-tab="inicio"><span>🏠</span>Inicio</button>
   <button data-tab="hoy"><span>☀️</span>Hoy</button>
   <button data-tab="tareas"><span>📋</span>Tareas</button>
-  <button data-tab="habitos"><span>💪</span>Hábitos</button>
+  <button data-tab="semana"><span>🗓️</span>Semana</button>
   <button data-tab="negocios"><span>🤝</span>Negocios</button>
   <button data-tab="proy"><span>🚀</span>Proyectos</button>
   <button data-tab="base"><span>📇</span>Base</button>
@@ -776,7 +776,7 @@ function showExtrasSetup(){
   if (necesitaActualizar()) return showExtrasUpdate();
   const raw = 'https://raw.githubusercontent.com/SnowPv/Organizador/main/apps-script/Extras.gs';
   const linea = "case 'extra':       return app_json_(app_extra_(p));";
-  sheet('<h3>✨ Activar funciones extra</h3><div class="hint">📅 Agenda y ✉️ correos como tareas · ☑ subtareas · 🔁 tareas que se repiten · 💪 mes nuevo de hábitos desde la app · y el Sheet vuelve a completar solo la fecha de cierre, el área y el estado cuando editas a mano. Se hace una sola vez, idealmente desde el PC. Todo corre en tu propio script: nada sale de tu cuenta.</div>' +
+  sheet('<h3>✨ Activar funciones extra</h3><div class="hint">📅 Agenda y ✉️ correos como tareas · ☑ subtareas · 🔁 tareas que se repiten · y el Sheet vuelve a completar solo la fecha de cierre, el área y el estado cuando editas a mano. Se hace una sola vez, idealmente desde el PC. Todo corre en tu propio script: nada sale de tu cuenta.</div>' +
     '<div class="card"><b>1.</b> En el Sheet: <b>Extensiones → Apps Script</b>. Toca <b>+ → Secuencia de comandos</b> y nómbrala <b>Extras</b>.' +
     '<div class="hint">Pega dentro todo el código de este archivo:</div><button class="btn sm sec" id="gc1">📋 Copiar código</button> <a class="btn sm sec" style="text-decoration:none;display:inline-block" href="' + raw + '" target="_blank">Abrir archivo</a></div>' +
     '<div class="card"><b>2.</b> En <b>WebApp</b>, dentro de <code>switch (p.action)</code>, agrega esta línea debajo de <code>case \'semanaGuardar\'</code>:<div class="hint" style="font-family:monospace;word-break:break-all">' + esc(linea) + '</div><button class="btn sm sec" id="gc2">📋 Copiar línea</button></div>' +
@@ -1686,7 +1686,7 @@ function viewSemana(){
       '<div style="display:flex;height:8px;border-radius:99px;overflow:hidden"><i style="width:' + (w.trabajo/tot*100) + '%;background:var(--trabajo)"></i><i style="width:' + (w.personal/tot*100) + '%;background:var(--personal)"></i></div>' +
       (w.bien ? '<div class="hint">🙂 ' + esc(w.bien) + '</div>' : '') + (w.mal ? '<div class="hint">⚠️ ' + esc(w.mal) + '</div>' : '') + '</div>';
   }).join(''));
-  $('#view').innerHTML = '<div class="views" style="grid-template-columns:1fr 1fr;margin-top:4px">' + [['habitos', '💪 Hábitos'], ['semana', '🗓️ Semana']].map(v => '<button class="' + (S.subH === v[0] ? 'on' : '') + '" data-subh="' + v[0] + '">' + v[1] + '</button>').join('') + '</div>' + html; bindSubH();
+  $('#view').innerHTML = html;
   $$('[data-chk]').forEach(b => b.onclick = async () => {
     const v = b.dataset.v === '1'; b.disabled = true;
     try { await api('semanaChecklist', { row: +b.dataset.chk, valor: v }); if (v) vibrar(20); await load(); }
