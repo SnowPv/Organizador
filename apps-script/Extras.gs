@@ -15,7 +15,7 @@
  * Para actualizar este archivo más adelante: reemplaza todo su contenido y repite los dos pasos anteriores.
  */
 
-const EX_VERSION = '2026-10-19';
+const EX_VERSION = '2026-10-20';
 const EX_NIVEL = 11;      // la app lo usa para saber qué funciones tiene este script
 const EX_HOJA = 'Tareas';
 const EX_PRIMERA = 4;
@@ -1040,6 +1040,14 @@ const EX_AS_SISTEMA = {
     '- para cada una: formato, tema corto, la idea o guion en 2 a 4 frases (qué se graba o muestra), un texto sugerido para la publicación (tono cercano, chileno, con llamado a la acción como escribir por WhatsApp o pasar a probarla), 3 a 6 hashtags, el objetivo y por qué ahora.',
     'No inventes precios ni promociones que no estén en los datos. Responde solo con el JSON pedido.'
   ].join('\n'),
+  tareas: [
+    'Eres el asistente de productividad del encargado de Blackline Puerto Varas (tienda de bicicletas Specialized con taller).',
+    'Revisa sus tareas pendientes junto con lo que pasa en la tienda (negociaciones y sus próximos pasos, lo que entendió el agente de los chats de WhatsApp, clientes esperando respuesta, agenda, proyectos y contenido planificado) y:',
+    '- sugiere solo las tareas que FALTAN (máximo 8), concretas y accionables, con fecha realista y el motivo; no sugieras nada que ya esté cubierto por una tarea pendiente, aunque esté escrita distinto;',
+    '- detecta tareas pendientes duplicadas o que se superponen (por ejemplo dos seguimientos al mismo cliente por lo mismo) y di cuál mantener y cuáles quitar, copiando los textos exactos;',
+    '- en fuente indica de dónde sale cada sugerencia (Negociación, Chat, Agenda, Proyecto, Contenido u Otro).',
+    'Español de Chile, directo. Responde solo con el JSON pedido.'
+  ].join('\n'),
   semana: [
     'Eres el asistente de productividad y ventas del encargado de Blackline Puerto Varas (tienda de bicicletas Specialized con taller).',
     'Con los datos de su semana (tareas hechas y pendientes, negociaciones, reflexión anterior) prepara su revisión semanal:',
@@ -1061,14 +1069,26 @@ const EX_AS_ESQUEMA = {
     ideas: { type: 'array', items: { type: 'object', additionalProperties: false, required: ['fecha', 'formato', 'tema', 'idea', 'guion', 'relacionado', 'texto', 'hashtags', 'objetivo', 'por_que'], properties: {
       fecha: { type: 'string' }, formato: { type: 'string', enum: ['Reel', 'Carrusel', 'Historia', 'Post'] }, tema: { type: 'string' }, idea: { type: 'string' }, guion: { type: 'string' }, relacionado: { type: 'string' }, texto: { type: 'string' }, hashtags: { type: 'string' },
       objetivo: { type: 'string', enum: ['Ventas', 'Comunidad', 'Alcance', 'Educación', 'Postventa'] }, por_que: { type: 'string' } } } } } },
+  tareas: { type: 'object', additionalProperties: false, required: ['resumen', 'sugerencias', 'duplicadas'], properties: {
+    resumen: { type: 'string' },
+    sugerencias: { type: 'array', items: { type: 'object', additionalProperties: false, required: ['tarea', 'fecha', 'prioridad', 'motivo', 'fuente'], properties: { tarea: { type: 'string' }, fecha: { type: 'string' }, prioridad: { type: 'string', enum: ['Alta', 'Media', 'Baja'] }, motivo: { type: 'string' }, fuente: { type: 'string', enum: ['Negociación', 'Chat', 'Agenda', 'Proyecto', 'Contenido', 'Otro'] } } } },
+    duplicadas: { type: 'array', items: { type: 'object', additionalProperties: false, required: ['mantener', 'quitar', 'motivo'], properties: { mantener: { type: 'string' }, quitar: { type: 'array', items: { type: 'string' } }, motivo: { type: 'string' } } } } } },
   semana: { type: 'object', additionalProperties: false, required: ['resumen', 'logros', 'prioridades', 'riesgos'], properties: {
     resumen: { type: 'string' },
     logros: { type: 'array', items: { type: 'string' } },
     prioridades: { type: 'array', items: { type: 'object', additionalProperties: false, required: ['titulo', 'por_que'], properties: { titulo: { type: 'string' }, por_que: { type: 'string' } } } },
     riesgos: { type: 'array', items: { type: 'string' } } } }
 };
+// Parecido entre dos textos de tareas (0 a 1), por palabras significativas en común.
+function ex_parecido_(a, b) {
+  const vac = { para: 1, con: 1, por: 1, que: 1, del: 1, los: 1, las: 1, una: 1, uno: 1, sus: 1, como: 1, este: 1, esta: 1, sobre: 1, entre: 1, hacer: 1, pendiente: 1 };
+  const tk = function (s) { const o = {}; ex_norm_(s).replace(/[^a-z0-9 ]+/g, ' ').split(/\s+/).forEach(function (w) { if (w.length > 2 && !vac[w]) o[w] = 1; }); return Object.keys(o); };
+  const A = tk(a), B = tk(b); if (!A.length || !B.length) return 0;
+  const comunes = A.filter(function (w) { return B.indexOf(w) >= 0; }).length;
+  return Math.max(comunes / (A.length + B.length - comunes), comunes >= 3 ? comunes / Math.min(A.length, B.length) * 0.9 : 0);
+}
 function ex_asistente_(p) {
-  const modo = ['semana', 'contenido'].indexOf(p.modo) >= 0 ? p.modo : 'dia';
+  const modo = ['semana', 'contenido', 'tareas'].indexOf(p.modo) >= 0 ? p.modo : 'dia';
   const ctx = String(p.contexto || '').slice(0, 40000);
   if (!ctx) throw new Error('sin contexto');
   return { ok: true, modo: modo, r: ex_llamarClaude_(ctx, EX_AS_SISTEMA[modo], EX_AS_ESQUEMA[modo]) };
@@ -1232,12 +1252,15 @@ function ex_aplicarAgente_(id, ctx, a) {
     if (n.etapa === 'Ganada' || n.etapa === 'Perdida') { upd.proxima = '🧠 Confirmar: ¿' + (n.etapa === 'Ganada' ? 'compró? → marcar Ganada' : 'se perdió? (' + (n.motivo_perdida || 'sin motivo') + ') → marcar Perdida'); upd.fechaProx = ex_hoyYmd_(tz); cambios.push('sugiere ' + n.etapa); }
     if (Object.keys(upd).length > 1) ex_guardarNegocio_(upd);
   }
-  // Recordatorios de lo conversado (sin repetir los que ya creó).
+  // Recordatorios de lo conversado (sin repetir los que ya creó ni duplicar tareas pendientes parecidas).
   const props = PropertiesService.getScriptProperties(), hechas = JSON.parse(props.getProperty('EX_AG_TAREAS') || '[]');
+  const pend = ex_hoja_().getRange(EX_PRIMERA, 1, EX_ULTIMA - EX_PRIMERA + 1, 15).getValues().filter(function (r) { return r[1] && r[0] !== true; }).map(function (r) { return { t: String(r[1]), n: String(r[14] || '') }; });
   (a.tareas || []).slice(0, 4).forEach(function (t) {
     if (!t.texto) return;
     const k = ex_firma_(id + '|' + ex_norm_(t.texto) + '|' + t.fecha);
     if (hechas.indexOf(k) >= 0) return;
+    if (pend.some(function (x) { const s2 = ex_parecido_(x.t, t.texto); return s2 >= 0.75 || (s2 >= 0.45 && x.n.indexOf(id) >= 0); })) { hechas.push(k); cambios.push('tarea omitida (ya existe una parecida): ' + t.texto); return; }
+    pend.push({ t: t.texto, n: id });
     hechas.push(k);
     app_agregar_({ tarea: { tarea: t.texto, area: 'Trabajo', categoria: 'Ventas', proyecto: '', limite: /^\d{4}-\d{2}-\d{2}$/.test(t.fecha) ? t.fecha : ex_hoyYmd_(tz), urgente: t.urgente ? 'Sí' : 'No', importante: 'Sí', tamano: 'Pequeña', notas: (t.hora ? '⏰ ' + t.hora + ' · ' : '') + '🧠 WhatsApp · ' + (ac.nombre || c[2]) + ' [' + id + ']' + (negId ? ' (' + negId + ')' : ''), estado: 'Pendiente' } });
     cambios.push('tarea: ' + t.texto);

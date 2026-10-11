@@ -544,6 +544,42 @@ nav.bottom button span .ico{width:21px;height:21px}
 .qa{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:0 0 14px}
 .qa a,.qa button{border:1px solid var(--line);background:var(--card);border-radius:12px;padding:10px 4px;font-weight:600;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:5px;color:var(--ink);text-decoration:none;cursor:pointer}
 .qa .ico{width:20px;height:20px;color:var(--accent)}
+
+/* ---------- Tareas: vistas inteligentes ---------- */
+.tviews{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:0 0 12px;padding-bottom:2px;position:sticky;top:calc(env(safe-area-inset-top,0px) + 64px);z-index:4;background:var(--bg);padding-top:4px}
+.tviews button{flex:none;border:1px solid var(--line);background:var(--card);border-radius:12px;padding:8px 12px;font-weight:600;font-size:13.5px;color:var(--ink);display:flex;align-items:center;gap:6px;cursor:pointer}
+.tviews button b{font-size:12px;font-weight:700;background:var(--soft);color:var(--muted);border-radius:8px;padding:1px 7px;font-variant-numeric:tabular-nums}
+.tviews button.on{background:var(--ink);border-color:var(--ink);color:#fff}
+.tviews button.on b{background:rgba(255,255,255,.2);color:#fff}
+.tviews button.alert b{background:#FDECEA;color:var(--bad-ink)}
+.tviews button.ia b{background:var(--accent-soft);color:var(--accent-ink)}
+.qadd{display:flex;gap:8px;margin-bottom:12px}
+.qadd input{flex:1;min-width:0;padding:12px 14px}
+.qadd .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;align-self:stretch;margin:0}
+.qadd .btn svg{width:18px;height:18px}
+@media (max-width:600px){.qadd .bt{display:none}.qadd .btn{padding:0 14px}}
+.dayh{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;padding:12px 0 2px;display:flex;justify-content:space-between}
+.dayh.hoy{color:var(--accent-ink)}
+.more{border:0;background:none;color:var(--accent-ink);font-weight:600;font-size:13px;padding:8px 0;cursor:pointer}
+.selmode .task .chk{visibility:hidden}
+.selmode .task{position:relative;cursor:pointer}
+.selmode .task::before{content:"";position:absolute;left:2px;top:14px;width:20px;height:20px;border-radius:6px;border:2px solid #C5CBD5;background:var(--card)}
+.selmode .task.sel::before{background:var(--accent);border-color:var(--accent);box-shadow:inset 0 0 0 3px var(--card)}
+.selbar{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(96px + env(safe-area-inset-bottom));z-index:12;background:var(--ink);color:#fff;border-radius:16px;padding:8px;display:flex;gap:6px;align-items:center;box-shadow:var(--shadow-md);max-width:calc(100% - 24px);overflow-x:auto}
+body:has(.selbar) .fab{display:none}
+@media (max-width:600px){.selbar{left:12px;right:12px;transform:none;max-width:none;flex-wrap:wrap;justify-content:center}.selbar span{width:100%;text-align:center;padding:2px 0 4px}}
+.selbar span{padding:0 8px;font-weight:700;font-size:13px;white-space:nowrap}
+.selbar button{border:0;background:rgba(255,255,255,.12);color:#fff;border-radius:10px;padding:8px 10px;font-weight:600;font-size:12.5px;white-space:nowrap;cursor:pointer}
+@media (min-width:1000px){.selbar{bottom:32px;left:calc(50% + 120px)}.tviews{top:0}}
+.sgi{display:flex;gap:10px;padding:11px 0;border-top:1px solid var(--line);align-items:flex-start}
+.sgi:first-child{border-top:0}
+.sgi .tx{flex:1;min-width:0;font-size:14px;line-height:1.35}
+.sgi .tx b{font-weight:600}
+.sgi .tx small{display:block;color:var(--muted);font-size:12.5px;margin-top:2px}
+.sgi .ac{display:flex;gap:6px;flex:none}
+.sgi .ac button{border:1px solid var(--line);background:var(--card);border-radius:10px;width:36px;height:36px;font-size:15px;cursor:pointer}
+.sgi .ac button.ok{background:var(--accent);border-color:var(--accent);color:#fff}
+.src{display:inline-block;font-size:11px;font-weight:700;color:var(--accent-ink);background:var(--accent-soft);border-radius:6px;padding:1px 6px;margin-right:6px}
 </style>
 </head>
 <body>
@@ -2437,32 +2473,101 @@ async function planificarDia(){
   } catch(e){ m.el.querySelector('.empty').innerHTML = 'No se pudo armar el plan: ' + esc(e.message); }
 }
 /* ---------- vista: Tareas (lista, tablero y matriz) ---------- */
+/* ---------- Tareas: vistas inteligentes (una a la vez), bandeja de sugerencias y selección múltiple ---------- */
+function similitud(a, b){
+  const A = new Set(tokens(a)), B = new Set(tokens(b)); if (!A.size || !B.size) return 0;
+  let c = 0; A.forEach(w => { if (B.has(w)) c++; });
+  return Math.max(c / (A.size + B.size - c), c >= 3 ? c / Math.min(A.size, B.size) * 0.9 : 0);
+}
+function yaExisteTarea(texto, clave){ return pendientes().some(t => similitud(t.tarea, texto) >= 0.6 || (clave && String(t.notas || '').includes(clave) && similitud(t.tarea, texto) >= 0.35)); }
+function esDelAgente(t){ return /🧠/.test(t.notas || '') && !/🧠✓/.test(t.notas || ''); }
+function descartadas(){ return lsGet('sugDesc', []); }
+// Sugerencias automáticas, sin IA: lo que falta según negociaciones, clientes esperando respuesta, agenda y proyectos.
+function sugerenciasTareas(){
+  const h = hoy(), out = [], desc = new Set(descartadas());
+  const add = x => { if (!desc.has(x.k) && !yaExisteTarea(x.tarea, x.clave) && !out.some(y => similitud(y.tarea, x.tarea) >= 0.6)) out.push(x); };
+  if (S.neg) abiertos().forEach(n => { if (n.proxima) add({ k: 'n:' + n.id + ':' + n.proxima, tarea: '🤝 ' + n.proxima + ' – ' + n.titulo, fecha: n.fechaProx && n.fechaProx > h ? n.fechaProx : h, fuente: 'Negociación', motivo: 'Próximo paso de la negociación sin tarea en tu lista', clave: n.id, notas: negTag(n) }); });
+  if (S.base) contactos().filter(c => agenteDe(c.id).idea).forEach(c => add({ k: 'r:' + c.id + ':' + (agenteDe(c.id).idea.fecha || ''), tarea: 'Responder a ' + (c.nombre || c.email), fecha: h, fuente: 'Chat', motivo: 'Te escribió y espera respuesta (el agente dejó una idea en su ficha)', clave: c.id, notas: c.telefono ? '📞 ' + c.telefono : '' }));
+  const ev = S.google && S.google.eventos ? S.google.eventos.filter(e => e.fecha > h && e.fecha <= addDays(h, 3) && !e.todoElDia && /client|reuni|visita|entrega|test|salida|capacit|proveedor|evento/i.test(e.titulo)) : [];
+  ev.forEach(e => add({ k: 'e:' + e.id, tarea: 'Preparar: ' + e.titulo, fecha: addDays(e.fecha, -1), fuente: 'Agenda', motivo: 'Evento del ' + fmt(e.fecha) + (e.inicio ? ' a las ' + e.inicio : ''), notas: '📅 ' + e.titulo }));
+  (S.data.proyectos || []).forEach(p => { if (!S.data.tareas.some(t => t.proyecto === p.nombre && !t.hecho)) add({ k: 'p:' + p.nombre, tarea: 'Definir la próxima tarea del proyecto ' + p.nombre, fecha: addDays(h, 1), fuente: 'Proyecto', motivo: 'El proyecto no tiene tareas pendientes', proyecto: p.nombre }); });
+  return out;
+}
+function duplicadasTareas(){
+  const P = pendientes(), grupos = [], usado = new Set();
+  P.forEach((a, i) => { if (usado.has(a)) return; const g = [a]; P.slice(i + 1).forEach(b => { if (!usado.has(b) && similitud(a.tarea, b.tarea) >= 0.6){ g.push(b); usado.add(b); } }); if (g.length > 1){ usado.add(a); grupos.push(g); } });
+  return grupos;
+}
 function viewTareas(){
-  const d = S.data, h = hoy();
-  let L = d.tareas.filter(t => S.verHechas ? true : !t.hecho);
-  if (S.filtro !== 'todas') L = L.filter(t => t.area === S.filtro || t.categoria === S.filtro || t.proyecto === S.filtro);
-  if (S.q){ const q = norm(S.q); L = L.filter(t => norm(t.tarea + ' ' + (t.proyecto || '') + ' ' + (t.categoria || '') + ' ' + (t.notas || '')).includes(q)); }
-  L.sort((a, b) => (a.hecho - b.hecho) || ordenar(a, b));
-  const opciones = [['todas', 'Todas las áreas y categorías']].concat(d.config.areas.map(a => [a, 'Área: ' + a]), d.config.categorias.map(c => [c.nombre, 'Categoría: ' + c.nombre]), (d.proyectos || []).map(p => [p.nombre, 'Proyecto: ' + p.nombre]));
-  let html = '<div class="tbar"><input type="text" id="q" placeholder="🔎 Buscar tarea, proyecto o nota" value="' + esc(S.q) + '"><select id="tf">' + opciones.map(o => '<option value="' + esc(o[0]) + '"' + (S.filtro === o[0] ? ' selected' : '') + '>' + esc(o[1]) + '</option>').join('') + '</select>' +
-    '<div class="views">' + [['lista', 'Lista'], ['tablero', 'Tablero'], ['matriz', 'Matriz']].map(v => '<button class="' + (S.vista === v[0] ? 'on' : '') + '" data-v="' + v[0] + '">' + v[1] + '</button>').join('') + '</div>' +
-    '<button class="pill ' + (S.verHechas ? 'on' : '') + '" id="vh">Ver hechas</button><button class="btn sm" id="tNew">＋ Nueva</button></div>';
-  const grupos = [['Vencidas', t => !t.hecho && t.limite && t.limite < h, 'bad'], ['Hoy', t => !t.hecho && t.limite === h], ['Próximas', t => !t.hecho && t.limite > h], ['Sin fecha', t => !t.hecho && !t.limite], ['Hechas', t => t.hecho]];
-  if (S.vista === 'tablero') html += tableroHTML(L.filter(t => !t.hecho));
-  else if (S.vista === 'matriz') html += matrizHTML(L.filter(t => !t.hecho));
-  else if (!L.length) html += '<div class="empty">No hay tareas con este filtro 🔍</div>';
-  else if (ANCHO()){
-    html += '<div class="tablewrap"><table class="ntable ttable"><thead><tr><th style="width:40px"></th><th>Tarea</th><th>Fecha</th><th>Categoría</th><th>Proyecto</th><th>Estado</th><th>Prioridad</th></tr></thead><tbody>' +
-      grupos.map(g => { const items = L.filter(g[1]); if (!items.length) return ''; return '<tr class="grp"><td colspan="7">' + g[0] + ' · ' + items.length + '</td></tr>' + items.map(t => { const idx = d.tareas.indexOf(t), f = fechaTxt(t), q = QUAD[quadOf(t)];
-        return '<tr><td><button class="chk ' + (t.hecho ? 'on' : '') + '" style="--q:' + (quadOf(t) === 1 ? 'var(--bad)' : '#C5CBD5') + '" data-tog="' + idx + '">' + (t.hecho ? '✓' : '') + '</button></td><td data-open="' + idx + '"><span class="t">' + esc(t.tarea) + '</span>' + ((t.subtareas || []).length ? ' <span class="pill2">☑ ' + t.subtareas.filter(x => x.ok).length + '/' + t.subtareas.length + '</span>' : '') + (t.repetir ? ' <span class="pill2">↻ ' + esc(t.repetir) + '</span>' : '') + '</td>' +
-          '<td style="white-space:nowrap"><span class="tm" style="margin:0"><span class="d ' + f[0] + '">' + (f[1] || '–') + '</span></span></td><td>' + esc(t.categoria || '–') + '</td><td>' + esc(t.proyecto || '–') + '</td><td>' + esc(t.hecho ? 'Hecha' : t.estado || 'Pendiente') + '</td><td style="white-space:nowrap"><span class="dot" style="background:' + q.c + ';margin-right:6px"></span>' + q.n + '</td></tr>'; }).join(''); }).join('') + '</tbody></table></div>';
-  } else grupos.forEach(g => { const items = L.filter(g[1]); if (items.length) html += '<div class="sec"><div class="sh"' + (g[2] ? ' style="color:var(--bad-ink)"' : '') + '>' + g[0] + ' <span class="n">' + items.length + '</span></div>' + items.map(t => taskHTML(t, { play: !t.hecho })).join('') + '</div>'; });
-  $('#view').innerHTML = html; bindTasks($('#view'));
-  const q = $('#q'); q.oninput = () => { S.q = q.value; const pos = q.selectionStart; viewTareas(); const q2 = $('#q'); q2.focus(); q2.setSelectionRange(pos, pos); };
-  $('#tf').onchange = e => { S.filtro = e.target.value; viewTareas(); };
+  const d = S.data, h = hoy(), P = pendientes();
+  const venc = vencidas().sort((a, b) => puntaje(b).s - puntaje(a).s), hoyL = P.filter(t => t.limite === h).sort((a, b) => puntaje(b).s - puntaje(a).s);
+  const prox = P.filter(t => t.limite > h).sort((a, b) => a.limite.localeCompare(b.limite) || ordenar(a, b)), sinF = P.filter(t => !t.limite).sort(ordenar);
+  const agente = P.filter(esDelAgente), sug = sugerenciasTareas(), dups = duplicadasTareas(), nRev = agente.length + sug.length + dups.length;
+  if (!S.tv) S.tv = 'hoy';
+  const vistas = [['hoy', 'Hoy', venc.length + hoyL.length, venc.length ? 'alert' : ''], ['prox', 'Próximas', prox.length, ''], ['sin', 'Sin fecha', sinF.length, ''], ['revisar', '✦ Por revisar', nRev, 'ia'], ['todas', 'Todas', P.length, ''], ['hechas', 'Hechas', d.tareas.filter(t => t.hecho).length, '']];
+  let html = '<div class="qadd"><input type="text" id="tq_add" placeholder="Nueva tarea… (ej.: llamar a Pedro viernes 10:00)" autocomplete="off"><button class="btn sm" id="tq_ok" title="Agregar">' + icon('plus') + '<span class="bt">Agregar</span></button><button class="btn sm sec" id="tSel" title="Seleccionar varias">' + (S.sel ? '<span>Listo</span>' : icon('check') + '<span class="bt">Seleccionar</span>') + '</button></div>' +
+    '<div class="tviews">' + vistas.map(v => '<button class="' + (S.tv === v[0] ? 'on ' : '') + v[3] + '" data-tv="' + v[0] + '">' + v[1] + ' <b>' + v[2] + '</b></button>').join('') + '</div>';
+  let cuerpo = '';
+  const lista = (L, opt) => L.map(t => taskHTML(t, Object.assign({ play: !t.hecho }, opt || {}))).join('');
+  if (S.tv === 'hoy'){
+    if (venc.length){ const ver = S.vencTodas ? venc : venc.slice(0, 5);
+      cuerpo += '<div class="sec"><div class="sh" style="color:var(--bad-ink)">Vencidas <span class="n">' + venc.length + '</span><span class="r"><button class="btn sm sec" data-bulk="hoy">Todas a hoy</button><button class="btn sm sec" data-bulk="man">A mañana</button></span></div>' + lista(ver) + (venc.length > 5 ? '<button class="more" id="vMas">' + (S.vencTodas ? 'Ver menos' : 'Ver las ' + (venc.length - 5) + ' restantes') + '</button>' : '') + '</div>'; }
+    const carga = venc.length + hoyL.length;
+    if (carga > metaDiaria() + 2) cuerpo += '<div class="nextc" style="margin-bottom:14px"><div class="tx"><small>Día cargado</small><b style="font-weight:600">Tienes ' + carga + ' tareas para hoy y tu meta es ' + metaDiaria() + '.</b><span style="color:var(--muted)">Pídele al asistente que ordene tu día o mueve lo no urgente.</span></div><button class="btn sm" id="tPlan">Planificar</button></div>';
+    cuerpo += '<div class="sec"><div class="sh">Para hoy <span class="n">' + hoyL.length + '</span></div>' + (hoyL.length ? lista(hoyL) : '<div class="wsub" style="padding:4px 0 10px">Nada con fecha de hoy.' + (prox.length ? ' Lo próximo: «' + esc(prox[0].tarea) + '» (' + fmt(prox[0].limite) + ').' : '') + '</div>') + '</div>';
+    if (nRev) cuerpo += '<div class="sec" style="border-color:#D7E4F7"><div class="sh" style="color:var(--accent-ink)">' + icon('spark') + ' ' + nRev + ' por revisar<span class="r"><button class="btn sm sec" data-tv="revisar">Revisar</button></span></div><div class="wsub" style="padding:0 0 10px">Sugerencias de tareas, tareas que creó el agente desde los chats y posibles duplicadas.</div></div>';
+  } else if (S.tv === 'prox'){
+    const dias = {}; prox.forEach(t => { (dias[t.limite] = dias[t.limite] || []).push(t); });
+    const keys = Object.keys(dias).sort(), cerca = keys.filter(k => k <= addDays(h, 14)), lejos = keys.filter(k => k > addDays(h, 14));
+    cuerpo += '<div class="week" style="margin-bottom:12px">' + [1, 2, 3, 4, 5, 6, 7].map(i => { const f = addDays(h, i), n = (dias[f] || []).length; return '<button class="wd" data-dj="' + f + '"><small>' + DIAS[pd(f).getDay()] + '</small><b>' + pd(f).getDate() + '</b><span style="font-size:11px;font-weight:700">' + (n || '·') + '</span></button>'; }).join('') + '</div>';
+    cuerpo += '<div class="sec">' + (keys.length ? cerca.map(k => '<div class="dayh" id="d-' + k + '"><span>' + (k === addDays(h, 1) ? 'Mañana · ' : '') + fmtLong(k) + '</span><span>' + dias[k].length + '</span></div>' + lista(dias[k])).join('') +
+      (lejos.length ? '<div class="dayh"><span>Más adelante</span><span>' + lejos.reduce((x, k) => x + dias[k].length, 0) + '</span></div>' + lista(lejos.flatMap(k => dias[k])) : '') : '<div class="empty">Nada programado más adelante.</div>') + '</div>';
+  } else if (S.tv === 'sin'){
+    cuerpo += '<div class="sec"><div class="sh">Sin fecha <span class="n">' + sinF.length + '</span></div><div class="wsub" style="padding:0 0 6px">Las tareas sin fecha son las que más se olvidan: dales un día o elimínalas. Usa «Seleccionar» para fecharlas en bloque.</div>' + (sinF.length ? sinF.map(t => taskHTML(t, { play: true }) + '<div class="tm" style="margin:-4px 0 8px 38px;gap:6px">' + [['Hoy', 0], ['Mañana', 1], ['Semana', 'sem']].map(x => '<button class="pill" style="padding:4px 10px;font-size:12px" data-qf="' + d.tareas.indexOf(t) + '" data-qd="' + x[1] + '">' + x[0] + '</button>').join('') + '</div>').join('') : '<div class="empty">Todas tus tareas tienen fecha ✓</div>') + '</div>';
+  } else if (S.tv === 'revisar'){
+    cuerpo += '<div class="ai"><div class="wh" style="margin:0 0 6px">' + icon('spark') + 'Asistente de tareas<span class="r" style="margin-left:auto"><button class="btn sm" id="aiTar">Revisar con IA</button></span></div><div class="wsub">Analiza negociaciones, chats, agenda y proyectos, sugiere lo que falta y encuentra tareas repetidas. Tú decides qué queda.</div></div>';
+    cuerpo += '<div class="sec"><div class="sh">Sugerencias <span class="n">' + sug.length + '</span></div>' + (sug.length ? sug.map((x, i) => '<div class="sgi"><div class="tx"><span class="src">' + esc(x.fuente) + '</span><b>' + esc(x.tarea) + '</b><small>' + esc(fmtRel(x.fecha)) + ' · ' + esc(x.motivo) + '</small></div><div class="ac"><button class="ok" data-sga="' + i + '" aria-label="Agregar">＋</button><button data-sgd="' + i + '" aria-label="Descartar">✕</button></div></div>').join('') : '<div class="wsub" style="padding:4px 0 10px">No falta nada por ahora ✓</div>') + '</div>';
+    cuerpo += '<div class="sec"><div class="sh">Creadas por el agente desde los chats <span class="n">' + agente.length + '</span></div>' + (agente.length ? agente.map(t => { const idx = d.tareas.indexOf(t); return '<div class="sgi"><div class="tx" data-open="' + idx + '"><b>' + esc(t.tarea) + '</b><small>' + (t.limite ? esc(fmtRel(t.limite)) + ' · ' : '') + esc(String(t.notas || '').replace(/🧠\s*WhatsApp\s*·\s*/, '').slice(0, 80)) + '</small></div><div class="ac"><button class="ok" data-agok="' + idx + '" aria-label="Mantener">✓</button><button data-agno="' + idx + '" aria-label="Eliminar">✕</button></div></div>'; }).join('') : '<div class="wsub" style="padding:4px 0 10px">Nada nuevo del agente.</div>') + '</div>';
+    cuerpo += '<div class="sec"><div class="sh">Posibles duplicadas <span class="n">' + dups.length + '</span></div>' + (dups.length ? dups.map((g, i) => '<div class="sgi"><div class="tx"><b>' + esc(g[0].tarea) + '</b>' + g.slice(1).map(t => '<small>≈ ' + esc(t.tarea) + (t.limite ? ' (' + fmt(t.limite) + ')' : '') + '</small>').join('') + '</div><div class="ac"><button class="ok" data-dupok="' + i + '" style="width:auto;padding:0 10px;font-size:12.5px">Dejar una</button><button data-dupno="' + i + '" aria-label="No son iguales">✕</button></div></div>').join('') : '<div class="wsub" style="padding:4px 0 10px">Sin tareas repetidas ✓</div>') + '</div>';
+  } else if (S.tv === 'hechas'){
+    const H = d.tareas.filter(t => t.hecho).sort((a, b) => String(b.cierre || '').localeCompare(String(a.cierre || ''))).slice(0, 60);
+    cuerpo += '<div class="sec"><div class="sh">Hechas <span class="n">últimas ' + H.length + '</span></div>' + (H.length ? lista(H) : '<div class="empty">Aún no hay tareas hechas.</div>') + '</div>';
+  } else {
+    let L = P.slice();
+    if (S.filtro !== 'todas') L = L.filter(t => t.area === S.filtro || t.categoria === S.filtro || t.proyecto === S.filtro);
+    if (S.q){ const q = norm(S.q); L = L.filter(t => norm(t.tarea + ' ' + (t.proyecto || '') + ' ' + (t.categoria || '') + ' ' + (t.notas || '')).includes(q)); }
+    L.sort(ordenar);
+    const opciones = [['todas', 'Todas las áreas y categorías']].concat(d.config.areas.map(a => [a, 'Área: ' + a]), d.config.categorias.map(c => [c.nombre, 'Categoría: ' + c.nombre]), (d.proyectos || []).map(p => [p.nombre, 'Proyecto: ' + p.nombre]));
+    cuerpo += '<div class="tbar"><input type="text" id="q" placeholder="🔎 Buscar" value="' + esc(S.q) + '"><select id="tf">' + opciones.map(o => '<option value="' + esc(o[0]) + '"' + (S.filtro === o[0] ? ' selected' : '') + '>' + esc(o[1]) + '</option>').join('') + '</select><div class="views">' + [['lista', 'Lista'], ['tablero', 'Tablero'], ['matriz', 'Matriz']].map(v => '<button class="' + (S.vista === v[0] ? 'on' : '') + '" data-v="' + v[0] + '">' + v[1] + '</button>').join('') + '</div></div>';
+    cuerpo += S.vista === 'tablero' ? tableroHTML(L) : S.vista === 'matriz' ? matrizHTML(L) : '<div class="sec">' + (L.length ? lista(L) : '<div class="empty">Nada con este filtro 🔍</div>') + '</div>';
+  }
+  html += '<div id="tbody" class="' + (S.sel ? 'selmode' : '') + '">' + cuerpo + '</div>';
+  if (S.sel) html += '<div class="selbar"><span id="selN">' + S.sel.size + ' seleccionadas</span><button data-sb="hecha">✓ Hechas</button><button data-sb="hoy">Hoy</button><button data-sb="man">Mañana</button><button data-sb="sem">Próx. semana</button><button data-sb="del">Eliminar</button></div>';
+  $('#view').innerHTML = html;
+  if (S.sel){
+    $$('#tbody .task').forEach(el => { const o = el.querySelector('[data-open]'); if (!o) return; const t = d.tareas[+o.dataset.open]; if (S.sel.has(t)) el.classList.add('sel');
+      el.onclick = ev => { ev.stopPropagation(); S.sel.has(t) ? S.sel.delete(t) : S.sel.add(t); el.classList.toggle('sel'); $('#selN').textContent = S.sel.size + ' seleccionadas'; }; });
+    $$('[data-sb]').forEach(b => b.onclick = () => accionBloque(b.dataset.sb, b));
+  } else bindTasks($('#view'));
+  $$('[data-tv]').forEach(b => b.onclick = () => { S.tv = b.dataset.tv; viewTareas(); });
+  $('#tSel').onclick = () => { S.sel = S.sel ? null : new Set(); viewTareas(); };
+  const add = async () => { const v = $('#tq_add').value.trim(); if (!v) return; const p = parseTarea(v); if (yaExisteTarea(p.tarea || v)){ toast('Ya tienes una tarea parecida: revisa antes de duplicar'); } openAdd({ texto: v }); };
+  $('#tq_ok').onclick = add; $('#tq_add').onkeydown = e => { if (e.key === 'Enter') add(); };
+  $$('[data-bulk]').forEach(b => b.onclick = e => reprogramar(vencidas(), b.dataset.bulk === 'hoy' ? h : addDays(h, 1), e.target));
+  const vm = $('#vMas'); if (vm) vm.onclick = () => { S.vencTodas = !S.vencTodas; viewTareas(); };
+  const ai = $('#aiTar'); if (ai) ai.onclick = revisarTareasIA;
+  const tp = $('#tPlan'); if (tp) tp.onclick = planificarDia;
+  $$('[data-dj]').forEach(b => b.onclick = () => { const x = $('#d-' + b.dataset.dj); if (x) x.scrollIntoView({ behavior: 'smooth', block: 'center' }); else toast('Nada ese día'); });
+  $$('[data-qf]').forEach(b => b.onclick = async e => { e.stopPropagation(); const t = d.tareas[+b.dataset.qf], f = b.dataset.qd === 'sem' ? nextMonday(h) : addDays(h, +b.dataset.qd); b.disabled = true; try { await updateTask(t, { limite: f }); t.limite = f; toast('📅 ' + fmtRel(f)); viewTareas(); load(); } catch(err){ b.disabled = false; toast('No se pudo: ' + err.message); } });
+  $$('[data-sga]').forEach(b => b.onclick = async () => { const x = sug[+b.dataset.sga]; b.disabled = true; try { await api('add', { tarea: { tarea: x.tarea, area: 'Trabajo', categoria: x.fuente === 'Negociación' || x.fuente === 'Chat' ? ((d.config.categorias.find(c => c.nombre === 'Ventas') || {}).nombre || '') : '', proyecto: x.proyecto || '', limite: x.fecha, urgente: 'No', importante: 'Sí', tamano: 'Pequeña', notas: x.notas || '', estado: 'Pendiente' } }); toast('✓ Agregada'); await load(); } catch(e){ b.disabled = false; toast('No se pudo: ' + e.message); } });
+  $$('[data-sgd]').forEach(b => b.onclick = () => { const x = sug[+b.dataset.sgd]; lsSet('sugDesc', descartadas().concat(x.k).slice(-300)); viewTareas(); });
+  $$('[data-agok]').forEach(b => b.onclick = async () => { const t = d.tareas[+b.dataset.agok]; b.disabled = true; try { await updateTask(t, { notas: String(t.notas || '').replace('🧠', '🧠✓') }); t.notas = String(t.notas || '').replace('🧠', '🧠✓'); viewTareas(); } catch(e){ b.disabled = false; toast('No se pudo: ' + e.message); } });
+  $$('[data-agno]').forEach(b => b.onclick = async () => { const t = d.tareas[+b.dataset.agno]; b.disabled = true; try { await api('delete', { row: t.row, tarea: t.tarea }); toast('Eliminada'); await load(); } catch(e){ b.disabled = false; toast('No se pudo: ' + e.message); } });
+  $$('[data-dupok]').forEach(b => b.onclick = async () => { const g = dups[+b.dataset.dupok]; b.disabled = true; try { for (const t of g.slice(1).sort((x, y) => (y.row || 0) - (x.row || 0))) await api('delete', { row: t.row, tarea: t.tarea }); toast('✓ Quedó una sola'); await load(); } catch(e){ b.disabled = false; toast('No se pudo: ' + e.message); } });
+  $$('[data-dupno]').forEach(b => b.onclick = () => { const g = dups[+b.dataset.dupno]; lsSet('sugDesc', descartadas().concat('d:' + g.map(t => t.tarea).sort().join('|')).slice(-300)); viewTareas(); });
+  const q = $('#q'); if (q) q.oninput = () => { S.q = q.value; const pos = q.selectionStart; viewTareas(); const q2 = $('#q'); q2.focus(); q2.setSelectionRange(pos, pos); };
+  const tf = $('#tf'); if (tf) tf.onchange = e => { S.filtro = e.target.value; viewTareas(); };
   $$('[data-v]').forEach(b => b.onclick = () => { S.vista = LS.vista = b.dataset.v; viewTareas(); });
-  $('#vh').onclick = () => { S.verHechas = !S.verHechas; viewTareas(); };
-  $('#tNew').onclick = () => openAdd();
   $$('[data-mv]').forEach(b => b.onclick = async e => {
     e.stopPropagation();
     const t = S.data.tareas[+b.dataset.mv], est = b.dataset.est;
@@ -2471,6 +2576,45 @@ function viewTareas(){
     try { await updateTask(t, { estado: est }); toast('Movida a ' + est); load(); }
     catch(err){ t.estado = antes; viewTareas(); toast('No se pudo mover: ' + err.message); }
   });
+}
+async function accionBloque(acc, btn){
+  const L = [...S.sel]; if (!L.length){ toast('Selecciona una o más tareas'); return; }
+  const h = hoy(); btn.disabled = true;
+  try {
+    if (acc === 'hecha') for (const t of L) if (!t.hecho) await toggle(t);
+    else if (acc === 'del') for (const t of L.sort((x, y) => (y.row || 0) - (x.row || 0))) await api('delete', { row: t.row, tarea: t.tarea });
+    else { const f = acc === 'hoy' ? h : acc === 'man' ? addDays(h, 1) : nextMonday(h); for (const t of L) await updateTask(t, { limite: f }); }
+    toast('✓ ' + L.length + ' tareas actualizadas'); S.sel = null; await load();
+  } catch(e){ btn.disabled = false; toast('No se pudo: ' + e.message); }
+}
+// Revisión con IA: sugiere lo que falta y encuentra tareas que se repiten (tú apruebas).
+async function revisarTareasIA(){
+  if (!iaDisponible()){ toast(extNivel() < 10 ? 'Actualiza el script para usar el asistente' : 'Falta tu clave de Claude (ANTHROPIC_API_KEY)'); return; }
+  const h = hoy(), P = pendientes();
+  const ctx = ['Hoy es ' + fmtLong(h) + '.',
+    'TAREAS PENDIENTES:', P.map(t => '- "' + t.tarea + '" | ' + (t.limite || 'sin fecha') + (t.categoria ? ' | ' + t.categoria : '') + (t.proyecto ? ' | proyecto ' + t.proyecto : '')).join('\n') || '(ninguna)',
+    '', 'NEGOCIACIONES ABIERTAS:', S.neg ? abiertos().map(n => '- ' + n.titulo + ' [' + n.etapa + '] próximo paso: ' + (n.proxima || 'ninguno') + (n.fechaProx ? ' (' + n.fechaProx + ')' : '')).join('\n') : '(sin datos)',
+    '', 'LO QUE ENTENDIÓ EL AGENTE DE LOS CHATS:', ((S.base && S.base.interacciones) || []).filter(i => /agente/i.test(i.tipo)).slice(0, 25).map(i => '- ' + i.detalle.slice(0, 240)).join('\n') || '(nada)',
+    '', 'CLIENTES ESPERANDO RESPUESTA: ' + (S.base ? contactos().filter(c => agenteDe(c.id).idea).map(c => c.nombre || c.email).join(', ') : '') ,
+    '', 'AGENDA 7 DÍAS:', S.google && S.google.eventos ? S.google.eventos.filter(e => e.fecha >= h && e.fecha <= addDays(h, 7)).map(e => '- ' + e.fecha + ' ' + (e.inicio || '') + ' ' + e.titulo).join('\n') : '(sin datos)',
+    '', 'PROYECTOS: ' + (S.data.proyectos || []).map(p => p.nombre + ' (' + pct(p.avance) + '%)').join('; '),
+    'CONTENIDO PLANIFICADO: ' + ((S.cont || []).filter(x => x.fecha >= h && x.estado === 'Planificado').map(x => x.fecha + ' ' + x.formato + ': ' + x.tema).join('; ') || 'nada')].join('\n');
+  const md = modal(icon('spark') + ' Revisión de tareas con IA', '<div class="empty"><span class="spin"></span>Revisando negociaciones, chats y agenda…</div>', { wide: true });
+  try {
+    const r = (await apiX('asistente', { modo: 'tareas', contexto: ctx })).r;
+    const sug = r.sugerencias.filter(x => !yaExisteTarea(x.tarea));
+    const dup = r.duplicadas.map(g => ({ g, keep: P.find(t => norm(t.tarea) === norm(g.mantener)), del: g.quitar.map(q => P.find(t => norm(t.tarea) === norm(q))).filter(Boolean) })).filter(x => x.del.length);
+    md.el.querySelector('.empty').outerHTML = '<p style="margin:2px 0 8px">' + esc(r.resumen) + '</p>' +
+      '<div class="lab" style="font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin:12px 0 4px">Tareas que faltan · ' + sug.length + '</div>' + (sug.length ? sug.map((x, i) => '<div class="sgi"><label style="display:flex;gap:10px;flex:1;cursor:pointer"><input type="checkbox" data-si="' + i + '" checked style="width:20px;height:20px;flex:none;margin-top:1px"><span class="tx"><span class="src">' + esc(x.fuente) + '</span><b>' + esc(x.tarea) + '</b><small>' + esc(/^\d{4}-\d{2}-\d{2}$/.test(x.fecha) ? fmtRel(x.fecha) : x.fecha) + ' · prioridad ' + esc(x.prioridad) + ' · ' + esc(x.motivo) + '</small></span></label></div>').join('') + '<div class="btns"><button class="btn" id="si_ok">Agregar las marcadas</button></div>' : '<div class="wsub">No falta nada: tus tareas cubren lo importante ✓</div>') +
+      '<div class="lab" style="font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin:16px 0 4px">Tareas repetidas · ' + dup.length + '</div>' + (dup.length ? dup.map((x, i) => '<div class="sgi"><div class="tx"><b>Mantener: ' + esc(x.g.mantener) + '</b>' + x.del.map(t => '<small>✕ ' + esc(t.tarea) + '</small>').join('') + '<small>' + esc(x.g.motivo) + '</small></div><div class="ac"><button class="ok" data-di="' + i + '" style="width:auto;padding:0 10px;font-size:12.5px">Unir</button></div></div>').join('') : '<div class="wsub">No encontró tareas repetidas ✓</div>');
+    const ok = md.el.querySelector('#si_ok'); if (ok) ok.onclick = async () => {
+      const sel = [...md.el.querySelectorAll('[data-si]')].filter(x => x.checked).map(x => sug[+x.dataset.si]); if (!sel.length) return;
+      ok.disabled = true; ok.innerHTML = '<span class="spin"></span>Agregando…';
+      try { for (const x of sel) await api('add', { tarea: { tarea: x.tarea, area: 'Trabajo', categoria: /Negoci|Chat/.test(x.fuente) ? ((S.data.config.categorias.find(c => c.nombre === 'Ventas') || {}).nombre || '') : /Contenido/.test(x.fuente) ? ((S.data.config.categorias.find(c => c.nombre === 'Marketing') || {}).nombre || '') : '', proyecto: '', limite: /^\d{4}-\d{2}-\d{2}$/.test(x.fecha) ? x.fecha : h, urgente: x.prioridad === 'Alta' ? 'Sí' : 'No', importante: 'Sí', tamano: 'Pequeña', notas: '✦ Sugerida por el asistente', estado: 'Pendiente' } }); toast('✓ ' + sel.length + ' tareas agregadas'); md.cerrar(); await load(); }
+      catch(e){ ok.disabled = false; ok.textContent = 'Agregar las marcadas'; toast('No se pudo: ' + e.message); }
+    };
+    md.el.querySelectorAll('[data-di]').forEach(b => b.onclick = async () => { const x = dup[+b.dataset.di]; b.disabled = true; try { for (const t of x.del.sort((p, q) => (q.row || 0) - (p.row || 0))) await api('delete', { row: t.row, tarea: t.tarea }); b.textContent = '✓ Unidas'; await load(); } catch(e){ b.disabled = false; toast('No se pudo: ' + e.message); } });
+  } catch(e){ md.el.querySelector('.empty').innerHTML = 'No se pudo revisar: ' + esc(e.message); }
 }
 function tableroHTML(L){
   const E = S.data.config.estados.length ? S.data.config.estados : ['Pendiente', 'En curso', 'Esperando respuesta', 'Pausada'];
