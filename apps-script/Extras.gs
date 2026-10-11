@@ -15,8 +15,8 @@
  * Para actualizar este archivo más adelante: reemplaza todo su contenido y repite los dos pasos anteriores.
  */
 
-const EX_VERSION = '2026-10-29';
-const EX_NIVEL = 15;      // la app lo usa para saber qué funciones tiene este script
+const EX_VERSION = '2026-11-02';
+const EX_NIVEL = 16;      // la app lo usa para saber qué funciones tiene este script
 const EX_HOJA = 'Tareas';
 const EX_PRIMERA = 4;
 const EX_ULTIMA = 400;
@@ -135,6 +135,14 @@ function app_extra_(p) {
     case 'piezas':     return ex_piezas_(p);
     case 'subirMedia': return ex_subirMedia_(p);
     case 'publicar':   return ex_publicarPieza_(p);
+    case 'specialized': return ex_specialized_(p);
+    case 'noticias':   return Object.assign({ ok: true }, ex_noticias_(!!p.forzar));
+    case 'clima':      return { ok: true, clima: ex_clima_() };
+    case 'avisos':     return ex_avisos_(p);
+    case 'fuentes':    return ex_fuentes_(p);
+    case 'copiloto':   return ex_copiloto_(p);
+    case 'cerebro':    return ex_cerebro_(p);
+    case 'global':     return ex_contextoGlobal_(p);
     default:           return { ok: false, error: 'op desconocida: ' + p.op };
   }
 }
@@ -1964,6 +1972,734 @@ function ex_rondaAgente_() {
   });
 }
 
+/* ---------- Specialized Chile (web pública): catálogo, stock por talla, lanzamientos, productos calientes ---------- */
+// Lee specialized.com/cl igual que un navegador: solo mira, no compra nada. El stock es el de la bodega de
+// Specialized Chile que muestra la web; cuando baja, alguien compró (en la web o una tienda lo pidió).
+const EX_SPZ = 'https://www.specialized.com';
+const EX_SPZ_CATS = [
+  ['/cl/es/shop/bicicletas/bicicletas-electricas', 'E-bikes'],
+  ['/cl/es/shop/bicicletas/bicicletas-de-montana', 'Montaña'],
+  ['/cl/es/shop/bicicletas/bicicletas-de-ruta', 'Ruta'],
+  ['/cl/es/shop/bicicletas/bicis-de-gravel', 'Gravel'],
+  ['/cl/es/shop/bicicletas/bicicletas-de-ciudad', 'Ciudad'],
+  ['/cl/es/shop/bicicletas/bicicletas-para-ninos', 'Niños'],
+  ['/cl/es/shop/equipamiento-para-ciclismo/accesorios/cascos-para-bici', 'Cascos'],
+  ['/cl/es/shop/ropa-de-ciclismo/zapatillas-de-ciclismo', 'Zapatillas'],
+  ['/cl/es/shop/equipamiento-para-ciclismo/accesorios/accesorios-para-bicis-electricas', 'Accesorios e-bike'],
+  ['/cl/es/shop/ropa-de-ciclismo', 'Ropa'],
+  ['/cl/es/shop/equipamiento-para-ciclismo', 'Equipamiento'],
+  ['/cl/es/shop/ofertas', 'Ofertas']
+];
+const EX_SPZ_BICIS = ['E-bikes', 'Montaña', 'Ruta', 'Gravel', 'Ciudad', 'Niños'];
+const EX_HOJA_SPZ = 'Specialized', EX_HOJA_SPZS = 'Specialized stock', EX_HOJA_SPZM = 'Specialized movimientos';
+const EX_CAB_SPZ = ['ID', 'Producto', 'Familia', 'Año', 'Categoría', 'Disciplina', 'Precio', 'Precio oferta', 'Etiqueta', 'Colores', 'Color más nuevo', 'URL', 'Imagen', 'Visto desde', 'Visto', 'Stock total', 'Stock revisado', 'Bajas 14 días', 'Tallas con stock', 'Datos'];
+const EX_CAB_SPZS = ['SKU', 'ID', 'Producto', 'Color', 'Talla', 'Stock', 'Estado', 'Precio', 'Precio oferta', 'Revisado'];
+const EX_CAB_SPZM = ['Fecha', 'Tipo', 'SKU', 'ID', 'Producto', 'Color', 'Talla', 'Cambio', 'Stock / precio'];
+const EX_SPZ_POR_RONDA = 24;   // fichas de producto revisadas por hora (stock por talla)
+
+// Los datos vienen dentro de la página (Next.js): se juntan los trozos y se extrae el JSON que interesa.
+function ex_rsc_(html) {
+  const re = /self\.__next_f\.push\(\[1,"((?:[^"\\]|\\.)*)"\]\)/g, out = []; let m;
+  while ((m = re.exec(html))) { try { out.push(JSON.parse('"' + m[1] + '"')); } catch (e) {} }
+  return out.join('');
+}
+function ex_jsonEn_(txt, desde) {
+  if (desde < 0 || (txt[desde] !== '[' && txt[desde] !== '{')) return null;
+  let d = 0, s = false, esc = false;
+  for (let i = desde; i < txt.length; i++) {
+    const c = txt[i];
+    if (s) { if (esc) esc = false; else if (c === '\\') esc = true; else if (c === '"') s = false; continue; }
+    if (c === '"') s = true;
+    else if (c === '[' || c === '{') d++;
+    else if (c === ']' || c === '}') { d--; if (d === 0) { try { return JSON.parse(txt.slice(desde, i + 1)); } catch (e) { return null; } } }
+  }
+  return null;
+}
+function ex_spzPedir_(rutas) {
+  const out = [];
+  for (let i = 0; i < rutas.length; i += 6) {
+    const rs = UrlFetchApp.fetchAll(rutas.slice(i, i + 6).map(function (r) { return { url: EX_SPZ + r, muteHttpExceptions: true, followRedirects: true, headers: { 'Accept-Language': 'es-CL,es;q=0.9' } }; }));
+    rs.forEach(function (r) { out.push(r.getResponseCode() === 200 ? r.getContentText() : { error: r.getResponseCode() }); });
+  }
+  return out;
+}
+function ex_spzItem_(x, cat) {
+  const sw = x.swatchesJSON || [], pr = sw.map(function (s) { return s.colorPrices || {}; });
+  const precios = pr.map(function (p) { return +p.minPrice || 0; }).filter(Boolean), ofertas = pr.map(function (p) { return +p.minDiscountPrice || 0; }).filter(Boolean);
+  const lista = String((x.productData && x.productData.list) || '').split('|').filter(String);
+  return {
+    id: String(x.uid), nombre: String(x.name || ''), familia: lista.length ? lista[lista.length - 1] : '', anio: String(x.modelYear || ''),
+    categoria: lista.slice(0, -1).join(' › '), disciplina: cat, precio: precios.length ? Math.min.apply(null, precios) : '',
+    oferta: ofertas.length ? Math.min.apply(null, ofertas) : '', etiqueta: [x.primaryBadge].concat(x.secondaryBadges || []).filter(Boolean).join(', '),
+    colores: sw.length, nuevo: sw.map(function (s) { return String(s.onlinefrom || '').slice(0, 10); }).sort().pop() || '',
+    url: EX_SPZ + String(x.url || ''), img: String(x.imageUrl || ''), bici: !!x.isBike
+  };
+}
+function ex_spzMov_(filas, tipo, sku, id, prod, color, talla, cambio, valor) {
+  filas.push([new Date(), tipo, sku || '', id || '', prod || '', color || '', talla || '', cambio, valor]);
+}
+function ex_spzGuardarMov_(filas) {
+  if (!filas.length) return;
+  const sh = ex_hojaCab_(EX_HOJA_SPZM, EX_CAB_SPZM);
+  sh.getRange(sh.getLastRow() + 1, 1, filas.length, EX_CAB_SPZM.length).setValues(filas);
+  const n = sh.getLastRow() - 1;
+  if (n > 6000) sh.deleteRows(2, n - 5000);   // se guardan los últimos ~5.000 movimientos
+}
+
+// Catálogo completo (una vez al día): precios, ofertas, etiquetas (nuevo, más vendido, galardonado) y colores.
+function ex_spzSinc_() {
+  const pr = PropertiesService.getScriptProperties(), html = ex_spzPedir_(EX_SPZ_CATS.map(function (c) { return c[0]; }));
+  const vistos = {}, orden = [], errores = [];
+  html.forEach(function (h, k) {
+    const cat = EX_SPZ_CATS[k][1];
+    if (typeof h !== 'string') { errores.push(cat + ' (' + h.error + ')'); return; }
+    const t = ex_rsc_(h), L = ex_jsonEn_(t, t.indexOf('"results":[') + 10);
+    if (!L) { errores.push(cat + ' (sin datos)'); return; }
+    L.forEach(function (x) {
+      const it = ex_spzItem_(x, cat);
+      if (vistos[it.id]) { if (it.oferta && !vistos[it.id].oferta) vistos[it.id].oferta = it.oferta; return; }
+      vistos[it.id] = it; orden.push(it.id);
+    });
+  });
+  if (!orden.length) throw new Error('Specialized no entregó productos: ' + errores.join(', '));
+  const sh = ex_hojaCab_(EX_HOJA_SPZ, EX_CAB_SPZ), n = sh.getLastRow() - 1;
+  const filas = n > 0 ? sh.getRange(2, 1, n, EX_CAB_SPZ.length).getValues() : [], idx = {}, primera = !filas.length;
+  filas.forEach(function (r, i) { idx[String(r[0])] = i; });
+  const hoy = ex_hoyYmd_(), mov = [], nuevos = [];
+  orden.forEach(function (id) {
+    const it = vistos[id], i = idx[id], ant = i === undefined ? null : filas[i];
+    const fila = [id, it.nombre, it.familia, it.anio, it.categoria, it.disciplina, it.precio, it.oferta, it.etiqueta, it.colores, it.nuevo, it.url, it.img, hoy, hoy, '', '', '', '', JSON.stringify({ bici: it.bici })];
+    if (ant) {
+      fila[13] = ant[13] instanceof Date ? ex_ymd_(ant[13]) : (ant[13] || hoy);
+      if (EX_SPZ_BICIS.indexOf(ant[5]) >= 0 && EX_SPZ_BICIS.indexOf(it.disciplina) < 0) fila[5] = ant[5];
+      for (let k = 15; k <= 18; k++) fila[k] = ant[k];
+      if (+it.oferta && !+ant[7]) ex_spzMov_(mov, 'oferta', '', id, it.nombre, '', '', +it.oferta - (+it.precio || 0), it.oferta);
+      else if (!+it.oferta && +ant[7]) ex_spzMov_(mov, 'fin oferta', '', id, it.nombre, '', '', 0, it.precio);
+      else if (+it.precio && +ant[6] && +it.precio !== +ant[6]) ex_spzMov_(mov, 'precio', '', id, it.nombre, '', '', +it.precio - +ant[6], it.precio);
+      if (it.nuevo && String(ant[10] instanceof Date ? ex_ymd_(ant[10]) : ant[10]) < it.nuevo) ex_spzMov_(mov, 'color nuevo', '', id, it.nombre, '', '', 0, it.nuevo);
+      filas[i] = fila;
+    } else {
+      filas.push(fila); nuevos.push(it.nombre);
+      if (!primera) ex_spzMov_(mov, 'nuevo', '', id, it.nombre, '', '', 0, it.precio);
+    }
+  });
+  sh.getRange(2, 1, filas.length, EX_CAB_SPZ.length).setValues(filas); _exSpzCat = null;
+  ex_spzGuardarMov_(mov);
+  let home = [];
+  try { home = ex_spzHome_(); } catch (e) { errores.push('portada: ' + e.message); }
+  pr.setProperty('SPZ_SINC', JSON.stringify({ fecha: new Date().toISOString(), productos: orden.length, errores: errores, nuevos: primera ? [] : nuevos.slice(0, 30), lanzamientos: home }));
+  return { ok: true, productos: orden.length, errores: errores };
+}
+
+// Portada: campañas y lanzamientos destacados.
+function ex_spzHome_() {
+  const h = ex_spzPedir_(['/cl/es'])[0];
+  if (typeof h !== 'string') throw new Error('respondió ' + h.error);
+  const tit = []; let m; const re = /<h[1-3][^>]*>([\s\S]*?)<\/h[1-3]>/g;
+  while ((m = re.exec(h))) { const t = m[1].replace(/<[^>]+>/g, '').replace(/&amp;/g, '&').replace(/&#x27;|&#39;/g, "'").trim(); if (t && t.length < 90) tit.push(t); }
+  const i = tit.indexOf('Lanzamientos'), fin = tit.indexOf('Comprar Bicicletas');
+  const lanz = (i >= 0 ? tit.slice(i + 1, fin > i ? fin : i + 16) : tit.slice(0, 14)).filter(function (t, k, a) { return t !== 'Lanzamientos' && a.indexOf(t) === k; });
+  return [tit[0]].concat(lanz).filter(function (t, k, a) { return t && a.indexOf(t) === k && !/^(soporte|recursos|acerca de|newsletter|compra online)$/i.test(t); }).slice(0, 16);
+}
+
+// Ficha de producto: stock por color y talla (con SKU) desde la web de Specialized Chile.
+function ex_spzFichaHtml_(id, h) {
+  const t = ex_rsc_(h), dyn = ex_jsonEn_(t, t.indexOf('"dynamicData":{') + 14) || {};
+  const m = new RegExp('"colors":\\[\\{"code":"\\d+-' + id + '","display').exec(t);
+  const colores = m ? (ex_jsonEn_(t, m.index + 9) || []) : [], info = {};
+  colores.forEach(function (c) {
+    (c.sizes || []).forEach(function (s) {
+      ((s.skus && s.skus.values) || []).forEach(function (v) {
+        const p = v.prices || {};
+        info[v.sku] = { color: String(c.displayName || c.colorName || ''), talla: String(v.size || s.name || ''), precio: p.regular ? p.regular.raw : '', oferta: p.special ? p.special.raw : '' };
+      });
+    });
+  });
+  if (!Object.keys(info).length) { const re = /"size":"([^"]+)","sku":"([\w-]+)"/g; let x; while ((x = re.exec(t))) if (!info[x[2]]) info[x[2]] = { color: '', talla: x[1], precio: '', oferta: '' }; }
+  const out = [];
+  (dyn.colors || []).forEach(function (c) {
+    (c.sizes || []).forEach(function (s) {
+      const st = s.stock || {}, i = info[s.sku] || {};
+      out.push({ sku: String(s.sku), color: i.color || '', talla: i.talla || '', stock: +st.stockLevel || 0, redondeado: !!st.isValueRounded, estado: String(s.availability || st.stockLevelStatus || ''), entrante: !!s.inboundInventory, precio: i.precio, oferta: i.oferta });
+    });
+  });
+  return out;
+}
+
+// Revisa fichas por turno: las e-bikes cada ~3 horas, el resto de las bicis cada ~12 horas.
+function ex_spzRondaStock_(max, soloIds) {
+  const sh = ex_hojaCab_(EX_HOJA_SPZ, EX_CAB_SPZ), n = sh.getLastRow() - 1;
+  if (n < 1) return { ok: true, revisados: 0 };
+  const cat = sh.getRange(2, 1, n, EX_CAB_SPZ.length).getValues(), ahora = Date.now();
+  const toca = cat.map(function (r, i) {
+    const bici = EX_SPZ_BICIS.indexOf(r[5]) >= 0 || /"bici":true/.test(String(r[19]));
+    if (soloIds) return soloIds.indexOf(String(r[0])) >= 0 ? { i: i, atraso: 1 } : null;
+    if (!bici) return null;
+    const rev = r[16] instanceof Date ? r[16].getTime() : 0, cada = (r[5] === 'E-bikes' ? 3 : 12) * 3600000;
+    return ahora - rev >= cada ? { i: i, atraso: (ahora - rev) / cada } : null;
+  }).filter(Boolean).sort(function (a, b) { return b.atraso - a.atraso; }).slice(0, max || EX_SPZ_POR_RONDA);
+  if (!toca.length) return { ok: true, revisados: 0 };
+  const html = ex_spzPedir_(toca.map(function (x) { return '/cl/es/p/' + cat[x.i][0]; }));
+  const shs = ex_hojaCab_(EX_HOJA_SPZS, EX_CAB_SPZS), ns = shs.getLastRow() - 1;
+  const stock = ns > 0 ? shs.getRange(2, 1, ns, EX_CAB_SPZS.length).getValues() : [], porSku = {};
+  stock.forEach(function (r, i) { porSku[String(r[0])] = i; });
+  const mov = [], fichas = {};
+  toca.forEach(function (x, k) {
+    const r = cat[x.i], id = String(r[0]), h = html[k];
+    if (typeof h !== 'string') return;
+    const tallas = ex_spzFichaHtml_(id, h); if (!tallas.length) return;
+    fichas[id] = tallas;
+    let total = 0; const con = [];
+    tallas.forEach(function (t) {
+      total += t.stock; if (t.stock > 0) con.push(t.talla + (t.color ? ' ' + t.color.split(/[\/,]/)[0].trim() : '') + ' (' + t.stock + (t.redondeado ? '+' : '') + ')');
+      const fila = [t.sku, id, r[1], t.color, t.talla, t.stock, t.estado + (t.entrante ? ' · en tránsito' : ''), t.precio, t.oferta, new Date()];
+      const j = porSku[t.sku];
+      if (j === undefined) { porSku[t.sku] = stock.length; stock.push(fila); return; }
+      const ant = stock[j], prev = ant[5] === '' ? null : +ant[5];
+      if (prev !== null && !(t.redondeado && /\+/.test(String(ant[6])))) {
+        if (t.stock < prev) ex_spzMov_(mov, 'venta', t.sku, id, r[1], t.color, t.talla, t.stock - prev, t.stock);
+        else if (t.stock > prev) ex_spzMov_(mov, 'reposición', t.sku, id, r[1], t.color, t.talla, t.stock - prev, t.stock);
+      }
+      if (t.redondeado) fila[6] += ' +';
+      stock[j] = fila;
+    });
+    r[15] = total; r[16] = new Date(); r[18] = con.join(', ');
+  });
+  if (stock.length) shs.getRange(2, 1, stock.length, EX_CAB_SPZS.length).setValues(stock);
+  ex_spzGuardarMov_(mov);
+  // Bajas de los últimos 14 días por producto: la señal de "lo que se está vendiendo" en Chile.
+  const bajas = ex_spzBajas_(14);
+  cat.forEach(function (r) { r[17] = bajas[String(r[0])] || ''; });
+  _exSpzCat = null;
+  sh.getRange(2, 16, cat.length, 4).setValues(cat.map(function (r) { return [r[15], r[16], r[17], r[18]]; }));
+  return { ok: true, revisados: Object.keys(fichas).length, movimientos: mov.length, fichas: fichas };
+}
+function ex_spzBajas_(dias) {
+  const sh = SpreadsheetApp.getActive().getSheetByName(EX_HOJA_SPZM); if (!sh || sh.getLastRow() < 2) return {};
+  const desde = Date.now() - dias * 86400000, out = {};
+  sh.getRange(2, 1, sh.getLastRow() - 1, 8).getValues().forEach(function (r) {
+    if (r[1] === 'venta' && r[0] instanceof Date && r[0].getTime() >= desde) out[String(r[3])] = (out[String(r[3])] || 0) - (+r[7] || 0);
+  });
+  return out;
+}
+function ex_spzCatalogo_() {
+  if (_exSpzCat) return _exSpzCat;
+  const sh = SpreadsheetApp.getActive().getSheetByName(EX_HOJA_SPZ); if (!sh || sh.getLastRow() < 2) return [];
+  const tz = ex_tz_(), f = function (d) { return d instanceof Date ? ex_ymd_(d, tz) : String(d || ''); };
+  return (_exSpzCat = sh.getRange(2, 1, sh.getLastRow() - 1, EX_CAB_SPZ.length).getValues().filter(function (r) { return r[0]; }).map(function (r) {
+    return { id: String(r[0]), nombre: String(r[1]), familia: String(r[2]), anio: String(r[3]), categoria: String(r[4]), disciplina: String(r[5]), precio: +r[6] || 0, oferta: +r[7] || 0, etiqueta: String(r[8]), colores: +r[9] || 0, colorNuevo: f(r[10]), url: String(r[11]), img: String(r[12]), desde: f(r[13]), visto: f(r[14]), stock: r[15] === '' ? null : +r[15], revisado: r[16] instanceof Date ? r[16].toISOString() : '', bajas14: +r[17] || 0, tallas: String(r[18] || '') };
+  }));
+}
+function ex_spzMovimientos_(dias) {
+  const sh = SpreadsheetApp.getActive().getSheetByName(EX_HOJA_SPZM); if (!sh || sh.getLastRow() < 2) return [];
+  const desde = Date.now() - (dias || 14) * 86400000, tz = ex_tz_();
+  return sh.getRange(Math.max(2, sh.getLastRow() - 1500), 1, Math.min(1500, sh.getLastRow() - 1), EX_CAB_SPZM.length).getValues()
+    .filter(function (r) { return r[0] instanceof Date && r[0].getTime() >= desde; })
+    .map(function (r) { return { fecha: Utilities.formatDate(r[0], tz, 'yyyy-MM-dd HH:mm'), tipo: r[1], sku: String(r[2]), id: String(r[3]), producto: String(r[4]), color: String(r[5]), talla: String(r[6]), cambio: +r[7] || 0, valor: r[8] }; }).reverse();
+}
+// Resumen para la app y los agentes: lo caliente, ofertas, novedades, poco stock y lanzamientos.
+function ex_spzResumen_() {
+  const pr = PropertiesService.getScriptProperties(), sinc = JSON.parse(pr.getProperty('SPZ_SINC') || 'null');
+  const C = ex_spzCatalogo_(); if (!C.length) return { activo: false, sinc: sinc };
+  const hoy = ex_hoyYmd_(), dias = function (s) { return s ? Math.round((Date.parse(hoy) - Date.parse(s.slice(0, 10))) / 86400000) : 999; };
+  const bici = function (x) { return EX_SPZ_BICIS.indexOf(x.disciplina) >= 0; };
+  const unico = function (L) { const v = {}; return L.filter(function (x) { if (v[x.nombre]) return false; v[x.nombre] = 1; return true; }); };
+  const corto = function (x) { return { id: x.id, nombre: x.nombre, familia: x.familia, disciplina: x.disciplina, precio: x.precio, oferta: x.oferta, stock: x.stock, tallas: x.tallas, bajas14: x.bajas14, etiqueta: x.etiqueta, url: x.url, img: x.img, colorNuevo: x.colorNuevo, desde: x.desde }; };
+  return {
+    activo: true, sinc: sinc, productos: C.length, bicis: C.filter(bici).length,
+    calientes: unico(C.filter(function (x) { return x.bajas14 > 0; }).sort(function (a, b) { return b.bajas14 - a.bajas14; })).slice(0, 15).map(corto),
+    masVendidos: unico(C.filter(function (x) { return /bestseller/.test(x.etiqueta); })).slice(0, 15).map(corto),
+    ofertas: unico(C.filter(function (x) { return x.oferta && x.precio; }).sort(function (a, b) { return (bici(b) - bici(a)) || ((b.disciplina === 'E-bikes') - (a.disciplina === 'E-bikes')) || ((1 - b.oferta / b.precio) - (1 - a.oferta / a.precio)); })).slice(0, 20).map(corto),
+    nuevos: unico(C.filter(function (x) { return /new/.test(x.etiqueta) || dias(x.desde) <= 21 || dias(x.colorNuevo) <= 30; }).sort(function (a, b) { return (b.colorNuevo || '').localeCompare(a.colorNuevo || ''); })).slice(0, 15).map(corto),
+    pocoStock: unico(C.filter(function (x) { return bici(x) && x.stock !== null && x.stock > 0 && x.stock <= 3; }).sort(function (a, b) { return (b.disciplina === 'E-bikes') - (a.disciplina === 'E-bikes') || a.stock - b.stock; })).slice(0, 15).map(corto),
+    agotadas: C.filter(function (x) { return bici(x) && x.stock === 0; }).length,
+    movimientos: ex_spzMovimientos_(7).slice(0, 40),
+    lanzamientos: (sinc && sinc.lanzamientos) || []
+  };
+}
+// Búsqueda por nombre, familia o SKU (ej.: "levo s4", "95227-6001", "kenevo sl comp").
+function ex_spzBuscar_(q, max) {
+  const C = ex_spzCatalogo_(), qq = ex_norm_(q).trim(); if (!qq) return [];
+  const sku = qq.match(/\b\d{5}-\d{2,6}\b/);
+  let ids = null;
+  if (sku) {
+    const sh = SpreadsheetApp.getActive().getSheetByName(EX_HOJA_SPZS);
+    if (sh && sh.getLastRow() > 1) ids = sh.getRange(2, 1, sh.getLastRow() - 1, 2).getValues().filter(function (r) { return String(r[0]).indexOf(sku[0]) === 0 || sku[0].indexOf(String(r[0]).slice(0, 8)) === 0; }).map(function (r) { return String(r[1]); });
+  }
+  const tk = qq.replace(/\b\d{5}-\d{2,6}\b/, '').split(/[^a-z0-9]+/).filter(function (w) { return w.length >= 2; });
+  // Cada palabra pesa según qué tan rara es en el catálogo: "kenevo" pesa mucho más que "comp" o "sl".
+  const textos = C.map(function (x) { return ' ' + ex_norm_(x.nombre + ' ' + x.familia + ' ' + x.disciplina + ' ' + x.categoria + ' ' + x.tallas).replace(/[^a-z0-9]+/g, ' ') + ' '; });
+  const peso = {}; tk.forEach(function (w) { const df = textos.filter(function (t) { return t.indexOf(' ' + w) >= 0; }).length; peso[w] = df ? Math.log(1 + C.length / df) : 0; });
+  const total = tk.reduce(function (s, w) { return s + peso[w]; }, 0);
+  return C.map(function (x, i) {
+    if (ids && ids.indexOf(x.id) >= 0) return { x: x, p: 100 };
+    const p = tk.reduce(function (s, w) { return s + (textos[i].indexOf(' ' + w) >= 0 ? peso[w] : 0); }, 0);
+    return { x: x, p: total && p >= total * 0.7 ? p + (x.disciplina === 'E-bikes' ? 0.3 : 0) - x.nombre.length / 1000 : 0 };
+  }).filter(function (o) { return o.p > 0; }).sort(function (a, b) { return b.p - a.p; }).slice(0, max || 10).map(function (o) { return o.x; });
+}
+function ex_spzTallas_(id) {
+  const sh = SpreadsheetApp.getActive().getSheetByName(EX_HOJA_SPZS); if (!sh || sh.getLastRow() < 2) return [];
+  return sh.getRange(2, 1, sh.getLastRow() - 1, EX_CAB_SPZS.length).getValues().filter(function (r) { return String(r[1]) === id; })
+    .map(function (r) { return { sku: String(r[0]), color: String(r[3]), talla: String(r[4]), stock: +r[5] || 0, estado: String(r[6]), precio: +r[7] || 0, oferta: +r[8] || 0 }; });
+}
+function ex_specialized_(p) {
+  const a = p.accion || 'resumen';
+  if (a === 'resumen') return Object.assign({ ok: true }, ex_spzResumen_());
+  if (a === 'buscar') return { ok: true, items: ex_spzBuscar_(p.q, 12).map(function (x) { return Object.assign(x, { detalle: ex_spzTallas_(x.id) }); }) };
+  if (a === 'ficha') { const r = ex_spzRondaStock_(1, [String(p.id)]); return { ok: true, tallas: (r.fichas && r.fichas[String(p.id)]) || ex_spzTallas_(String(p.id)), producto: ex_spzCatalogo_().filter(function (x) { return x.id === String(p.id); })[0] || null }; }
+  if (a === 'sinc') { const s = ex_spzSinc_(); const r = ex_spzRondaStock_(EX_SPZ_POR_RONDA); return { ok: true, productos: s.productos, revisados: r.revisados, errores: s.errores }; }
+  return { ok: false, error: 'acción desconocida' };
+}
+function ex_spzRonda_() {
+  const s = JSON.parse(PropertiesService.getScriptProperties().getProperty('SPZ_SINC') || 'null');
+  if (!s || Date.now() - Date.parse(s.fecha) > 20 * 3600000) ex_spzSinc_();
+  ex_spzRondaStock_(EX_SPZ_POR_RONDA);
+}
+
+/* ---------- clima de Puerto Varas (Open-Meteo, gratis y sin clave) ---------- */
+const EX_CLIMA_LAT = -41.3195, EX_CLIMA_LON = -72.9854;
+function ex_clima_() {
+  const cache = CacheService.getScriptCache(), c = cache.get('clima');
+  if (c) return JSON.parse(c);
+  const pr = PropertiesService.getScriptProperties(), lat = pr.getProperty('CLIMA_LAT') || EX_CLIMA_LAT, lon = pr.getProperty('CLIMA_LON') || EX_CLIMA_LON;
+  const url = 'https://api.open-meteo.com/v1/forecast?latitude=' + lat + '&longitude=' + lon +
+    '&current=temperature_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m,wind_gusts_10m' +
+    '&hourly=temperature_2m,precipitation_probability,precipitation,weather_code,wind_speed_10m' +
+    '&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,wind_speed_10m_max,wind_gusts_10m_max,sunrise,sunset' +
+    '&timezone=America%2FSantiago&forecast_days=7';
+  const r = UrlFetchApp.fetch(url, { muteHttpExceptions: true });
+  if (r.getResponseCode() !== 200) throw new Error('Open-Meteo respondió ' + r.getResponseCode());
+  const j = JSON.parse(r.getContentText());
+  try { cache.put('clima', JSON.stringify(j), 3600); } catch (e) {}
+  return j;
+}
+const EX_WMO = { 0: 'despejado', 1: 'mayormente despejado', 2: 'parcial nublado', 3: 'nublado', 45: 'niebla', 48: 'niebla', 51: 'llovizna', 53: 'llovizna', 55: 'llovizna intensa', 61: 'lluvia débil', 63: 'lluvia', 65: 'lluvia fuerte', 66: 'lluvia helada', 67: 'lluvia helada', 71: 'nieve', 73: 'nieve', 75: 'nieve fuerte', 80: 'chubascos', 81: 'chubascos', 82: 'chubascos fuertes', 95: 'tormenta', 96: 'tormenta con granizo', 99: 'tormenta con granizo' };
+function ex_climaTexto_(j) {
+  if (!j || !j.daily) return 'sin datos de clima';
+  const d = j.daily, c = j.current || {}, out = ['Ahora: ' + Math.round(c.temperature_2m) + '°C, ' + (EX_WMO[c.weather_code] || '') + ', viento ' + Math.round(c.wind_speed_10m) + ' km/h.'];
+  d.time.forEach(function (t, i) {
+    out.push(t + ': ' + (EX_WMO[d.weather_code[i]] || '') + ', ' + Math.round(d.temperature_2m_min[i]) + '–' + Math.round(d.temperature_2m_max[i]) + '°C, lluvia ' + (d.precipitation_probability_max[i] || 0) + '% (' + (Math.round(d.precipitation_sum[i] * 10) / 10) + ' mm), viento máx ' + Math.round(d.wind_speed_10m_max[i]) + ' km/h');
+  });
+  return out.join('\n');
+}
+
+/* ---------- noticias del mundo bike: Pinkbike, Vital MTB, Specialized y ciclismo en Chile ---------- */
+const EX_NOT_FUENTES = [
+  ['Pinkbike', 'https://www.pinkbike.com/pinkbike_xml_feed.php'],
+  ['Vital MTB', 'https://feeds.feedburner.com/vitalmtb'],
+  ['Specialized en la prensa', 'https://news.google.com/rss/search?q=%22Specialized%22+(bike+OR+bicicleta+OR+e-bike+OR+Levo+OR+Tarmac)+when:14d&hl=es-419&gl=CL&ceid=CL:es-419'],
+  ['Ciclismo en Chile', 'https://news.google.com/rss/search?q=(mountain+bike+OR+ciclismo+OR+e-bike)+(Chile+OR+%22Puerto+Varas%22+OR+Llanquihue)+when:14d&hl=es-419&gl=CL&ceid=CL:es-419']
+];
+function ex_rssItems_(xml, fuente) {
+  const items = [], re = /<item[\s>]([\s\S]*?)<\/item>/g; let m;
+  const tag = function (s, t) { const x = new RegExp('<' + t + '[^>]*>([\\s\\S]*?)<\\/' + t + '>').exec(s); return x ? x[1].replace(/<!\[CDATA\[|\]\]>/g, '').trim() : ''; };
+  const limpio = function (s) { return s.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/<[^>]+>/g, ' ').replace(/&#0?39;|&#x27;/g, "'").replace(/&amp;/g, '&').replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').trim(); };
+  while ((m = re.exec(xml)) && items.length < 25) {
+    const s = m[1], desc = tag(s, 'description'), img = /<img[^>]+src="([^"]+)"/.exec(desc.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"'));
+    const fecha = Date.parse(tag(s, 'pubDate'));
+    items.push({ fuente: fuente, titulo: limpio(tag(s, 'title')), link: limpio(tag(s, 'link')), fecha: isNaN(fecha) ? '' : new Date(fecha).toISOString(), resumen: limpio(desc).slice(0, 240), img: img ? img[1] : '' });
+  }
+  return items;
+}
+const EX_NOT_SISTEMA = 'Eres el editor de noticias de una tienda Specialized en Puerto Varas, Chile (Blackline). Su fuerte son las e-bikes (Turbo Levo, Levo SL, Kenevo, Vado, Como, Creo) y también venden MTB, ruta, gravel, urbano, niños, ropa y accesorios; tienen taller. De la lista de titulares, elige como máximo 6 que de verdad le sirvan al encargado de la tienda para vender, asesorar o crear contenido: lanzamientos y novedades de Specialized (prioridad máxima), e-bikes, tendencias que los clientes van a preguntar, competencia directa (Trek, Santa Cruz, Orbea, Giant, Scott, Canyon) cuando afecte la venta, retiros de productos o problemas de seguridad, cambios de precios o abastecimiento, y grandes carreras o atletas Specialized que sirvan para contenido. Descarta lo trivial, chismes, videos sin novedad y notas locales sin relación. Traduce el título al español de Chile (corto y claro) y explica en una frase por qué le importa a la tienda. No inventes nada que no esté en el titular o el resumen.';
+const EX_NOT_ESQUEMA = { type: 'object', additionalProperties: false, required: ['destacadas'], properties: { destacadas: { type: 'array', items: { type: 'object', additionalProperties: false, required: ['i', 'titulo', 'por_que', 'tipo', 'relevancia'], properties: {
+  i: { type: 'integer' }, titulo: { type: 'string' }, por_que: { type: 'string' },
+  tipo: { type: 'string', enum: ['lanzamiento', 'specialized', 'ebike', 'tendencia', 'competencia', 'seguridad', 'industria', 'carrera', 'local'] }, relevancia: { type: 'integer', enum: [1, 2, 3] } } } } } };
+function ex_noticias_(forzar) {
+  const pr = PropertiesService.getScriptProperties(), guardado = JSON.parse(pr.getProperty('NOTICIAS') || 'null');
+  if (!forzar && guardado && Date.now() - Date.parse(guardado.fecha) < 6 * 3600000) return guardado;
+  const rs = UrlFetchApp.fetchAll(EX_NOT_FUENTES.map(function (f) { return { url: f[1], muteHttpExceptions: true, followRedirects: true }; }));
+  let todos = [];
+  rs.forEach(function (r, k) { if (r.getResponseCode() === 200) todos = todos.concat(ex_rssItems_(r.getContentText(), EX_NOT_FUENTES[k][0]).slice(0, k < 2 ? 20 : 12)); });
+  const vistos = {};
+  todos = todos.filter(function (x) { const k = ex_norm_(x.titulo).slice(0, 60); if (!x.titulo || vistos[k] || /\/forums?\//.test(x.link)) return false; vistos[k] = 1; return true; })
+    .sort(function (a, b) { return (b.fecha || '').localeCompare(a.fecha || ''); }).slice(0, 60);
+  let items = [];
+  if (pr.getProperty('ANTHROPIC_API_KEY') && todos.length) {
+    try {
+      const r = ex_llamarClaude_(todos.map(function (x, i) { return i + '. [' + x.fuente + ', ' + (x.fecha || '').slice(0, 10) + '] ' + x.titulo + ' — ' + x.resumen.slice(0, 160); }).join('\n'), EX_NOT_SISTEMA, EX_NOT_ESQUEMA);
+      items = (r.destacadas || []).filter(function (d) { return todos[d.i]; }).map(function (d) { return Object.assign({}, todos[d.i], { original: todos[d.i].titulo, titulo: d.titulo, por_que: d.por_que, tipo: d.tipo, relevancia: d.relevancia }); });
+    } catch (e) { console.log('Noticias IA: ' + e.message); }
+  }
+  if (!items.length) items = todos.filter(function (x) { return /specialized|levo|kenevo|vado|e-?bike|emtb|launch|lanz/i.test(x.titulo + ' ' + x.resumen); }).concat(todos).filter(function (x, i, a) { return a.indexOf(x) === i; }).slice(0, 6);
+  const out = { fecha: new Date().toISOString(), items: items, total: todos.length };
+  pr.setProperty('NOTICIAS', JSON.stringify(out).slice(0, 8500));
+  return out;
+}
+
+/* ---------- avisos internos de la tienda (los ve todo el equipo al abrir la app) ---------- */
+const EX_HOJA_AVISOS = 'Avisos';
+const EX_CAB_AVISOS = ['ID', 'Creado', 'Título', 'Detalle', 'Desde', 'Hasta', 'Importancia', 'Origen', 'Estado', 'Fecha del evento'];
+function ex_avisos_(p) {
+  const sh = ex_hojaCab_(EX_HOJA_AVISOS, EX_CAB_AVISOS), tz = ex_tz_(), f = function (d) { return d instanceof Date ? ex_ymd_(d, tz) : String(d || ''); };
+  const leer = function () { const n = sh.getLastRow() - 1; return n > 0 ? sh.getRange(2, 1, n, EX_CAB_AVISOS.length).getValues() : []; };
+  if (p.guardar) {
+    const a = p.guardar, filas = leer(), i = a.id ? filas.findIndex(function (r) { return String(r[0]) === a.id; }) : -1;
+    const fila = [a.id || 'AV-' + Date.now().toString(36), i >= 0 ? filas[i][1] : new Date(), String(a.titulo || '').slice(0, 140), String(a.detalle || '').slice(0, 2000), a.desde || ex_hoyYmd_(tz), a.hasta || '', a.importancia || 'normal', a.origen || 'Manual', a.estado || 'Activo', a.fecha || ''];
+    if (!fila[2]) throw new Error('falta el título');
+    if (i >= 0) sh.getRange(i + 2, 1, 1, fila.length).setValues([fila]); else sh.appendRow(fila);
+  }
+  if (p.archivar) { const filas = leer(), i = filas.findIndex(function (r) { return String(r[0]) === p.archivar; }); if (i >= 0) sh.getRange(i + 2, 9).setValue('Archivado'); }
+  const hoy = ex_hoyYmd_(tz);
+  const items = leer().filter(function (r) { return r[0]; }).map(function (r) {
+    return { id: String(r[0]), creado: r[1] instanceof Date ? r[1].toISOString() : '', titulo: String(r[2]), detalle: String(r[3]), desde: f(r[4]), hasta: f(r[5]), importancia: String(r[6] || 'normal'), origen: String(r[7] || 'Manual'), estado: String(r[8] || 'Activo'), fecha: f(r[9]) };
+  }).filter(function (a) { return p.todos || (a.estado !== 'Archivado' && (!a.hasta || a.hasta >= hoy)); }).reverse();
+  return { ok: true, items: items.slice(0, 80) };
+}
+function ex_avisoAuto_(titulo, detalle, importancia, fecha, hasta) {
+  const act = ex_avisos_({}).items;
+  if (act.some(function (a) { return ex_parecido_(a.titulo, titulo) > 0.55; })) return false;
+  ex_avisos_({ guardar: { titulo: titulo, detalle: detalle, importancia: importancia || 'normal', origen: 'Cerebro', fecha: fecha || '', hasta: hasta || fecha || ex_ymd_(new Date(Date.now() + 3 * 86400000)) } });
+  return true;
+}
+
+/* ---------- otras fuentes: tus planillas de Google y los archivos de la carpeta "Fuentes" ---------- */
+// Pega el link de cualquier Google Sheet tuyo (lista de precios, B2B exportado, metas, proveedores…) o deja
+// archivos CSV / Google Sheets en la carpeta de Drive "Organizador · Fuentes": los agentes los consultan solo para leer.
+const EX_CARPETA_FUENTES = 'Organizador · Fuentes';
+function ex_carpetaFuentes_(crear) {
+  const pr = PropertiesService.getScriptProperties(), id = pr.getProperty('EX_FUENTES_ID');
+  if (id) { try { return DriveApp.getFolderById(id); } catch (e) {} }
+  if (!crear) return null;
+  const it = DriveApp.getFoldersByName(EX_CARPETA_FUENTES), f = it.hasNext() ? it.next() : DriveApp.createFolder(EX_CARPETA_FUENTES);
+  pr.setProperty('EX_FUENTES_ID', f.getId());
+  return f;
+}
+function ex_fuentesLista_() {
+  const pr = PropertiesService.getScriptProperties(), L = JSON.parse(pr.getProperty('FUENTES') || '[]');
+  const carpeta = ex_carpetaFuentes_(false);
+  if (carpeta) {
+    const files = carpeta.getFiles();
+    while (files.hasNext()) {
+      const f = files.next(), mt = f.getMimeType();
+      if (mt !== MimeType.GOOGLE_SHEETS && mt !== MimeType.CSV && !/\.csv$/i.test(f.getName())) continue;
+      if (!L.some(function (x) { return x.id === f.getId(); })) L.push({ id: f.getId(), nombre: f.getName().replace(/\.csv$/i, ''), tipo: mt === MimeType.GOOGLE_SHEETS ? 'sheet' : 'csv', carpeta: true, actualizado: f.getLastUpdated().toISOString(), descripcion: '' });
+    }
+  }
+  return L;
+}
+function ex_fuenteTabla_(f, maxFilas) {
+  if (f.tipo === 'csv') {
+    const b = DriveApp.getFileById(f.id).getBlob(); let s = b.getDataAsString('UTF-8');
+    if (s.indexOf('�') >= 0) s = b.getDataAsString('ISO-8859-1');
+    const sep = (s.split('\n')[0].match(/;/g) || []).length > (s.split('\n')[0].match(/,/g) || []).length ? ';' : ',';
+    return [{ hoja: f.nombre, filas: Utilities.parseCsv(s, sep).slice(0, maxFilas) }];
+  }
+  return SpreadsheetApp.openById(f.id).getSheets().slice(0, 6).map(function (sh) {
+    const n = Math.min(sh.getLastRow(), maxFilas), c = Math.min(sh.getLastColumn(), 30);
+    return { hoja: sh.getName(), filas: n && c ? sh.getRange(1, 1, n, c).getDisplayValues() : [], total: sh.getLastRow() };
+  });
+}
+function ex_fuenteBuscar_(q, max) {
+  const tk = ex_norm_(q).split(/[^a-z0-9-]+/).filter(function (w) { return w.length >= 2; }); if (!tk.length) return [];
+  const out = [];
+  ex_fuentesLista_().forEach(function (f) {
+    try {
+      ex_fuenteTabla_(f, 4000).forEach(function (t) {
+        const cab = t.filas[0] || [];
+        t.filas.slice(1).forEach(function (r, i) {
+          const s = ex_norm_(r.join(' ')), p = tk.reduce(function (a, w) { return a + (s.indexOf(w) >= 0 ? 1 : 0); }, 0);
+          if (p >= Math.max(1, Math.ceil(tk.length * 0.6))) { const o = {}; cab.forEach(function (h, k) { if (r[k] !== '' && r[k] != null) o[String(h || 'col' + (k + 1))] = r[k]; }); out.push({ p: p, fuente: f.nombre, hoja: t.hoja, fila: i + 2, datos: o }); }
+        });
+      });
+    } catch (e) { out.push({ p: 0, fuente: f.nombre, error: e.message }); }
+  });
+  return out.sort(function (a, b) { return b.p - a.p; }).slice(0, max || 20);
+}
+function ex_fuentes_(p) {
+  const pr = PropertiesService.getScriptProperties(), L = JSON.parse(pr.getProperty('FUENTES') || '[]');
+  if (p.agregar) {
+    const m = /\/d\/([a-zA-Z0-9_-]{20,})/.exec(p.agregar.url || '') || /^([a-zA-Z0-9_-]{25,})$/.exec(p.agregar.url || '');
+    if (!m) throw new Error('No reconozco el link. Copia el link completo de la planilla de Google.');
+    const ss = SpreadsheetApp.openById(m[1]);
+    if (!L.some(function (x) { return x.id === m[1]; })) L.push({ id: m[1], nombre: p.agregar.nombre || ss.getName(), tipo: 'sheet', descripcion: String(p.agregar.descripcion || '').slice(0, 300), agregado: new Date().toISOString() });
+    pr.setProperty('FUENTES', JSON.stringify(L));
+  }
+  if (p.quitar) pr.setProperty('FUENTES', JSON.stringify(L.filter(function (x) { return x.id !== p.quitar; })));
+  if (p.describir) { L.forEach(function (x) { if (x.id === p.describir.id) x.descripcion = String(p.describir.descripcion || '').slice(0, 300); }); pr.setProperty('FUENTES', JSON.stringify(L)); }
+  if (p.ver) { const f = ex_fuentesLista_().filter(function (x) { return x.id === p.ver; })[0]; if (!f) throw new Error('fuente no encontrada'); return { ok: true, fuente: f, tablas: ex_fuenteTabla_(f, 25) }; }
+  if (p.buscar) return { ok: true, items: ex_fuenteBuscar_(p.buscar, 25) };
+  const carpeta = ex_carpetaFuentes_(false);
+  return { ok: true, items: ex_fuentesLista_(), carpeta: carpeta ? carpeta.getUrl() : '' };
+}
+function ex_fuentesResumen_() {
+  return ex_fuentesLista_().slice(0, 8).map(function (f) {
+    try { const t = ex_fuenteTabla_(f, 6); return f.nombre + (f.descripcion ? ' (' + f.descripcion + ')' : '') + ': ' + t.map(function (x) { return x.hoja + ' [' + (x.total || x.filas.length) + ' filas] columnas: ' + (x.filas[0] || []).filter(String).join(', '); }).join(' | '); }
+    catch (e) { return f.nombre + ': no se pudo leer (' + e.message + ')'; }
+  }).join('\n');
+}
+
+/* ---------- datos compartidos para el Cerebro y el Copiloto ---------- */
+let _exPerfLista = null, _exSpzCat = null;   // memoria dentro de una misma ejecución
+function ex_perfilesLista_() {
+  if (_exPerfLista) return _exPerfLista;
+  const P = ex_leerPerfiles_(), nombres = {};
+  try { (ex_leerBase_().contactos || []).forEach(function (c) { nombres[c.id] = c.nombre; }); } catch (e) {}
+  _exPerfLista = Object.keys(P).filter(function (id) { return P[id].ciclo; }).map(function (id) { return Object.assign({ id: id, nombre: nombres[id] || id }, P[id]); });
+  return _exPerfLista;
+}
+function ex_tareasAbiertas_() {
+  const sh = ex_hoja_(), tz = ex_tz_(), n = EX_ULTIMA - EX_PRIMERA + 1, v = sh.getRange(EX_PRIMERA, 1, n, 15).getValues(), out = [];
+  v.forEach(function (r) {
+    if (!String(r[1] || '').trim() || r[0] === true) return;
+    out.push({ tarea: String(r[1]), area: String(r[2] || ''), categoria: String(r[3] || ''), proyecto: String(r[4] || ''), cuadrante: String(r[7] || '').charAt(0), limite: r[9] instanceof Date ? ex_ymd_(r[9], tz) : '', estado: String(r[10] || ''), notas: String(r[14] || '').slice(0, 160) });
+  });
+  return out;
+}
+function ex_waEsperando_(dias) {
+  const sh = SpreadsheetApp.getActive().getSheetByName(EX_HOJA_WA); if (!sh || sh.getLastRow() < 2) return [];
+  const desde = Date.now() - (dias || 7) * 86400000, n = Math.min(4000, sh.getLastRow() - 1), ult = {};
+  sh.getRange(sh.getLastRow() - n + 1, 1, n, 7).getValues().forEach(function (r) {
+    const f = r[0] instanceof Date ? r[0] : new Date(r[0]); if (isNaN(f) || f.getTime() < desde) return;
+    const id = String(r[6] || r[2]); if (ult[id] && ult[id].fecha > f) return;
+    ult[id] = { id: id, nombre: String(r[3] || ''), entrante: String(r[1]) === 'Recibido', fecha: f, mensaje: String(r[4] || '').slice(0, 140) };
+  });
+  return Object.keys(ult).map(function (k) { return ult[k]; }).filter(function (x) { return x.entrante; }).sort(function (a, b) { return a.fecha - b.fecha; })
+    .map(function (x) { return { id: x.id, nombre: x.nombre, hace_h: Math.round((Date.now() - x.fecha) / 3600000), mensaje: x.mensaje }; });
+}
+function ex_contactosRapidos_(q, max) {
+  const b = ex_leerBase_(), tk = ex_norm_(q).split(/[^a-z0-9+]+/).filter(function (w) { return w.length >= 2; });
+  let perf = {}; try { perf = ex_leerPerfiles_(); } catch (e) {}
+  return (b.contactos || []).map(function (c) {
+    const t = ex_norm_([c.nombre, c.empresa, c.email, c.telefono, c.etiquetas, c.notas, perf[c.id] ? JSON.stringify(perf[c.id].p || {}).slice(0, 600) : ''].join(' '));
+    return { c: c, p: tk.reduce(function (a, w) { return a + (t.indexOf(w) >= 0 ? 1 : 0); }, 0) };
+  }).filter(function (o) { return o.p >= Math.max(1, Math.ceil(tk.length * 0.6)); }).sort(function (a, b) { return b.p - a.p; }).slice(0, max || 8).map(function (o) {
+    const c = o.c, pf = perf[c.id];
+    return { id: c.id, nombre: c.nombre, tipo: c.tipo, telefono: c.telefono, email: c.email, intereses: c.etiquetas, ultima: c.ultima, perfil: pf ? { ciclo: pf.ciclo, clase: pf.clase, prob: pf.prob, resumen: pf.resumen, intereses: pf.p && pf.p.intereses, talla: pf.p && pf.p.talla, presupuesto: pf.p && pf.p.presupuesto_clp, disciplinas: pf.p && pf.p.disciplinas } : null,
+      ultimas: (b.interacciones || []).filter(function (i) { return i.id === c.id; }).slice(0, 5).map(function (i) { return i.fecha + ' ' + i.tipo + ': ' + String(i.detalle || '').slice(0, 160); }) };
+  });
+}
+// Clientes con interés declarado en un producto (perfiles y etiquetas), para cruzar con stock y ofertas.
+function ex_interesados_(texto, max) {
+  const tk = ex_norm_(texto).split(/[^a-z0-9]+/).filter(function (w) { return w.length >= 3 && !/^(comp|expert|pro|sport|base|alloy|carbon|s-works|sworks|turbo|bike|bicicleta)$/.test(w); });
+  if (!tk.length) return [];
+  const out = [];
+  try {
+    ex_perfilesLista_().forEach(function (p) {
+      const s = ex_norm_(((p.p && p.p.intereses) || []).join(' ') + ' ' + (p.resumen || ''));
+      if (tk.every(function (w) { return s.indexOf(w) >= 0; })) out.push({ id: p.id, nombre: p.nombre, ciclo: p.ciclo, clase: p.clase, prob: p.prob, talla: p.p && p.p.talla });
+    });
+  } catch (e) {}
+  return out.sort(function (a, b) { return (b.prob || 0) - (a.prob || 0); }).slice(0, max || 10);
+}
+
+/* ---------- Copiloto: un agente que consulta todas las fuentes y propone acciones ---------- */
+const EX_COP_SISTEMA = [
+  'Eres el Copiloto de Blackline Puerto Varas, tienda Specialized en Puerto Varas, Chile (lluvioso; temporada alta de primavera a verano; muchos turistas argentinos en verano). Su fuerte son las e-bikes (Turbo Levo, Levo SL, Kenevo, Vado, Como, Creo) y también venden MTB, ruta, gravel, urbano, niños, ropa, accesorios y taller. Han vendido S-Works en todas las disciplinas. Hablas con Gonzalo, el encargado: psicólogo laboral, vendedor experto, muy analítico. Tutéalo, en español de Chile, directo y concreto.',
+  'Tu trabajo: responder rápido y bien usando las herramientas. Consulta los datos antes de afirmar algo (stock, precios, clientes, negociaciones, clima). Cruza fuentes: por ejemplo, si preguntan por un producto mira la web de Specialized (precio, oferta, stock por talla en Chile), el stock de la tienda (Bsale) y qué clientes lo quieren. Si una herramienta no tiene datos (por ejemplo Bsale aún no conectado), dilo en una frase y sigue con lo que sí hay.',
+  'Reglas: nunca inventes precios, stock ni datos de clientes. El stock de Specialized es el de su bodega en Chile según la web (sirve para saber si se puede pedir); el de Bsale es el de la tienda. No puedes comprar, pedir, enviar mensajes ni modificar nada por tu cuenta: cuando convenga actuar, usa proponer_accion (tareas, avisos, abrir chat de WhatsApp con un borrador, crear negociación, diseñar una pieza, idea de contenido, abrir ficha de producto) y Gonzalo decide con un toque.',
+  'Formato de la respuesta: breve y escaneable. Empieza con la respuesta directa en 1–2 frases. Luego, si sirve, viñetas cortas con datos concretos (precio, tallas, stock, fechas). Usa **negrita** solo para lo clave. Sin títulos grandes ni tablas. Para borradores de mensajes a clientes, escríbelos listos para copiar, cálidos y cortos, con emojis moderados.'
+].join('\n\n');
+const EX_COP_TOOLS = [
+  { name: 'buscar_producto', description: 'Busca un producto por nombre, familia, talla o SKU (ej. "levo sl s4", "kenevo sl comp", "95227-6001", "casco ambush"). Devuelve la web de Specialized Chile (precio, oferta, etiqueta, stock por talla y color en la bodega de Chile, bajas recientes), el stock de la tienda en Bsale y los clientes interesados.', input_schema: { type: 'object', properties: { consulta: { type: 'string' } }, required: ['consulta'] } },
+  { name: 'ficha_specialized_en_vivo', description: 'Vuelve a leer ahora la ficha de un producto en specialized.com/cl (stock por talla y color al minuto). Úsala cuando necesites confirmar stock exacto antes de prometer algo. Requiere el id del producto que entrega buscar_producto.', input_schema: { type: 'object', properties: { id: { type: 'string' } }, required: ['id'] } },
+  { name: 'novedades_specialized', description: 'Lo que está pasando en specialized.com/cl: productos más vendidos en Chile (bajas de stock de los últimos 14 días), etiquetados como más vendidos, ofertas activas, novedades y colores nuevos, bicis con poco stock, lanzamientos y campañas de la portada.', input_schema: { type: 'object', properties: {} } },
+  { name: 'buscar_clientes', description: 'Busca clientes o contactos por nombre, teléfono, email, producto de interés o característica (ej. "Juan", "levo talla L", "gravel principiante"). Devuelve perfil (ciclo, probabilidad, intereses, talla, presupuesto) y últimas interacciones.', input_schema: { type: 'object', properties: { consulta: { type: 'string' } }, required: ['consulta'] } },
+  { name: 'clientes_interesados', description: 'Lista los clientes que han mostrado interés en un producto o familia (ej. "Kenevo SL", "Vado"). Útil para avisar llegadas, ofertas o poco stock.', input_schema: { type: 'object', properties: { producto: { type: 'string' } }, required: ['producto'] } },
+  { name: 'whatsapp_esperando', description: 'Clientes que escribieron por WhatsApp y esperan respuesta (últimos días), con el último mensaje.', input_schema: { type: 'object', properties: {} } },
+  { name: 'ver_negociaciones', description: 'Negociaciones de venta abiertas (o todas) con etapa, valor, próxima acción y última actividad. Filtro opcional por texto.', input_schema: { type: 'object', properties: { filtro: { type: 'string', enum: ['abiertas', 'estancadas', 'ganadas_30d', 'perdidas_30d'] }, consulta: { type: 'string' } } } },
+  { name: 'ver_tareas', description: 'Tareas pendientes del organizador. Filtro: hoy, vencidas, semana o todas; texto opcional.', input_schema: { type: 'object', properties: { filtro: { type: 'string', enum: ['hoy', 'vencidas', 'semana', 'todas'] }, consulta: { type: 'string' } } } },
+  { name: 'ver_agenda', description: 'Eventos de Google Calendar de los próximos días (reuniones, salidas, test rides, capacitaciones).', input_schema: { type: 'object', properties: { dias: { type: 'integer' } } } },
+  { name: 'ver_clima', description: 'Pronóstico de Puerto Varas: ahora y los próximos 7 días (lluvia, temperatura, viento). Útil para salidas, test rides, eventos y contenido.', input_schema: { type: 'object', properties: {} } },
+  { name: 'ver_noticias', description: 'Noticias del mundo bike seleccionadas (Pinkbike, Vital MTB, Specialized en la prensa, ciclismo en Chile).', input_schema: { type: 'object', properties: {} } },
+  { name: 'stock_tienda', description: 'Stock de la tienda en Bsale para un producto (nombre, SKU o código).', input_schema: { type: 'object', properties: { consulta: { type: 'string' } }, required: ['consulta'] } },
+  { name: 'buscar_en_planillas', description: 'Busca en las planillas y archivos que Gonzalo conectó como fuentes (listas de precios, exportaciones del B2B, metas, proveedores, etc.).', input_schema: { type: 'object', properties: { consulta: { type: 'string' } }, required: ['consulta'] } },
+  { name: 'ver_instagram', description: 'Resumen de Instagram: alcance y seguidores recientes, últimas publicaciones y su rendimiento, contenido planificado y piezas del estudio.', input_schema: { type: 'object', properties: {} } },
+  { name: 'ver_avisos', description: 'Avisos internos activos de la tienda (lo que viene, cosas importantes).', input_schema: { type: 'object', properties: {} } },
+  { name: 'proponer_accion', description: 'Propone una acción para que Gonzalo la apruebe con un toque. No ejecuta nada por sí sola. Úsala cuando haya un siguiente paso claro.', input_schema: { type: 'object', properties: {
+    tipo: { type: 'string', enum: ['crear_tarea', 'crear_aviso', 'whatsapp', 'crear_negocio', 'disenar_pieza', 'idea_contenido', 'abrir_producto', 'abrir_contacto'] },
+    titulo: { type: 'string', description: 'Texto del botón o título de la tarea, aviso, negociación o idea' },
+    detalle: { type: 'string', description: 'Detalle: notas de la tarea, texto del aviso, borrador del mensaje de WhatsApp, tema de la pieza' },
+    fecha: { type: 'string', description: 'yyyy-MM-dd si aplica' },
+    ref: { type: 'string', description: 'ID del contacto, producto o negociación relacionada, o teléfono' } }, required: ['tipo', 'titulo'] } }
+];
+function ex_json_(o, max) { const s = JSON.stringify(o); return s.length > (max || 7000) ? s.slice(0, max || 7000) + '…' : s; }
+function ex_copHerramienta_(nombre, inp, estado) {
+  const tz = ex_tz_(), hoy = ex_hoyYmd_(tz);
+  switch (nombre) {
+    case 'buscar_producto': {
+      const spz = ex_spzBuscar_(inp.consulta, 6).map(function (x) { return { id: x.id, nombre: x.nombre, disciplina: x.disciplina, precio: x.precio, oferta: x.oferta || null, etiqueta: x.etiqueta, stock_chile: x.stock, tallas_con_stock: x.tallas, bajas_14d: x.bajas14, revisado: x.revisado, url: x.url, detalle: ex_spzTallas_(x.id).slice(0, 30) }; });
+      let bsale = 'Bsale aún no está conectado';
+      if (ex_bsaleToken_()) { try { bsale = ex_bsaleParaAgente_(inp.consulta) || 'sin coincidencias en Bsale'; } catch (e) { bsale = 'error Bsale: ' + e.message; } }
+      return ex_json_({ specialized: spz.length ? spz : 'sin coincidencias en el catálogo de Specialized (o aún no se sincroniza)', tienda_bsale: bsale, interesados: ex_interesados_(inp.consulta, 8) }, 9000);
+    }
+    case 'ficha_specialized_en_vivo': { const r = ex_specialized_({ accion: 'ficha', id: inp.id }); return ex_json_(r, 8000); }
+    case 'novedades_specialized': { const r = ex_spzResumen_(); ['calientes', 'masVendidos', 'ofertas', 'nuevos', 'pocoStock'].forEach(function (k) { if (r[k]) r[k] = r[k].slice(0, 8).map(function (x) { return { nombre: x.nombre, disciplina: x.disciplina, precio: x.precio, oferta: x.oferta || null, stock: x.stock, tallas: x.tallas, bajas14: x.bajas14, id: x.id }; }); }); if (r.movimientos) r.movimientos = r.movimientos.slice(0, 15); return ex_json_(r, 9000); }
+    case 'buscar_clientes': return ex_json_(ex_contactosRapidos_(inp.consulta, 6), 8000);
+    case 'clientes_interesados': return ex_json_(ex_interesados_(inp.producto, 15));
+    case 'whatsapp_esperando': return ex_json_(ex_waEsperando_(7).slice(0, 20));
+    case 'ver_negociaciones': {
+      let L = ex_leerNegocios_().negocios; const f = inp.filtro || 'abiertas', d = function (s) { return s ? Math.round((Date.parse(hoy) - Date.parse(s)) / 86400000) : 999; };
+      if (f === 'abiertas') L = L.filter(function (n) { return n.estado === 'Abierta'; });
+      if (f === 'estancadas') L = L.filter(function (n) { return n.estado === 'Abierta' && d(n.actividad) > 7; });
+      if (f === 'ganadas_30d') L = L.filter(function (n) { return n.estado === 'Ganada' && d(n.actividad) <= 30; });
+      if (f === 'perdidas_30d') L = L.filter(function (n) { return n.estado === 'Perdida' && d(n.actividad) <= 30; });
+      if (inp.consulta) { const q = ex_norm_(inp.consulta); L = L.filter(function (n) { return ex_norm_(n.titulo + ' ' + n.producto + ' ' + n.notas + ' ' + n.contacto).indexOf(q) >= 0; }); }
+      return ex_json_(L.slice(0, 25).map(function (n) { return { id: n.id, titulo: n.titulo, contacto: n.contacto, etapa: n.etapa, valor: n.valor, producto: n.producto, proxima: n.proxima, fechaProx: n.fechaProx, actividad: n.actividad, notas: String(n.notas || '').slice(0, 160) }; }));
+    }
+    case 'ver_tareas': {
+      let L = ex_tareasAbiertas_(); const f = inp.filtro || 'hoy', fin = ex_ymd_(new Date(Date.now() + 7 * 86400000), tz);
+      if (f === 'hoy') L = L.filter(function (t) { return t.limite && t.limite <= hoy; });
+      if (f === 'vencidas') L = L.filter(function (t) { return t.limite && t.limite < hoy; });
+      if (f === 'semana') L = L.filter(function (t) { return t.limite && t.limite <= fin; });
+      if (inp.consulta) { const q = ex_norm_(inp.consulta); L = L.filter(function (t) { return ex_norm_(t.tarea + ' ' + t.notas + ' ' + t.proyecto).indexOf(q) >= 0; }); }
+      return ex_json_(L.slice(0, 40));
+    }
+    case 'ver_agenda': { const n = Math.min(14, inp.dias || 7), lim = ex_ymd_(new Date(Date.now() + n * 86400000), tz); return ex_json_(int_eventos_(tz).filter(function (e) { return e.fecha <= lim; }).map(function (e) { return { fecha: e.fecha, inicio: e.inicio, fin: e.fin, titulo: e.titulo, lugar: e.lugar }; })); }
+    case 'ver_clima': return ex_climaTexto_(ex_clima_());
+    case 'ver_noticias': return ex_json_(ex_noticias_(false).items.map(function (x) { return { titulo: x.titulo, por_que: x.por_que, fuente: x.fuente, fecha: (x.fecha || '').slice(0, 10), link: x.link }; }));
+    case 'stock_tienda': if (!ex_bsaleToken_()) return 'Bsale aún no está conectado: no hay stock de la tienda disponible.'; return String(ex_bsaleParaAgente_(inp.consulta) || 'sin coincidencias en Bsale');
+    case 'buscar_en_planillas': { const L = ex_fuentesLista_(); if (!L.length) return 'No hay planillas conectadas como fuentes todavía.'; return ex_json_(ex_fuenteBuscar_(inp.consulta, 15), 9000); }
+    case 'ver_instagram': {
+      const o = {}; try { const ig = ex_instagram_({}); o.dias = (ig.dias || []).slice(-14).map(function (d) { return [d.fecha, d.seguidores, d.alcance, d.interacciones].join(' · '); }); o.ultimas = (ig.posts || []).filter(function (x) { return x.formato !== 'STORY'; }).sort(function (a, b) { return String(b.fecha).localeCompare(String(a.fecha)); }).slice(0, 8).map(function (x) { return { fecha: x.fecha, formato: x.formato, texto: String(x.texto || '').slice(0, 90), alcance: x.alcance, guardados: x.guardados }; }); } catch (e) { o.instagram = 'sin datos: ' + e.message; }
+      try { o.plan = (ex_contenido_({}).items || []).filter(function (x) { return x.fecha >= hoy && x.estado !== 'Publicado'; }).slice(0, 10).map(function (x) { return x.fecha + ' ' + x.formato + ': ' + x.tema; }); } catch (e) {}
+      try { o.piezas = (ex_piezas_({}).items || []).slice(0, 8).map(function (x) { return x.estado + ': ' + x.titulo; }); } catch (e) {}
+      return ex_json_(o, 7000);
+    }
+    case 'ver_avisos': return ex_json_(ex_avisos_({}).items.map(function (a) { return { titulo: a.titulo, detalle: a.detalle, fecha: a.fecha, importancia: a.importancia }; }));
+    case 'proponer_accion': estado.acciones.push({ tipo: inp.tipo, titulo: String(inp.titulo || '').slice(0, 160), detalle: String(inp.detalle || '').slice(0, 1500), fecha: inp.fecha || '', ref: inp.ref || '' }); return 'Acción propuesta. Gonzalo la verá como botón.';
+  }
+  throw new Error('herramienta desconocida: ' + nombre);
+}
+function ex_claudeMensajes_(cuerpo) {
+  const clave = PropertiesService.getScriptProperties().getProperty('ANTHROPIC_API_KEY');
+  if (!clave) throw new Error('falta ANTHROPIC_API_KEY en las propiedades del script');
+  const r = UrlFetchApp.fetch('https://api.anthropic.com/v1/messages', { method: 'post', contentType: 'application/json', muteHttpExceptions: true, payload: JSON.stringify(cuerpo), headers: { 'x-api-key': clave, 'anthropic-version': '2023-06-01' } });
+  const j = JSON.parse(r.getContentText() || '{}');
+  if (r.getResponseCode() !== 200) throw new Error('Claude respondió ' + r.getResponseCode() + ': ' + ((j.error && j.error.message) || '').slice(0, 200));
+  return j;
+}
+function ex_copiloto_(p) {
+  const pr = PropertiesService.getScriptProperties(), modelo = pr.getProperty('COPILOTO_MODELO') || pr.getProperty('AGENTE_MODELO') || EX_AG_MODELO, tz = ex_tz_();
+  const hist = (p.mensajes || []).slice(-12).filter(function (m) { return m && m.texto; });
+  if (!hist.length || hist[hist.length - 1].rol !== 'yo') throw new Error('falta la pregunta');
+  const ahora = Utilities.formatDate(new Date(), tz, "EEEE d 'de' MMMM yyyy, HH:mm");
+  const messages = hist.map(function (m, i) {
+    let t = String(m.texto).slice(0, 4000);
+    if (i === hist.length - 1) t = '[' + ahora + (p.pestana ? ' · Gonzalo está en la pestaña ' + p.pestana : '') + (p.contexto ? ' · En pantalla: ' + String(p.contexto).slice(0, 1500) : '') + ']\n' + t;
+    return { role: m.rol === 'yo' ? 'user' : 'assistant', content: t };
+  });
+  while (messages.length && messages[0].role !== 'user') messages.shift();
+  const estado = { acciones: [], usadas: {} };
+  const tools = EX_COP_TOOLS.map(function (t, i) { return i === EX_COP_TOOLS.length - 1 ? Object.assign({}, t, { cache_control: { type: 'ephemeral' } }) : t; });
+  let texto = '';
+  for (let paso = 0; paso < 7; paso++) {
+    const j = ex_claudeMensajes_({ model: modelo, max_tokens: 6000, output_config: { effort: /haiku/.test(modelo) ? 'medium' : 'low' }, system: [{ type: 'text', text: EX_COP_SISTEMA, cache_control: { type: 'ephemeral' } }], tools: tools, messages: messages });
+    if (j.stop_reason === 'refusal') { texto = 'No puedo ayudar con eso.'; break; }
+    messages.push({ role: 'assistant', content: j.content });
+    texto = (j.content || []).filter(function (c) { return c.type === 'text'; }).map(function (c) { return c.text; }).join('\n').trim() || texto;
+    if (j.stop_reason !== 'tool_use') break;
+    const res = (j.content || []).filter(function (c) { return c.type === 'tool_use'; }).map(function (tu) {
+      estado.usadas[tu.name] = 1;
+      try { return { type: 'tool_result', tool_use_id: tu.id, content: String(ex_copHerramienta_(tu.name, tu.input || {}, estado)) }; }
+      catch (e) { return { type: 'tool_result', tool_use_id: tu.id, content: 'Error: ' + e.message, is_error: true }; }
+    });
+    messages.push({ role: 'user', content: res });
+  }
+  return { ok: true, texto: texto || 'No encontré una respuesta. Prueba preguntando de otra forma.', acciones: estado.acciones.slice(0, 6), fuentes: Object.keys(estado.usadas) };
+}
+
+/* ---------- Cerebro: cada mañana cruza todas las fuentes y arma el plan del día ---------- */
+const EX_HOJA_CEREBRO = 'Cerebro';
+const EX_CER_SISTEMA = [
+  'Eres el jefe de operaciones virtual de Blackline Puerto Varas (tienda Specialized en Puerto Varas, Chile). Cada mañana lees TODAS las fuentes (tareas, agenda, negociaciones, clientes y WhatsApp, stock de la tienda, web de Specialized Chile, Instagram y contenido, clima, noticias, avisos internos y planillas) y le armas a Gonzalo, el encargado, el plan del día: lo que él organizaría en su cabeza, pero hecho por ti, para que solo ejecute.',
+  'Contexto del negocio: el fuerte son las e-bikes (Turbo Levo, Levo SL, Kenevo, Vado, Como, Creo) y también MTB, ruta, gravel, urbano, niños, ropa, accesorios y taller; han vendido S-Works en todas las disciplinas. Puerto Varas es muy lluvioso: en invierno se vende menos y desde primavera la demanda sube fuerte; en verano llegan turistas, muchos argentinos. El equipo: Gonzalo, 2 vendedores (uno apoya marketing, otro organización física y stock) y 2 mecánicos.',
+  'Lo más valioso son los CRUCES entre fuentes, concretos y accionables. Ejemplos: un cliente quiere un producto que en la web de Specialized tiene poco stock o entró en oferta → escribirle hoy; llueve el día de una salida o test ride → moverlo o confirmar; un producto se está vendiendo rápido en Chile y lo tenemos → contenido y empuje; una negociación sin actividad hace días y su próxima acción venció → retomarla; un lanzamiento de Specialized que los clientes van a preguntar → prepararse y publicar; un día soleado de fin de semana → salida con clientes o contenido en ruta.',
+  'Reglas: usa solo datos que estén en el contexto, no inventes. Prioriza por impacto en ventas y urgencia. Sé específico: nombres, productos, tallas, fechas, montos. Máximo 6 prioridades, 6 cruces y 4 alertas. Si una fuente no tiene datos, ignórala sin mencionarla. Español de Chile, directo, frases cortas. Propón avisos internos solo para cosas que el equipo deba saber (eventos, llegadas, cambios de horario, campañas), no para tareas personales.'
+].join('\n\n');
+const EX_CER_ACCION = { type: 'object', additionalProperties: false, required: ['tipo', 'ref', 'texto'], properties: {
+  tipo: { type: 'string', enum: ['ninguna', 'whatsapp', 'abrir_negocio', 'abrir_contacto', 'abrir_tarea', 'crear_tarea', 'disenar_pieza', 'abrir_producto', 'abrir_pestana'] },
+  ref: { type: 'string', description: 'ID de contacto, negociación, producto o nombre de pestaña; vacío si no aplica' },
+  texto: { type: 'string', description: 'Borrador de mensaje, título de tarea o tema de la pieza; vacío si no aplica' } } };
+const EX_CER_ESQUEMA = { type: 'object', additionalProperties: false, required: ['titular', 'resumen', 'foco', 'prioridades', 'cruces', 'alertas', 'contenido', 'clima', 'avisos'], properties: {
+  titular: { type: 'string', description: 'Una frase que resume el día (máx. 90 caracteres)' },
+  resumen: { type: 'string', description: '2–3 frases con lo más importante del día' },
+  foco: { type: 'array', items: { type: 'string' }, description: 'Las 3 cosas que, si se hacen hoy, hacen que el día valga la pena' },
+  prioridades: { type: 'array', items: { type: 'object', additionalProperties: false, required: ['titulo', 'por_que', 'area', 'urgencia', 'minutos', 'accion'], properties: {
+    titulo: { type: 'string' }, por_que: { type: 'string' }, area: { type: 'string', enum: ['ventas', 'clientes', 'marketing', 'taller', 'equipo', 'stock', 'admin', 'personal'] },
+    urgencia: { type: 'string', enum: ['alta', 'media', 'baja'] }, minutos: { type: 'integer' }, accion: EX_CER_ACCION } } },
+  cruces: { type: 'array', items: { type: 'object', additionalProperties: false, required: ['titulo', 'detalle', 'fuentes', 'accion'], properties: {
+    titulo: { type: 'string' }, detalle: { type: 'string' }, fuentes: { type: 'array', items: { type: 'string', enum: ['tareas', 'agenda', 'negocios', 'clientes', 'whatsapp', 'bsale', 'specialized', 'instagram', 'clima', 'noticias', 'avisos', 'planillas'] } }, accion: EX_CER_ACCION } } },
+  alertas: { type: 'array', items: { type: 'object', additionalProperties: false, required: ['titulo', 'detalle', 'nivel'], properties: { titulo: { type: 'string' }, detalle: { type: 'string' }, nivel: { type: 'string', enum: ['info', 'atencion', 'urgente'] } } } },
+  contenido: { type: 'array', items: { type: 'object', additionalProperties: false, required: ['tema', 'formato', 'por_que'], properties: { tema: { type: 'string' }, formato: { type: 'string', enum: ['Carrusel', 'Historias', 'Reel', 'Post'] }, por_que: { type: 'string' } } } },
+  clima: { type: 'string', description: 'Cómo el clima de hoy y los próximos días afecta ventas, salidas, test rides, eventos o contenido (1–2 frases)' },
+  avisos: { type: 'array', items: { type: 'object', additionalProperties: false, required: ['titulo', 'detalle', 'fecha', 'importancia'], properties: { titulo: { type: 'string' }, detalle: { type: 'string' }, fecha: { type: 'string', description: 'yyyy-MM-dd o vacío' }, importancia: { type: 'string', enum: ['normal', 'importante', 'urgente'] } } } }
+} };
+function ex_cerebroContexto_(extra) {
+  const tz = ex_tz_(), hoy = ex_hoyYmd_(tz), partes = [], sec = function (t, f) { try { const s = f(); if (s) partes.push('## ' + t + '\n' + s); } catch (e) { console.log('Cerebro ' + t + ': ' + e.message); } };
+  partes.push('Hoy es ' + Utilities.formatDate(new Date(), tz, "EEEE d 'de' MMMM yyyy") + ' (' + hoy + ').');
+  sec('Clima Puerto Varas', function () { return ex_climaTexto_(ex_clima_()); });
+  sec('Agenda (7 días)', function () { const lim = ex_ymd_(new Date(Date.now() + 7 * 86400000), tz); return int_eventos_(tz).filter(function (e) { return e.fecha <= lim; }).map(function (e) { return e.fecha + ' ' + (e.inicio || 'todo el día') + ' · ' + e.titulo + (e.lugar ? ' @ ' + e.lugar : ''); }).join('\n'); });
+  sec('Tareas pendientes', function () { const L = ex_tareasAbiertas_().filter(function (t) { return t.limite && t.limite <= ex_ymd_(new Date(Date.now() + 5 * 86400000), tz); }).sort(function (a, b) { return a.limite.localeCompare(b.limite); }); return L.slice(0, 40).map(function (t) { return (t.limite < hoy ? 'VENCIDA ' : '') + t.limite + ' · ' + t.tarea + ' [' + t.categoria + (t.estado ? ', ' + t.estado : '') + ']'; }).join('\n'); });
+  sec('Negociaciones abiertas', function () { return ex_leerNegocios_().negocios.filter(function (n) { return n.estado === 'Abierta'; }).slice(0, 30).map(function (n) { return n.id + ' · ' + n.titulo + ' · ' + n.etapa + ' · $' + n.valor + ' · contacto ' + n.contacto + ' · próxima: ' + (n.proxima || '—') + ' ' + (n.fechaProx || '') + ' · última actividad ' + (n.actividad || '—'); }).join('\n'); });
+  sec('WhatsApp: esperan respuesta', function () { return ex_waEsperando_(5).slice(0, 15).map(function (w) { return w.id + ' · ' + w.nombre + ' · hace ' + w.hace_h + ' h: "' + w.mensaje + '"'; }).join('\n'); });
+  sec('Clientes con mayor probabilidad (perfiles)', function () { return ex_perfilesLista_().filter(function (p) { return p.prob >= 40 && /oportunidad|lead_activo|cliente_nuevo/.test(p.ciclo || ''); }).sort(function (a, b) { return b.prob - a.prob; }).slice(0, 15).map(function (p) { return p.id + ' · ' + p.nombre + ' · ' + p.ciclo + ' · ' + p.prob + '% · intereses: ' + ((p.p && p.p.intereses) || []).join(', ') + (p.p && p.p.talla ? ' · talla ' + p.p.talla : ''); }).join('\n'); });
+  sec('Stock de la tienda (Bsale): arribos y crítico', function () { const b = ex_bsaleResumen_(); if (!b) return ''; const L = b.items.filter(function (x) { return x.l || x.c; }).slice(0, 30); return L.map(function (x) { return x.p + ' ' + x.v + ': ' + x.s + (x.l ? ' (llegó ' + x.l + ')' : '') + (x.c ? ' (crítico ' + x.c + ')' : ''); }).join('\n'); });
+  sec('Specialized Chile (web)', function () {
+    const r = ex_spzResumen_(); if (!r.activo) return '';
+    const f = function (x) { return x.nombre + (x.oferta ? ' OFERTA $' + x.oferta + ' (antes $' + x.precio + ')' : ' $' + x.precio) + (x.stock !== null && x.stock !== undefined ? ' · stock Chile ' + x.stock : '') + (x.bajas14 ? ' · ' + x.bajas14 + ' vendidas en 14 días' : ''); };
+    return ['Más vendidos en Chile (bajas de stock 14 días): ' + r.calientes.slice(0, 8).map(f).join('; '), 'Ofertas: ' + r.ofertas.slice(0, 8).map(f).join('; '), 'Novedades: ' + r.nuevos.slice(0, 6).map(f).join('; '), 'Poco stock en Chile: ' + r.pocoStock.slice(0, 8).map(function (x) { return x.nombre + ' (' + x.tallas + ')'; }).join('; '), 'Lanzamientos y campañas en la portada: ' + r.lanzamientos.join(', ')].join('\n');
+  });
+  sec('Interesados en productos con oferta o poco stock', function () {
+    const r = ex_spzResumen_(); if (!r.activo) return '';
+    const out = [];
+    r.ofertas.slice(0, 10).concat(r.pocoStock.slice(0, 10)).forEach(function (x) { const I = ex_interesados_(x.familia || x.nombre, 5); if (I.length) out.push(x.nombre + ' → ' + I.map(function (i) { return i.nombre + ' (' + i.id + (i.talla ? ', talla ' + i.talla : '') + ')'; }).join(', ')); });
+    return out.join('\n');
+  });
+  sec('Instagram y contenido', function () { return ex_copHerramienta_('ver_instagram', {}, { acciones: [] }); });
+  sec('Noticias', function () { return ex_noticias_(false).items.map(function (x) { return '[' + x.fuente + '] ' + x.titulo + (x.por_que ? ' — ' + x.por_que : ''); }).join('\n'); });
+  sec('Avisos internos activos', function () { return ex_avisos_({}).items.map(function (a) { return (a.fecha || a.desde) + ' · ' + a.titulo + ': ' + a.detalle.slice(0, 160); }).join('\n'); });
+  sec('Planillas conectadas', ex_fuentesResumen_);
+  if (extra) partes.push('## Desde la app\n' + String(extra).slice(0, 6000));
+  return partes.join('\n\n');
+}
+function ex_cerebro_(p) {
+  p = p || {};
+  const sh = ex_hojaCab_(EX_HOJA_CEREBRO, ['Fecha', 'Generado', 'Plan (JSON)']), tz = ex_tz_(), hoy = ex_hoyYmd_(tz);
+  const leer = function () { const n = sh.getLastRow() - 1; if (n < 1) return null; const r = sh.getRange(sh.getLastRow(), 1, 1, 3).getValues()[0]; try { return { fecha: r[0] instanceof Date ? ex_ymd_(r[0], tz) : String(r[0]), generado: r[1] instanceof Date ? r[1].toISOString() : String(r[1]), plan: JSON.parse(r[2]) }; } catch (e) { return null; } };
+  const ult = leer();
+  if (!p.forzar && ult && ult.fecha === hoy) return Object.assign({ ok: true }, ult);
+  if (!p.forzar && !p.generar) return Object.assign({ ok: true, pendiente: true }, ult || {});
+  const plan = ex_llamarClaude_(ex_cerebroContexto_(p.contexto), EX_CER_SISTEMA, EX_CER_ESQUEMA);
+  sh.appendRow([hoy, new Date(), JSON.stringify(plan)]);
+  if (sh.getLastRow() > 120) sh.deleteRows(2, sh.getLastRow() - 100);
+  (plan.avisos || []).slice(0, 3).forEach(function (a) { try { ex_avisoAuto_(a.titulo, a.detalle, a.importancia, a.fecha); } catch (e) {} });
+  return { ok: true, fecha: hoy, generado: new Date().toISOString(), plan: plan };
+}
+// Cada hora: a partir de las 7:00 genera el plan del día una vez (si hay clave de Claude).
+function ex_rondaCerebro_() {
+  const pr = PropertiesService.getScriptProperties(), tz = ex_tz_(), hoy = ex_hoyYmd_(tz), hora = +Utilities.formatDate(new Date(), tz, 'H');
+  if (!pr.getProperty('ANTHROPIC_API_KEY') || hora < 7 || pr.getProperty('EX_CEREBRO_DIA') === hoy) return;
+  pr.setProperty('EX_CEREBRO_DIA', hoy);
+  ex_cerebro_({ generar: true });
+}
+function ex_contextoGlobal_(p) {
+  // Para la app: todo lo externo en una sola llamada (clima, Specialized, noticias, avisos, fuentes y el plan del día).
+  const out = { ok: true };
+  try { out.clima = ex_clima_(); } catch (e) { out.climaError = e.message; }
+  try { out.specialized = ex_spzResumen_(); } catch (e) { out.specializedError = e.message; }
+  try { out.noticias = ex_noticias_(false); } catch (e) { out.noticiasError = e.message; }
+  try { out.avisos = ex_avisos_({}).items; } catch (e) { out.avisos = []; }
+  try { out.fuentes = ex_fuentesLista_().map(function (f) { return { id: f.id, nombre: f.nombre, tipo: f.tipo, carpeta: !!f.carpeta, descripcion: f.descripcion || '' }; }); } catch (e) { out.fuentes = []; }
+  try { const c = ex_cerebro_({}); out.cerebro = c.plan ? c : null; } catch (e) { out.cerebroError = e.message; }
+  return out;
+}
+
+// Ejecútala una vez después de pegar esta versión: crea las hojas y carpetas nuevas, pide los permisos
+// (Drive y otras planillas) y hace la primera lectura de Specialized y de las noticias.
+function autorizarCerebro() {
+  ex_carpetaFuentes_(true);
+  try { ex_carpetaBanco_(); } catch (e) {}
+  ex_hojaCab_(EX_HOJA_AVISOS, EX_CAB_AVISOS);
+  SpreadsheetApp.openById(SpreadsheetApp.getActive().getId());
+  try { const r = ex_spzSinc_(); console.log('Specialized: ' + r.productos + ' productos' + (r.errores.length ? ' · avisos: ' + r.errores.join(', ') : '')); const s = ex_spzRondaStock_(12); console.log('Stock por talla revisado en ' + s.revisados + ' bicis.'); } catch (e) { console.log('Specialized: ' + e.message); }
+  try { const n = ex_noticias_(true); console.log('Noticias: ' + n.items.length + ' destacadas de ' + n.total); } catch (e) { console.log('Noticias: ' + e.message); }
+  try { console.log('Clima: ' + ex_climaTexto_(ex_clima_()).split('\n')[0]); } catch (e) { console.log('Clima: ' + e.message); }
+  console.log('Carpeta de fuentes: ' + ex_carpetaFuentes_(false).getUrl());
+  ex_instalarTriggers_();
+  console.log('Listo. Ahora: Implementar → Administrar implementaciones → ✏️ → Nueva versión.');
+}
+
 /* ---------- tareas automáticas (cada hora y cada 6 horas) ---------- */
 function ex_instalarTriggers_() {
   ScriptApp.getProjectTriggers().forEach(function (t) {
@@ -1978,7 +2714,13 @@ function ex_conLock_(fn) {
   if (!lock.tryLock(30000)) return;
   try { fn(); } finally { lock.releaseLock(); }
 }
-function ex_tareaHoraria() { if (!ex_cuentaVigente_()) return; ex_conLock_(ex_sincCalendario_); try { ex_rondaPublicar_(); } catch (e) { console.log('Publicar: ' + e.message); } }
+function ex_tareaHoraria() {
+  if (!ex_cuentaVigente_()) return;
+  ex_conLock_(ex_sincCalendario_);
+  try { ex_rondaPublicar_(); } catch (e) { console.log('Publicar: ' + e.message); }
+  try { ex_spzRonda_(); } catch (e) { console.log('Specialized: ' + e.message); }
+  try { ex_rondaCerebro_(); } catch (e) { console.log('Cerebro: ' + e.message); }
+}
 function ex_tareaBase() {
   if (!ex_cuentaVigente_()) return;
   ex_conLock_(ex_escanearBase_);

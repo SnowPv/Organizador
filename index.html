@@ -106,7 +106,7 @@ nav.bottom button.on span{background:var(--soft);filter:none;opacity:1;transform
 .seg{display:flex;gap:7px;flex-wrap:wrap}
 .pill{border:1.5px solid var(--line);background:var(--card);border-radius:99px;padding:8px 14px;font-size:13.5px;font-weight:700;color:var(--ink)}
 .pill.on{background:var(--accent);color:#fff;border-color:var(--accent)}
-input[type=text],input[type=date],input[type=time],input[type=url],input[type=password],input[type=number],input[type=datetime-local],select,textarea{width:100%;padding:13px 14px;border-radius:15px;border:1.5px solid var(--line);background:var(--card);font-size:16px;color:var(--ink)}
+input[type=text],input[type=date],input[type=time],input[type=url],input[type=password],input[type=number],input[type=datetime-local],input[type=search],select,textarea{width:100%;padding:13px 14px;border-radius:15px;border:1.5px solid var(--line);background:var(--card);font-size:16px;color:var(--ink)}
 input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent)}
 label.l{display:block;font-size:11px;color:var(--muted);margin:14px 0 6px;font-weight:800;text-transform:uppercase;letter-spacing:.05em}
 .btn{border:0;border-radius:15px;padding:14px 16px;font-weight:800;background:var(--grad);color:#fff;font-size:15.5px;box-shadow:0 6px 16px -6px rgba(164,77,240,.6)}
@@ -876,7 +876,7 @@ nav.bottom .nb{position:absolute;top:2px;left:calc(50% + 6px);min-width:17px;hei
 .selmode .task::before{content:"";position:absolute;left:2px;top:14px;width:20px;height:20px;border-radius:6px;border:2px solid #C5CBD5;background:var(--card)}
 .selmode .task.sel::before{background:var(--accent);border-color:var(--accent);box-shadow:inset 0 0 0 3px var(--card)}
 .selbar{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(96px + env(safe-area-inset-bottom));z-index:12;background:var(--ink);color:#fff;border-radius:16px;padding:8px;display:flex;gap:6px;align-items:center;box-shadow:var(--shadow-md);max-width:calc(100% - 24px);overflow-x:auto}
-body:has(.selbar) .fab{display:none}
+body:has(.selbar) .fab,body:has(.selbar) .fab2{display:none}
 @media (max-width:600px){.selbar{left:12px;right:12px;transform:none;max-width:none;flex-wrap:wrap;justify-content:center}.selbar span{width:100%;text-align:center;padding:2px 0 4px}}
 .selbar span{padding:0 8px;font-weight:700;font-size:13px;white-space:nowrap}
 .selbar button{border:0;background:rgba(255,255,255,.12);color:#fff;border-radius:10px;padding:8px 10px;font-weight:600;font-size:12.5px;white-space:nowrap;cursor:pointer}
@@ -963,7 +963,254 @@ body:has(.selbar) .fab{display:none}
   .pz-sl{width:118px}.pz-strip.v .pz-sl{width:92px}
   .mk-c{grid-template-columns:repeat(5,1fr)}
 }
+/* Cerebro: plan del día, clima, radar, avisos, noticias, Specialized, Copiloto */
+.cmd{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(300px,1fr);gap:14px;margin:0 0 14px}
+.cmd-plan{background:linear-gradient(140deg,#16213A 0%,#1D2B4B 55%,#23396A 100%);color:#fff;border-radius:18px;padding:20px 22px;position:relative;overflow:hidden;box-shadow:0 18px 40px -24px rgba(22,33,58,.9)}
+.cmd-plan::after{content:"";position:absolute;right:-70px;top:-90px;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(91,155,255,.35),transparent 70%)}
+.cmd-plan > *{position:relative;z-index:1}
+.pl-k{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#9CC3FF}
+.pl-k .ico{width:15px;height:15px}
+.pl-t{font-size:22px;font-weight:800;letter-spacing:-.02em;line-height:1.2;margin:8px 0 6px}
+.pl-h p{margin:0 0 14px;font-size:14px;line-height:1.5;opacity:.85;max-width:70ch}
+.pl-foco{display:grid;gap:8px}
+.pl-f{all:unset;box-sizing:border-box;display:flex;gap:10px;align-items:flex-start;cursor:pointer;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:10px 12px;font-size:14px;font-weight:600;line-height:1.35;transition:background .15s}
+.pl-f:hover{background:rgba(255,255,255,.14)}
+.pl-f > span{flex:none;width:22px;height:22px;border-radius:50%;background:#5B9BFF;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800}
+.pl-f > span .ico{width:13px;height:13px}
+.pl-f.ok{opacity:.6;text-decoration:line-through}
+.pl-f.ok > span{background:var(--ok)}
+.pl-acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.cmd-plan .btn.sec{background:rgba(255,255,255,.1);color:#fff;border-color:rgba(255,255,255,.18)}
+.cmd-plan .btn:not(.sec){background:#fff;color:#16213A}
+/* el plan dentro de Hoy y del modal (fondo claro) */
+.hy-hl .pl-h,.pl-m .pl-h{background:var(--accent-soft);border-radius:14px;padding:14px;margin:8px 0 12px}
+.hy-hl .pl-k,.pl-m .pl-k{color:var(--accent-ink)}
+.hy-hl .pl-t,.pl-m .pl-t{font-size:18px;margin:6px 0 4px}
+.hy-hl .pl-h p,.pl-m .pl-h p{opacity:1;color:var(--muted);margin-bottom:10px}
+.hy-hl .pl-f,.pl-m .pl-f{background:var(--card);border-color:var(--line);color:var(--ink)}
+.hy-hl .pl-f:hover,.pl-m .pl-f:hover{background:var(--soft)}
+.hy-hl .pl-f > span,.pl-m .pl-f > span{background:var(--accent)}
+.pl-p{display:flex;gap:12px;align-items:center;padding:11px 0;border-top:1px solid var(--line)}
+.pl-pb{flex:1;min-width:0}
+.pl-pb b{display:block;font-size:14.5px;line-height:1.35;margin-top:4px}
+.pl-pb small{display:block;color:var(--muted);font-size:13px;line-height:1.45;margin-top:2px}
+.pl-pt{display:flex;gap:5px;flex-wrap:wrap}
+.pl-pt .tag .ico{width:12px;height:12px;vertical-align:-2px}
+.pl-p .btn{flex:none;white-space:nowrap}
+.im-warn.bad{background:rgba(217,45,32,.1)}
+/* clima */
+.wx{flex:none;display:block}
+.wx-card{display:flex;flex-direction:column;background:linear-gradient(180deg,#EEF5FF 0%,var(--card) 46%)}
+.wx-card[data-w]{cursor:pointer}
+.wx-now{display:flex;align-items:center;gap:12px}
+.wx-t{display:flex;align-items:center;gap:10px;flex:1;min-width:0}
+.wx-t b{font-size:42px;font-weight:800;letter-spacing:-.04em;line-height:1}
+.wx-t span{font-size:12.5px;color:var(--muted);line-height:1.4;font-weight:600}
+.wx-hoy{text-align:right;flex:none}
+.wx-hoy small{display:block;font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+.wx-hoy b{display:block;font-size:15px;font-variant-numeric:tabular-nums}
+.wx-hoy span{display:inline-flex;align-items:center;gap:3px;font-size:12.5px;font-weight:700;color:var(--muted)}
+.wx-hoy span .ico,.wd em .ico{width:12px;height:12px;color:#3B82F6}
+.wx-hoy span.mojado{color:#1D4ED8}
+.wx-hrs{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(26px,1fr);gap:3px;margin:14px 0 6px;height:84px;align-items:end}
+.wh1{position:relative;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center}
+.wh1 .tp{position:absolute;top:calc((1 - var(--y)) * 22px);font-size:10.5px;font-weight:700;color:var(--ink)}
+.wh1 i{display:block;width:70%;height:calc(var(--p) * .36px + 2px);background:linear-gradient(180deg,#60A5FA,#2563EB);border-radius:4px 4px 2px 2px;opacity:calc(.25 + var(--p) / 140)}
+.wh1 span{font-size:10px;color:var(--muted);font-weight:600;margin-top:4px}
+.wh1.now span{color:var(--accent-ink);font-weight:800}
+.wx-days{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;border-top:1px solid var(--line);padding-top:10px;margin-top:4px}
+.wd{display:flex;flex-direction:column;align-items:center;gap:2px;border-radius:10px;padding:4px 0}
+.wd small{font-size:11px;font-weight:700;color:var(--muted);text-transform:capitalize}
+.wd b{font-size:13px;font-variant-numeric:tabular-nums}
+.wd span{font-size:11.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.wd em{font-style:normal;font-size:10.5px;font-weight:700;color:var(--muted)}
+.wd.mojado em{color:#1D4ED8}
+.wd.mojado{background:rgba(59,130,246,.07)}
+.wx-tip{display:flex;gap:8px;align-items:flex-start;background:var(--soft);border-radius:12px;padding:9px 11px;margin-top:12px;font-size:13px;line-height:1.45}
+.wx-tip .ico{flex:none;width:16px;height:16px;color:var(--accent);margin-top:1px}
+.wx-tabs{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin:4px 0 12px}
+.wx-tabs button{all:unset;box-sizing:border-box;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 2px;border-radius:12px;border:1px solid var(--line)}
+.wx-tabs button.on{border-color:var(--accent);background:var(--accent-soft)}
+.wx-tabs small{font-size:11.5px;font-weight:700;color:var(--muted);text-transform:capitalize}
+.wx-tabs b{font-size:14px}.wx-tabs span{font-size:11px;color:var(--muted);font-weight:600}
+.wx-sum{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:10px}
+.wx-sum b{display:block;font-size:16px}.wx-sum span{font-size:13px;color:var(--muted)}
+.wx-sum small{display:block;font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;text-align:right}
+.wx-ch{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(30px,1fr);gap:2px;overflow-x:auto;padding-bottom:4px}
+.wx-ch .c{display:flex;flex-direction:column;align-items:center;gap:3px;position:relative;padding-top:24px;min-height:150px;justify-content:flex-end}
+.wx-ch .tp{position:absolute;top:calc((1 - var(--y)) * 18px);font-size:11px;font-weight:700}
+.wx-ch i{display:block;width:60%;height:calc(var(--p) * .5px + 2px);background:linear-gradient(180deg,#60A5FA,#2563EB);border-radius:4px}
+.wx-ch em{font-style:normal;font-size:10px;color:var(--muted)}
+.wx-ch span{font-size:10.5px;color:var(--muted);font-weight:700}
+.hy-wx{all:unset;box-sizing:border-box;cursor:pointer;display:inline-flex;align-items:center;gap:8px;background:var(--soft);border-radius:999px;padding:5px 14px 5px 8px;margin:8px 0 2px;font-size:13px;color:var(--muted);font-weight:600;max-width:100%}
+.hy-wx b{color:var(--ink);font-size:15px}
+.hy-wx span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hy-wx .ico{width:12px;height:12px;color:#3B82F6;vertical-align:-1px}
+.rainbar{position:relative;height:6px;margin:0 0 4px}
+.rainbar i{position:absolute;top:0;height:100%;background:#3B82F6;opacity:calc(var(--p) / 110);border-radius:2px}
+.blq.wet{background:repeating-linear-gradient(135deg,rgba(59,130,246,.18) 0 6px,rgba(59,130,246,.08) 6px 12px)!important;border-color:#60A5FA!important}
+.blq .ico{width:11px;height:11px;margin-right:3px;vertical-align:-1px;color:#2563EB}
+/* radar */
+.rd-sec{margin:0 0 14px}
+.rd-t{display:flex;align-items:baseline;gap:8px;font-weight:800;font-size:15px;margin:2px 2px 10px}
+.rd-t .ico{width:16px;height:16px;color:var(--warn);align-self:center}
+.rd-t small{font-weight:600;color:var(--muted);font-size:12.5px}
+.rd{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.rd-c{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.rd-c.at{border-color:#F5C26B;background:linear-gradient(180deg,#FFF8EB,var(--card) 60%)}
+.rd-h{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:2px}
+.rd-h img{width:44px;height:44px;border-radius:10px;object-fit:cover;background:#F1F1F1}
+.rd-ic{width:34px;height:34px;border-radius:10px;background:var(--accent-soft);color:var(--accent-ink);display:flex;align-items:center;justify-content:center}
+.rd-ic .ico{width:18px;height:18px}
+.rd-f{display:flex;gap:4px;align-items:center}
+.rd-f i{width:22px;height:22px;border-radius:7px;background:var(--soft);display:flex;align-items:center;justify-content:center;color:var(--muted)}
+.rd-f i .ico{width:12px;height:12px}
+.rd-f em{font-style:normal;font-size:10px;font-weight:800;color:#fff;background:#7A5AF8;border-radius:6px;padding:2px 6px}
+.rd-c b{font-size:14px;line-height:1.35}
+.rd-c p{margin:0;font-size:13px;color:var(--muted);line-height:1.45;flex:1}
+.rd-c .btn{align-self:flex-start;margin-top:4px}
+.rd.sm{grid-template-columns:1fr;gap:8px}
+.rd.sm .rd-c{padding:11px 12px;flex-direction:row;flex-wrap:wrap;align-items:flex-start;gap:4px 10px}
+.rd.sm .rd-h{margin:0}
+.rd.sm .rd-f{display:none}
+.rd.sm .rd-h img,.rd.sm .rd-ic{width:30px;height:30px}
+.rd.sm .rd-c b{flex:1;min-width:0;font-size:13.5px}
+.rd.sm .rd-c p{flex-basis:100%;font-size:12.5px}
+/* avisos */
+.av-list{display:flex;flex-direction:column;gap:8px}
+.av-it{display:flex;gap:12px;align-items:flex-start;border:1px solid var(--line);border-left:4px solid var(--c,var(--accent));border-radius:12px;padding:10px 12px;cursor:pointer;background:var(--card)}
+.av-it.bad{--c:var(--bad)}.av-it.warn{--c:var(--warn)}.av-it.info{--c:var(--accent)}
+.av-d{flex:none;width:40px;text-align:center;color:var(--c)}
+.av-d b{display:block;font-size:20px;line-height:1;color:var(--ink)}
+.av-d small{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase}
+.av-d .ico{width:20px;height:20px;margin-top:4px}
+.av-b{flex:1;min-width:0}
+.av-t{display:flex;gap:5px;align-items:center;flex-wrap:wrap;margin-bottom:3px}
+.av-t .tag .ico{width:11px;height:11px;vertical-align:-1px}
+.av-cuando{font-size:11.5px;color:var(--muted);font-weight:700;margin-left:auto}
+.av-b > b{display:block;font-size:14.5px;line-height:1.35}
+.av-b p{margin:3px 0 0;font-size:13px;color:var(--muted);line-height:1.45;white-space:pre-wrap}
+.av-list.sm .av-it{padding:8px 10px}.av-list.sm .av-b p{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+/* noticias */
+.nt{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-top:1px solid var(--line);text-decoration:none;color:inherit}
+.nt-w .nt:first-of-type,.pop .nt:first-of-type{border-top:0}
+.nt img,.nt-ph{flex:none;width:64px;height:48px;border-radius:9px;object-fit:cover;background:var(--soft);display:flex;align-items:center;justify-content:center;color:var(--muted)}
+.nt-b{flex:1;min-width:0}
+.nt-m{display:flex;gap:6px;align-items:center;font-size:11.5px;color:var(--muted);font-weight:600}
+.nt-m em{font-style:normal;font-weight:800;font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;background:var(--soft);border-radius:6px;padding:1px 6px;color:var(--ink)}
+.nt-m em.hi{background:#FDECEC;color:#B42318}.nt-m em.bad{background:var(--bad);color:#fff}
+.nt-b b{display:block;font-size:13.5px;line-height:1.35;margin-top:2px}
+.nt-b small{display:block;font-size:12.5px;color:var(--muted);line-height:1.4;margin-top:2px}
+.nt:hover b{color:var(--accent-ink)}
+/* Specialized */
+.sp-tabs{display:flex;gap:6px;margin:-2px 0 10px;flex-wrap:wrap}
+.sp-tabs button{all:unset;cursor:pointer;font-size:13px;font-weight:700;padding:6px 11px;border-radius:999px;background:var(--soft);color:var(--muted)}
+.sp-tabs button.on{background:var(--ink);color:#fff}
+.sp-tabs small{opacity:.7;font-weight:600;margin-left:2px}
+.sp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px}
+.sp-it{display:flex;gap:10px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:8px;cursor:pointer;min-width:0;transition:border-color .15s}
+.sp-it:hover{border-color:var(--accent)}
+.sp-im{flex:none;width:52px;height:52px;border-radius:9px;background:#F1F1F1;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.sp-im img{width:100%;height:100%;object-fit:contain}
+.sp-b{flex:1;min-width:0}
+.sp-b b{display:block;font-size:13.5px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sp-b small{display:block;font-size:12px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sp-b small b,.pd-p b{display:inline;font-size:inherit;color:var(--ink)}
+.sp-b s,.pd-p s{color:var(--muted)}
+.of{color:var(--ok-ink)!important}
+.sp-int{flex:none;display:flex;align-items:center;gap:3px;font-size:12px;font-weight:800;color:var(--accent-ink);background:var(--accent-soft);border-radius:999px;padding:3px 8px}
+.sp-int .ico{width:12px;height:12px}
+.sp-lz{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;align-items:center}
+.sp-lz small{flex-basis:100%;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.sp-lz span{font-size:12px;font-weight:600;background:var(--soft);border-radius:999px;padding:4px 10px}
+/* ficha 360 de producto */
+.pop.pdm{max-width:820px}
+.pd-bus{display:flex;gap:8px;margin:6px 0 14px}
+.pd-bus input{flex:1}
+.pd-h{display:flex;gap:16px;align-items:flex-start;margin-bottom:14px}
+.pd-h img{flex:none;width:150px;height:150px;object-fit:contain;background:#F1F1F1;border-radius:14px}
+.pd-h h3{margin:2px 0 4px;font-size:20px;letter-spacing:-.01em}
+.pd-cat{font-size:12px;color:var(--muted);font-weight:700}
+.pd-p{font-size:16px}
+.pd-k{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.pd-k span{background:var(--soft);border-radius:10px;padding:6px 10px;font-size:11.5px;color:var(--muted);font-weight:600;text-align:center;min-width:72px}
+.pd-k b{display:block;font-size:17px;color:var(--ink)}
+.pd-acts{display:flex;gap:6px;flex-wrap:wrap}
+.pd-tb{overflow-x:auto;border:1px solid var(--line);border-radius:12px}
+.pd-tb table{border-collapse:collapse;width:100%;font-size:13px}
+.pd-tb th,.pd-tb td{padding:8px;text-align:center;border-bottom:1px solid var(--line);white-space:nowrap}
+.pd-tb th{background:var(--soft);font-size:11.5px;color:var(--muted)}
+.pd-tb td:first-child,.pd-tb th:first-child{text-align:left;max-width:200px;overflow:hidden;text-overflow:ellipsis}
+.pd-tb tr:last-child td{border-bottom:0}
+.st{display:inline-block;min-width:28px;padding:3px 6px;border-radius:7px;font-weight:800;cursor:pointer}
+.st.ok{background:rgba(18,160,107,.14);color:var(--ok-ink)}.st.poco{background:rgba(229,160,0,.18);color:var(--warn-ink)}.st.no{color:#C0C6D0}
+.pd-i{border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:8px}
+.pd-i b{font-size:14px}.pd-i small{display:block;color:var(--muted);font-size:12.5px}
+.pd-i .op-msg{margin:8px 0}
+/* centro de fuentes */
+.fz-it{display:flex;gap:10px;align-items:center;padding:9px 0;border-top:1px solid var(--line)}
+.fz{flex:none;width:9px;height:9px;border-radius:50%}
+.fz.ok{background:var(--ok);box-shadow:0 0 0 3px rgba(18,160,107,.15)}.fz.no{background:#C9CFD8}
+.fz-ic{flex:none;width:30px;height:30px;border-radius:9px;background:var(--soft);display:flex;align-items:center;justify-content:center;color:var(--muted)}
+.fz-ic .ico{width:16px;height:16px}
+.fz-it b{display:block;font-size:14px}.fz-it small{display:block;font-size:12.5px;color:var(--muted)}
+.fz-add{display:grid;grid-template-columns:1.3fr 1fr auto;gap:8px;margin-top:10px}
+.fz-b2b{background:var(--accent-soft);border-radius:14px;padding:12px 14px;margin-top:16px}
+.fz-b2b b{display:flex;align-items:center;gap:6px}
+.fz-b2b p{margin:6px 0 10px;font-size:13px;line-height:1.5;color:var(--ink)}
+/* Copiloto */
+.fab2{position:fixed;right:18px;bottom:calc(166px + env(safe-area-inset-bottom));z-index:9;border:0;display:flex;align-items:center;gap:8px;height:46px;padding:0 16px 0 13px;border-radius:999px;background:#16213A;color:#fff;font-weight:800;font-size:14px;box-shadow:0 12px 28px -10px rgba(22,33,58,.7);cursor:pointer;transition:transform .12s}
+.fab2:active{transform:scale(.95)}
+.fab2 .ico{width:18px;height:18px;color:#9CC3FF}
+.cop{position:fixed;inset:0;z-index:50;background:var(--card);display:flex;flex-direction:column;transform:translateY(100%);transition:transform .25s ease;visibility:hidden}
+.cop.on{transform:none;visibility:visible}
+.cop-h{display:flex;gap:10px;align-items:center;padding:calc(14px + env(safe-area-inset-top)) 16px 12px;border-bottom:1px solid var(--line)}
+.cop-h b{display:block;font-size:16px}.cop-h small{display:block;font-size:12px;color:var(--muted);line-height:1.3}
+.cop-av{flex:none;width:36px;height:36px;border-radius:12px;background:linear-gradient(140deg,#16213A,#23396A);color:#9CC3FF;display:flex;align-items:center;justify-content:center}
+.cop-av .ico{width:18px;height:18px}
+.cop-av.lg{width:56px;height:56px;border-radius:18px;margin:0 auto 12px}.cop-av.lg .ico{width:28px;height:28px}
+.cop-m{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px}
+.cm{max-width:88%;font-size:14.5px;line-height:1.5;border-radius:16px;padding:10px 13px}
+.cm.yo{align-self:flex-end;background:var(--accent);color:#fff;border-bottom-right-radius:5px;white-space:pre-wrap}
+.cm.ia{align-self:flex-start;background:var(--soft);border-bottom-left-radius:5px}
+.cm.ia p{margin:0 0 6px}.cm.ia p:last-child{margin:0}
+.cm.ia ul{margin:4px 0 6px;padding-left:18px}.cm.ia li{margin:2px 0}
+.cm.ia a{color:var(--accent-ink);font-weight:700}
+.cm.err{background:rgba(217,45,32,.08);color:var(--bad-ink)}
+.cm-acc{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.cm-f{display:flex;gap:4px;flex-wrap:wrap;margin-top:8px}
+.cm-f span{font-size:10.5px;font-weight:700;color:var(--muted);background:var(--card);border-radius:6px;padding:2px 6px;text-transform:capitalize}
+.cop-dots{display:inline-flex;gap:3px;margin-right:6px;vertical-align:middle}
+.cop-dots i{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:cpd 1s infinite ease-in-out}
+.cop-dots i:nth-child(2){animation-delay:.15s}.cop-dots i:nth-child(3){animation-delay:.3s}
+@keyframes cpd{0%,80%,100%{opacity:.25;transform:translateY(0)}40%{opacity:1;transform:translateY(-3px)}}
+.cop-hola{text-align:center;margin:auto;max-width:330px;color:var(--muted);font-size:14px;line-height:1.5}
+.cop-hola b{display:block;color:var(--ink);font-size:18px;margin-bottom:4px}
+.cop-s{display:flex;gap:6px;flex-wrap:wrap;padding:0 16px 8px}
+.cop-s button{all:unset;cursor:pointer;font-size:13px;font-weight:600;border:1px solid var(--line);border-radius:999px;padding:7px 12px;background:var(--card)}
+.cop-s button:hover{border-color:var(--accent);color:var(--accent-ink)}
+.cop-f{display:flex;gap:8px;align-items:flex-end;padding:10px 12px calc(12px + env(safe-area-inset-bottom));border-top:1px solid var(--line)}
+.cop-f textarea{flex:1;resize:none;border:1px solid var(--line);border-radius:14px;padding:11px 13px;font:inherit;font-size:15px;max-height:140px;background:var(--soft)}
+.cop-f .btn{flex:none;width:46px;height:46px;padding:0;border-radius:14px;display:flex;align-items:center;justify-content:center}
+@media (min-width:1000px){
+  .fab2{right:36px;bottom:108px}
+  .cop{inset:16px 16px 16px auto;width:430px;border-radius:20px;box-shadow:-20px 0 60px -20px rgba(16,24,40,.35);transform:translateX(calc(100% + 24px))}
+  .cop-h{padding-top:14px}
+}
+@media (max-width:760px){
+  .cmd{grid-template-columns:1fr}
+  .cmd-plan{padding:18px}
+  .pl-t{font-size:19px}
+  .fz-add{grid-template-columns:1fr}
+  .pd-h img{width:96px;height:96px}
+  .rd{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:82%;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:6px;margin:0 -16px;padding-left:16px;padding-right:16px}
+  .rd .rd-c{scroll-snap-align:start}
+  .rd.sm{grid-auto-flow:row;grid-auto-columns:auto;margin:0;padding:0}
+  .wx-days small{font-size:10px}
+  .ihead #prodBtn,.ihead #fzBtn{display:none}
+}
 </style>
+
 </head>
 <body>
 <div class="wrap">
@@ -977,6 +1224,7 @@ body:has(.selbar) .fab{display:none}
   <main id="view"></main>
 </div>
 <button class="fab" id="fab" aria-label="Agregar tarea">+</button>
+<button class="fab2" id="copFab" aria-label="Abrir el Copiloto"></button>
 <button class="focus-pill" id="focusPill" hidden></button>
 <nav class="bottom">
   <div class="brand"><img src="icon-192.png" alt=""><div>Organizador<small>Blackline Puerto Varas</small></div></div>
@@ -1051,7 +1299,7 @@ async function api(action, extra){
 function apiX(op, extra){ return api('extra', Object.assign({ op }, extra || {})); }
 // Nivel 2 del script Extras: recordatorios y base de contactos. Nivel 3: la base solo usa contacto@blacklinechile.cl. Nivel 4: eventos de varios días.
 function extNivel(){ return S.extInactivo ? 0 : (S.ext && S.ext.nivel) || 1; }
-function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < 15; }
+function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < 16; }
 let sincTimer = null;
 // Después de cambiar tareas, el script actualiza los recordatorios del calendario (en segundo plano).
 function sincPronto(){
@@ -1080,6 +1328,9 @@ async function loadExtras(){
   applyExtras();
 }
 async function load(){
+  if (!S.global) S.global = lsGet('globalCache', null);
+  if (!S.climaD){ const c = lsGet('climaCache', null); if (c){ S.climaD = c.d; S.climaAt = c.t; } }
+  loadClima(false).then(() => { if (['inicio', 'hoy'].includes(S.tab) && S.data && !$('#layer').innerHTML && !$('.pop-bg')) render(); });
   S.busy = true; head();
   const antes = S.data ? +((S.data.indicadores || {})['Nivel']) || 0 : 0;
   try {
@@ -1095,6 +1346,7 @@ async function load(){
   S.busy = false; render();
   loadExtras().then(async () => {
     if (S.mutado){ S.mutado = false; sincPronto(); }
+    loadGlobal(false);
     await loadBase(false);
     await loadNeg(false);
     await loadIG(false);
@@ -1130,12 +1382,15 @@ function head(){
 }
 function go(tab){ S.tab = tab; render(); window.scrollTo(0, 0); }
 $$('nav.bottom button').forEach(b => b.onclick = () => go(b.dataset.tab));
-$('#btnRefresh').onclick = () => { load(); loadGoogle(true); };
+$('#btnRefresh').onclick = () => { load(); loadGoogle(true); loadGlobal(true); };
 $('#btnSettings').onclick = () => showSettings();
 $('#fab').onclick = () => { try { openAdd(); } catch(e){ toast('No se pudo abrir el formulario: ' + e.message); } };
+$('#copFab').onclick = () => { const c = $('#cop'); if (c && c.classList.contains('on')) c.classList.remove('on'); else copiloto(); };
+document.addEventListener('keydown', e => { if ((e.key === 'k' && (e.metaKey || e.ctrlKey)) || (e.key === '/' && !/INPUT|TEXTAREA|SELECT/.test((document.activeElement || {}).tagName || ''))){ e.preventDefault(); copiloto(); } if (e.key === 'Escape'){ const c = $('#cop'); if (c) c.classList.remove('on'); } });
 
 function render(){
   head();
+  const cf = $('#copFab'); if (cf && !cf.innerHTML) cf.innerHTML = icon('spark') + '<span>Copiloto</span>';
   if (!S.data){ $('#view').innerHTML = '<div class="empty"><span class="spin"></span>Cargando…</div>'; return; }
   ({ inicio: viewInicio, hoy: viewHoy, tareas: viewTareas, habitos: () => S.subH === 'semana' ? viewSemana() : viewHabitos(), semana: viewSemana, proy: viewProy, base: viewBase, negocios: viewNegocios, redes: viewRedes })[S.tab]();
   focusPill(); imxPill();
@@ -1270,6 +1525,7 @@ const ICONS = {
   users: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14.5a6.5 6.5 0 0 1 3.5 5.5"/>',
   chart: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
   bolt: '<path d="M13 2 4 14h7l-1 8 9-12h-7z"/>',
+  drop: '<path d="M12 3s6 6.4 6 11a6 6 0 0 1-12 0c0-4.6 6-11 6-11z"/>',
   spark: '<path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M18 6l-2.5 2.5M8.5 15.5 6 18"/>',
   clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
   plus: '<path d="M12 5v14M5 12h14"/>',
@@ -1309,8 +1565,11 @@ function viewInicio(){
   const h = hoy(), lista = paraHoy(), hechas = hechasEl(h), venc = vencidas(), enCurso = pendientes().filter(t => t.estado === 'En curso');
   const totalHoy = lista.length + hechas.length;
   let html = '<div class="ihead"><button class="quick" id="qa"><b>+</b>Agregar tarea… <span style="margin-left:auto">🎤</span></button>' +
-    '<button class="btn sec" id="planBtn">' + icon('spark') + ' Plan de la semana</button></div>';
-  if (necesitaActualizar()) html += '<div class="w" style="margin-bottom:14px;display:flex;gap:12px;align-items:center"><div class="grow"><b>Nueva versión del script</b><div class="wsub">' + (extNivel() >= 14 ? 'Estudio de contenido: el agente diseña carruseles e historias con tu marca y los publicas en Instagram con un toque.' : extNivel() >= 10 ? 'Instagram: métricas diarias y calendario de contenido con IA. También filtra los correos automáticos de bancos y pagos.' : extNivel() >= 8 ? 'Asistente de IA para planificar tu día y tu semana, Instagram y conexión con Bsale.' : 'Importar chats de WhatsApp y agente de IA.') + '</div></div><button class="btn sm" id="updBtn">Actualizar</button></div>';
+    '<button class="btn sec" id="prodBtn">' + icon('box') + ' Producto</button><button class="btn sec" id="fzBtn">' + icon('chart') + ' Fuentes</button><button class="btn sec" id="planBtn">' + icon('spark') + ' Plan de la semana</button></div>';
+  if (necesitaActualizar()) html += '<div class="w" style="margin-bottom:14px;display:flex;gap:12px;align-items:center"><div class="grow"><b>Nueva versión del script</b><div class="wsub">' + (extNivel() >= 14 ? 'El Cerebro: plan del día automático, Copiloto que consulta todo, Specialized Chile (ventas, ofertas y stock por talla), clima, noticias y avisos para el equipo.' : extNivel() >= 10 ? 'Instagram: métricas diarias y calendario de contenido con IA. También filtra los correos automáticos de bancos y pagos.' : extNivel() >= 8 ? 'Asistente de IA para planificar tu día y tu semana, Instagram y conexión con Bsale.' : 'Importar chats de WhatsApp y agente de IA.') + '</div></div><button class="btn sm" id="updBtn">Actualizar</button></div>';
+  html += cmdHTML();
+  const rad = senales();
+  if (rad.length) html += '<div class="rd-sec"><div class="rd-t">' + icon('bolt') + ' Radar <small>cruces entre tus fuentes: clientes, stock, Specialized, clima y agenda</small></div>' + radarHTML(rad.slice(0, 6)) + '</div>';
   html += '<div class="wgrid">';
   // 1. Tareas de hoy (anillo: avance del día contra lo planificado)
   html += '<div class="w" data-w="hoy"><div class="wh">' + icon('check') + 'Tareas de hoy<button class="go" data-go="hoy">Ver</button></div><div class="wring"><div class="rg">' + ringSVG(totalHoy ? hechas.length / totalHoy : 0, 86) + '<b>' + hechas.length + '/' + totalHoy + '<small>hechas</small></b></div>' +
@@ -1354,6 +1613,7 @@ function viewInicio(){
       '<div class="bars" style="height:50px">' + D.map(d => '<i style="height:' + ((+d.alcance || 0) / mx * 100) + '%" data-t="' + esc(fmt(d.fecha)) + ': ' + (+d.alcance || 0) + '"></i>').join('') + '</div><div class="wsub">Alcance diario · 14 días</div>' +
       '<div class="wl" style="margin-top:8px"><div class="it" data-go="redes"><span class="dot" style="background:var(--accent)"></span><div class="tx">' + (sig ? esc(sig.tema) + '<small>' + esc(fmt(sig.fecha)) + ' · ' + esc(sig.formato) + '</small>' : 'Sin contenido planificado<small>Genera tu calendario con el asistente</small>') + '</div></div></div></div>';
   }
+  html += spzW() + noticiasW(4) + avisosW();
   // 9. Progreso (meta semanal, racha, nivel)
   const ind = S.data.indicadores || {}, semana = +ind['Hechas esta semana'] || 0, metaSem = meta * 5;
   html += '<div class="w"><div class="wh">' + icon('trophy') + 'Tu semana</div><div class="wring"><div class="rg">' + ringSVG(semana / metaSem, 86, 'var(--ok)') + '<b>' + semana + '<small>de ' + metaSem + '</small></b></div>' +
@@ -1372,6 +1632,9 @@ function viewInicio(){
   const sg = $('#sugBtn'); if (sg) sg.onclick = openSugerencias;
   const bl = $('#bloqBtn2'); if (bl) bl.onclick = openBloqueo;
   bindAsistente();
+  bindCmd($('#view')); bindRadar($('#view'), rad); bindExterno($('#view'));
+  $('#prodBtn').onclick = () => abrirProducto();
+  $('#fzBtn').onclick = abrirFuentes;
   // Cada lunes, la primera vez que abres la app, aparece el plan de la semana.
   if (pd(h).getDay() === 1 && LS.planVisto !== h && S.base && (S.neg || extNivel() < 5) && !$('.pop-bg')){ LS.planVisto = h; setTimeout(openPlanSemana, 400); }
 }
@@ -1628,7 +1891,7 @@ function showExtrasUpdate(){
   const raw = 'https://raw.githubusercontent.com/SnowPv/Organizador/main/apps-script/Extras.gs';
   sheet('<h3>⬆️ Actualizar el script Extras</h3><div class="hint">Hay una versión nueva del script' + (extNivel() >= 7 ? ': 📥 importar chats de WhatsApp y agente en modo económico (Claude Haiku 5.5).' : extNivel() >= 5 ? ': 🧠 agente de ventas con IA y conexión con WhatsApp Business (Telnyx).' : extNivel() >= 3 ? ': 🤝 pestaña Negocios (pipeline de ventas con sugerencias) y eventos de varios días.' : ': 📅 recordatorios en tu calendario y 📇 base de datos armada solo con los correos que llegan por contacto@blacklinechile.cl.') + ' Son 3 pasos:</div>' +
     '<div class="card"><b>1.</b> En Apps Script elimina <b>Extras.gs</b> (⋮ → Eliminar) y crea otro igual (<b>+ → Secuencia de comandos → Extras</b>). Toca <b>📋 Copiar código</b> y pégalo con el <b>«Pegar» de Chrome</b> (mantén presionado), no con el portapapeles del teclado. Guarda 💾.<div style="margin-top:8px"><button class="btn sm sec" id="gu1">📋 Copiar código</button> <a class="btn sm sec" style="text-decoration:none;display:inline-block" href="' + raw + '" target="_blank">Abrir archivo</a></div></div>' +
-    (extNivel() >= 14 ? '<div class="card"><b>2.</b> Arriba elige <b>autorizarEstudio</b> y toca <b>Ejecutar</b>. Acepta el permiso de Google Drive: crea la carpeta del banco de imágenes del Estudio de contenido.</div>' : '<div class="card"><b>2.</b> Arriba elige <b>autorizarExtras</b> y toca <b>Ejecutar</b>. Acepta los permisos nuevos (crear el calendario y programar tareas automáticas).</div>') +
+    (extNivel() >= 14 ? '<div class="card"><b>2.</b> Arriba elige <b>autorizarCerebro</b> y toca <b>Ejecutar</b>. Acepta los permisos (Drive y planillas): crea las carpetas, lee Specialized y las noticias por primera vez. Tarda cerca de 1 minuto.</div>' : '<div class="card"><b>2.</b> Arriba elige <b>autorizarExtras</b> y toca <b>Ejecutar</b>. Acepta los permisos nuevos (crear el calendario y programar tareas automáticas).</div>') +
     '<div class="card"><b>3.</b> <b>Implementar → Administrar implementaciones → ✏️ → Nueva versión → Implementar</b>.</div>' +
     '<div class="hint">La línea que agregaste en WebApp ya sirve; no hay que tocarla.</div>' +
     '<div class="btns"><button class="btn" id="guTry">Ya lo hice, probar</button></div>');
@@ -2408,7 +2671,7 @@ function contextoRedes(){
     'LEADS: desde Instagram en 28 días ' + a.leads.ig28.length + ' (28 días antes ' + a.leads.ig56 + '); historial ' + a.leads.ig.length + ' de Instagram (' + a.leads.conv.gan + ' compraron) y ' + a.leads.web.length + ' de la web. Códigos con leads: ' + (Object.entries(a.leads.porRef).map(e => e[0] + ' ' + e[1].length).join(', ') || 'ninguno (aún no usa links con código)'),
     'STOCK QUE LLEGÓ (30 días): ' + (stk.slice(0, 15).join(', ') || 'sin datos de Bsale'),
     'AGENDA PRÓXIMOS 30 DÍAS: ' + (ev.map(e => e.fecha + ' ' + e.titulo).join('; ') || 'sin eventos'),
-    'Equipo: el encargado graba y publica; un vendedor apoya en marketing. Tiempo limitado: prefiere 1 o 2 sesiones de grabación por semana.'].join('\n');
+    'Equipo: el encargado graba y publica; un vendedor apoya en marketing. Tiempo limitado: prefiere 1 o 2 sesiones de grabación por semana.', '', contextoExterno()].join('\n');
 }
 function bindRedes(t){
   if (t === 'resumen') bindInsights('redes');
@@ -2494,6 +2757,7 @@ function openIdea(x, pre){
       '<label class="l">Formato</label><div class="choice" id="id_fm">' + ['Reel', 'Carrusel', 'Historia', 'Post'].map(f => '<button data-f="' + f + '" class="' + (f === 'Reel' ? 'on' : '') + '">' + f + '</button>').join('') + '</div>' +
       '<label class="l">Tema (pilar)</label><select id="id_p"><option value="">—</option>' + PILARES_K.map(p => '<option>' + esc(p) + '</option>').join('') + '</select>' +
       '<label class="l">Idea</label><textarea class="note" id="id_i"></textarea><label class="row" style="gap:8px;margin-top:10px;font-size:14px"><input type="checkbox" id="id_b" style="width:18px;height:18px"> Guardar sin fecha (banco de ideas)</label><div class="btns"><button class="btn" id="id_ok">Guardar</button></div>');
+    if (pre.tema) md.el.querySelector('#id_t').value = pre.tema; if (pre.idea) md.el.querySelector('#id_i').value = pre.idea;
     md.el.querySelectorAll('[data-f]').forEach(b => b.onclick = () => md.el.querySelectorAll('[data-f]').forEach(y => y.classList.toggle('on', y === b)));
     md.el.querySelector('#id_ok').onclick = async () => { const t = md.el.querySelector('#id_t').value.trim(); if (!t){ toast('Ponle un tema'); return; }
       const fm = (md.el.querySelector('#id_fm .on') || {}).dataset.f || 'Reel', banco = md.el.querySelector('#id_b').checked;
@@ -2590,7 +2854,7 @@ function contextoInsightsBase(){
     'Conversión por experiencia: ' + (fx(b.convExp) || 's/d') + '.', 'Conversión por gama: ' + (fx(b.convGama) || 's/d') + '.', 'Conversión por disciplina: ' + (fx(b.convDisc) || 's/d') + '.',
     'Origen detectado: ' + b.canal.ig + ' desde Instagram, ' + b.canal.web + ' desde la web.',
     'Oportunidades de contacto pendientes: ' + ops.length + ' (' + Object.entries(ops.reduce((o, x) => { o[x.tipo] = (o[x.tipo] || 0) + 1; return o; }, {})).map(e => (OP_TIPO[e[0]] || e[0]) + ' ' + e[1]).join(', ') + ').',
-    'Negociaciones abiertas: ' + (S.neg ? abiertos().length : 's/d') + '; valor en juego ' + (S.neg ? clpCorto(abiertos().reduce((s, n) => s + (+n.valor || 0), 0)) : 's/d') + '.'].join('\n');
+    'Negociaciones abiertas: ' + (S.neg ? abiertos().length : 's/d') + '; valor en juego ' + (S.neg ? clpCorto(abiertos().reduce((s, n) => s + (+n.valor || 0), 0)) : 's/d') + '.', '', contextoExterno()].join('\n');
 }
 async function generarInsights(area, btn){
   if (!iaDisponible() || extNivel() < 14) return;
@@ -2937,7 +3201,7 @@ function crearPieza(idea){
     (prox.length ? '<label class="l">Desde tu calendario (opcional)</label><select id="cp_i"><option value="">—</option>' + prox.map(x => '<option value="' + esc(x.id) + '"' + (idea && idea.id === x.id ? ' selected' : '') + '>' + esc(fmt(x.fecha) + ' · ' + x.formato + ' · ' + x.tema) + '</option>').join('') + '</select>' : '') +
     '<label class="l">Tema (opcional)</label><textarea class="note" id="cp_q" placeholder="Déjalo vacío y el agente elige lo más oportuno: temporada, lo que preguntan tus clientes, lo que más se vende y el stock. O escribe, por ejemplo: «Guía para elegir talla de Levo» o «Mantención de primavera»."></textarea>' +
     '<div class="wsub" style="margin-top:8px">Tarda unos 20 segundos: el agente escribe, elige las fotos y la app la diseña con tu marca.</div><div class="btns"><button class="btn" id="cp_go">' + icon('spark') + ' Crear</button></div>');
-  bindPills('cp_t'); if (idea){ md.el.querySelectorAll('#cp_t .pill').forEach(b => b.classList.toggle('on', (idea.formato === 'Historia') === (b.dataset.v === 'historias'))); }
+  bindPills('cp_t'); if (idea){ md.el.querySelectorAll('#cp_t .pill').forEach(b => b.classList.toggle('on', /Historia/.test(idea.formato || idea.tema || '') === (b.dataset.v === 'historias'))); if (idea.tema && !idea.id) md.el.querySelector('#cp_q').value = idea.tema; }
   md.el.querySelector('#cp_go').onclick = async () => {
     const b = md.el.querySelector('#cp_go'), tipo = (md.el.querySelector('#cp_t .on') || {}).dataset.v || 'carrusel', iid = md.el.querySelector('#cp_i') ? md.el.querySelector('#cp_i').value : '', it = (S.cont || []).find(x => x.id === iid);
     b.disabled = true; b.innerHTML = '<span class="spin"></span>El agente está creando…';
@@ -3105,6 +3369,488 @@ function abrirMarca(){
   };
   md.el.querySelector('#mk_ok').onclick = async () => { const b = md.el.querySelector('#mk_ok'); b.disabled = true; b.innerHTML = '<span class="spin"></span>Guardando…'; try { S.marcaSrv = await apiX('marca', { guardar: leer() }); S._thumbs = {}; toast('✓ Kit de marca guardado'); md.cerrar(); render(); } catch(e){ b.disabled = false; b.textContent = 'Guardar kit de marca'; toast('No se pudo: ' + e.message); } };
   prev();
+}
+
+/* ---------- Cerebro: fuentes externas (clima, Specialized, noticias, avisos) y el plan del día ---------- */
+const URL_CLIMA = 'https://api.open-meteo.com/v1/forecast?latitude=-41.3195&longitude=-72.9854&current=temperature_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m,wind_gusts_10m&hourly=temperature_2m,precipitation_probability,precipitation,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,wind_speed_10m_max,wind_gusts_10m_max,sunrise,sunset&timezone=America%2FSantiago&forecast_days=7';
+async function loadClima(forzar){
+  if (!forzar && S.climaD && Date.now() - S.climaAt < 30 * 60000) return;
+  try { const r = await fetch(URL_CLIMA); if (!r.ok) throw new Error(r.status); S.climaD = await r.json(); S.climaAt = Date.now(); lsSet('climaCache', { d: S.climaD, t: S.climaAt }); }
+  catch(e){ if (!S.climaD){ const c = lsGet('climaCache', null); if (c){ S.climaD = c.d; S.climaAt = c.t; } } }
+}
+async function loadGlobal(forzar){
+  if (!LS.url || S.globalBusy) return;
+  if (!forzar && S.global && Date.now() - (S.globalAt || 0) < 15 * 60000) return;
+  S.globalBusy = 1;
+  const p = [loadClima(forzar)];
+  if (extNivel() >= 16) p.push(apiX('global').then(g => { S.global = g; S.globalAt = Date.now(); lsSet('globalCache', g); }).catch(() => {}));
+  await Promise.all(p);
+  S.globalBusy = 0;
+  if (['inicio', 'hoy'].includes(S.tab) && !$('#layer').innerHTML && !$('.pop-bg')) render();
+  avisosPopup();
+}
+function G(){ return S.global || {}; }
+function climaDatos(){ return S.climaD || G().clima || null; }
+function cerebroPlan(){ const c = S.cerebroHoy || G().cerebro; return c && c.plan && c.fecha === hoy() ? c.plan : null; }
+
+/* --- clima --- */
+const WX_TXT = { 0: 'Despejado', 1: 'Mayormente despejado', 2: 'Parcial nublado', 3: 'Nublado', 45: 'Niebla', 48: 'Niebla', 51: 'Llovizna', 53: 'Llovizna', 55: 'Llovizna intensa', 56: 'Llovizna helada', 57: 'Llovizna helada', 61: 'Lluvia débil', 63: 'Lluvia', 65: 'Lluvia fuerte', 66: 'Lluvia helada', 67: 'Lluvia helada', 71: 'Nieve', 73: 'Nieve', 75: 'Nieve fuerte', 77: 'Granizo fino', 80: 'Chubascos', 81: 'Chubascos', 82: 'Chubascos fuertes', 85: 'Nieve', 86: 'Nieve', 95: 'Tormenta', 96: 'Tormenta con granizo', 99: 'Tormenta con granizo' };
+function wxTipo(c){ c = +c; if (c <= 1) return 'sol'; if (c === 2) return 'parcial'; if (c === 3) return 'nube'; if (c === 45 || c === 48) return 'niebla'; if (c >= 95) return 'tormenta'; if ((c >= 71 && c <= 77) || c === 85 || c === 86) return 'nieve'; if (c >= 51 && c <= 57) return 'llovizna'; if ((c >= 61 && c <= 67) || (c >= 80 && c <= 82)) return 'lluvia'; return 'nube'; }
+function wxIcon(code, size){
+  const s = size || 28, t = wxTipo(code), sol = '<circle cx="12" cy="12" r="5" fill="#F7B733"/><g stroke="#F7B733" stroke-width="2" stroke-linecap="round"><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/></g>';
+  const nube = (x, y, c) => '<path transform="translate(' + x + ' ' + y + ')" d="M7 19h10.5a4.5 4.5 0 0 0 .6-8.96A6 6 0 0 0 6.6 9.2 4.9 4.9 0 0 0 7 19z" fill="' + c + '"/>';
+  const gotas = '<g stroke="#3B82F6" stroke-width="1.9" stroke-linecap="round"><path d="M9 21.5l-1 2.2M13 21.5l-1 2.2M17 21.5l-1 2.2"/></g>';
+  const body = { sol: sol, parcial: '<g transform="translate(-3 -3) scale(.8)">' + sol + '</g>' + nube(2, 2, '#CBD5E1'), nube: nube(0, 0, '#B6C2D2') + nube(-3, 3, '#CBD5E1'),
+    niebla: '<g stroke="#A3AFC2" stroke-width="2" stroke-linecap="round"><path d="M4 9h16M3 13h18M5 17h14"/></g>', llovizna: nube(0, -2, '#B6C2D2') + '<g stroke="#60A5FA" stroke-width="1.8" stroke-linecap="round"><path d="M10 20.5v1.5M15 20.5v1.5"/></g>',
+    lluvia: nube(0, -2, '#94A3B8') + gotas, tormenta: nube(0, -2, '#7C8AA0') + '<path d="M12.5 17l-2.5 4h3l-1.5 3.5" fill="none" stroke="#F7B733" stroke-width="1.9" stroke-linejoin="round" stroke-linecap="round"/>', nieve: nube(0, -2, '#B6C2D2') + '<g fill="#93C5FD"><circle cx="9" cy="21.5" r="1.2"/><circle cx="13" cy="22.5" r="1.2"/><circle cx="17" cy="21.5" r="1.2"/></g>' }[t];
+  return '<svg class="wx" width="' + s + '" height="' + s + '" viewBox="0 0 24 25" aria-hidden="true">' + body + '</svg>';
+}
+function horasDe(fecha){
+  const c = climaDatos(); if (!c || !c.hourly) return [];
+  const H = c.hourly;
+  return H.time.map((t, i) => ({ f: t.slice(0, 10), h: +t.slice(11, 13), temp: H.temperature_2m[i], prob: H.precipitation_probability ? +H.precipitation_probability[i] || 0 : 0, mm: +H.precipitation[i] || 0, code: H.weather_code[i], viento: H.wind_speed_10m ? H.wind_speed_10m[i] : null })).filter(x => x.f === fecha);
+}
+function diaClima(fecha){
+  const c = climaDatos(); if (!c || !c.daily) return null;
+  const d = c.daily, i = d.time.indexOf(fecha); if (i < 0) return null;
+  return { fecha, code: d.weather_code[i], max: d.temperature_2m_max[i], min: d.temperature_2m_min[i], prob: +(d.precipitation_probability_max || [])[i] || 0, mm: +d.precipitation_sum[i] || 0, viento: (d.wind_speed_10m_max || [])[i], rafaga: (d.wind_gusts_10m_max || [])[i], sale: d.sunrise ? String(d.sunrise[i]).slice(11, 16) : '', pone: d.sunset ? String(d.sunset[i]).slice(11, 16) : '' };
+}
+function diasClima(){ const c = climaDatos(); return c && c.daily ? c.daily.time.map(diaClima) : []; }
+// Mejor bloque seco del día (9 a 20 h, lluvia < 30 %), sin horas ya pasadas.
+function ventanaSeca(fecha){
+  const ahora = fecha === hoy() ? new Date().getHours() : 0, H = horasDe(fecha).filter(x => x.h >= Math.max(9, ahora) && x.h <= 20);
+  let mejor = null, ini = null;
+  H.forEach((x, i) => { const seco = x.prob < 30 && x.mm < 0.2; if (seco && ini === null) ini = i; if ((!seco || i === H.length - 1) && ini !== null){ const fin = seco ? i : i - 1, n = fin - ini + 1; if (!mejor || n > mejor.n) mejor = { ini: H[ini].h, fin: H[fin].h + 1, n }; ini = null; } });
+  return mejor && mejor.n >= 2 ? mejor : null;
+}
+function lluviaA(fecha, hhmm){ const h = +String(hhmm || '12').slice(0, 2), x = horasDe(fecha).find(y => y.h === h); return x ? x.prob : (diaClima(fecha) || {}).prob; }
+function mejorDiaSeco(desde, dias, evitar){ return diasClima().filter(d => d && d.fecha >= desde && d.fecha <= addDays(desde, dias) && d.fecha !== evitar).sort((a, b) => a.prob - b.prob || b.max - a.max)[0] || null; }
+const RE_AFUERA = /salida|ride|test|ruta|rodada|evento|demo|pichiju|sendero|paseo|carrera|cicletada|feria|exhibici|clinica|clínica|tour|travesia|travesía|grabar|sesion de fotos|sesión de fotos|outdoor|enduro|bikepark|bike park/i;
+function climaTip(){
+  const pl = cerebroPlan(); if (pl && pl.clima) return pl.clima;
+  const d = diaClima(hoy()); if (!d) return '';
+  const v = ventanaSeca(hoy()), fin = diasClima().filter(x => x && x.fecha > hoy() && [0, 6].includes(pd(x.fecha).getDay())).slice(0, 2), bueno = fin.find(x => x.prob < 25 && x.max >= 13);
+  if (d.prob >= 70) return 'Día de lluvia: buen momento para empujar taller, ropa impermeable y contenido de mantención.' + (bueno ? ' El ' + fmt(bueno.fecha).toLowerCase() + ' viene seco (' + Math.round(bueno.max) + '°): ideal para una salida o test ride.' : '');
+  if (v) return 'Mejor ventana para salir hoy: ' + v.ini + ':00 a ' + v.fin + ':00.' + (bueno ? ' ' + fmt(bueno.fecha) + ' seco y ' + Math.round(bueno.max) + '°.' : '');
+  return bueno ? fmt(bueno.fecha) + ' viene seco y ' + Math.round(bueno.max) + '°: planifica salidas y contenido en ruta.' : '';
+}
+function climaTxtIA(){
+  const ds = diasClima(); if (!ds.length) return '';
+  const c = climaDatos(), cur = c.current || {};
+  return 'CLIMA EN PUERTO VARAS: ahora ' + Math.round(cur.temperature_2m) + '°C, ' + (WX_TXT[cur.weather_code] || '').toLowerCase() + '. Pronóstico: ' + ds.map(d => fmt(d.fecha) + ' ' + (WX_TXT[d.code] || '').toLowerCase() + ' ' + Math.round(d.min) + '–' + Math.round(d.max) + '°, lluvia ' + d.prob + '%').join('; ') + '.';
+}
+function climaW(){
+  const c = climaDatos(), d = diaClima(hoy());
+  if (!c || !d) return '<div class="w wx-card"><div class="wh">' + icon('sun') + 'Clima · Puerto Varas</div><div class="wsub"><span class="spin"></span>Consultando el pronóstico…</div></div>';
+  const cur = c.current || {}, h = new Date().getHours(), H = horasDe(hoy()).filter(x => x.h >= Math.min(h, 20) && x.h <= Math.min(23, Math.max(h, 8) + 12));
+  const mx = Math.max(...H.map(x => x.temp)), mn = Math.min(...H.map(x => x.temp)), tip = climaTip();
+  return '<div class="w wx-card" data-w="clima"><div class="wh">' + icon('sun') + 'Clima · Puerto Varas<button class="go" id="wxMas">Detalle</button></div>' +
+    '<div class="wx-now">' + wxIcon(cur.weather_code, 54) + '<div class="wx-t"><b>' + Math.round(cur.temperature_2m) + '°</b><span>' + esc(WX_TXT[cur.weather_code] || '') + '<br>sensación ' + Math.round(cur.apparent_temperature) + '° · viento ' + Math.round(cur.wind_speed_10m) + ' km/h</span></div>' +
+    '<div class="wx-hoy"><small>Hoy</small><b>' + Math.round(d.min) + '° / ' + Math.round(d.max) + '°</b><span class="' + (d.prob >= 60 ? 'mojado' : '') + '">' + icon('drop') + d.prob + '%' + (d.mm >= 0.5 ? ' · ' + (Math.round(d.mm * 10) / 10) + ' mm' : '') + '</span></div></div>' +
+    (H.length ? '<div class="wx-hrs">' + H.map(x => '<div class="wh1' + (x.h === h ? ' now' : '') + '" title="' + x.h + ':00 · ' + x.prob + '% lluvia · ' + Math.round(x.temp) + '°"><small class="tp" style="--y:' + (mx > mn ? (x.temp - mn) / (mx - mn) : .5) + '">' + Math.round(x.temp) + '°</small><i style="--p:' + x.prob + '"></i><span>' + (x.h === h ? 'Ahora' : x.h) + '</span></div>').join('') + '</div>' : '') +
+    '<div class="wx-days">' + diasClima().map((x, i) => '<div class="wd' + (x.prob >= 60 ? ' mojado' : '') + '"><small>' + (i === 0 ? 'Hoy' : DIAS[pd(x.fecha).getDay()].slice(0, 3)) + '</small>' + wxIcon(x.code, 24) + '<b>' + Math.round(x.max) + '°</b><span>' + Math.round(x.min) + '°</span><em>' + x.prob + '%</em></div>').join('') + '</div>' +
+    (tip ? '<div class="wx-tip">' + icon('spark') + '<span>' + esc(tip) + '</span></div>' : '') + '</div>';
+}
+function abrirClima(){
+  const ds = diasClima(); if (!ds.length) return;
+  let sel = hoy();
+  const md = modal(icon('sun') + ' Clima · Puerto Varas', '<div id="wxD"></div>', { wide: true }), box = md.el.querySelector('#wxD');
+  const pintar = () => {
+    const d = diaClima(sel), H = horasDe(sel).filter(x => x.h >= 6), v = ventanaSeca(sel), mx = Math.max(...H.map(x => x.temp)), mn = Math.min(...H.map(x => x.temp));
+    const ev = ((S.google && S.google.eventos) || []).filter(e => e.fecha === sel);
+    box.innerHTML = '<div class="wx-tabs">' + ds.map((x, i) => '<button class="' + (x.fecha === sel ? 'on' : '') + '" data-wd="' + x.fecha + '"><small>' + (i === 0 ? 'Hoy' : DIAS[pd(x.fecha).getDay()].slice(0, 3)) + '</small>' + wxIcon(x.code, 26) + '<b>' + Math.round(x.max) + '°</b><span>' + x.prob + '%</span></button>').join('') + '</div>' +
+      '<div class="wx-sum"><div><b>' + esc(WX_TXT[d.code] || '') + '</b><span>' + Math.round(d.min) + '° a ' + Math.round(d.max) + '° · lluvia ' + d.prob + '%' + (d.mm >= 0.5 ? ' (' + (Math.round(d.mm * 10) / 10) + ' mm)' : '') + ' · viento hasta ' + Math.round(d.viento) + ' km/h' + (d.rafaga ? ' (ráfagas ' + Math.round(d.rafaga) + ')' : '') + '</span></div><div><small>Sol</small><b>' + esc(d.sale) + ' – ' + esc(d.pone) + '</b></div></div>' +
+      '<div class="wx-ch">' + H.map(x => '<div class="c"><small class="tp" style="--y:' + (mx > mn ? (x.temp - mn) / (mx - mn) : .5) + '">' + Math.round(x.temp) + '°</small>' + wxIcon(x.code, 20) + '<i style="--p:' + x.prob + '"></i><em>' + x.prob + '%</em><span>' + x.h + '</span></div>').join('') + '</div>' +
+      '<div class="wx-tip" style="margin-top:12px">' + icon('spark') + '<span>' + (v ? 'Mejor bloque seco: <b>' + v.ini + ':00 – ' + v.fin + ':00</b>.' : (sel === hoy() ? 'Sin bloques secos en lo que queda del día.' : 'Sin bloques secos largos este día.')) + (ev.length ? ' En tu agenda: ' + ev.map(e => esc((e.inicio ? e.inicio + ' ' : '') + e.titulo) + (RE_AFUERA.test(e.titulo + ' ' + e.lugar) ? ' (' + lluviaA(sel, e.inicio) + '% lluvia)' : '')).join(', ') + '.' : '') + '</span></div>' +
+      '<div class="wsub" style="margin-top:10px">Pronóstico de Open-Meteo para Puerto Varas, se actualiza cada 30 minutos.</div>';
+    box.querySelectorAll('[data-wd]').forEach(b => b.onclick = () => { sel = b.dataset.wd; pintar(); });
+  };
+  pintar();
+}
+
+/* --- avisos internos de la tienda --- */
+function avisos(){ return (G().avisos || []).filter(a => a.estado !== 'Archivado'); }
+function avisosPopup(){
+  if (S._avPop || !S.data || $('.pop-bg') || $('#layer').innerHTML) return;
+  const v = new Set(lsGet('avisosVistos', [])), h = hoy(), L = avisos().filter(a => !v.has(a.id) && (!a.desde || a.desde <= addDays(h, 3)));
+  if (!L.length) return;
+  S._avPop = 1; setTimeout(() => { if (!$('.pop-bg')) abrirAvisos(L, true); }, 700);
+}
+const AV_IMP = { urgente: ['bad', 'Urgente'], importante: ['warn', 'Importante'], normal: ['info', 'Aviso'] };
+function avisoHTML(a){
+  const im = AV_IMP[a.importancia] || AV_IMP.normal, f = a.fecha || '';
+  return '<div class="av-it ' + im[0] + '" data-av="' + esc(a.id) + '"><div class="av-d">' + (f ? '<b>' + pd(f).getDate() + '</b><small>' + MESES[pd(f).getMonth()] + '</small>' : icon('flag')) + '</div><div class="av-b"><div class="av-t"><span class="tag ' + im[0] + '">' + im[1] + '</span>' + (a.origen === 'Cerebro' ? '<span class="tag">' + icon('spark') + ' Agente</span>' : '') + (f ? '<span class="av-cuando">' + esc(fmtRel(f)) + '</span>' : '') + '</div><b>' + esc(a.titulo) + '</b>' + (a.detalle ? '<p>' + esc(a.detalle) + '</p>' : '') + '</div></div>';
+}
+function abrirAvisos(L, popup){
+  L = L || avisos();
+  const md = modal(icon('flag') + ' Avisos de la tienda', '<div class="av-list">' + (L.length ? L.map(avisoHTML).join('') : '<div class="empty">No hay avisos activos.</div>') + '</div><div class="btns">' + (extNivel() >= 16 ? '<button class="btn sec" id="avN">' + icon('plus') + ' Nuevo aviso</button>' : '') + '<button class="btn" id="avOk">' + (popup ? 'Entendido' : 'Cerrar') + '</button></div>', { wide: true });
+  md.el.classList.add('avm');
+  const visto = () => lsSet('avisosVistos', Array.from(new Set(lsGet('avisosVistos', []).concat(L.map(a => a.id)))).slice(-200));
+  md.el.querySelector('#avOk').onclick = () => { visto(); md.cerrar(); };
+  const n = md.el.querySelector('#avN'); if (n) n.onclick = () => { visto(); md.cerrar(); avisoForm(); };
+  md.el.querySelectorAll('[data-av]').forEach(b => b.onclick = () => { visto(); md.cerrar(); avisoForm(avisos().find(a => a.id === b.dataset.av)); });
+  if (popup) visto();
+}
+function avisoForm(a, pre){
+  if (extNivel() < 16){ toast('Actualiza el script para usar los avisos'); return showExtrasUpdate(); }
+  pre = pre || {}; const nuevo = !a; a = a || { titulo: pre.titulo || '', detalle: pre.detalle || '', fecha: pre.fecha || '', importancia: 'normal' };
+  const md = modal(icon('flag') + (nuevo ? ' Nuevo aviso' : ' Aviso'), '<label class="l" style="margin-top:0">Título</label><input type="text" id="av_t" value="' + esc(a.titulo) + '" placeholder="Ej.: Llega el contenedor de Levo el martes">' +
+    '<label class="l">Detalle</label><textarea class="note" id="av_d" rows="3" placeholder="Lo que el equipo tiene que saber o hacer">' + esc(a.detalle) + '</textarea>' +
+    '<div class="rs-row"><div><label class="l">Fecha del evento (opcional)</label><input type="date" id="av_f" value="' + esc(a.fecha) + '"></div><div><label class="l">Mostrar hasta</label><input type="date" id="av_h" value="' + esc(a.hasta || '') + '"></div></div>' +
+    '<label class="l">Importancia</label><div class="seg" id="av_i">' + [['normal', 'Normal'], ['importante', 'Importante'], ['urgente', 'Urgente']].map(x => '<button type="button" class="pill' + (x[0] === a.importancia ? ' on' : '') + '" data-v="' + x[0] + '">' + x[1] + '</button>').join('') + '</div>' +
+    '<div class="wsub" style="margin-top:8px">Aparece como aviso al abrir la app (a todo el equipo) y lo leen los agentes al armar el plan del día.</div>' +
+    '<div class="btns">' + (nuevo ? '' : '<button class="btn bad" id="av_x">Archivar</button>') + '<button class="btn" id="av_ok">Guardar</button></div>');
+  bindPills('av_i');
+  md.el.querySelector('#av_ok').onclick = async () => {
+    const g = { id: a.id, titulo: md.el.querySelector('#av_t').value.trim(), detalle: md.el.querySelector('#av_d').value.trim(), fecha: md.el.querySelector('#av_f').value, hasta: md.el.querySelector('#av_h').value || md.el.querySelector('#av_f').value || addDays(hoy(), 7), importancia: val('av_i') || 'normal', origen: a.origen || 'Manual' };
+    if (!g.titulo){ toast('Ponle un título'); return; }
+    const b = md.el.querySelector('#av_ok'); b.disabled = true;
+    try { const r = await apiX('avisos', { guardar: g }); S.global = Object.assign(G(), { avisos: r.items }); lsSet('globalCache', S.global); md.cerrar(); toast('📣 Aviso guardado'); render(); } catch(e){ b.disabled = false; toast('No se pudo: ' + e.message); }
+  };
+  const x = md.el.querySelector('#av_x'); if (x) x.onclick = async () => { try { const r = await apiX('avisos', { archivar: a.id }); S.global = Object.assign(G(), { avisos: r.items }); md.cerrar(); render(); } catch(e){ toast('No se pudo: ' + e.message); } };
+}
+function avisosW(){
+  const L = avisos().slice(0, 4);
+  return '<div class="w"><div class="wh">' + icon('flag') + 'Avisos de la tienda<button class="go" id="avNew">＋ Aviso</button></div>' +
+    (extNivel() < 16 ? '<div class="wsub">Con la versión nueva del script puedes dejar avisos para el equipo (llegadas, eventos, cambios).</div>' :
+      L.length ? '<div class="av-list sm">' + L.map(avisoHTML).join('') + '</div>' + (avisos().length > 4 ? '<button class="btn sm sec" id="avAll" style="width:100%;margin-top:8px">Ver los ' + avisos().length + '</button>' : '') : '<div class="wsub">Sin avisos. Agrega llegadas, eventos o cosas que el equipo deba saber.</div>') + '</div>';
+}
+
+/* --- noticias --- */
+const NT_TIPO = { lanzamiento: 'Lanzamiento', specialized: 'Specialized', ebike: 'E-bike', tendencia: 'Tendencia', competencia: 'Competencia', seguridad: 'Seguridad', industria: 'Industria', carrera: 'Carreras', local: 'Local' };
+function noticias(){ const n = G().noticias; return (n && n.items) || []; }
+function noticiaHTML(x){
+  return '<a class="nt" href="' + esc(x.link) + '" target="_blank" rel="noopener">' + (x.img ? '<img src="' + esc(x.img) + '" alt="" loading="lazy">' : '<span class="nt-ph">' + icon('note') + '</span>') + '<span class="nt-b"><span class="nt-m">' + (x.tipo ? '<em class="' + (x.tipo === 'seguridad' ? 'bad' : x.tipo === 'lanzamiento' || x.tipo === 'specialized' ? 'hi' : '') + '">' + esc(NT_TIPO[x.tipo] || x.tipo) + '</em>' : '') + esc(x.fuente) + (x.fecha ? ' · ' + esc(fmtRel(x.fecha.slice(0, 10))) : '') + '</span><b>' + esc(x.titulo) + '</b>' + (x.por_que ? '<small>' + esc(x.por_que) + '</small>' : '') + '</span></a>';
+}
+function noticiasW(n){
+  const L = noticias();
+  if (!L.length) return extNivel() >= 16 ? '' : '<div class="w"><div class="wh">' + icon('note') + 'Noticias del mundo bike</div><div class="wsub">Lanzamientos de Specialized y lo importante de Pinkbike y Vital MTB, con la versión nueva del script.</div></div>';
+  return '<div class="w nt-w"><div class="wh">' + icon('note') + 'Noticias del mundo bike' + (L.length > n ? '<button class="go" id="ntAll">Más</button>' : '') + '</div>' + L.slice(0, n).map(noticiaHTML).join('') + '</div>';
+}
+function abrirNoticias(){ modal(icon('note') + ' Noticias del mundo bike', '<div class="wsub" style="margin:0 0 6px">Elegidas por el agente entre Pinkbike, Vital MTB, Specialized en la prensa y ciclismo en Chile.</div>' + noticias().map(noticiaHTML).join(''), { wide: true }); }
+
+/* --- Specialized Chile --- */
+const GENERICOS = new Set(['turbo', 'comp', 'expert', 'pro', 'sport', 'base', 'alloy', 'carbon', 'works', 'bike', 'bicicleta', 'bicicletas', 'evo', 'ltd', 'gen', 'step', 'through', 'mujer', 'women']);
+function palabrasModelo(s){ return tokens(s).filter(w => !GENERICOS.has(w) && !/^\d+$/.test(w) && w.length >= 3); }
+function interesadosEn(prod){
+  const ws = palabrasModelo(typeof prod === 'string' ? prod : (prod.familia || prod.nombre)).slice(0, 2); if (!ws.length) return [];
+  return perfiles().filter(pf => { const t = norm(((pf.p && pf.p.intereses) || []).join(' ') + ' ' + (pf.r || []).map(r => r.producto || '').join(' ')); return ws.every(w => t.includes(w)); })
+    .map(pf => ({ pf, c: contactoPorId(pf.id) })).filter(x => x.c && x.c.tipo !== 'Ignorar' && !/perdido|proveedor/.test(x.pf.ciclo || '')).sort((a, b) => (b.pf.prob || 0) - (a.pf.prob || 0));
+}
+function spz(){ return G().specialized || {}; }
+function precioSpz(x){ return x.oferta ? '<s>' + clpCorto(x.precio) + '</s> <b class="of">' + clpCorto(x.oferta) + '</b>' : '<b>' + clpCorto(x.precio) + '</b>'; }
+function spzFila(x, extra){
+  const I = interesadosEn(x).length;
+  return '<div class="sp-it" data-spz="' + esc(x.id) + '"><span class="sp-im">' + (x.img ? '<img src="' + esc(x.img.replace(/w=\d+&h=\d+/, 'w=160&h=160')) + '" alt="" loading="lazy">' : icon('box')) + '</span><span class="sp-b"><b>' + esc(x.nombre) + '</b><small>' + precioSpz(x) + (extra ? ' · ' + extra : '') + '</small></span>' + (I ? '<span class="sp-int" title="Clientes interesados">' + icon('users') + I + '</span>' : '') + '</div>';
+}
+function spzW(){
+  const s = spz();
+  if (!s.activo) return '<div class="w span2"><div class="wh">' + icon('box') + 'Specialized Chile</div><div class="wsub">' + (extNivel() >= 16 ? 'Sincronizando el catálogo de specialized.com/cl… (se actualiza solo cada hora)' : 'Con la versión nueva del script la app lee specialized.com/cl: lo que más se vende en Chile, ofertas, novedades, colores y stock por talla.') + '</div></div>';
+  const vende = (s.calientes || []).concat((s.masVendidos || []).filter(x => !(s.calientes || []).some(y => y.id === x.id)));
+  const tabs = [['vende', 'Se vende', vende], ['ofertas', 'Ofertas', s.ofertas || []], ['nuevos', 'Novedades', s.nuevos || []], ['poco', 'Poco stock', s.pocoStock || []]].filter(t => t[2].length);
+  if (!tabs.length) return '';
+  const t = tabs.find(x => x[0] === S.spzTab) || tabs[0];
+  const extra = x => t[0] === 'vende' ? (x.bajas14 ? x.bajas14 + ' vendidas en 14 d' : 'más vendido') : t[0] === 'poco' ? esc(x.tallas || '') : t[0] === 'nuevos' ? (x.colorNuevo ? 'desde ' + fmt(x.colorNuevo) : 'nuevo') : x.stock != null ? (x.stock ? x.stock + ' en Chile' : 'agotada') : '';
+  return '<div class="w span2 sp-w"><div class="wh">' + icon('box') + 'Specialized Chile<span class="r"><button class="go" id="spBus">Buscar producto o SKU</button></span></div>' +
+    '<div class="sp-tabs">' + tabs.map(x => '<button class="' + (x === t ? 'on' : '') + '" data-spt="' + x[0] + '">' + x[1] + ' <small>' + x[2].length + '</small></button>').join('') + '</div>' +
+    '<div class="sp-grid">' + t[2].slice(0, 6).map(x => spzFila(x, extra(x))).join('') + '</div>' +
+    ((s.lanzamientos || []).length ? '<div class="sp-lz"><small>En la portada de Specialized</small>' + s.lanzamientos.slice(1, 9).map(l => '<span>' + esc(l) + '</span>').join('') + '</div>' : '') + '</div>';
+}
+
+/* --- Radar: cruces entre fuentes (lo que conecta pestañas y datos externos) --- */
+const FUENTE_IC = { tareas: 'check', agenda: 'cal', negocios: 'deal', clientes: 'users', whatsapp: 'note', bsale: 'box', specialized: 'bolt', instagram: 'camera', clima: 'sun', noticias: 'note', avisos: 'flag', planillas: 'chart' };
+const FUENTE_TX = { tareas: 'Tareas', agenda: 'Agenda', negocios: 'Negocios', clientes: 'Clientes', whatsapp: 'WhatsApp', bsale: 'Bsale', specialized: 'Specialized', instagram: 'Instagram', clima: 'Clima', noticias: 'Noticias', avisos: 'Avisos', planillas: 'Planillas' };
+function senales(){
+  const out = [], h = hoy(), s = spz(), add = o => { if (!out.some(x => norm(x.t).slice(0, 40) === norm(o.t).slice(0, 40))) out.push(o); };
+  const pl = cerebroPlan();
+  (pl && pl.cruces || []).forEach(c => add({ ia: 1, ic: 'spark', t: c.titulo, d: c.detalle, f: c.fuentes || [], acc: accCerebro(c.accion), pr: 100 }));
+  // clima × agenda y tareas al aire libre
+  ((S.google && S.google.eventos) || []).filter(e => e.fecha >= h && e.fecha <= addDays(h, 6) && RE_AFUERA.test(e.titulo + ' ' + (e.lugar || ''))).forEach(e => {
+    const p = e.todoElDia ? (diaClima(e.fecha) || {}).prob : lluviaA(e.fecha, e.inicio); if (p == null || p < 55) return;
+    const alt = mejorDiaSeco(h, 6, e.fecha);
+    add({ ic: 'sun', nivel: 'atencion', t: 'Lluvia ' + p + '% para «' + e.titulo + '»', d: fmtRel(e.fecha) + (e.inicio ? ' a las ' + e.inicio : '') + '. ' + (alt && alt.prob + 20 < p ? 'El ' + fmt(alt.fecha).toLowerCase() + ' viene más seco (' + alt.prob + '%).' : 'Confirma con los asistentes o ten un plan B.'), f: ['clima', 'agenda'], acc: { tipo: 'crear_tarea', titulo: 'Confirmar o mover: ' + e.titulo + (alt ? ' (opción: ' + fmt(alt.fecha) + ')' : ''), fecha: h, label: 'Crear tarea' }, pr: 92 });
+  });
+  pendientes().filter(t => t.limite && t.limite >= h && t.limite <= addDays(h, 4) && RE_AFUERA.test(t.tarea)).slice(0, 3).forEach(t => { const d = diaClima(t.limite); if (d && d.prob >= 60) add({ ic: 'sun', t: 'Lluvia ' + d.prob + '% el día de «' + t.tarea + '»', d: fmtRel(t.limite) + ': ' + (WX_TXT[d.code] || '').toLowerCase() + '. ¿La mueves?', f: ['clima', 'tareas'], acc: { tipo: 'abrir_tarea', ref: t.tarea, label: 'Abrir tarea' }, pr: 80 }); });
+  const finde = diasClima().filter(x => x && x.fecha > h && [0, 6].includes(pd(x.fecha).getDay()) && x.prob < 25 && x.max >= 13)[0];
+  if (finde) add({ ic: 'sun', t: fmt(finde.fecha) + ' seco y ' + Math.round(finde.max) + '°', d: 'Ideal para una salida con clientes, test rides o grabar contenido en ruta. Con la demanda de temporada, invita a quienes están decidiendo.', f: ['clima', 'clientes'], acc: { tipo: 'crear_aviso', titulo: 'Salida / test ride ' + fmt(finde.fecha), detalle: 'Pronóstico seco y ' + Math.round(finde.max) + '°. Invitar a clientes interesados en e-bikes.', fecha: finde.fecha, label: 'Crear aviso' }, pr: 55 });
+  const dh = diaClima(h); if (dh && dh.prob >= 75) add({ ic: 'sun', t: 'Hoy llueve (' + dh.prob + '%)', d: 'Día para taller, ropa impermeable, guardabarros y luces. Buen momento para contenido de mantención y cuidado de la batería.', f: ['clima', 'instagram'], acc: { tipo: 'disenar_pieza', texto: 'Cuidado de la e-bike con lluvia: limpieza, batería y transmisión', label: 'Diseñar pieza' }, pr: 50 });
+  // Specialized × clientes interesados
+  const porFam = {}; (s.ofertas || []).slice(0, 20).forEach(x => { const k = palabrasModelo(x.familia || x.nombre).slice(0, 2).join(' ') || x.id; (porFam[k] = porFam[k] || []).push(x); });
+  Object.values(porFam).forEach(G2 => { const x = G2[0], I = interesadosEn(x); if (!I.length) return;
+    const fam = G2.length > 1 ? (x.familia || x.nombre) + ' (' + G2.length + ' modelos)' : x.nombre, desde = Math.min(...G2.map(y => y.oferta));
+    add({ ic: 'bolt', t: I.length + (I.length === 1 ? ' cliente quiere ' : ' clientes quieren ') + fam + ' y está en oferta', d: (G2.length > 1 ? 'Ofertas en la web desde ' + clpCorto(desde) + ': ' + G2.slice(0, 3).map(y => y.nombre.replace(x.familia || '', '').trim() || y.nombre).join(', ') + '. ' : 'En la web: ' + clpCorto(x.precio) + ' → ' + clpCorto(x.oferta) + '. ') + I.slice(0, 3).map(y => primerNombre(y.c)).join(', ') + (I.length > 3 ? ' y ' + (I.length - 3) + ' más' : '') + '.', f: ['specialized', 'clientes'], acc: { tipo: 'abrir_producto', ref: x.id, label: 'Ver y escribirles' }, pr: 88, img: x.img }); });
+  (s.pocoStock || []).slice(0, 12).forEach(x => { const I = interesadosEn(x); if (I.length) add({ ic: 'flag', t: 'Quedan pocas ' + x.nombre + ' en Chile', d: (x.tallas || x.stock + ' unidades') + '. Le interesa a ' + I.slice(0, 3).map(y => primerNombre(y.c) + (y.pf.p && y.pf.p.talla ? ' (' + y.pf.p.talla + ')' : '')).join(', ') + '.', f: ['specialized', 'clientes'], acc: { tipo: 'abrir_producto', ref: x.id, label: 'Ver stock y avisar' }, pr: 86, img: x.img }); });
+  (s.nuevos || []).slice(0, 10).forEach(x => { const I = interesadosEn(x); if (I.length >= 2) add({ ic: 'spark', t: 'Novedad: ' + x.nombre, d: 'Nuevo en specialized.com/cl' + (x.colorNuevo ? ' (desde ' + fmt(x.colorNuevo) + ')' : '') + '. ' + I.length + ' clientes preguntaron por esta familia.', f: ['specialized', 'clientes'], acc: { tipo: 'abrir_producto', ref: x.id, label: 'Ver interesados' }, pr: 70, img: x.img }); });
+  // Specialized (lo que se vende en Chile) × stock de la tienda
+  ((s.calientes || []).length ? s.calientes : []).slice(0, 8).forEach(x => { const L = stockPara(x.nombre); if (L.length){ const n = L.reduce((a, y) => a + (+y.s || 0), 0); add({ ic: 'chart', t: x.nombre + ' se está vendiendo en Chile', d: x.bajas14 + ' vendidas en 14 días en la web de Specialized y tienes ' + n + ' en tienda. Empújala con contenido y a tus interesados.', f: ['specialized', 'bsale', 'instagram'], acc: { tipo: 'disenar_pieza', texto: x.nombre + ': por qué se está vendiendo tanto', label: 'Diseñar pieza' }, pr: 75, img: x.img }); } });
+  // negociaciones × stock u oferta en Specialized
+  if (S.neg) abiertos().forEach(n => { const txt = norm((n.producto || '') + ' ' + n.titulo), ws = palabrasModelo(n.producto || n.titulo).slice(0, 2); if (!ws.length) return;
+    const m = (s.pocoStock || []).concat(s.ofertas || []).find(x => ws.every(w => norm(x.nombre + ' ' + x.familia).includes(w)));
+    if (m) add({ ic: 'deal', t: (m.oferta ? 'Oferta' : 'Poco stock') + ' para cerrar: ' + n.titulo, d: m.nombre + (m.oferta ? ' bajó a ' + clpCorto(m.oferta) + ' en la web de Specialized.' : ': quedan ' + (m.tallas || m.stock) + ' en Chile.') + ' Úsalo para cerrar.', f: ['negocios', 'specialized'], acc: { tipo: 'abrir_negocio', ref: n.id, label: 'Abrir negociación' }, pr: 84 }); });
+  // noticias de seguridad o lanzamientos de la marca
+  noticias().filter(x => x.tipo === 'seguridad' || (x.tipo === 'lanzamiento' && x.relevancia >= 3)).slice(0, 2).forEach(x => add({ ic: 'note', t: x.titulo, d: x.por_que || x.fuente, f: ['noticias'], acc: { tipo: 'link', ref: x.link, label: 'Leer' }, pr: x.tipo === 'seguridad' ? 90 : 60 }));
+  return out.sort((a, b) => b.pr - a.pr).slice(0, 9);
+}
+function accCerebro(a){
+  if (!a || a.tipo === 'ninguna') return null;
+  const lab = { whatsapp: 'Escribir', abrir_negocio: 'Abrir negociación', abrir_contacto: 'Ver cliente', abrir_tarea: 'Abrir tarea', crear_tarea: 'Crear tarea', disenar_pieza: 'Diseñar pieza', abrir_producto: 'Ver producto', abrir_pestana: 'Ir' }[a.tipo] || 'Hacer';
+  return { tipo: a.tipo, ref: a.ref, texto: a.texto, titulo: a.texto, detalle: a.texto, label: lab };
+}
+function radarHTML(L, compacto){
+  return '<div class="rd' + (compacto ? ' sm' : '') + '">' + L.map((x, i) => '<div class="rd-c' + (x.nivel === 'atencion' ? ' at' : '') + '">' +
+    '<div class="rd-h">' + (x.img ? '<img src="' + esc(x.img.replace(/w=\d+&h=\d+/, 'w=120&h=120')) + '" alt="">' : '<span class="rd-ic">' + icon(x.ic || 'spark') + '</span>') + '<span class="rd-f">' + (x.f || []).map(f => '<i title="' + esc(FUENTE_TX[f] || f) + '">' + icon(FUENTE_IC[f] || 'spark') + '</i>').join('') + (x.ia ? '<em>IA</em>' : '') + '</span></div>' +
+    '<b>' + esc(x.t) + '</b><p>' + esc(x.d) + '</p>' + (x.acc ? '<button class="btn sm sec" data-rda="' + i + '">' + esc(x.acc.label || 'Hacer') + ' →</button>' : '') + '</div>').join('') + '</div>';
+}
+function bindRadar(root, L){ root.querySelectorAll('[data-rda]').forEach(b => b.onclick = () => ejecutarAccion(L[+b.dataset.rda].acc)); }
+
+// Ejecuta una acción propuesta por el Copiloto, el Cerebro o el Radar (siempre con un toque tuyo).
+function ejecutarAccion(a){
+  if (!a) return;
+  const t = a.tipo, ref = String(a.ref || ''), soloTel = ref.replace(/\D/g, '');
+  const c = ref ? (contactoPorId(ref) || (S.base && soloTel.length >= 8 ? contactos().find(x => telWA(x).endsWith(soloTel.slice(-8))) : null)) : null;
+  if (t === 'link') { window.open(ref, '_blank'); return; }
+  if (t === 'whatsapp'){ const tel = c ? telWA(c) : soloTel, txt = a.detalle || a.texto || ''; if (tel) window.open('https://wa.me/' + tel + (txt ? '?text=' + encodeURIComponent(txt) : ''), '_blank'); else { try { navigator.clipboard.writeText(txt); } catch(e){} toast('Mensaje copiado · no encontré el teléfono'); } return; }
+  if (t === 'crear_tarea') return openAdd({ texto: a.titulo || a.texto || '', notas: a.detalle && a.detalle !== a.titulo ? a.detalle : '', limite: a.fecha || hoy() });
+  if (t === 'crear_aviso') return avisoForm(null, { titulo: a.titulo, detalle: a.detalle, fecha: a.fecha });
+  if (t === 'crear_negocio') return openNegocio(null, { contacto: c ? c.id : '', titulo: a.titulo, producto: a.detalle });
+  if (t === 'abrir_negocio'){ const n = S.neg ? negocios().find(x => x.id === ref) : null; return n ? openDeal(n) : go('negocios'); }
+  if (t === 'abrir_contacto') return c ? openCto(c) : go('base');
+  if (t === 'disenar_pieza'){ S.rtab = 'estudio'; go('redes'); setTimeout(() => crearPieza({ tema: a.texto || a.titulo || a.detalle || '' }), 350); return; }
+  if (t === 'idea_contenido') return openIdea(null, { tema: a.titulo, idea: a.detalle });
+  if (t === 'abrir_producto') return abrirProducto(ref || a.titulo || a.texto);
+  if (t === 'abrir_tarea'){ const q = norm(ref || a.texto || '').slice(0, 30), tk = q && S.data.tareas.find(x => !x.hecho && norm(x.tarea).includes(q)); return tk ? openDetail(tk) : go('tareas'); }
+  if (t === 'abrir_pestana') return go(TITLES[ref] ? ref : 'hoy');
+}
+
+/* --- Plan del día (Cerebro) --- */
+function contextoApp(){
+  const L = [];
+  try { const o = oportunidades().slice(0, 12); if (o.length) L.push('OPORTUNIDADES DE CONTACTO (calculadas en la app): ' + o.map(x => (x.c.nombre || x.c.id) + ' (' + x.c.id + '): ' + x.titulo + ' – ' + x.porque).join('; ')); } catch(e){}
+  try { const r = senales().filter(x => !x.ia); if (r.length) L.push('CRUCES DETECTADOS: ' + r.map(x => x.t + ' – ' + x.d).join('; ')); } catch(e){}
+  try { const e = esperanRespuesta(); if (e.length) L.push('ESPERAN RESPUESTA (con idea lista): ' + e.map(x => (x.c.nombre || x.c.id) + ' (' + x.c.id + ')').join(', ')); } catch(e){}
+  const tc = climaTxtIA(); if (tc) L.push(tc);
+  return L.join('\n');
+}
+async function generarCerebro(btn){
+  if (extNivel() < 16){ toast('Actualiza el script para el plan del agente'); return showExtrasUpdate(); }
+  if (!iaDisponible()){ toast('Falta la clave de Claude en el script'); return; }
+  const t0 = btn ? btn.innerHTML : ''; if (btn){ btn.disabled = true; btn.innerHTML = '<span class="spin"></span>El agente está cruzando todo…'; }
+  try { const r = await apiX('cerebro', { forzar: true, contexto: contextoApp() }); S.cerebroHoy = r; S.global = Object.assign(G(), { cerebro: r }); lsSet('globalCache', S.global); loadGlobal(true); toast('🧠 Plan del día listo'); render(); }
+  catch(e){ if (btn){ btn.disabled = false; btn.innerHTML = t0; } toast('No se pudo: ' + e.message); }
+}
+function focoHechos(){ return lsGet('foco:' + hoy(), []); }
+function planHeroHTML(pl){
+  const hechos = focoHechos();
+  return '<div class="pl-h"><span class="pl-k">' + icon('spark') + ' Plan del agente</span><div class="pl-t">' + esc(pl.titular) + '</div><p>' + esc(pl.resumen) + '</p>' +
+    '<div class="pl-foco">' + (pl.foco || []).slice(0, 3).map((f, i) => '<button class="pl-f' + (hechos.includes(i) ? ' ok' : '') + '" data-pf="' + i + '"><span>' + (hechos.includes(i) ? icon('check') : i + 1) + '</span>' + esc(f) + '</button>').join('') + '</div></div>';
+}
+function bindPlanHero(root){
+  root.querySelectorAll('[data-pf]').forEach(b => b.onclick = () => { const i = +b.dataset.pf, H = focoHechos(), k = H.indexOf(i); if (k >= 0) H.splice(k, 1); else { H.push(i); confetti(18); } lsSet('foco:' + hoy(), H); render(); });
+}
+function abrirPlan(){
+  const pl = cerebroPlan(); if (!pl) return generarCerebro();
+  const urg = { alta: 'bad', media: 'warn', baja: '' }, AREA = { ventas: 'Ventas', clientes: 'Clientes', marketing: 'Marketing', taller: 'Taller', equipo: 'Equipo', stock: 'Stock', admin: 'Admin', personal: 'Personal' };
+  const acc = []; const btnA = a => { const x = accCerebro(a); if (!x) return ''; acc.push(x); return '<button class="btn sm sec" data-pla="' + (acc.length - 1) + '">' + esc(x.label) + ' →</button>'; };
+  const gen = (S.cerebroHoy || G().cerebro || {}).generado;
+  const html = '<div class="pl-m">' + planHeroHTML(pl) +
+    ((pl.alertas || []).length ? '<div class="lab2">Alertas</div>' + pl.alertas.map(a => '<div class="im-warn ' + (a.nivel === 'urgente' ? 'bad' : '') + '">' + icon('flag') + '<span><b>' + esc(a.titulo) + '</b> ' + esc(a.detalle) + '</span></div>').join('') : '') +
+    '<div class="lab2" style="margin-top:16px">Prioridades del día</div>' + (pl.prioridades || []).map(p => '<div class="pl-p"><div class="pl-pb"><div class="pl-pt"><span class="tag ' + (urg[p.urgencia] || '') + '">' + esc(p.urgencia) + '</span><span class="tag">' + esc(AREA[p.area] || p.area) + '</span>' + (p.minutos ? '<span class="tag">' + p.minutos + ' min</span>' : '') + '</div><b>' + esc(p.titulo) + '</b><small>' + esc(p.por_que) + '</small></div>' + btnA(p.accion) + '</div>').join('') +
+    ((pl.cruces || []).length ? '<div class="lab2" style="margin-top:16px">Cruces entre fuentes</div>' + pl.cruces.map(c => '<div class="pl-p"><div class="pl-pb"><div class="pl-pt">' + (c.fuentes || []).map(f => '<span class="tag">' + icon(FUENTE_IC[f] || 'spark') + ' ' + esc(FUENTE_TX[f] || f) + '</span>').join('') + '</div><b>' + esc(c.titulo) + '</b><small>' + esc(c.detalle) + '</small></div>' + btnA(c.accion) + '</div>').join('') : '') +
+    ((pl.contenido || []).length ? '<div class="lab2" style="margin-top:16px">Contenido sugerido</div>' + pl.contenido.map((c, i) => '<div class="pl-p"><div class="pl-pb"><div class="pl-pt"><span class="tag">' + esc(c.formato) + '</span></div><b>' + esc(c.tema) + '</b><small>' + esc(c.por_que) + '</small></div><button class="btn sm sec" data-plc="' + i + '">Diseñar →</button></div>').join('') : '') +
+    (pl.clima ? '<div class="wx-tip" style="margin-top:14px">' + icon('sun') + '<span>' + esc(pl.clima) + '</span></div>' : '') +
+    '<div class="wsub" style="margin-top:12px">' + (gen ? 'Generado ' + esc(new Date(gen).toTimeString().slice(0, 5)) + ' · ' : '') + 'Se arma solo cada mañana a las 7:00 cruzando todas tus fuentes.</div>' +
+    '<div class="btns"><button class="btn sec" id="plR">' + icon('spark') + ' Regenerar con lo último</button><button class="btn" id="plCop">Preguntar al Copiloto</button></div></div>';
+  const md = modal(icon('spark') + ' Plan del día', html, { wide: true });
+  bindPlanHero(md.el);
+  md.el.querySelectorAll('[data-pla]').forEach(b => b.onclick = () => { md.cerrar(); ejecutarAccion(acc[+b.dataset.pla]); });
+  md.el.querySelectorAll('[data-plc]').forEach(b => b.onclick = () => { const c = pl.contenido[+b.dataset.plc]; md.cerrar(); ejecutarAccion({ tipo: 'disenar_pieza', texto: c.tema + ' (' + c.formato + ')' }); });
+  md.el.querySelector('#plR').onclick = e => { md.cerrar(); generarCerebro(); };
+  md.el.querySelector('#plCop').onclick = () => { md.cerrar(); copiloto('Según el plan de hoy, ¿por dónde empiezo y qué le escribo a cada cliente?'); };
+}
+// Bloque superior de Inicio: plan del día + clima.
+function cmdHTML(){
+  const pl = cerebroPlan(), nm = params()['Tu nombre (para el saludo)'];
+  let izq;
+  if (pl) izq = planHeroHTML(pl) + '<div class="pl-acts"><button class="btn sm" id="plAbrir">Ver plan completo</button><button class="btn sm sec" data-go="hoy">Ir a Hoy</button><button class="btn sm sec" id="copIni">' + icon('spark') + ' Preguntar</button></div>';
+  else izq = '<div class="pl-h"><span class="pl-k">' + icon('spark') + ' Plan del agente</span><div class="pl-t">' + (extNivel() >= 16 ? (iaDisponible() ? 'Tu plan de hoy aún no está listo' : 'Conecta tu clave de Claude para el plan diario') : 'Actualiza el script para activar el Cerebro') + '</div><p>' + (extNivel() >= 16 ? 'Cada mañana a las 7:00 el agente cruza tareas, agenda, clientes, WhatsApp, Bsale, la web de Specialized, Instagram, clima y noticias, y te deja las 3 cosas que hacen que el día valga la pena.' : 'El Cerebro lee todas tus fuentes cada mañana y te arma el plan del día, con avisos automáticos y el Copiloto para preguntar lo que quieras.') + '</p>' +
+    '<div class="pl-acts">' + (extNivel() >= 16 ? (iaDisponible() ? '<button class="btn sm" id="plGen">' + icon('spark') + ' Generar ahora</button>' : '') : '<button class="btn sm" id="updBtn2">Actualizar (5 min)</button>') + '<button class="btn sm sec" id="copIni">' + icon('spark') + ' Preguntar al Copiloto</button></div></div>';
+  return '<div class="cmd"><div class="cmd-plan">' + izq + '</div>' + climaW() + '</div>';
+}
+function bindCmd(root){
+  bindPlanHero(root);
+  const a = root.querySelector('#plAbrir'); if (a) a.onclick = abrirPlan;
+  const g = root.querySelector('#plGen'); if (g) g.onclick = () => generarCerebro(g);
+  const u = root.querySelector('#updBtn2'); if (u) u.onclick = showExtrasUpdate;
+  const c = root.querySelector('#copIni'); if (c) c.onclick = () => copiloto();
+  const w = root.querySelector('#wxMas'); if (w) w.onclick = abrirClima;
+  const wc = root.querySelector('.wx-card'); if (wc) wc.addEventListener('click', e => { if (!e.target.closest('button')) abrirClima(); });
+}
+
+/* --- Ficha 360 de producto: Specialized + tienda + clientes + contenido --- */
+function abrirProducto(q){
+  const md = modal(icon('box') + ' Producto', '<div class="pd-bus"><input type="search" id="pdQ" placeholder="Modelo, talla o SKU (ej.: levo sl s4, 95227-6001, casco ambush)" value="' + esc(/^\d{6,8}$/.test(String(q || '')) ? '' : (q || '')) + '"><button class="btn sm" id="pdGo">Buscar</button></div><div id="pdR"></div>', { wide: true });
+  md.el.classList.add('pdm');
+  const box = md.el.querySelector('#pdR'), inp = md.el.querySelector('#pdQ');
+  if (extNivel() < 16){ box.innerHTML = '<div class="empty">Con la versión nueva del script la ficha muestra precio, oferta y stock por talla de specialized.com/cl, el stock de tu tienda y los clientes interesados.<br><button class="btn sm" id="pdU" style="margin-top:10px">Ver cómo actualizar</button></div>'; box.querySelector('#pdU').onclick = showExtrasUpdate; return; }
+  const ficha = async (x) => {
+    box.innerHTML = '<div class="empty"><span class="spin"></span>Leyendo el stock en specialized.com/cl…</div>';
+    let T = x.detalle || [];
+    try { const r = await apiX('specialized', { accion: 'ficha', id: x.id }); if (r.tallas && r.tallas.length) T = r.tallas; if (r.producto) x = Object.assign({}, x, r.producto); } catch(e){}
+    let tienda = null; if (S.ext && S.ext.bsale && S.ext.bsale.activo){ try { tienda = (await apiX('bsale', { q: x.familia + ' ' + x.nombre.replace(/s-works/i, ''), max: 10 })).items || []; } catch(e){} }
+    const colores = [...new Set(T.map(t => t.color || '—'))], tallas = [...new Set(T.map(t => t.talla))].sort((a, b) => String(a).localeCompare(String(b), 'es', { numeric: true }));
+    const I = interesadosEn(x), oferta = x.oferta ? ' en oferta a ' + clp(x.oferta) : '';
+    const agotada = x.stock === 0, talla = it => it.pf.p && it.pf.p.talla ? ' (' + it.pf.p.talla + ')' : '';
+    const msgI = it => 'Hola ' + primerNombre(it.c) + '! Te escribo de Blackline 🙌 ' + (agotada ? 'La ' + x.nombre + ' que te interesaba está agotada por ahora en Chile, pero te aviso apenas entre stock en tu talla' + talla(it) + '. ¿Te parece si te muestro alternativas mientras?' :
+      (x.oferta ? 'La ' + x.nombre + ' que te interesaba está' + oferta + ' (antes ' + clp(x.precio) + ').' : 'Te cuento que la ' + x.nombre + ' que te interesaba ' + (x.stock && x.stock <= 3 ? 'tiene pocas unidades en Chile' : 'está disponible') + '.') + (talla(it) ? ' ¿Te reviso tu talla' + talla(it) + '?' : ' ¿Te la reservo?'));
+    box.innerHTML = '<div class="pd-h">' + (x.img ? '<img src="' + esc(x.img) + '" alt="">' : '') + '<div><div class="pd-cat">' + esc(x.disciplina || '') + (x.anio ? ' · ' + esc(x.anio) : '') + (x.etiqueta ? ' · ' + esc(x.etiqueta.replace('new', 'nuevo').replace('bestseller', 'más vendido').replace('awardwinning', 'galardonado')) : '') + '</div><h3>' + esc(x.nombre) + '</h3><div class="pd-p">' + precioSpz(x) + (x.oferta ? ' <span class="tag ok">−' + Math.round((1 - x.oferta / x.precio) * 100) + '%</span>' : '') + '</div>' +
+      '<div class="pd-k"><span><b>' + (x.stock != null ? x.stock : '–') + '</b>en Chile</span><span><b>' + (x.bajas14 || 0) + '</b>vendidas 14 d</span><span><b>' + I.length + '</b>interesados</span>' + (tienda ? '<span><b>' + tienda.reduce((s, v) => s + (+v.total || 0), 0) + '</b>en tienda</span>' : '') + '</div>' +
+      '<div class="pd-acts"><a class="btn sm sec" href="' + esc(x.url) + '" target="_blank">Ver en specialized.com</a><button class="btn sm sec" id="pdPz">' + icon('spark') + ' Diseñar pieza</button><button class="btn sm sec" id="pdCop">Preguntar</button></div></div></div>' +
+      (T.length ? '<div class="lab2">Stock por talla en Specialized Chile</div><div class="pd-tb"><table><thead><tr><th>Color</th>' + tallas.map(t => '<th>' + esc(t) + '</th>').join('') + '</tr></thead><tbody>' + colores.map(co => '<tr><td>' + esc(co) + '</td>' + tallas.map(tl => { const s = T.find(t => (t.color || '—') === co && t.talla === tl); return '<td>' + (s ? '<span class="st ' + (s.stock === 0 ? 'no' : s.stock <= 2 ? 'poco' : 'ok') + '" title="SKU ' + esc(s.sku) + '">' + (s.stock === 0 ? '–' : s.stock + (/\+/.test(s.estado || '') || s.redondeado ? '+' : '')) + '</span>' : '') + '</td>'; }).join('') + '</tr>').join('') + '</tbody></table></div><div class="wsub">Toca un número para ver el SKU. «+» significa que hay más unidades de las que muestra la web.</div>' : '<div class="wsub">Este producto aún no tiene stock por talla revisado.</div>') +
+      (tienda ? '<div class="lab2" style="margin-top:14px">En tu tienda (Bsale)</div>' + (tienda.length ? '<div class="wl">' + tienda.slice(0, 8).map(v => '<div class="it"><div class="tx">' + esc(v.producto + (v.variante ? ' · ' + v.variante : '')) + '<small>' + (v.sku ? 'SKU ' + esc(v.sku) + ' · ' : '') + (v.precio ? clp(v.precio) : '') + '</small></div><span class="rt"><b>' + (+v.total || 0) + '</b> disp.</span></div>').join('') + '</div>' : '<div class="wsub">Sin coincidencias en Bsale.</div>') : '') +
+      '<div class="lab2" style="margin-top:14px">Clientes interesados</div>' + (I.length ? I.slice(0, 8).map((it, i) => '<div class="pd-i"><div><b>' + esc(it.c.nombre || it.c.email) + '</b><small>' + esc((CICLO[it.pf.ciclo] || {}).t || '') + (it.pf.p && it.pf.p.talla ? ' · talla ' + esc(it.pf.p.talla) : '') + (it.pf.prob ? ' · ' + it.pf.prob + '%' : '') + '</small></div><textarea class="op-msg" rows="2" data-pim="' + i + '">' + esc(msgI(it)) + '</textarea><div class="acts">' + (telWA(it.c) ? '<button class="btn sm" data-piw="' + i + '">' + icon('note') + ' WhatsApp</button>' : '') + '<button class="btn sm sec" data-pif="' + i + '">Ficha</button></div></div>').join('') : '<div class="wsub">Nadie ha preguntado por este modelo todavía.</div>');
+    box.querySelectorAll('[data-piw]').forEach(b => b.onclick = () => { const it = I[+b.dataset.piw]; window.open('https://wa.me/' + telWA(it.c) + '?text=' + encodeURIComponent(box.querySelector('[data-pim="' + b.dataset.piw + '"]').value), '_blank'); });
+    box.querySelectorAll('[data-pif]').forEach(b => b.onclick = () => { md.cerrar(); openCto(I[+b.dataset.pif].c, { tab: 'perfil' }); });
+    box.querySelectorAll('.st[title]').forEach(s => s.onclick = () => toast(s.title));
+    box.querySelector('#pdPz').onclick = () => { md.cerrar(); ejecutarAccion({ tipo: 'disenar_pieza', texto: x.nombre + (x.oferta ? ' en oferta' : '') + ': para quién es y por qué elegirla' }); };
+    box.querySelector('#pdCop').onclick = () => { md.cerrar(); copiloto('¿Qué me conviene hacer con la ' + x.nombre + '? Cruza stock, clientes interesados y contenido.'); };
+  };
+  const buscar = async () => {
+    const qq = inp.value.trim(); if (!qq){ box.innerHTML = '<div class="wsub">Escribe un modelo, una talla o un SKU.</div>'; return; }
+    box.innerHTML = '<div class="empty"><span class="spin"></span>Buscando…</div>';
+    try {
+      const r = await apiX('specialized', { accion: 'buscar', q: qq }), L = r.items || [];
+      if (L.length === 1 || /^\d{5}-\d{2,6}$/.test(qq)) return L[0] ? ficha(L[0]) : (box.innerHTML = '<div class="empty">No encontré ese SKU en Specialized.</div>');
+      box.innerHTML = L.length ? '<div class="sp-grid">' + L.map(x => spzFila(x, x.stock != null ? (x.stock ? x.stock + ' en Chile' : 'agotada') : x.disciplina)).join('') + '</div>' : '<div class="empty">Sin resultados en specialized.com/cl. Prueba con el nombre del modelo.</div>';
+      box.querySelectorAll('[data-spz]').forEach(b => b.onclick = () => ficha(L.find(x => x.id === b.dataset.spz)));
+    } catch(e){ box.innerHTML = '<div class="empty">No se pudo buscar: ' + esc(e.message) + '</div>'; }
+  };
+  md.el.querySelector('#pdGo').onclick = buscar; inp.onkeydown = e => { if (e.key === 'Enter') buscar(); };
+  if (/^\d{6,8}$/.test(String(q || ''))) ficha({ id: String(q), nombre: '', detalle: [] }); else if (q) buscar(); else setTimeout(() => inp.focus(), 80);
+}
+
+/* --- Copiloto: pregúntale lo que sea; consulta todas tus fuentes --- */
+const COP_SUG = {
+  inicio: ['¿Qué es lo más importante hoy?', '¿Qué se está vendiendo en Chile y qué tengo en stock?', '¿A qué clientes les escribo hoy y qué les digo?'],
+  hoy: ['¿Por dónde empiezo?', '¿Cómo viene el clima para la salida del fin de semana?', 'Escríbeme los mensajes para los que esperan respuesta'],
+  negocios: ['¿Qué negociaciones puedo cerrar esta semana?', '¿Cuáles se están enfriando y qué hago?', '¿Hay ofertas en Specialized que me ayuden a cerrar?'],
+  base: ['¿Quién está buscando una Levo?', '¿Qué clientes tienen una bici para upgrade?', '¿A quién le aviso de las ofertas de Specialized?'],
+  redes: ['¿Qué publico esta semana según lo que se vende?', 'Ideas de contenido para días de lluvia', '¿Qué lanzamiento de Specialized aprovecho?'],
+  tareas: ['¿Qué tareas puedo delegar al equipo?', '¿Qué está atrasado y qué hago?'],
+  def: ['¿Hay Levo SL en talla S4?', '¿Qué hay en oferta en Specialized?', '¿Cómo viene el clima esta semana?']
+};
+function copHist(){ return S.copHist || (S.copHist = lsGet('copHist', [])); }
+function copMd(s){
+  const e = esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener">enlace</a>');
+  let out = '', lista = false;
+  e.split('\n').forEach(l => { const m = /^\s*(?:[-•*]|\d+\.)\s+(.*)/.exec(l); if (m){ if (!lista){ out += '<ul>'; lista = true; } out += '<li>' + m[1] + '</li>'; } else { if (lista){ out += '</ul>'; lista = false; } if (l.trim()) out += '<p>' + l + '</p>'; } });
+  return out + (lista ? '</ul>' : '');
+}
+function copiloto(pregunta){
+  let p = $('#cop');
+  if (!p){
+    p = document.createElement('div'); p.id = 'cop'; p.className = 'cop'; p.setAttribute('role', 'dialog'); p.setAttribute('aria-label', 'Copiloto');
+    p.innerHTML = '<div class="cop-h"><span class="cop-av">' + icon('spark') + '</span><div class="grow"><b>Copiloto</b><small>Consulta tareas, clientes, negocios, Bsale, Specialized, Instagram, clima y noticias</small></div><button class="icon-btn" id="copNew" title="Nueva conversación">↺</button><button class="icon-btn" id="copX" aria-label="Cerrar">✕</button></div><div class="cop-m" id="copM"></div><div class="cop-s" id="copS"></div><form class="cop-f" id="copF"><textarea id="copQ" rows="1" placeholder="Pregunta lo que quieras…"></textarea><button class="btn" aria-label="Enviar">' + icon('arrow') + '</button></form>';
+    document.body.appendChild(p);
+    p.querySelector('#copX').onclick = () => p.classList.remove('on');
+    p.querySelector('#copNew').onclick = () => { S.copHist = []; lsSet('copHist', []); copPintar(); };
+    const q = p.querySelector('#copQ');
+    q.oninput = () => { q.style.height = 'auto'; q.style.height = Math.min(140, q.scrollHeight) + 'px'; };
+    q.onkeydown = e => { if (e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); p.querySelector('#copF').requestSubmit(); } };
+    p.querySelector('#copF').onsubmit = e => { e.preventDefault(); const t = q.value.trim(); if (t){ q.value = ''; q.style.height = 'auto'; copEnviar(t); } };
+  }
+  p.classList.add('on'); copPintar();
+  if (pregunta) copEnviar(pregunta); else setTimeout(() => p.querySelector('#copQ').focus(), 120);
+}
+function copPintar(){
+  const H = copHist(), m = $('#copM'), s = $('#copS'); if (!m) return;
+  m.innerHTML = H.length ? H.map((x, i) => x.rol === 'yo' ? '<div class="cm yo">' + esc(x.texto) + '</div>' :
+    '<div class="cm ia' + (x.error ? ' err' : '') + '">' + (x.pensando ? '<span class="cop-dots"><i></i><i></i><i></i></span> Revisando tus fuentes…' : copMd(x.texto)) +
+    ((x.acciones || []).length ? '<div class="cm-acc">' + x.acciones.map((a, k) => '<button class="btn sm' + (k ? ' sec' : '') + '" data-cpa="' + i + ':' + k + '">' + esc(a.titulo || a.tipo) + '</button>').join('') + '</div>' : '') +
+    ((x.fuentes || []).length ? '<div class="cm-f">' + x.fuentes.filter(f => f !== 'proponer_accion').map(f => '<span>' + esc(f.replace(/_/g, ' ')) + '</span>').join('') + '</div>' : '') + '</div>').join('') :
+    '<div class="cop-hola"><span class="cop-av lg">' + icon('spark') + '</span><b>¿En qué te ayudo?</b><p>Pregúntame por stock y tallas, clientes, negociaciones, qué publicar, el clima o lo que sea. Si hay algo que hacer, te lo dejo listo en un botón.</p></div>';
+  s.innerHTML = (H.length ? [] : (COP_SUG[S.tab] || []).concat(COP_SUG.def).slice(0, 4)).map(t => '<button>' + esc(t) + '</button>').join('');
+  s.querySelectorAll('button').forEach(b => b.onclick = () => copEnviar(b.textContent));
+  m.querySelectorAll('[data-cpa]').forEach(b => b.onclick = () => { const [i, k] = b.dataset.cpa.split(':').map(Number), a = H[i].acciones[k]; ejecutarAccion(a); if (innerWidth < 1000) $('#cop').classList.remove('on'); });
+  m.scrollTop = m.scrollHeight;
+}
+function contextoPantalla(){
+  const t = S.tab, L = [];
+  if (t === 'hoy' || t === 'inicio'){ const pl = cerebroPlan(); if (pl) L.push('Plan del día: ' + pl.titular + ' · foco: ' + (pl.foco || []).join(' | ')); }
+  if (t === 'negocios' && S.neg) L.push(abiertos().length + ' negociaciones abiertas');
+  const ttl = $('.pop h4'); if (ttl) L.push('Ventana abierta: ' + ttl.textContent.slice(0, 80));
+  return L.join(' · ');
+}
+async function copEnviar(texto){
+  const H = copHist();
+  if (H.some(x => x.pensando)) return;
+  H.push({ rol: 'yo', texto }); const r = { rol: 'ia', texto: '', pensando: true }; H.push(r); copPintar();
+  try {
+    if (extNivel() < 16) throw new Error('Para usar el Copiloto actualiza el script a la versión nueva (Ajustes → Actualizar).');
+    if (!iaDisponible()) throw new Error('Falta la clave de Claude (ANTHROPIC_API_KEY) en las propiedades del script.');
+    const res = await apiX('copiloto', { mensajes: H.filter(x => !x.pensando && !x.error).slice(-12).map(x => ({ rol: x.rol, texto: x.texto })), pestana: TITLES[S.tab] || S.tab, contexto: contextoPantalla() });
+    Object.assign(r, { texto: res.texto, acciones: res.acciones || [], fuentes: res.fuentes || [], pensando: false });
+  } catch(e){ Object.assign(r, { texto: e.message, error: true, pensando: false }); }
+  S.copHist = H.slice(-30); lsSet('copHist', S.copHist.filter(x => !x.pensando)); copPintar();
+}
+
+/* --- Centro de fuentes: qué está conectado y cómo conversa todo --- */
+function abrirFuentes(){
+  const e = S.ext || {}, s = spz(), n = G().noticias, F = G().fuentes || [], ok = (b) => '<i class="fz ' + (b ? 'ok' : 'no') + '"></i>';
+  const nivel = extNivel(), fila = (on, ic, t, d, extra) => '<div class="fz-it">' + ok(on) + '<span class="fz-ic">' + icon(ic) + '</span><div class="grow"><b>' + t + '</b><small>' + d + '</small></div>' + (extra || '') + '</div>';
+  const html = '<div class="wsub" style="margin:0 0 10px">Todo lo que la app y sus agentes leen. Cada fuente alimenta a las demás: el plan del día, el radar de cruces, el Copiloto, las oportunidades de contacto y el estudio de contenido.</div>' +
+    '<div class="lab2">Tu negocio</div>' +
+    fila(!!S.data, 'check', 'Tareas, proyectos y hábitos', 'Tu planilla de Google · al día') +
+    fila(S.google && !S.google.inactivo, 'cal', 'Google Calendar y Gmail', S.google && S.google.eventos ? S.google.eventos.length + ' eventos próximos' : 'Sin conectar') +
+    fila(!!S.base, 'users', 'Contactos y perfiles de clientes', S.base ? contactos().length + ' contactos · ' + perfiles().length + ' perfilados' : 'Cargando…') +
+    fila(!!(e.wa), 'note', 'WhatsApp', e.wa ? 'Último mensaje ' + esc(String(e.wa).slice(0, 16).replace('T', ' ')) : 'Importa tus chats en Contactos') +
+    fila(!!S.neg, 'deal', 'Negociaciones', S.neg ? abiertos().length + ' abiertas' : '—') +
+    fila(e.bsale && e.bsale.activo, 'box', 'Bsale (tienda y web blacklinechile.cl)', e.bsale && e.bsale.activo ? 'Stock y precios · ' + (e.bsale.sinc ? 'sincronizado' : '') : 'Pendiente: falta el token (BSALE_TOKEN)') +
+    fila(e.instagram && e.instagram.activo, 'camera', 'Instagram', e.instagram && e.instagram.activo ? '@' + esc(e.instagram.usuario || '') + ' · métricas diarias' : 'Sin conectar') +
+    '<div class="lab2" style="margin-top:14px">Afuera</div>' +
+    fila(s.activo, 'bolt', 'Specialized Chile (specialized.com/cl)', s.activo ? s.productos + ' productos · ' + (s.bicis || 0) + ' bicis con stock por talla · ' + (s.sinc && s.sinc.fecha ? 'catálogo ' + esc(fmtRel(s.sinc.fecha.slice(0, 10))) : '') : nivel >= 16 ? 'Sincronizando…' : 'Requiere la versión nueva del script') +
+    fila(!!climaDatos(), 'sun', 'Clima de Puerto Varas', climaDatos() ? 'Open-Meteo · cada 30 min' : 'Sin datos') +
+    fila(n && n.items && n.items.length, 'note', 'Noticias (Pinkbike, Vital MTB, prensa, Chile)', n && n.items ? n.items.length + ' destacadas de ' + n.total : nivel >= 16 ? 'Cargando…' : 'Requiere la versión nueva del script') +
+    fila(nivel >= 16, 'flag', 'Avisos internos', avisos().length + ' activos') +
+    '<div class="lab2" style="margin-top:14px">Tus planillas y archivos</div>' +
+    (F.length ? F.map(f => fila(true, 'chart', esc(f.nombre), (f.carpeta ? 'Carpeta Fuentes · ' : 'Planilla · ') + esc(f.descripcion || (f.tipo === 'csv' ? 'CSV' : 'Google Sheets')), f.carpeta ? '' : '<button class="btn sm sec" data-fzq="' + esc(f.id) + '">Quitar</button>')).join('') : '<div class="wsub">Aún no conectas planillas. Pega abajo el link de cualquier Google Sheet tuyo (lista de precios, metas, proveedores, exportación del B2B…).</div>') +
+    (nivel >= 16 ? '<div class="fz-add"><input type="url" id="fzU" placeholder="Link de la planilla de Google"><input type="text" id="fzD" placeholder="¿Qué contiene? (ayuda al agente)"><button class="btn sm" id="fzA">Conectar</button></div>' : '') +
+    '<div class="fz-b2b"><b>' + icon('box') + ' B2B de Specialized</b><p>El B2B es un portal privado con tu usuario: la app no entra con tu clave (ni la guarda), por seguridad y porque el portal no tiene una conexión oficial para esto. La forma segura: exporta desde el B2B la disponibilidad o lista de precios (Excel o CSV) y déjala en la carpeta <b>Organizador · Fuentes</b> de tu Drive (si es Excel, ábrelo y guárdalo como Hoja de cálculo de Google). Los agentes la leen solos, solo para consultar, y la cruzan con Specialized, Bsale y tus clientes.</p>' + (G().fuentesCarpeta ? '<a class="btn sm sec" target="_blank" href="' + esc(G().fuentesCarpeta) + '">Abrir carpeta Fuentes</a>' : '') + '</div>';
+  const md = modal(icon('chart') + ' Fuentes de información', html, { wide: true });
+  const a = md.el.querySelector('#fzA'); if (a) a.onclick = async () => {
+    const u = md.el.querySelector('#fzU').value.trim(); if (!u){ toast('Pega el link de la planilla'); return; }
+    a.disabled = true; a.innerHTML = '<span class="spin"></span>';
+    try { const r = await apiX('fuentes', { agregar: { url: u, descripcion: md.el.querySelector('#fzD').value.trim() } }); S.global = Object.assign(G(), { fuentes: r.items, fuentesCarpeta: r.carpeta }); md.cerrar(); toast('✓ Planilla conectada'); abrirFuentes(); }
+    catch(e){ a.disabled = false; a.textContent = 'Conectar'; toast('No se pudo: ' + e.message); }
+  };
+  md.el.querySelectorAll('[data-fzq]').forEach(b => b.onclick = async () => { try { const r = await apiX('fuentes', { quitar: b.dataset.fzq }); S.global = Object.assign(G(), { fuentes: r.items }); md.cerrar(); abrirFuentes(); } catch(e){ toast('No se pudo: ' + e.message); } });
+  if (nivel >= 16 && !G().fuentesCarpeta) apiX('fuentes', {}).then(r => { S.global = Object.assign(G(), { fuentesCarpeta: r.carpeta, fuentes: r.items }); }).catch(() => {});
+}
+function hyWx(){
+  const c = climaDatos(), d = diaClima(hoy()); if (!c || !d) return '';
+  const cur = c.current || {}, m = diaClima(addDays(hoy(), 1)), v = ventanaSeca(hoy());
+  return '<button class="hy-wx">' + wxIcon(cur.weather_code, 26) + '<b>' + Math.round(cur.temperature_2m) + '°</b><span>' + esc(WX_TXT[cur.weather_code] || '') + ' · ' + icon('drop') + d.prob + '% hoy' + (v ? ' · seco ' + v.ini + '–' + v.fin + ' h' : '') + (m ? ' · mañana ' + Math.round(m.max) + '° ' + m.prob + '%' : '') + '</span></button>';
+}
+function bindExterno(root){
+  root.querySelectorAll('[data-spt]').forEach(b => b.onclick = () => { S.spzTab = b.dataset.spt; render(); });
+  root.querySelectorAll('[data-spz]').forEach(b => b.onclick = () => abrirProducto(b.dataset.spz));
+  const sb = root.querySelector('#spBus'); if (sb) sb.onclick = () => abrirProducto();
+  const na = root.querySelector('#ntAll'); if (na) na.onclick = abrirNoticias;
+  const an = root.querySelector('#avNew'); if (an) an.onclick = () => avisoForm();
+  const aa = root.querySelector('#avAll'); if (aa) aa.onclick = () => abrirAvisos();
+  root.querySelectorAll('.av-list [data-av]').forEach(b => b.onclick = () => avisoForm(avisos().find(a => a.id === b.dataset.av)));
+}
+// Texto con lo externo para los prompts de los otros agentes (contenido, estrategia, plan del día).
+function contextoExterno(){
+  const L = [], s = spz(), t = temporadaPV(), n = noticias();
+  L.push('TEMPORADA: ' + t.t);
+  const c = climaTxtIA(); if (c) L.push(c);
+  if (s.activo){
+    const f = x => x.nombre + (x.oferta ? ' (oferta ' + clpCorto(x.oferta) + ', antes ' + clpCorto(x.precio) + ')' : '') + (x.bajas14 ? ' · ' + x.bajas14 + ' vendidas 14 d' : '');
+    L.push('SPECIALIZED CHILE (web oficial): lo que más se vende en Chile: ' + ((s.calientes || []).length ? s.calientes : s.masVendidos || []).slice(0, 6).map(f).join('; ') + '. Ofertas: ' + (s.ofertas || []).slice(0, 6).map(f).join('; ') + '. Novedades: ' + (s.nuevos || []).slice(0, 5).map(x => x.nombre).join(', ') + '. Campañas y lanzamientos en la portada: ' + (s.lanzamientos || []).slice(0, 8).join(', ') + '.');
+  }
+  if (n.length) L.push('NOTICIAS DEL MUNDO BIKE: ' + n.slice(0, 5).map(x => x.titulo + (x.por_que ? ' (' + x.por_que + ')' : '')).join('; ') + '.');
+  const av = avisos().slice(0, 5); if (av.length) L.push('AVISOS INTERNOS: ' + av.map(a => (a.fecha ? a.fecha + ' ' : '') + a.titulo).join('; ') + '.');
+  return L.join('\n');
 }
 
 /* ---------- vista: Negocios (pipeline de ventas estilo CRM) ---------- */
@@ -3667,6 +4413,7 @@ function openNegocio(n, opt){
   if (nuevo){
     const c = opt.contacto ? contactoPorId(opt.contacto) : null;
     n = { id: '', titulo: c ? (c.nombre || c.email) + (c.etiquetas ? ' – ' + String(c.etiquetas).split(',')[0] : '') : '', contacto: c ? c.id : '', etapa: 'Nuevo', valor: 0, producto: c && c.etiquetas ? String(c.etiquetas).split(',')[0] : '', cierre: addDays(h, 14), proxima: 'Contactar', fechaProx: h, notas: '', estado: 'Abierta' };
+    if (opt.titulo) n.titulo = opt.titulo; if (opt.producto) n.producto = opt.producto;
   }
   const a = nuevo ? null : analizar(n), e = etapaDe(n), C = contactos().slice().sort((x, y) => String(x.nombre).localeCompare(String(y.nombre)));
   const R = nuevo ? [] : recomendaciones(n, a);
@@ -3820,12 +4567,23 @@ function oportunidades(){
     // 5) temporada (agosto–septiembre): mantención pre-temporada a quienes tienen bici
     if (/-0[89]-/.test(h + '-') && (p.bicis || []).length && /cliente|recurrente|solo_taller/.test(p.relacion || '')) add(Object.assign({ k: 'temp:' + c.id + ':' + h.slice(0, 4), tipo: 'temporada', ic: 'sun', titulo: 'Mantención pre-temporada', porque: 'Tiene ' + p.bicis.map(b => b.modelo).join(', '), msg: msg.temporada(n), pr: 35 }, base));
   });
+  // 6) Specialized Chile: lo que le interesa entró en oferta o queda poco en el país (G() existe desde la versión 16).
+  const sz = (S.global && S.global.specialized) || {};
+  if (sz.activo) perfiles().forEach(pf => {
+    const c = contactoPorId(pf.id); if (!c || c.tipo === 'Ignorar' || /proveedor|sin_relacion|perdido/.test(pf.ciclo || '')) return;
+    const p = pf.p || {}, n = primerNombre(c) || '', ints = (p.intereses || []).filter(q => RE_MODELO.test(norm(q))); if (!ints.length) return;
+    const base = { c, pf, pot: pf.potencial || 0 };
+    ints.forEach(q => { const ws = palabrasModelo(q).slice(0, 2); if (!ws.length) return; const hit = L => (L || []).find(x => ws.every(w => norm(x.nombre + ' ' + x.familia).includes(w)));
+      const of = hit(sz.ofertas), po = hit(sz.pocoStock);
+      if (of) add(Object.assign({ k: 'spzof:' + c.id + ':' + of.id + ':' + of.oferta, tipo: 'oferta_web', ic: 'bolt', titulo: of.nombre + ' en oferta', porque: 'Le interesa «' + q + '» · ' + clpCorto(of.precio) + ' → ' + clpCorto(of.oferta) + ' en specialized.com', msg: 'Hola ' + n + '! Te escribo de Blackline 🙌 La ' + of.nombre + ' está en oferta a ' + clp(of.oferta) + ' (antes ' + clp(of.precio) + '). ¿Te la reservo' + (p.talla ? ' en tu talla (' + p.talla + ')' : '') + '?', pr: 90 }, base));
+      else if (po) add(Object.assign({ k: 'spzpo:' + c.id + ':' + po.id + ':' + h.slice(0, 7), tipo: 'stock_web', ic: 'flag', titulo: 'Quedan pocas ' + po.nombre + ' en Chile', porque: 'Le interesa «' + q + '» · ' + (po.tallas || po.stock + ' unidades'), msg: 'Hola ' + n + '! Te aviso que de la ' + po.nombre + ' van quedando pocas unidades en Chile. Si la quieres, te la consigo antes de que se acabe 😉', pr: 82 }, base)); });
+  });
   // Una sola por cliente (la más importante), ordenadas por importancia y potencial.
   const mejor = {}; out.forEach(o => { const k = o.c.id; if (!mejor[k] || o.pr > mejor[k].pr) mejor[k] = o; });
   return Object.values(mejor).sort((a, b) => (b.pr + b.pot / 5) - (a.pr + a.pot / 5));
 }
 function fmtMes(s){ const M = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic']; return /^\d{4}-\d{2}/.test(s || '') ? M[+s.slice(5, 7) - 1] + ' ' + s.slice(0, 4) : s; }
-const OP_TIPO = { arribo: 'Llegó stock', critico: 'Stock crítico', mantencion: 'Mantención', bateria: 'Batería', upgrade: 'Upgrade', reactivar: 'Reactivar', retomar: 'Retomar interés', postventa: 'Post-venta', temporada: 'Temporada', seguimiento: 'Seguimiento', invitacion: 'Invitación', otro: 'Sugerencia' };
+const OP_TIPO = { oferta_web: 'Oferta Specialized', stock_web: 'Poco stock en Chile', arribo: 'Llegó stock', critico: 'Stock crítico', mantencion: 'Mantención', bateria: 'Batería', upgrade: 'Upgrade', reactivar: 'Reactivar', retomar: 'Retomar interés', postventa: 'Post-venta', temporada: 'Temporada', seguimiento: 'Seguimiento', invitacion: 'Invitación', otro: 'Sugerencia' };
 function opCardHTML(o, i){
   const tel = telWA(o.c);
   return '<div class="op" data-opi="' + i + '"><div class="op-h"><span class="op-ic">' + icon(o.ic) + '</span><span class="op-t">' + esc(OP_TIPO[o.tipo] || 'Sugerencia') + '</span>' + (o.pf.clase && o.pf.clase !== '–' ? '<span class="op-cl">' + esc(o.pf.clase) + '</span>' : '') + '</div>' +
@@ -4109,9 +4867,10 @@ function lineaDiaHTML(ev){
   let ini = 9 * 60, fin = 20 * 60; timed.forEach(e => { ini = Math.min(ini, Math.floor(m(e.inicio) / 60) * 60); fin = Math.max(fin, Math.ceil(m(e.fin || e.inicio) / 60) * 60); });
   const pct = x => ((x - ini) / (fin - ini) * 100).toFixed(2), now = new Date(), nm = now.getHours() * 60 + now.getMinutes();
   let ticks = ''; for (let x = ini; x <= fin; x += 180) ticks += '<span style="left:' + pct(x) + '%">' + (x / 60) + ':00</span>';
-  const bl = timed.map(e => { const a = m(e.inicio), b = Math.max(a + 30, m(e.fin || e.inicio)); return '<div class="blq' + (nm >= a && nm < b ? ' now' : nm >= b ? ' past' : '') + '" style="left:' + pct(a) + '%;width:' + (b - a) / (fin - ini) * 100 + '%" title="' + esc(e.inicio + ' ' + e.titulo) + '"><span>' + esc(e.titulo) + '</span></div>'; }).join('');
+  const bl = timed.map(e => { const a = m(e.inicio), b = Math.max(a + 30, m(e.fin || e.inicio)), pl = RE_AFUERA.test(e.titulo + ' ' + (e.lugar || '')) ? lluviaA(e.fecha || hoy(), e.inicio) : null, moj = pl != null && pl >= 50; return '<div class="blq' + (nm >= a && nm < b ? ' now' : nm >= b ? ' past' : '') + (moj ? ' wet' : '') + '" style="left:' + pct(a) + '%;width:' + (b - a) / (fin - ini) * 100 + '%" title="' + esc(e.inicio + ' ' + e.titulo + (moj ? ' · ' + pl + '% lluvia' : '')) + '"><span>' + (moj ? icon('drop') : '') + esc(e.titulo) + '</span></div>'; }).join('');
   const todo = ev.filter(e => e.todoElDia).map(e => '<span class="tag">' + esc(e.titulo) + '</span>').join(' ');
-  return '<div class="hy-line">' + (todo ? '<div class="hy-allday">Todo el día: ' + todo + '</div>' : '') + '<div class="bar">' + bl + (nm > ini && nm < fin ? '<i class="nowm" style="left:' + pct(nm) + '%"></i>' : '') + '</div><div class="ticks">' + ticks + '</div>' + (timed.length ? '' : '<div class="wsub" style="margin-top:6px">Sin reuniones con hora: tienes el día libre para vender y avanzar.</div>') + '</div>';
+  const HR = horasDe(hoy()), lluvia = HR.length ? '<div class="rainbar" title="Probabilidad de lluvia por hora">' + HR.filter(x => x.h * 60 >= ini && x.h * 60 < fin).map(x => '<i style="left:' + pct(x.h * 60) + '%;width:' + (60 / (fin - ini) * 100) + '%;--p:' + x.prob + '" title="' + x.h + ':00 · ' + x.prob + '% lluvia"></i>').join('') + '</div>' : '';
+  return '<div class="hy-line">' + (todo ? '<div class="hy-allday">Todo el día: ' + todo + '</div>' : '') + lluvia + '<div class="bar">' + bl + (nm > ini && nm < fin ? '<i class="nowm" style="left:' + pct(nm) + '%"></i>' : '') + '</div><div class="ticks">' + ticks + '</div>' + (timed.length ? '' : '<div class="wsub" style="margin-top:6px">Sin reuniones con hora: tienes el día libre para vender y avanzar.</div>') + '</div>';
 }
 function respHTML(x, i){
   const c = x.c, g = x.g, tel = telWA(c), res = g.r ? String(g.r.detalle).split(' · ')[0] : '';
@@ -4138,8 +4897,8 @@ function viewHoy(){
   if (!S.hPaso || !pasos.some(p => p.k === S.hPaso)) S.hPaso = (pasos.find(p => p.pend) || pasos[1]).k;
   const nm = params()['Tu nombre (para el saludo)'], hr = new Date().getHours();
   let html = '<div class="hy-hero"><div class="hy-hl"><div class="hy-g">' + (hr < 12 ? 'Buenos días' : hr < 20 ? 'Buenas tardes' : 'Buenas noches') + (nm ? ', ' + esc(nm) : '') + '</div>' +
-    '<div class="hy-brief">' + briefingHoy(D).map(l => '<div>' + icon(l[0]) + '<span>' + l[1] + '</span></div>').join('') + '</div>' +
-    '<div class="hy-cta"><button class="btn" id="hFoco">' + icon('arrow') + ' Empezar mi día</button><button class="btn sec" id="aiDia">' + icon('spark') + ' Planificar con IA</button><button class="btn sec" id="qa" title="Agregar para hoy">' + icon('plus') + '</button></div></div>' +
+    hyWx() + (cerebroPlan() ? planHeroHTML(cerebroPlan()) : '<div class="hy-brief">' + briefingHoy(D).map(l => '<div>' + icon(l[0]) + '<span>' + l[1] + '</span></div>').join('') + '</div>') +
+    '<div class="hy-cta"><button class="btn" id="hFoco">' + icon('arrow') + ' Empezar mi día</button>' + (cerebroPlan() ? '<button class="btn sec" id="hPlan">' + icon('spark') + ' Plan del agente</button>' : extNivel() >= 16 && iaDisponible() ? '<button class="btn sec" id="hPlanG">' + icon('spark') + ' Generar plan del agente</button>' : '') + '<button class="btn sec" id="aiDia">' + icon('clock') + ' Horario con IA</button><button class="btn sec" id="qa" title="Agregar para hoy">' + icon('plus') + '</button></div></div>' +
     '<div class="hy-ring"><div class="rg">' + ringSVG(tot ? hechoTot / tot : 0, 108) + '<div class="rv"><b>' + hechoTot + '</b><small>de ' + tot + '</small></div></div><div class="wsub" style="text-align:center">acciones del día</div></div>' +
     '<div class="hy-tl">' + lineaDiaHTML(D.ev) + '</div></div>';
   html += '<div class="hy-steps">' + pasos.map(p => { const T = p.pend + p.hecho, ok = !p.pend; return '<button class="hy-step' + (S.hPaso === p.k ? ' on' : '') + (ok ? ' ok' : '') + '" data-paso="' + p.k + '"><span class="num">' + (ok ? icon('check') : p.n) + '</span><span class="tx"><b>' + p.t + '</b><small>' + (ok ? (p.hecho ? p.hecho + ' hechas ✓' : p.sub) : p.txt || p.pend + ' ' + p.sub) + '</small></span><span class="pb"><i style="width:' + (T ? p.hecho / T * 100 : ok ? 100 : 0) + '%"></i></span></button>'; }).join('') + '</div>';
@@ -4163,14 +4922,23 @@ function viewHoy(){
   const ahora = new Date().toTimeString().slice(0, 5), man = addDays(h, 1);
   const evM = S.google && S.google.eventos ? S.google.eventos.filter(e => e.fecha === man) : [], tM = pendientes().filter(t => t.limite === man);
   const sug = typeof sugerenciasTareas === 'function' ? sugerenciasTareas().length : 0;
-  let der = '<div class="sec"><div class="sh">' + icon('cal') + ' Agenda de hoy<span class="r"><button class="btn sm sec" id="bloqH">＋ Evento</button></span></div>' + (D.ev.length ? '<div class="tl2">' + D.ev.map(e => '<div class="ev2 ' + (!e.todoElDia && e.inicio <= ahora && e.fin > ahora ? 'now' : '') + '"><b>' + esc(e.titulo) + '</b><small>' + (e.todoElDia ? 'Todo el día' : esc(e.inicio) + '–' + esc(e.fin)) + (e.lugar ? ' · ' + esc(e.lugar) : '') + '</small></div>').join('') + '</div>' : '<div class="wsub" style="padding:4px 0 8px">Sin eventos en el calendario.</div>') + '</div>';
+  const radH = senales().slice(0, 4), avH = avisos().filter(a => !a.fecha || a.fecha <= addDays(h, 7)).slice(0, 3);
+  let der = (radH.length ? '<div class="sec"><div class="sh">' + icon('bolt') + ' Radar<span class="r"><button class="btn sm sec" id="hRad">Ver todo</button></span></div>' + radarHTML(radH, true) + '</div>' : '') +
+    (avH.length ? '<div class="sec"><div class="sh">' + icon('flag') + ' Avisos de la tienda<span class="r"><button class="btn sm sec" id="avNew">＋</button></span></div><div class="av-list sm">' + avH.map(avisoHTML).join('') + '</div></div>' : '');
+  der += '<div class="sec"><div class="sh">' + icon('cal') + ' Agenda de hoy<span class="r"><button class="btn sm sec" id="bloqH">＋ Evento</button></span></div>' + (D.ev.length ? '<div class="tl2">' + D.ev.map(e => '<div class="ev2 ' + (!e.todoElDia && e.inicio <= ahora && e.fin > ahora ? 'now' : '') + '"><b>' + esc(e.titulo) + '</b><small>' + (e.todoElDia ? 'Todo el día' : esc(e.inicio) + '–' + esc(e.fin)) + (e.lugar ? ' · ' + esc(e.lugar) : '') + '</small></div>').join('') + '</div>' : '<div class="wsub" style="padding:4px 0 8px">Sin eventos en el calendario.</div>') + '</div>';
   der += '<div class="sec hy-agent"><div class="sh">' + icon('spark') + ' Asistente</div>' +
     '<button class="hy-link" id="hSug"><b>' + sug + '</b><span>' + (sug === 1 ? 'tarea sugerida' : 'tareas sugeridas') + ' por revisar</span>' + icon('arrow') + '</button>' +
     (D.cont.length ? D.cont.map(x => '<button class="hy-link" data-hct="' + esc(x.id) + '">' + icon('camera') + '<span>Hoy publicas: ' + esc(x.formato + ' · ' + x.tema) + '</span>' + icon('arrow') + '</button>').join('') : '') +
     '<button class="hy-link" id="hMan">' + icon('clock') + '<span>Mañana: ' + tM.length + (tM.length === 1 ? ' tarea' : ' tareas') + (evM.length ? ' · ' + evM.length + (evM.length === 1 ? ' evento' : ' eventos') : '') + '</span>' + icon('arrow') + '</button>' +
     '<div class="wsub" style="padding:6px 0 4px">«Planificar con IA» arma tu día con horarios mirando tareas, negociaciones, chats y agenda.</div></div>';
+  der += noticias().length ? '<div class="sec nt-w"><div class="sh">' + icon('note') + ' Noticias<span class="r"><button class="btn sm sec" id="ntAll">Más</button></span></div>' + noticias().slice(0, 3).map(noticiaHTML).join('') + '</div>' : '';
   html += '<div class="cols2"><div>' + izq + '</div><div>' + der + '</div></div>';
   $('#view').innerHTML = html; bindTasks($('#view'));
+  bindPlanHero($('#view')); bindRadar($('#view'), radH); bindExterno($('#view'));
+  if ($('#hPlan')) $('#hPlan').onclick = abrirPlan;
+  if ($('#hPlanG')) $('#hPlanG').onclick = () => generarCerebro($('#hPlanG'));
+  if ($('#hRad')) $('#hRad').onclick = () => { const L = senales(); const md = modal(icon('bolt') + ' Radar · cruces entre tus fuentes', radarHTML(L), { wide: true }); bindRadar(md.el, L); md.el.querySelectorAll('[data-rda]').forEach(b => b.addEventListener('click', () => md.cerrar())); };
+  if ($('.hy-wx')) $('.hy-wx').onclick = abrirClima;
   $('#qa').onclick = () => openAdd({ limite: h });
   $('#aiDia').onclick = planificarDia;
   $('#hFoco').onclick = () => modoEnfoque();
@@ -4340,7 +5108,7 @@ function contextoDia(){
     '', 'AGENDA DE HOY:', ev.length ? ev.map(e => '- ' + (e.todoElDia ? 'todo el día' : e.inicio + '-' + e.fin) + ' ' + e.titulo).join('\n') : '(sin eventos)',
     '', 'TAREAS PENDIENTES (ordenadas por urgencia):', P.map(x => '- "' + x.t.tarea + '" | ' + (x.t.limite ? (x.t.limite < h ? 'vencida ' + x.t.limite : x.t.limite === h ? 'vence hoy' : 'vence ' + x.t.limite) : 'sin fecha') + ' | ' + QUAD[quadOf(x.t)].n + ' | tamaño ' + (x.t.tamano || '-') + ' | ' + (x.t.estado || 'Pendiente') + (x.t.categoria ? ' | ' + x.t.categoria : '')).join('\n'),
     '', 'NEGOCIACIONES QUE REQUIEREN ATENCIÓN:', an.length ? an.map(x => '- ' + x.n.titulo + ': ' + motivoAlerta(x.n, x.a) + (x.n.valor ? ' (' + clpCorto(x.n.valor) + ')' : '')).join('\n') : '(ninguna)',
-    '', 'CLIENTES QUE ESPERAN RESPUESTA: ' + (esperan.length ? esperan.join(', ') : 'ninguno')].join('\n');
+    '', 'CLIENTES QUE ESPERAN RESPUESTA: ' + (esperan.length ? esperan.join(', ') : 'ninguno'), '', contextoExterno()].join('\n');
 }
 async function planificarDia(){
   if (!iaDisponible()){
@@ -5208,6 +5976,7 @@ function showSettings(){
   const g = S.google, gTxt = S.extInactivo || (g && g.inactivo) ? 'No activadas' : !g ? 'Revisando…' : 'Activas ✓ · ' + (g.eventos || []).length + ' eventos · ' + (g.correos || []).length + ' correos' + (g.avisos && g.avisos.length ? ' · ⚠️ ' + g.avisos.join(' · ') : '');
   sheet('<h3>⚙️ Ajustes</h3><div class="hint">Conectado a tu Sheet del organizador.</div>' +
     (deferredInstall ? '<div class="btns"><button class="btn" id="s_inst">📲 Instalar app en este dispositivo</button></div>' : '') +
+    '<div class="card"><b>🧠 Cerebro y fuentes</b><div class="hint">' + (extNivel() >= 16 ? 'Activo ✓ Cada mañana a las 7:00 el agente cruza todas tus fuentes y arma el plan del día. El Copiloto (botón ✨ abajo a la derecha, o la tecla /) responde con tus datos. Specialized Chile se lee solo cada hora.' : 'Actualiza el script para activar el plan del día, el Copiloto, Specialized Chile, noticias y avisos.') + '</div><div class="btns" style="margin-top:8px"><button class="btn sm sec" id="s_fz">📊 Fuentes de información</button>' + (extNivel() >= 16 ? '<button class="btn sm sec" id="s_av">📣 Avisos</button>' : '') + '</div></div>' +
     '<div class="card"><b>✨ Funciones extra</b> <span class="hint">(calendario, correo, subtareas, repetir)</span><div class="hint">' + esc(gTxt) + '</div><button class="btn sm sec" id="s_g">' + (g && !g.inactivo ? 'Ver sugerencias' : 'Cómo activarlas') + '</button></div>' +
     (extNivel() >= 2 ? '<div class="card"><b>📅 Recordatorios en tu calendario</b><div class="hint">Cada tarea pendiente con fecha está en el calendario «' + esc((S.ext && S.ext.calendario) || 'Organizador BlackLine') + '», con aviso en tu teléfono 10 min antes (a las 9:00, o a la hora que pongas: «a las 15:30»). Se actualiza solo cada hora y cuando cambias algo.</div><button class="btn sm sec" id="s_sinc">🔄 Sincronizar ahora</button></div>' : necesitaActualizar() ? '<div class="card"><b>⬆️ Hay una versión nueva del script</b><div class="hint">📅 Recordatorios y 📇 base de datos solo con contacto@blacklinechile.cl.</div><button class="btn sm" id="s_upd">Actualizar (2 min)</button></div>' : '') +
     (extNivel() >= 9 ? '<div class="card"><b>📦 Bsale</b><div class="hint">' + (bsaleActivo() ? 'Conectado ✓' + (S.ext.bsale.sinc ? ' · catálogo actualizado ' + haceTxt(S.ext.bsale.sinc.slice(0, 10)) : '') + '. El agente revisa stock y precio de lo que pide cada cliente, y en cada negociación puedes consultar el stock. El catálogo se actualiza solo una vez al día.' : 'No conectado: falta tu token de Bsale (BSALE_TOKEN) en las propiedades del script. Los pasos están en la guía.') + '</div>' + (bsaleActivo() ? '<div class="btns" style="margin-top:8px"><button class="btn sm sec" id="s_bs">📦 Buscar stock</button><button class="btn sm sec" id="s_bsc">🔄 Actualizar catálogo</button></div>' : '') + '</div>' : '') +
@@ -5218,6 +5987,8 @@ function showSettings(){
     '<div class="btns"><button class="btn bad" id="s_out">Desconectar este dispositivo</button></div>');
   if (deferredInstall) $('#s_inst').onclick = async () => { deferredInstall.prompt(); await deferredInstall.userChoice; deferredInstall = null; closeSheet(); };
   $('#s_g').onclick = () => g && !g.inactivo ? openSugerencias() : showExtrasSetup();
+  const fz = $('#s_fz'); if (fz) fz.onclick = () => { closeSheet(); abrirFuentes(); };
+  const sav = $('#s_av'); if (sav) sav.onclick = () => { closeSheet(); abrirAvisos(); };
   const ss2 = $('#s_sinc'); if (ss2) ss2.onclick = async () => { ss2.disabled = true; try { const r = await apiX('sinc'); toast('📅 ' + r.creados + ' nuevos · ' + r.actualizados + ' actualizados · ' + r.borrados + ' borrados'); } catch(e){ toast('No se pudo: ' + e.message); } ss2.disabled = false; };
   const su = $('#s_upd'); if (su) su.onclick = showExtrasUpdate;
   const sim = $('#s_imp'); if (sim) sim.onclick = () => openImportar();
