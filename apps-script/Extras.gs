@@ -15,8 +15,8 @@
  * Para actualizar este archivo más adelante: reemplaza todo su contenido y repite los dos pasos anteriores.
  */
 
-const EX_VERSION = '2026-10-25';
-const EX_NIVEL = 13;      // la app lo usa para saber qué funciones tiene este script
+const EX_VERSION = '2026-10-27';
+const EX_NIVEL = 14;      // la app lo usa para saber qué funciones tiene este script
 const EX_HOJA = 'Tareas';
 const EX_PRIMERA = 4;
 const EX_ULTIMA = 400;
@@ -1102,11 +1102,12 @@ function ex_contenido_(p) {
 }
 // Estrategia de Instagram guardada (diagnóstico de la IA y metas), para verla en el teléfono y en el PC.
 function ex_igEstrategia_(p) {
-  const sh = ex_hojaCab_('IG Estrategia', ['Fecha', 'Estrategia (JSON)']);
-  if (p.guardar) sh.getRange(2, 1, 1, 2).setValues([[new Date(), JSON.stringify(p.guardar).slice(0, 45000)]]);
-  const v = sh.getLastRow() >= 2 ? sh.getRange(2, 1, 1, 2).getValues()[0] : null;
-  let e = null; try { e = v && v[1] ? JSON.parse(v[1]) : null; } catch (err) {}
-  return { ok: true, estrategia: e, fecha: v && v[0] instanceof Date ? v[0].toISOString() : '' };
+  // Fila 2: estrategia de Instagram · fila 3: análisis del agente de Instagram · fila 4: análisis del agente de la base de clientes.
+  const sh = ex_hojaCab_('IG Estrategia', ['Fecha', 'Contenido (JSON)']), fila = { estrategia: 2, insights: 3, insightsBase: 4 };
+  const leer = function (r) { const v = sh.getLastRow() >= r ? sh.getRange(r, 1, 1, 2).getValues()[0] : null; let e = null; try { e = v && v[1] ? JSON.parse(v[1]) : null; } catch (err) {} return { e: e, fecha: v && v[0] instanceof Date ? v[0].toISOString() : '' }; };
+  if (p.guardar) sh.getRange(fila[p.tipo] || 2, 1, 1, 2).setValues([[new Date(), JSON.stringify(p.guardar).slice(0, 45000)]]);
+  const e = leer(2), i = leer(3), b = leer(4);
+  return { ok: true, estrategia: e.e, fecha: e.fecha, insights: i.e, insightsFecha: i.fecha, insightsBase: b.e, insightsBaseFecha: b.fecha };
 }
 // Ejecútala una vez después de guardar IG_TOKEN: trae los datos y muestra el resultado.
 function probarInstagram() {
@@ -1152,6 +1153,16 @@ const EX_AS_SISTEMA = {
     '- metas a 30 días con kpi (usa estos nombres: seguidores, alcance_28d, interaccion, publicaciones_semana, toques_links_28d, leads_instagram_28d), nombre legible, valor actual y meta realista.',
     'Lo que hoy más pesa en Instagram: tiempo de visualización, me gusta por alcance y envíos por alcance (que la gente lo comparta por mensaje). Usa los datos de la cuenta antes que reglas generales y no inventes cifras. Español de Chile, directo. Responde solo con el JSON pedido.'
   ].join('\n'),
+  insights: [
+    'Eres el analista de crecimiento de Blackline Puerto Varas (tienda de bicicletas Specialized con taller, en Puerto Varas, Chile). Tu trabajo: leer los datos que te entrega la app, detectar patrones, anticipar lo que va a pasar y decir qué hacer para crecer en ventas.',
+    'Recibes datos calculados por la app (no los recalcules ni inventes otros): series semanales, tendencias, proyecciones simples, comparaciones entre grupos y totales. El ÁREA te dice si analizas Instagram o la base de clientes.',
+    'Entrega:',
+    '- resumen: 1 o 2 frases con la lectura más importante, con números;',
+    '- predicciones: 2 a 4 anticipaciones para las próximas 2 a 8 semanas (por ejemplo seguidores o conversaciones esperadas si sigue la tendencia, qué tipo de publicación o cliente rendirá más, riesgos como baja de respuesta o clientes que se enfrían), cada una con el dato en que se basa y una confianza honesta (alta solo si hay muchos datos y una tendencia clara);',
+    '- recomendaciones: 3 a 6 acciones concretas, en orden de impacto, cada una con el dato que la respalda (cópialo de los datos), el impacto esperado y el esfuerzo;',
+    '- alertas: 0 a 3 cosas que requieren atención ya (caídas, clientes esperando, oportunidades que se pierden).',
+    'Si hay pocos datos, dilo y recomienda cómo conseguirlos. Español de Chile, directo, sin relleno. Responde solo con el JSON pedido.'
+  ].join('\n'),
   tareas: [
     'Eres el asistente de productividad del encargado de Blackline Puerto Varas (tienda de bicicletas Specialized con taller).',
     'Revisa sus tareas pendientes junto con lo que pasa en la tienda (negociaciones y sus próximos pasos, lo que entendió el agente de los chats de WhatsApp, clientes esperando respuesta, agenda, proyectos y contenido planificado) y:',
@@ -1181,6 +1192,11 @@ const EX_AS_ESQUEMA = {
     ideas: { type: 'array', items: { type: 'object', additionalProperties: false, required: ['fecha', 'formato', 'tema', 'idea', 'guion', 'relacionado', 'texto', 'hashtags', 'objetivo', 'por_que'], properties: {
       fecha: { type: 'string' }, hora: { type: 'string' }, formato: { type: 'string', enum: ['Reel', 'Carrusel', 'Historia', 'Post'] }, pilar: { type: 'string', enum: ['Producto y stock', 'Taller y consejos', 'Comunidad y salidas', 'Clientes y entregas', 'Promociones', 'Lugar y estilo de vida'] }, tema: { type: 'string' }, idea: { type: 'string' }, guion: { type: 'string' }, relacionado: { type: 'string' }, texto: { type: 'string' }, hashtags: { type: 'string' },
       cta: { type: 'string', enum: ['WhatsApp', 'Web', 'Visita', 'Guardar', 'Compartir'] }, objetivo: { type: 'string', enum: ['Ventas', 'Comunidad', 'Alcance', 'Educación', 'Postventa'] }, por_que: { type: 'string' } } } } } },
+  insights: { type: 'object', additionalProperties: false, required: ['resumen', 'predicciones', 'recomendaciones', 'alertas'], properties: {
+    resumen: { type: 'string' },
+    predicciones: { type: 'array', items: { type: 'object', additionalProperties: false, required: ['titulo', 'detalle', 'horizonte', 'base', 'confianza'], properties: { titulo: { type: 'string' }, detalle: { type: 'string' }, horizonte: { type: 'string' }, base: { type: 'string' }, confianza: { type: 'string', enum: ['alta', 'media', 'baja'] } } } },
+    recomendaciones: { type: 'array', items: { type: 'object', additionalProperties: false, required: ['titulo', 'detalle', 'dato', 'impacto', 'esfuerzo'], properties: { titulo: { type: 'string' }, detalle: { type: 'string' }, dato: { type: 'string' }, impacto: { type: 'string', enum: ['alto', 'medio', 'bajo'] }, esfuerzo: { type: 'string', enum: ['bajo', 'medio', 'alto'] } } } },
+    alertas: { type: 'array', items: { type: 'object', additionalProperties: false, required: ['titulo', 'detalle'], properties: { titulo: { type: 'string' }, detalle: { type: 'string' } } } } } },
   redes: { type: 'object', additionalProperties: false, required: ['resumen', 'diagnostico', 'frecuencia', 'horarios', 'pilares', 'acciones_leads', 'metas'], properties: {
     resumen: { type: 'string' },
     diagnostico: { type: 'array', items: { type: 'object', additionalProperties: false, required: ['tipo', 'titulo', 'detalle'], properties: { tipo: { type: 'string', enum: ['fortaleza', 'debilidad', 'oportunidad'] }, titulo: { type: 'string' }, detalle: { type: 'string' } } } },
@@ -1208,7 +1224,7 @@ function ex_parecido_(a, b) {
   return Math.max(comunes / (A.length + B.length - comunes), comunes >= 3 ? comunes / Math.min(A.length, B.length) * 0.9 : 0);
 }
 function ex_asistente_(p) {
-  const modo = ['semana', 'contenido', 'tareas', 'redes'].indexOf(p.modo) >= 0 ? p.modo : 'dia';
+  const modo = ['semana', 'contenido', 'tareas', 'redes', 'insights'].indexOf(p.modo) >= 0 ? p.modo : 'dia';
   const ctx = String(p.contexto || '').slice(0, 40000);
   if (!ctx) throw new Error('sin contexto');
   return { ok: true, modo: modo, r: ex_llamarClaude_(ctx, EX_AS_SISTEMA[modo], EX_AS_ESQUEMA[modo]) };
@@ -1527,16 +1543,32 @@ function ex_origenLead_(filas) {
 // Todos los contactos que llegaron desde Instagram o la web (lee los chats guardados; se guarda 20 min en caché).
 function ex_leadsCanal_(p) {
   const cache = CacheService.getScriptCache();
-  if (!p || !p.forzar) { const c = cache.get('leadsCanal'); if (c) return JSON.parse(c); }
-  const wa = ex_hojaWa_(), n = wa.getLastRow() - 1, por = {};
-  (n > 0 ? wa.getRange(2, 1, n, 7).getValues() : []).forEach(function (r) { const id = String(r[6] || ''); if (id) (por[id] = por[id] || []).push(r); });
-  const leads = [];
+  if (!p || !p.forzar) { const c = cache.get('leadsCanal2'); if (c) return JSON.parse(c); }
+  const wa = ex_hojaWa_(), n = wa.getLastRow() - 1, por = {}, tz = ex_tz_();
+  (n > 0 ? wa.getRange(2, 1, n, 7).getValues() : []).forEach(function (r) { const id = String(r[6] || ''); if (id && r[0] instanceof Date) (por[id] = por[id] || []).push(r); });
+  const leads = [], ahora = Date.now(), dia = 86400000;
+  // Estadísticas de los chats: conversaciones nuevas por semana, cuándo escriben los clientes y tu tiempo de respuesta.
+  const semNuevas = {}, semConv = {}, heat = {}, resp = {}, lunes = function (d) { const x = new Date(d.getTime()); const w = (x.getDay() + 6) % 7; x.setDate(x.getDate() - w); return ex_ymd_(x, tz); };
+  let esperan = 0;
   Object.keys(por).forEach(function (id) {
     const L = por[id].sort(function (a, b) { return a[0] - b[0]; }), o = ex_origenLead_(L);
     if (o) leads.push({ id: id, canal: o.primero.canal, ref: o.primero.ref, fecha: o.primero.fecha, todos: o.todos });
+    const primero = L.filter(function (r) { return r[1] !== 'Enviado'; })[0];
+    if (primero && ahora - primero[0] < 182 * dia) { const k = lunes(primero[0]); semNuevas[k] = (semNuevas[k] || 0) + 1; }
+    let prev = null, pend = null;
+    L.forEach(function (r) {
+      const f = r[0], cli = r[1] !== 'Enviado';
+      if (!prev || f - prev > 3 * dia) { if (cli && ahora - f < 182 * dia) { const k = lunes(f); semConv[k] = (semConv[k] || 0) + 1; } pend = null; }
+      if (cli) { if (ahora - f < 182 * dia) { const hk = f.getDay() + ':' + f.getHours(); heat[hk] = (heat[hk] || 0) + 1; } if (!pend) pend = f; }
+      else if (pend) { const k = lunes(pend); (resp[k] = resp[k] || []).push((f - pend) / 60000); pend = null; }
+      prev = f;
+    });
+    const ult = L[L.length - 1]; if (ult && ult[1] !== 'Enviado' && ahora - ult[0] < 30 * dia) esperan++;
   });
-  const out = { ok: true, leads: leads, calculado: new Date().toISOString() };
-  try { cache.put('leadsCanal', JSON.stringify(out), 1200); } catch (e) {}
+  const med = function (a) { a = a.slice().sort(function (x, y) { return x - y; }); return a.length ? Math.round(a[Math.floor(a.length / 2)]) : null; };
+  const respSem = {}; Object.keys(resp).forEach(function (k) { respSem[k] = { mediana: med(resp[k]), n: resp[k].length, en1h: Math.round(resp[k].filter(function (x) { return x <= 60; }).length / resp[k].length * 100) }; });
+  const out = { ok: true, leads: leads, stats: { nuevas: semNuevas, conversaciones: semConv, heat: heat, respuesta: respSem, esperan: esperan, contactos: Object.keys(por).length }, calculado: new Date().toISOString() };
+  try { cache.put('leadsCanal2', JSON.stringify(out), 1200); } catch (e) {}
   return out;
 }
 
@@ -1612,6 +1644,11 @@ function ex_perfilar_(id, masivo) {
   return r;
 }
 function ex_perfilarOp_(p) {
+  if (p.encolar) {
+    const b = ex_baseHojas_(), nom = {}; ex_filasContactos_(b.cs).forEach(function (r) { nom[String(r[0])] = r[2]; });
+    (p.encolar || []).slice(0, 2000).forEach(function (id) { if (nom[id] !== undefined) ex_encolarPerfil_(String(id), nom[id]); });
+    return { ok: true, pendientes: ex_pendientesPerf_() };
+  }
   if (p.ids) return { ok: true, pendientes: ex_pendientesPerf_().length };
   const id = String(p.id || ''); if (!id) throw new Error('falta el contacto');
   try { return ex_perfilar_(id, p.masivo !== false); }
