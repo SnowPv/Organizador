@@ -15,7 +15,7 @@
  * Para actualizar este archivo más adelante: reemplaza todo su contenido y repite los dos pasos anteriores.
  */
 
-const EX_VERSION = '2026-10-18';
+const EX_VERSION = '2026-10-19';
 const EX_NIVEL = 11;      // la app lo usa para saber qué funciones tiene este script
 const EX_HOJA = 'Tareas';
 const EX_PRIMERA = 4;
@@ -903,7 +903,7 @@ function ex_bsaleParaAgente_(texto) {
 const EX_IG_API = 'https://graph.instagram.com/v25.0';
 const EX_CAB_IG = ['Fecha', 'Seguidores', 'Siguiendo', 'Publicaciones', 'Alcance', 'Vistas', 'Interacciones', 'Cuentas que interactuaron', 'Toques en links'];
 const EX_CAB_IGP = ['ID', 'Fecha', 'Tipo', 'Formato', 'Texto', 'Link', 'Me gusta', 'Comentarios', 'Guardados', 'Compartidos', 'Alcance', 'Vistas', 'Interacciones', 'Tiempo medio reel (s)', 'Actualizado'];
-const EX_CAB_CONT = ['ID', 'Fecha', 'Formato', 'Tema', 'Idea / guion', 'Texto sugerido', 'Hashtags', 'Objetivo', 'Por qué ahora', 'Estado', 'Creado'];
+const EX_CAB_CONT = ['ID', 'Fecha', 'Formato', 'Tema', 'Idea / guion', 'Texto sugerido', 'Hashtags', 'Objetivo', 'Por qué ahora', 'Estado', 'Creado', 'Relacionado'];
 function ex_igToken_() {
   const pr = PropertiesService.getScriptProperties(), t = pr.getProperty('IG_TOKEN');
   if (!t) return '';
@@ -994,8 +994,9 @@ function ex_instagram_(p) {
 // Calendario de contenido (hoja "Contenido"): listar, guardar ideas y cambiar su estado.
 function ex_contenido_(p) {
   const tz = ex_tz_(), sh = ex_hojaCab_('Contenido', EX_CAB_CONT);
+  if (sh.getRange(1, EX_CAB_CONT.length).getValue() !== EX_CAB_CONT[EX_CAB_CONT.length - 1]) sh.getRange(1, 1, 1, EX_CAB_CONT.length).setValues([EX_CAB_CONT]).setFontWeight('bold');
   if (p.accion === 'guardar') {
-    const filas = (p.items || []).map(function (x, k) { return ['ct-' + Date.now() + '-' + k, "'" + String(x.fecha || ''), x.formato || '', x.tema || '', x.idea || '', x.texto || '', x.hashtags || '', x.objetivo || '', x.por_que || '', x.estado || 'Planificado', new Date()]; });
+    const filas = (p.items || []).map(function (x, k) { return ['ct-' + Date.now() + '-' + k, "'" + String(x.fecha || ''), x.formato || '', x.tema || '', x.idea || '', x.texto || '', x.hashtags || '', x.objetivo || '', x.por_que || '', x.estado || 'Planificado', new Date(), x.relacionado || '']; });
     if (filas.length) sh.getRange(sh.getLastRow() + 1, 1, filas.length, EX_CAB_CONT.length).setValues(filas);
   } else if (p.accion === 'estado') {
     const n = sh.getLastRow() - 1, ids = n > 0 ? sh.getRange(2, 1, n, 1).getValues() : [];
@@ -1004,7 +1005,7 @@ function ex_contenido_(p) {
   }
   const n = sh.getLastRow() - 1;
   const items = (n > 0 ? sh.getRange(2, 1, n, EX_CAB_CONT.length).getValues() : []).filter(function (r) { return r[0]; }).map(function (r) {
-    return { id: String(r[0]), fecha: r[1] instanceof Date ? Utilities.formatDate(r[1], tz, 'yyyy-MM-dd') : String(r[1]).replace(/^'/, ''), formato: r[2], tema: r[3], idea: r[4], texto: r[5], hashtags: r[6], objetivo: r[7], por_que: r[8], estado: r[9] };
+    return { id: String(r[0]), fecha: r[1] instanceof Date ? Utilities.formatDate(r[1], tz, 'yyyy-MM-dd') : String(r[1]).replace(/^'/, ''), formato: r[2], tema: r[3], idea: r[4], texto: r[5], hashtags: r[6], objetivo: r[7], por_que: r[8], estado: r[9], relacionado: String(r[11] || '') };
   });
   return { ok: true, items: items };
 }
@@ -1032,6 +1033,9 @@ const EX_AS_SISTEMA = {
     'Con lo que pasa en la tienda (agenda, proyectos, productos que más piden los clientes, ventas recientes, tareas de marketing) y las métricas de Instagram (qué formatos y días funcionan mejor), arma un calendario de contenido para las próximas 2 semanas:',
     '- 3 o 4 publicaciones por semana, mezclando Reels (prioridad si funcionan mejor), carruseles, historias y posts;',
     '- cada idea atada a algo real y actual de la tienda (un evento, un producto con demanda, una entrega, el taller, la temporada, un test ride), nunca genérica;',
+    '- prioriza: (1) productos que se encargaron o están en negociación y que NO tienen contenido en Instagram: prepara el reel para cuando lleguen (unboxing, primera salida, entrega al cliente si corresponde, sin dar su nombre sin permiso); (2) las preguntas que más se repiten en los chats (tallas, cuotas, compra desde Argentina, mantención) como reels o carruseles educativos; (3) eventos y salidas de la agenda;',
+    '- para Reels y Carruseles escribe el guion completo en el campo guion: el gancho de los primeros 3 segundos, luego cada toma o lámina en una línea numerada (qué se graba o muestra y el texto en pantalla), la música o audio sugerido y el llamado a la acción final; para Historias, la secuencia de 3 a 5 historias con stickers (encuesta, pregunta, link a WhatsApp);',
+    '- en relacionado pon el producto o la negociación a la que se vincula la idea (vacío si no aplica);',
     '- elige el día según los días que mejor funcionan; no repitas ideas ya planificadas;',
     '- para cada una: formato, tema corto, la idea o guion en 2 a 4 frases (qué se graba o muestra), un texto sugerido para la publicación (tono cercano, chileno, con llamado a la acción como escribir por WhatsApp o pasar a probarla), 3 a 6 hashtags, el objetivo y por qué ahora.',
     'No inventes precios ni promociones que no estén en los datos. Responde solo con el JSON pedido.'
@@ -1054,8 +1058,8 @@ const EX_AS_ESQUEMA = {
     consejo: { type: 'string' } } },
   contenido: { type: 'object', additionalProperties: false, required: ['resumen', 'ideas'], properties: {
     resumen: { type: 'string' },
-    ideas: { type: 'array', items: { type: 'object', additionalProperties: false, required: ['fecha', 'formato', 'tema', 'idea', 'texto', 'hashtags', 'objetivo', 'por_que'], properties: {
-      fecha: { type: 'string' }, formato: { type: 'string', enum: ['Reel', 'Carrusel', 'Historia', 'Post'] }, tema: { type: 'string' }, idea: { type: 'string' }, texto: { type: 'string' }, hashtags: { type: 'string' },
+    ideas: { type: 'array', items: { type: 'object', additionalProperties: false, required: ['fecha', 'formato', 'tema', 'idea', 'guion', 'relacionado', 'texto', 'hashtags', 'objetivo', 'por_que'], properties: {
+      fecha: { type: 'string' }, formato: { type: 'string', enum: ['Reel', 'Carrusel', 'Historia', 'Post'] }, tema: { type: 'string' }, idea: { type: 'string' }, guion: { type: 'string' }, relacionado: { type: 'string' }, texto: { type: 'string' }, hashtags: { type: 'string' },
       objetivo: { type: 'string', enum: ['Ventas', 'Comunidad', 'Alcance', 'Educación', 'Postventa'] }, por_que: { type: 'string' } } } } } },
   semana: { type: 'object', additionalProperties: false, required: ['resumen', 'logros', 'prioridades', 'riesgos'], properties: {
     resumen: { type: 'string' },

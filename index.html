@@ -1634,9 +1634,9 @@ function ctoTab(c, tab){
 /* ---------- Redes: Instagram (métricas) y calendario de contenido con IA ---------- */
 function igActivo(){ return extNivel() >= 11 && !!(S.ext && S.ext.instagram && S.ext.instagram.activo); }
 async function loadIG(forzar){
-  if (!igActivo()) return;
-  if (!forzar && S.ig && Date.now() - S.igAt < 10 * 60000) return;
-  try { const [a, b] = await Promise.all([apiX('instagram'), apiX('contenido')]); S.ig = a; S.cont = b.items || []; S.igAt = Date.now(); lsSet('igCache', { ig: S.ig, cont: S.cont }); }
+  if (extNivel() < 11) return;
+  if (!forzar && S.cont && Date.now() - S.igAt < 10 * 60000) return;
+  try { const [a, b] = await Promise.all([igActivo() ? apiX('instagram') : Promise.resolve(null), apiX('contenido')]); S.ig = a; S.cont = b.items || []; S.igAt = Date.now(); lsSet('igCache', { ig: S.ig, cont: S.cont }); }
   catch(e){ if (!S.ig){ const c = lsGet('igCache', null); if (c){ S.ig = c.ig; S.cont = c.cont; } } }
 }
 const FMT_IG = { REELS: 'Reel', FEED: 'Post / carrusel', STORY: 'Historia' };
@@ -1656,9 +1656,10 @@ function viewRedes(){
     $('#view').innerHTML = '<div class="sec" style="padding:20px"><div class="wh">' + icon('camera') + 'Instagram y calendario de contenido</div><p style="margin:0 0 12px;line-height:1.5">Conecta Instagram con la API oficial de Meta (gratis): la app guarda tus métricas todos los días y el asistente arma un calendario de contenido con lo que está pasando en la tienda.</p><button class="btn" id="rAct">Actualizar el script</button></div>';
     $('#rAct').onclick = showExtrasUpdate; return;
   }
+  if (!S.cont){ $('#view').innerHTML = '<div class="empty"><span class="spin"></span>Cargando…</div>'; loadIG(true).then(() => { if (S.tab === 'redes') render(); }); return; }
   if (!igActivo()){
-    $('#view').innerHTML = '<div class="sec" style="padding:20px"><div class="wh">' + icon('camera') + 'Conecta tu Instagram</div><p style="margin:0 0 10px;line-height:1.5">Falta el token de Instagram en el script (propiedad <b>IG_TOKEN</b>). Son unos 15 minutos y es gratis: la guía está en <b>docs/INSTAGRAM.md</b> del repositorio.</p><ol style="margin:0 0 12px;padding-left:20px;line-height:1.7;font-size:14px"><li>Cuenta de Instagram profesional (empresa o creador).</li><li>App en developers.facebook.com con el producto Instagram → «API setup with Instagram login» → generar token.</li><li>Guardar el token en Propiedades del script como IG_TOKEN y ejecutar <b>probarInstagram</b>.</li></ol><a class="btn sec" href="https://github.com/SnowPv/Organizador/blob/main/docs/INSTAGRAM.md" target="_blank" style="display:inline-block;text-decoration:none">Abrir la guía</a></div>';
-    return;
+    $('#view').innerHTML = calendarioHTML() + '<div class="sec" style="padding:20px"><div class="wh">' + icon('camera') + 'Conecta tu Instagram</div><p style="margin:0 0 10px;line-height:1.5">Falta el token de Instagram en el script (propiedad <b>IG_TOKEN</b>). Son unos 15 minutos y es gratis: la guía está en <b>docs/INSTAGRAM.md</b> del repositorio.</p><ol style="margin:0 0 12px;padding-left:20px;line-height:1.7;font-size:14px"><li>Cuenta de Instagram profesional (empresa o creador).</li><li>App en developers.facebook.com con el producto Instagram → «API setup with Instagram login» → generar token.</li><li>Guardar el token en Propiedades del script como IG_TOKEN y ejecutar <b>probarInstagram</b>.</li></ol><a class="btn sec" href="https://github.com/SnowPv/Organizador/blob/main/docs/INSTAGRAM.md" target="_blank" style="display:inline-block;text-decoration:none">Abrir la guía</a></div>';
+    bindCalendario(); return;
   }
   if (!S.ig){ $('#view').innerHTML = '<div class="empty"><span class="spin"></span>Cargando Instagram…</div>'; loadIG(true).then(() => { if (S.tab === 'redes') render(); }); return; }
   const m = igMetricas(), h = hoy();
@@ -1670,12 +1671,7 @@ function viewRedes(){
   // alcance diario
   const D = m.D.slice(-30), maxA = Math.max(1, ...D.map(d => +d.alcance || 0));
   let izq = '<div class="w" style="margin-bottom:14px"><div class="wh">' + icon('chart') + 'Alcance por día · 30 días' + ib('igAlc') + '</div><div class="bars" style="height:120px">' + D.map(d => '<i style="height:' + ((+d.alcance || 0) / maxA * 100) + '%" data-t="' + esc(fmt(d.fecha)) + ': ' + (+d.alcance || 0).toLocaleString('es-CL') + '"></i>').join('') + '</div><div class="bx"><span>' + (D[0] ? fmt(D[0].fecha) : '') + '</span><span>ayer</span></div></div>';
-  // calendario de contenido
-  const C = (S.cont || []).filter(x => x.estado !== 'Descartado').sort((a, b) => a.fecha.localeCompare(b.fecha));
-  const prox = C.filter(x => x.fecha >= h && x.estado !== 'Publicado'), pasadas = C.filter(x => x.fecha < h && x.estado !== 'Publicado');
-  izq += '<div class="sec"><div class="sh">' + icon('cal') + ' Calendario de contenido <span class="n">' + prox.length + ' próximas</span><span class="r"><button class="btn sm sec" id="igNew">＋ Idea</button></span></div>' +
-    (pasadas.length ? '<div class="hint" style="color:var(--bad-ink)">' + pasadas.length + ' publicaciones planificadas ya pasaron su fecha sin marcarse como publicadas.</div>' : '') +
-    (prox.length || pasadas.length ? '<div class="wl">' + pasadas.concat(prox).map(x => '<div class="it" data-ct="' + esc(x.id) + '"><span class="dot" style="background:' + (x.fecha < h ? 'var(--bad)' : x.formato === 'Reel' ? 'var(--accent)' : 'var(--s2)') + '"></span><div class="tx">' + esc(x.tema || x.idea) + '<small>' + esc(fmt(x.fecha)) + ' · ' + esc(x.formato) + (x.objetivo ? ' · ' + esc(x.objetivo) : '') + '</small></div><span class="rt">' + esc(x.estado) + '</span></div>').join('') + '</div>' : '<div class="wsub" style="padding:4px 0 10px">Sin publicaciones planificadas. Toca «Calendario de contenido» y el asistente te propone las próximas 2 semanas según lo que pasa en la tienda.</div>') + '</div>';
+  izq += calendarioHTML(true);
   // qué funciona
   const fm = Object.entries(m.porFmt).map(([k, L]) => [k, L.length, L.reduce((s, x) => s + x.interacciones, 0) / L.length, L.reduce((s, x) => s + x.alcance, 0) / L.length]).sort((a, b) => b[2] - a[2]);
   const maxF = Math.max(1, ...fm.map(x => x[2])), maxDi = Math.max(1, ...m.porDia.map(x => x.prom));
@@ -1686,8 +1682,19 @@ function viewRedes(){
   html += '<div class="cols2"><div>' + izq + '</div><div>' + der + '</div></div>';
   $('#view').innerHTML = html;
   $('#igSinc').onclick = async e => { const b = e.target.closest('button'); b.disabled = true; b.innerHTML = '<span class="spin"></span>Actualizando…'; try { const r = await apiX('instagram', { sinc: 1 }); S.ig = r; toast('Instagram actualizado ✓ · ' + (r.resultado ? r.resultado.publicaciones + ' publicaciones' : '')); render(); } catch(err){ b.disabled = false; b.textContent = '↻ Actualizar ahora'; toast('No se pudo: ' + err.message); } };
-  $('#igPlan').onclick = planContenido;
-  $('#igNew').onclick = () => openIdea(null);
+  $('#igPlan').onclick = () => planContenido();
+  bindCalendario();
+}
+function calendarioHTML(sinBoton){
+  const h = hoy(), C = (S.cont || []).filter(x => x.estado !== 'Descartado').sort((a, b) => a.fecha.localeCompare(b.fecha));
+  const prox = C.filter(x => x.fecha >= h && x.estado !== 'Publicado'), pasadas = C.filter(x => x.fecha < h && x.estado !== 'Publicado');
+  return '<div class="sec"><div class="sh">' + icon('cal') + ' Calendario de contenido <span class="n">' + prox.length + ' próximas</span><span class="r">' + (sinBoton ? '' : '<button class="btn sm" id="ctPlan">' + icon('spark') + ' Generar con IA</button>') + '<button class="btn sm sec" id="igNew">＋ Idea</button></span></div>' +
+    (pasadas.length ? '<div class="hint" style="color:var(--bad-ink)">' + pasadas.length + ' publicaciones planificadas ya pasaron su fecha sin marcarse como publicadas.</div>' : '') +
+    (prox.length || pasadas.length ? '<div class="wl">' + pasadas.concat(prox).map(x => '<div class="it" data-ct="' + esc(x.id) + '"><span class="dot" style="background:' + (x.fecha < h ? 'var(--bad)' : x.formato === 'Reel' ? 'var(--accent)' : 'var(--s2)') + '"></span><div class="tx">' + esc(x.tema || x.idea) + '<small>' + esc(fmt(x.fecha)) + ' · ' + esc(x.formato) + (x.relacionado ? ' · 🔗 ' + esc(x.relacionado) : x.objetivo ? ' · ' + esc(x.objetivo) : '') + '</small></div><span class="rt">' + esc(x.estado) + '</span></div>').join('') + '</div>' : '<div class="wsub" style="padding:4px 0 10px">Sin publicaciones planificadas. El asistente te propone las próximas 2 semanas según lo que pasa en la tienda.</div>') + '</div>';
+}
+function bindCalendario(){
+  const p = $('#ctPlan'); if (p) p.onclick = () => planContenido();
+  const n = $('#igNew'); if (n) n.onclick = () => openIdea(null);
   $$('[data-ct]').forEach(b => b.onclick = () => openIdea((S.cont || []).find(x => x.id === b.dataset.ct)));
 }
 function contextoContenido(){
@@ -1708,22 +1715,35 @@ function contextoContenido(){
     'LO QUE MÁS PIDEN LOS CLIENTES (etiquetas de contactos): ' + Object.entries(interes).sort((a, b) => b[1] - a[1]).slice(0, 15).map(x => x[0] + ' (' + x[1] + ')').join(', '),
     'NEGOCIACIONES ABIERTAS (producto): ' + an.slice(0, 20).map(x => x.n.producto || x.n.titulo).join('; '),
     'VENTAS ÚLTIMOS 30 DÍAS: ' + (gan.map(n => n.producto || n.titulo).join('; ') || 'ninguna registrada'),
+    'PRODUCTOS EN NEGOCIACIÓN O ENCARGADOS SIN CONTENIDO EN INSTAGRAM: ' + (productosSinContenido().map(x => x.producto + ' [' + x.etapa + (x.notas ? '; ' + x.notas.slice(0, 120) : '') + ']').join('; ') || 'ninguno detectado'),
+    'LO QUE SE HABLA EN LOS CHATS (resúmenes del agente): ' + (((S.base && S.base.interacciones) || []).filter(i => /agente/i.test(i.tipo)).slice(0, 25).map(i => i.detalle.slice(0, 220)).join(' | ') || 'sin resúmenes'),
     'YA PLANIFICADO (no repetir): ' + ((S.cont || []).filter(x => x.fecha >= h && x.estado !== 'Descartado').map(x => x.fecha + ' ' + x.formato + ': ' + x.tema).join('; ') || 'nada')].join('\n');
 }
-async function planContenido(){
-  if (!iaDisponible()){ toast('Falta tu clave de Claude (ANTHROPIC_API_KEY) para usar el asistente'); return; }
-  const md = modal(icon('spark') + ' Calendario de contenido · 2 semanas', '<div class="empty"><span class="spin"></span>El asistente está revisando la tienda y tus métricas…</div>', { wide: true });
+// Productos de negociaciones abiertas que nunca aparecen en los textos de tus publicaciones de Instagram.
+function productosSinContenido(){
+  const textos = norm(((S.ig && S.ig.posts) || []).map(x => x.texto).join(' ') + ' ' + (S.cont || []).map(x => x.tema + ' ' + x.idea).join(' '));
+  const clave = t => norm(t).split(/[^a-z0-9]+/).filter(w => w.length >= 4 && !/^(talla|para|unidad|unidades|specialized|bicicleta|bici|ebike|modelo|cuadro|color|gris|negro)$/.test(w));
+  const vistos = {};
+  return abiertos().filter(n => n.producto).map(n => ({ producto: n.producto, etapa: n.etapa, notas: n.notas || '', palabras: clave(n.producto) }))
+    .filter(x => x.palabras.length && !x.palabras.every(w => textos.includes(w)) && !vistos[x.producto] && (vistos[x.producto] = 1)).slice(0, 10);
+}
+async function planContenido(n){
+  if (!iaDisponible()){ toast(extNivel() < 11 ? 'Actualiza el script para usar el asistente de contenido' : 'Falta tu clave de Claude (ANTHROPIC_API_KEY)'); return; }
+  if (!S.cont) await loadIG(true);
+  const enfoque = n ? '\n\nENFOQUE ESPECIAL: en vez de 2 semanas, genera 3 ideas (1 Reel con guion completo, 1 Carrusel y 1 secuencia de Historias) solo sobre «' + (n.producto || n.titulo) + '» de la negociación «' + n.titulo + '» (etapa ' + n.etapa + (n.notas ? '; notas: ' + n.notas : '') + '). Piensa en el momento de la llegada a la tienda y la entrega. En relacionado pon exactamente: ' + n.titulo + '. Usa fechas cercanas a la fecha de cierre esperada (' + (n.cierre || addDays(hoy(), 7)) + ').' : '';
+  const md = modal(icon('spark') + (n ? ' Contenido para ' + esc(n.producto || n.titulo) : ' Calendario de contenido · 2 semanas'), '<div class="empty"><span class="spin"></span>El asistente está revisando la tienda y tus métricas…</div>', { wide: true });
   try {
-    const r = (await apiX('asistente', { modo: 'contenido', contexto: contextoContenido() })).r;
-    md.el.querySelector('.empty').outerHTML = '<p style="margin:2px 0 8px">' + esc(r.resumen) + '</p>' + r.ideas.map((x, i) => '<div class="blk"><label style="display:flex;gap:10px;flex:1;cursor:pointer"><input type="checkbox" data-ii="' + i + '" checked style="width:20px;height:20px;margin-top:2px;flex:none"><span class="hr" style="width:64px">' + esc(fmt(x.fecha)) + '<br><span style="color:var(--muted);font-weight:600">' + esc(x.formato) + '</span></span><span class="tx"><b>' + esc(x.tema) + '</b><small>' + esc(x.idea) + '</small><small style="color:var(--accent-ink)">Por qué ahora: ' + esc(x.por_que) + '</small></span></label></div>').join('') +
+    const r = (await apiX('asistente', { modo: 'contenido', contexto: contextoContenido() + enfoque })).r;
+    if (n) r.ideas.forEach(x => { x.relacionado = n.titulo; });
+    md.el.querySelector('.empty').outerHTML = '<p style="margin:2px 0 8px">' + esc(r.resumen) + '</p>' + r.ideas.map((x, i) => '<div class="blk"><label style="display:flex;gap:10px;flex:1;cursor:pointer"><input type="checkbox" data-ii="' + i + '" checked style="width:20px;height:20px;margin-top:2px;flex:none"><span class="hr" style="width:64px">' + esc(fmt(x.fecha)) + '<br><span style="color:var(--muted);font-weight:600">' + esc(x.formato) + '</span></span><span class="tx"><b>' + esc(x.tema) + '</b><small>' + esc(x.idea) + '</small>' + (x.relacionado ? '<small>🔗 ' + esc(x.relacionado) + '</small>' : '') + (x.guion ? '<details style="margin-top:4px"><summary style="font-size:12.5px;color:var(--accent-ink);cursor:pointer">Ver guion</summary><div style="white-space:pre-wrap;font-size:12.5px;margin-top:4px">' + esc(x.guion) + '</div></details>' : '') + '<small style="color:var(--accent-ink)">Por qué ahora: ' + esc(x.por_que) + '</small></span></label></div>').join('') +
       '<label class="row" style="margin-top:12px;gap:8px;font-size:14px;font-weight:600"><input type="checkbox" id="ii_tk" checked style="width:20px;height:20px"> Crear una tarea por publicación (preparar/grabar el día antes)</label><div class="btns"><button class="btn" id="ii_ok">Guardar en el calendario</button></div>';
     md.el.querySelector('#ii_ok').onclick = async () => {
       const sel = [...md.el.querySelectorAll('[data-ii]')].filter(x => x.checked).map(x => r.ideas[+x.dataset.ii]); if (!sel.length){ toast('Marca al menos una'); return; }
       const b = md.el.querySelector('#ii_ok'); b.disabled = true; b.innerHTML = '<span class="spin"></span>Guardando…';
       try {
-        const res = await apiX('contenido', { accion: 'guardar', items: sel }); S.cont = res.items;
+        const res = await apiX('contenido', { accion: 'guardar', items: sel.map(x => Object.assign({}, x, { idea: x.idea + (x.guion ? '\n\nGUION:\n' + x.guion : '') })) }); S.cont = res.items;
         if (md.el.querySelector('#ii_tk').checked) for (const x of sel) await api('add', { tarea: { tarea: (x.formato === 'Reel' ? 'Grabar reel: ' : 'Preparar ' + x.formato.toLowerCase() + ': ') + x.tema, area: 'Trabajo', categoria: (S.data.config.categorias.find(c => c.nombre === 'Marketing') || {}).nombre || '', proyecto: '', limite: addDays(x.fecha, -1) < hoy() ? hoy() : addDays(x.fecha, -1), urgente: 'No', importante: 'Sí', tamano: 'Mediana', notas: '📸 Contenido ' + x.fecha + ' · ' + x.idea, estado: 'Pendiente' } });
-        md.cerrar(); toast('📅 ' + sel.length + ' publicaciones en tu calendario'); S.mutado = true; load(); render();
+        md.cerrar(); toast('📅 ' + sel.length + ' publicaciones en tu calendario'); S.mutado = true; load(); if (n && $('#ng_root')) openDeal(negocios().find(y => y.id === n.id) || n, { tab: 'resumen' }); else render();
       } catch(e){ b.disabled = false; b.textContent = 'Guardar en el calendario'; toast('No se pudo guardar: ' + e.message); }
     };
   } catch(e){ md.el.querySelector('.empty').innerHTML = 'No se pudo armar el calendario: ' + esc(e.message); }
@@ -1733,7 +1753,7 @@ function openIdea(x){
   const md = modal(nueva ? 'Nueva publicación' : esc(x.tema || 'Publicación'), nueva ?
     '<label class="l" style="margin-top:0">Tema</label><input type="text" id="id_t" placeholder="Ej.: Test ride de la Levo en Pichijuán"><label class="l">Fecha</label><input type="date" id="id_f" value="' + esc(x.fecha) + '"><label class="l">Formato</label><div class="choice" id="id_fm">' + ['Reel', 'Carrusel', 'Historia', 'Post'].map(f => '<button data-f="' + f + '" class="' + (f === 'Reel' ? 'on' : '') + '">' + f + '</button>').join('') + '</div><label class="l">Idea</label><textarea class="note" id="id_i"></textarea><div class="btns"><button class="btn" id="id_ok">Guardar</button></div>' :
     '<div class="tm" style="margin:0 0 10px"><span class="d">' + esc(fmtLong(x.fecha)) + '</span><span>' + esc(x.formato) + '</span><span>' + esc(x.objetivo) + '</span><span class="pill2">' + esc(x.estado) + '</span></div>' +
-    (x.idea ? '<div class="lab" style="font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;margin:8px 0 4px">Idea / guion</div><p style="margin:0;line-height:1.5">' + esc(x.idea) + '</p>' : '') +
+    (x.relacionado ? '<div class="hint" style="margin:0 0 6px">🔗 Vinculado a: <b>' + esc(x.relacionado) + '</b></div>' : '') + (x.idea ? '<div class="lab" style="font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;margin:8px 0 4px">Idea / guion</div><p style="margin:0;line-height:1.5;white-space:pre-wrap">' + esc(x.idea) + '</p>' : '') +
     (x.texto ? '<div class="lab" style="font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;margin:14px 0 4px">Texto sugerido</div><div class="calc" style="background:var(--soft);border-radius:12px;padding:12px;white-space:pre-wrap;font-size:14px">' + esc(x.texto + (x.hashtags ? '\n\n' + x.hashtags : '')) + '</div><button class="btn sm sec" id="id_cp" style="margin-top:8px">Copiar texto</button>' : '') +
     (x.por_que ? '<p class="hint">Por qué ahora: ' + esc(x.por_que) + '</p>' : '') +
     '<div class="btns"><button class="btn sec" data-es="Descartado">Descartar</button><button class="btn sec" data-es="Planificado">Planificado</button><button class="btn" data-es="Publicado" style="background:var(--ok)">✓ Publicado</button></div>', { wide: !nueva });
@@ -1913,11 +1933,14 @@ function dealTab(n, a, tab){
     box.innerHTML = (a.abierta ? '<div class="mini3"><div data-info="prob" data-ref="' + esc(n.id) + '"><small>Prob. de cierre' + ib('prob', n.id) + '</small><b>' + Math.round(a.prob * 100) + '%</b></div><div data-info="salud" data-ref="' + esc(n.id) + '"><small>Salud' + ib('salud', n.id) + '</small><b style="color:' + saludCol(a.salud) + '">' + a.salud + '</b></div><div data-info="dAct" data-ref="' + esc(n.id) + '"><small>Sin actividad' + ib('dAct', n.id) + '</small><b>' + a.dAct + ' d</b></div></div>' : '') +
       agenteHTML(c) +
       (R.length ? '<div class="lab" style="font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin:14px 0 4px">Qué hacer ahora</div><div>' + R.map(r => '<div class="sug2"><span class="dot" style="background:' + r.c + ';margin-top:6px"></span><div class="tx"><b>' + esc(r.t) + '</b><div style="color:var(--muted);font-size:13px;margin-top:2px">' + esc(r.d) + '</div>' + (r.acts ? '<div class="acts">' + r.acts.map(x => '<button class="btn sm sec" data-nga="' + esc(x[1]) + '">' + esc(x[0]) + '</button>').join('') + '</div>' : '') + '</div></div>').join('') + '</div>' : '') +
+      (extNivel() >= 11 ? (() => { const L = (S.cont || []).filter(x => x.relacionado && (x.relacionado === n.titulo || (n.producto && x.relacionado === n.producto))); return '<div class="lab" style="font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin:14px 0 6px">Contenido para redes</div>' + (L.length ? '<div class="wl">' + L.map(x => '<div class="it" data-ct="' + esc(x.id) + '"><span class="dot" style="background:var(--accent)"></span><div class="tx">' + esc(x.tema) + '<small>' + esc(fmt(x.fecha)) + ' · ' + esc(x.formato) + ' · ' + esc(x.estado) + '</small></div></div>').join('') + '</div>' : '<div class="wsub">Sin contenido vinculado a este producto.</div>') + '<button class="btn sm sec" id="dx_cont" style="margin-top:8px">📸 Crear reel, historias y carrusel de este producto</button>'; })() : '') +
       (c ? '<div class="lab" style="font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin:14px 0 6px">Contacto</div><div class="wl"><div class="it" id="dx_cto">' + avatar(c, 32) + '<div class="tx">' + esc(c.nombre || c.email) + '<small>' + esc([c.telefono, c.email].filter(Boolean).join(' · ')) + '</small></div><span class="rt">Ver ficha ›</span></div></div>' : '');
     box.querySelectorAll('[data-nga]').forEach(b => b.onclick = () => negAccion(b.dataset.nga, n, b));
     box.querySelectorAll('[data-agente]').forEach(b => b.onclick = () => analizarAhora(b.dataset.agente, b));
     box.querySelectorAll('[data-impc]').forEach(b => b.onclick = () => openImportar({ contacto: b.dataset.impc }));
     const ct = $('#dx_cto'); if (ct) ct.onclick = () => openContacto(c);
+    const dc = $('#dx_cont'); if (dc) dc.onclick = () => planContenido(n);
+    box.querySelectorAll('[data-ct]').forEach(b => b.onclick = () => openIdea((S.cont || []).find(x => x.id === b.dataset.ct)));
   } else if (tab === 'actividad'){
     const I = a.I.slice().reverse();
     const icTl = t => /agente|idea/i.test(t) ? '🧠' : /whatsapp|chat/i.test(t) ? '💬' : /correo/i.test(t) ? '✉️' : /reuni/i.test(t) ? '📅' : /tarea|acci/i.test(t) ? '✅' : /venta/i.test(t) ? '🏆' : /negoci|etapa/i.test(t) ? '🔀' : '📝';
