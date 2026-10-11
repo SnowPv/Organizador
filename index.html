@@ -106,7 +106,7 @@ nav.bottom button.on span{background:var(--soft);filter:none;opacity:1;transform
 .seg{display:flex;gap:7px;flex-wrap:wrap}
 .pill{border:1.5px solid var(--line);background:var(--card);border-radius:99px;padding:8px 14px;font-size:13.5px;font-weight:700;color:var(--ink)}
 .pill.on{background:var(--accent);color:#fff;border-color:var(--accent)}
-input[type=text],input[type=date],input[type=time],input[type=url],input[type=password],select,textarea{width:100%;padding:13px 14px;border-radius:15px;border:1.5px solid var(--line);background:var(--card);font-size:16px;color:var(--ink)}
+input[type=text],input[type=date],input[type=time],input[type=url],input[type=password],input[type=number],input[type=datetime-local],select,textarea{width:100%;padding:13px 14px;border-radius:15px;border:1.5px solid var(--line);background:var(--card);font-size:16px;color:var(--ink)}
 input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent)}
 label.l{display:block;font-size:11px;color:var(--muted);margin:14px 0 6px;font-weight:800;text-transform:uppercase;letter-spacing:.05em}
 .btn{border:0;border-radius:15px;padding:14px 16px;font-weight:800;background:var(--grad);color:#fff;font-size:15.5px;box-shadow:0 6px 16px -6px rgba(164,77,240,.6)}
@@ -890,6 +890,79 @@ body:has(.selbar) .fab{display:none}
 .sgi .ac button{border:1px solid var(--line);background:var(--card);border-radius:10px;width:36px;height:36px;font-size:15px;cursor:pointer}
 .sgi .ac button.ok{background:var(--accent);border-color:var(--accent);color:#fff}
 .src{display:inline-block;font-size:11px;font-weight:700;color:var(--accent-ink);background:var(--accent-soft);border-radius:6px;padding:1px 6px;margin-right:6px}
+/* Estudio de contenido */
+.est-top{display:flex;gap:12px;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;margin:2px 2px 14px}
+.est-acts{display:flex;gap:8px;flex-wrap:wrap}
+.est-setup{margin-bottom:14px}
+.est-f{display:flex;gap:12px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
+.est-f:first-of-type{border-top:0}
+.est-f>svg{width:18px;height:18px;color:var(--accent);flex:none}
+.est-f>div{flex:1;min-width:0}
+.est-f b{display:block;font-size:14.5px}
+.est-f span{display:block;font-size:13px;color:var(--muted);line-height:1.4;margin-top:2px}
+.est-f .btn{flex:none}
+.pz-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:12px}
+.pz{all:unset;box-sizing:border-box;cursor:pointer;background:var(--card);border-radius:16px;overflow:hidden;box-shadow:var(--shadow);display:flex;flex-direction:column;transition:transform .15s ease,box-shadow .15s ease}
+.pz:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
+.pz:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.pz-th{display:flex;align-items:center;justify-content:center;aspect-ratio:4/5;background:#111214;overflow:hidden}
+.pz-th.v img{object-position:center 60%}
+.pz-th img{width:100%;height:100%;object-fit:cover;display:block}
+.pz-b{padding:10px 12px 12px;display:flex;flex-direction:column;gap:3px;min-width:0}
+.pz-b b{font-size:14px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.pz-b small{font-size:12px;color:var(--muted)}
+.pz-b small.err{color:var(--bad,#d33)}
+.pop.pzm{max-width:1020px}
+.pz-strip{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 2px 12px;margin:8px -2px 6px}
+.pz-sl{all:unset;box-sizing:border-box;position:relative;flex:0 0 auto;width:150px;aspect-ratio:4/5;border-radius:10px;overflow:hidden;cursor:pointer;scroll-snap-align:start;border:3px solid transparent;background:#111214}
+.pz-strip.v .pz-sl{width:118px;aspect-ratio:9/16}
+.pz-sl img{width:100%;height:100%;object-fit:cover;display:block}
+.pz-sl span{position:absolute;left:6px;top:6px;background:rgba(0,0,0,.6);color:#fff;font-size:11px;font-weight:800;border-radius:6px;padding:2px 6px}
+.pz-sl.on{border-color:var(--accent)}
+.pz-cols{display:grid;grid-template-columns:1.1fr 1fr;gap:22px;align-items:start}
+.pz-ed,.pz-side{min-width:0}
+.pz-foto{display:flex;gap:10px;align-items:center;background:var(--soft);border-radius:12px;padding:8px;margin-top:12px}
+.pz-foto>div{flex:1;min-width:0}
+.pz-foto b{display:block;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pz-foto small{display:block;font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pz-fth{flex:none;width:46px;height:46px;border-radius:8px;overflow:hidden;background:var(--card);display:flex;align-items:center;justify-content:center;color:var(--muted)}
+.pz-fth img{width:100%;height:100%;object-fit:cover}
+.pz-fth svg{width:20px;height:20px}
+.pz-ia{background:var(--soft);border-radius:14px;padding:4px 12px 12px;margin-top:14px}
+.pz-ia .btn{margin-top:8px}
+.pz-ok{display:flex;gap:8px;align-items:center;margin-top:14px;font-weight:700;color:var(--good,#1a9e5a)}
+.pz-ok svg{width:18px;height:18px}
+.pz-acc{margin-top:16px;display:flex;flex-direction:column;gap:10px}
+.pz-acc>.btn{width:100%}
+.pz-acc .rs-row{grid-template-columns:1fr auto;align-items:center}
+.pz-acc .btns{margin-top:0;flex-wrap:wrap}
+.ef-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;margin-top:4px;min-height:120px}
+.ef-i{all:unset;box-sizing:border-box;cursor:pointer;border-radius:10px;overflow:hidden;background:var(--soft);display:flex;flex-direction:column;position:relative}
+.ef-i img,.ef-i>.spin{width:100%;aspect-ratio:1;object-fit:cover;display:block}
+.ef-i small{font-size:11px;color:var(--muted);padding:5px 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ef-i:hover{outline:2px solid var(--accent)}
+.ef-i.cargando{opacity:.5;pointer-events:none}
+.mk{display:grid;grid-template-columns:300px 1fr;gap:22px;align-items:start}
+.mk-prev{position:sticky;top:0;display:grid;gap:10px}
+.mk-prev img{width:100%;border-radius:12px;display:block;box-shadow:var(--shadow)}
+.mk-f{min-width:0}
+.mk-c{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.mk-c label{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11.5px;color:var(--muted);text-align:center;cursor:pointer}
+.mk-c input[type=color]{width:44px;height:44px;border:0;padding:0;border-radius:50%;overflow:hidden;cursor:pointer;background:none}
+.mk-c input[type=color]::-webkit-color-swatch-wrapper{padding:0}
+.mk-c input[type=color]::-webkit-color-swatch{border:1px solid var(--line);border-radius:50%}
+.mk-sw{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px}
+.mk-sw .wsub{flex-basis:100%}
+.sw{all:unset;cursor:pointer;width:30px;height:30px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(0,0,0,.15)}
+.mk-logo{display:flex;align-items:center;justify-content:center;width:64px;height:64px;border-radius:12px;background:repeating-conic-gradient(#ddd 0 25%,#fff 0 50%) 0/14px 14px;font-size:11px;color:var(--muted);overflow:hidden;flex:none}
+.mk-logo img{max-width:100%;max-height:100%}
+@media (max-width:760px){
+  .pz-cols,.mk{grid-template-columns:1fr}
+  .mk-prev{position:static;grid-template-columns:1fr 1fr}
+  .pz-grid{grid-template-columns:repeat(2,1fr);gap:10px}
+  .pz-sl{width:118px}.pz-strip.v .pz-sl{width:92px}
+  .mk-c{grid-template-columns:repeat(5,1fr)}
+}
 </style>
 </head>
 <body>
@@ -978,7 +1051,7 @@ async function api(action, extra){
 function apiX(op, extra){ return api('extra', Object.assign({ op }, extra || {})); }
 // Nivel 2 del script Extras: recordatorios y base de contactos. Nivel 3: la base solo usa contacto@blacklinechile.cl. Nivel 4: eventos de varios días.
 function extNivel(){ return S.extInactivo ? 0 : (S.ext && S.ext.nivel) || 1; }
-function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < 14; }
+function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < 15; }
 let sincTimer = null;
 // Después de cambiar tareas, el script actualiza los recordatorios del calendario (en segundo plano).
 function sincPronto(){
@@ -1237,7 +1310,7 @@ function viewInicio(){
   const totalHoy = lista.length + hechas.length;
   let html = '<div class="ihead"><button class="quick" id="qa"><b>+</b>Agregar tarea… <span style="margin-left:auto">🎤</span></button>' +
     '<button class="btn sec" id="planBtn">' + icon('spark') + ' Plan de la semana</button></div>';
-  if (necesitaActualizar()) html += '<div class="w" style="margin-bottom:14px;display:flex;gap:12px;align-items:center"><div class="grow"><b>Nueva versión del script</b><div class="wsub">' + (extNivel() >= 10 ? 'Instagram: métricas diarias y calendario de contenido con IA. También filtra los correos automáticos de bancos y pagos.' : extNivel() >= 8 ? 'Asistente de IA para planificar tu día y tu semana, Instagram y conexión con Bsale.' : 'Importar chats de WhatsApp y agente de IA.') + '</div></div><button class="btn sm" id="updBtn">Actualizar</button></div>';
+  if (necesitaActualizar()) html += '<div class="w" style="margin-bottom:14px;display:flex;gap:12px;align-items:center"><div class="grow"><b>Nueva versión del script</b><div class="wsub">' + (extNivel() >= 14 ? 'Estudio de contenido: el agente diseña carruseles e historias con tu marca y los publicas en Instagram con un toque.' : extNivel() >= 10 ? 'Instagram: métricas diarias y calendario de contenido con IA. También filtra los correos automáticos de bancos y pagos.' : extNivel() >= 8 ? 'Asistente de IA para planificar tu día y tu semana, Instagram y conexión con Bsale.' : 'Importar chats de WhatsApp y agente de IA.') + '</div></div><button class="btn sm" id="updBtn">Actualizar</button></div>';
   html += '<div class="wgrid">';
   // 1. Tareas de hoy (anillo: avance del día contra lo planificado)
   html += '<div class="w" data-w="hoy"><div class="wh">' + icon('check') + 'Tareas de hoy<button class="go" data-go="hoy">Ver</button></div><div class="wring"><div class="rg">' + ringSVG(totalHoy ? hechas.length / totalHoy : 0, 86) + '<b>' + hechas.length + '/' + totalHoy + '<small>hechas</small></b></div>' +
@@ -1555,7 +1628,7 @@ function showExtrasUpdate(){
   const raw = 'https://raw.githubusercontent.com/SnowPv/Organizador/main/apps-script/Extras.gs';
   sheet('<h3>⬆️ Actualizar el script Extras</h3><div class="hint">Hay una versión nueva del script' + (extNivel() >= 7 ? ': 📥 importar chats de WhatsApp y agente en modo económico (Claude Haiku 5.5).' : extNivel() >= 5 ? ': 🧠 agente de ventas con IA y conexión con WhatsApp Business (Telnyx).' : extNivel() >= 3 ? ': 🤝 pestaña Negocios (pipeline de ventas con sugerencias) y eventos de varios días.' : ': 📅 recordatorios en tu calendario y 📇 base de datos armada solo con los correos que llegan por contacto@blacklinechile.cl.') + ' Son 3 pasos:</div>' +
     '<div class="card"><b>1.</b> En Apps Script elimina <b>Extras.gs</b> (⋮ → Eliminar) y crea otro igual (<b>+ → Secuencia de comandos → Extras</b>). Toca <b>📋 Copiar código</b> y pégalo con el <b>«Pegar» de Chrome</b> (mantén presionado), no con el portapapeles del teclado. Guarda 💾.<div style="margin-top:8px"><button class="btn sm sec" id="gu1">📋 Copiar código</button> <a class="btn sm sec" style="text-decoration:none;display:inline-block" href="' + raw + '" target="_blank">Abrir archivo</a></div></div>' +
-    '<div class="card"><b>2.</b> Arriba elige <b>autorizarExtras</b> y toca <b>Ejecutar</b>. Acepta los permisos nuevos (crear el calendario y programar tareas automáticas).</div>' +
+    (extNivel() >= 14 ? '<div class="card"><b>2.</b> Arriba elige <b>autorizarEstudio</b> y toca <b>Ejecutar</b>. Acepta el permiso de Google Drive: crea la carpeta del banco de imágenes del Estudio de contenido.</div>' : '<div class="card"><b>2.</b> Arriba elige <b>autorizarExtras</b> y toca <b>Ejecutar</b>. Acepta los permisos nuevos (crear el calendario y programar tareas automáticas).</div>') +
     '<div class="card"><b>3.</b> <b>Implementar → Administrar implementaciones → ✏️ → Nueva versión → Implementar</b>.</div>' +
     '<div class="hint">La línea que agregaste en WebApp ya sirve; no hay que tocarla.</div>' +
     '<div class="btns"><button class="btn" id="guTry">Ya lo hice, probar</button></div>');
@@ -2152,11 +2225,11 @@ function viewRedes(){
   if (igActivo() && !S.ig){ $('#view').innerHTML = '<div class="empty"><span class="spin"></span>Cargando Instagram…</div>'; loadIG(true).then(() => { if (S.tab === 'redes') render(); }); return; }
   if (!S.leadsCanal && extNivel() >= 13 && !S._leadsPend){ S._leadsPend = 1; loadLeads().then(() => { S._leadsPend = 0; if (S.tab === 'redes') render(); }); }
   if (!S.base && !S._basePend){ S._basePend = 1; loadBase(false).then(() => { S._basePend = 0; if (S.tab === 'redes') render(); }); }
-  const tabs = [['resumen', 'Resumen'], ['contenido', 'Contenido'], ['audiencia', 'Audiencia'], ['leads', 'Leads'], ['estrategia', 'Estrategia']];
+  const tabs = [['resumen', 'Resumen'], ['contenido', 'Contenido'], ['estudio', 'Estudio'], ['audiencia', 'Audiencia'], ['leads', 'Leads'], ['estrategia', 'Estrategia']];
   const t = S.rtab || (igActivo() ? 'resumen' : 'contenido');
   let html = '<div class="btabs"><div class="tabs">' + tabs.map(x => '<button class="' + (x[0] === t ? 'on' : '') + '" data-rt="' + x[0] + '">' + x[1] + '</button>').join('') + '</div>' +
     (igActivo() ? '<button class="btn sm sec" id="igSinc">↻ Actualizar</button>' : '') + '<button class="btn sm" id="igPlan">' + icon('spark') + ' Planificar contenido</button></div>';
-  html += ({ resumen: redesResumen, contenido: redesContenido, audiencia: redesAudiencia, leads: redesLeads, estrategia: redesEstrategia })[t]();
+  html += ({ resumen: redesResumen, contenido: redesContenido, estudio: redesEstudio, audiencia: redesAudiencia, leads: redesLeads, estrategia: redesEstrategia })[t]();
   $('#view').innerHTML = html;
   $$('[data-rt]').forEach(b => b.onclick = () => { S.rtab = b.dataset.rt; viewRedes(); });
   const sb = $('#igSinc'); if (sb) sb.onclick = async e => { const b = e.target.closest('button'); b.disabled = true; b.innerHTML = '<span class="spin"></span>Actualizando…'; try { const r = await apiX('instagram', { sinc: 1 }); S.ig = r; await loadLeads(true); toast('Instagram actualizado ✓'); render(); } catch(err){ b.disabled = false; b.textContent = '↻ Actualizar'; toast('No se pudo: ' + err.message); } };
@@ -2339,6 +2412,7 @@ function contextoRedes(){
 }
 function bindRedes(t){
   if (t === 'resumen') bindInsights('redes');
+  if (t === 'estudio') bindEstudio();
   $$('[data-rt2]').forEach(b => b.onclick = () => { S.rtab = b.dataset.rt2; viewRedes(); });
   const eg = $('#estGo'); if (eg) eg.onclick = () => armarEstrategia(eg);
   const ru = $('#rUpd'); if (ru) ru.onclick = showExtrasUpdate;
@@ -2436,9 +2510,10 @@ function openIdea(x, pre){
     (x.por_que ? '<p class="hint">Por qué ahora: ' + esc(x.por_que) + '</p>' : '') +
     (x.codigo ? linksHTML(x) : '') +
     '<div class="rs-row" style="margin-top:12px"><div><label class="l">Mover a</label><input type="date" id="id_mv" value="' + esc(x.fecha) + '"></div><div><label class="l">Hora</label><input type="time" id="id_hr" value="' + esc(x.hora) + '"></div></div>' +
-    '<div class="btns"><button class="btn bad" data-es="Descartado">Descartar</button><button class="btn sec" id="id_sv">Guardar fecha y hora</button></div>', { wide: true });
+    '<div class="btns"><button class="btn bad" data-es="Descartado">Descartar</button><button class="btn sec" id="id_sv">Guardar fecha y hora</button>' + (extNivel() >= 15 ? '<button class="btn" id="id_dz">' + icon('spark') + ' Diseñar pieza</button>' : '') + '</div>', { wide: true });
   bindLinks(md.el, x);
   const cp = md.el.querySelector('#id_cp'); if (cp) cp.onclick = async () => { try { await navigator.clipboard.writeText(x.texto + (x.hashtags ? '\n\n' + x.hashtags : '') + (x.cta && x.codigo ? '' : '')); toast('Texto copiado ✓'); } catch(e){ toast('No se pudo copiar'); } };
+  const dz = md.el.querySelector('#id_dz'); if (dz) dz.onclick = () => { md.cerrar(); S.rtab = 'estudio'; if (S.tab === 'redes') viewRedes(); crearPieza(x); };
   md.el.querySelector('#id_sv').onclick = async () => { try { const r = await apiX('contenido', { accion: 'editar', id: x.id, fecha: md.el.querySelector('#id_mv').value, estado: x.estado === 'Idea' && md.el.querySelector('#id_mv').value ? 'Planificado' : '', campos: { hora: md.el.querySelector('#id_hr').value } }); S.cont = r.items; md.cerrar(); toast('Guardado ✓'); render(); } catch(e){ toast('No se pudo: ' + e.message); } };
   md.el.querySelectorAll('[data-es]').forEach(b => b.onclick = async () => { b.disabled = true; try { const r = await apiX('contenido', { accion: 'estado', id: x.id, estado: b.dataset.es, post: b.dataset.es === 'Publicado' && p ? p.id : undefined }); S.cont = r.items; md.cerrar(); if (b.dataset.es === 'Publicado') confetti(40); render(); } catch(e){ b.disabled = false; toast('No se pudo: ' + e.message); } });
 }
@@ -2636,6 +2711,400 @@ function statsBaseHTML(){
     html += '<div class="w"><div class="wh">' + icon('trophy') + 'Quién compra' + ib('bConv') + '</div><div class="tw"><table class="rtab"><thead><tr><th>Grupo</th><th>Perfiles</th><th>Con negociación</th><th>Compró</th></tr></thead><tbody>' + filas.map(([t, L]) => L.slice(0, 4).map((x, i) => '<tr>' + (i === 0 ? '<td colspan="4" class="grp">' + t + '</td></tr><tr>' : '') + '<td><b>' + esc(x.t) + '</b></td><td class="num">' + x.n + '</td><td class="num">' + Math.round(x.neg / x.n * 100) + '%</td><td class="num"><span class="mini"><i style="width:' + Math.round(x.gan / x.n * 100) + '%"></i></span>' + Math.round(x.gan / x.n * 100) + '%</td></tr>').join('')).join('') + '</tbody></table></div></div></div>';
   }
   return html;
+}
+
+/* ---------- Redes · Estudio de contenido (carruseles e historias) ---------- */
+/* ---------- Estudio de contenido: el agente diseña carruseles e historias con tu marca; tú revisas y publicas ---------- */
+const FUENTES_MARCA = ['Barlow Condensed', 'Anton', 'Archivo Black', 'Oswald', 'Bebas Neue', 'Montserrat', 'Poppins', 'Barlow', 'Archivo', 'Work Sans', 'DM Sans', 'Manrope'];
+const MARCA_BASE = {
+  nombre: 'Blackline Puerto Varas', handle: '@blackline_bicicletas', web: 'blacklinechile.cl',
+  colores: { fondo: '#111214', texto: '#FFFFFF', acento: '#E1251B', claro: '#F3F2EE', tinta: '#111214' },
+  fuenteTitulo: 'Barlow Condensed', pesoTitulo: 800, fuenteTexto: 'Barlow', mayusculas: true, alternar: true, logoData: '',
+  tono: 'Cercano, experto y directo. Español de Chile. Sin exageraciones.',
+  contexto: 'Somos expertos en e-bikes: son nuestro fuerte y principal motor de ventas (Turbo Levo, Levo SL, Kenevo, Turbo Vado, Turbo Como). Igual vendemos todo el catálogo Specialized (MTB, ruta, gravel, urbano, niños, ropa y accesorios) y tenemos taller. Hemos vendido S-Works en todas las disciplinas. En Puerto Varas llueve mucho: en invierno cuesta mover las ventas y desde primavera la demanda sube fuerte. En verano llegan turistas, muchos de Argentina.',
+  focoEbike: 50
+};
+function marca(){ const m = (S.marcaSrv && S.marcaSrv.marca) || {}; return Object.assign({}, MARCA_BASE, m, { colores: Object.assign({}, MARCA_BASE.colores, m.colores || {}) }); }
+function temporadaPV(f){
+  const mes = +(f || hoy()).slice(5, 7);
+  if (mes >= 9 && mes <= 11) return { k: 'primavera', t: 'Primavera: mejora el clima y arranca la temporada alta; la demanda de e-bikes sube fuerte. Momento de test rides, preparar bicis (mantención) y lanzar novedades.' };
+  if (mes === 12 || mes <= 2) return { k: 'verano', t: 'Verano: temporada alta, días largos, turistas (muchos argentinos), salidas y viajes. Rutas de la zona, arriendo y compra, accesorios de viaje.' };
+  if (mes <= 4) return { k: 'otoño', t: 'Otoño: cierre de temporada. Mantención post-temporada, aprovechar el clima que queda, ofertas de fin de temporada si las hay.' };
+  return { k: 'invierno', t: 'Invierno lluvioso: ventas más lentas. Foco en taller, ropa e implementos para lluvia, e-bikes urbanas (Vado, Como) para moverse igual, planificar la temporada y contenido educativo.' };
+}
+async function loadEstudio(forzar){
+  if (extNivel() < 15) return;
+  if (!forzar && S.piezas && S.marcaSrv) return;
+  try { const [m, p] = await Promise.all([apiX('marca'), apiX('piezas')]); S.marcaSrv = m; S.piezas = p.items || []; } catch(e){ S.piezas = S.piezas || []; toast('No se pudo cargar el estudio: ' + e.message); }
+}
+// Fuentes de Google para dibujar en el canvas.
+const _fuentesCargadas = {};
+async function cargarFuentes(m){
+  const fams = [m.fuenteTitulo, m.fuenteTexto].filter((x, i, a) => x && a.indexOf(x) === i), falt = fams.filter(f => !_fuentesCargadas[f]);
+  if (falt.length){
+    const l = document.createElement('link'); l.rel = 'stylesheet';
+    l.href = 'https://fonts.googleapis.com/css2?' + falt.map(f => 'family=' + encodeURIComponent(f).replace(/%20/g, '+') + ':wght@400;600;700;800;900').join('&') + '&display=swap';
+    document.head.appendChild(l); await new Promise(r => { l.onload = r; l.onerror = r; setTimeout(r, 4000); });
+    falt.forEach(f => { _fuentesCargadas[f] = 1; });
+  }
+  try { await Promise.all([document.fonts.load(m.pesoTitulo + ' 80px "' + m.fuenteTitulo + '", Arial, sans-serif'), document.fonts.load('400 40px "' + m.fuenteTexto + '", Arial, sans-serif'), document.fonts.load('600 40px "' + m.fuenteTexto + '", Arial, sans-serif')]); } catch(e){}
+}
+
+/* --- Banco de imágenes --- */
+const _img = {};   // id → HTMLImageElement listo para dibujar
+function cargarImg(src){ return new Promise((ok, no) => { const i = new Image(); i.onload = () => ok(i); i.onerror = () => no(new Error('imagen')); i.src = src; }); }
+async function traerImgs(refs, ancho){
+  const falt = refs.filter(r => r && !_img[r.fuente + ':' + r.id]);
+  for (let i = 0; i < falt.length; i += 6){
+    const r = await apiX('imagen', { accion: 'traer', items: falt.slice(i, i + 6).map(x => ({ fuente: x.fuente, id: x.id, url: x.url, ancho: ancho || 1600 })) });
+    for (const x of r.items || []) if (x.data){ try { _img[x.fuente + ':' + x.id] = await cargarImg(x.data); } catch(e){} }
+  }
+}
+async function bancoListas(){
+  if (!S.banco){ try { S.banco = (await apiX('imagen', { accion: 'listar' })).items || []; } catch(e){ S.banco = []; } }
+  if (!S.propias){ try { S.propias = igActivo() ? (await apiX('imagen', { accion: 'propias' })).items || [] : []; } catch(e){ S.propias = []; } }
+}
+// Elige la foto que mejor calza con lo que pide cada lámina (palabras clave en nombres de archivo y textos de tus publicaciones).
+async function resolverFotos(pz){
+  await bancoListas();
+  const usadas = new Set(pz.slides.map(s => s.foto && s.foto.ref && s.foto.ref.id).filter(Boolean));
+  for (const s of pz.slides){
+    if (!s.foto || !s.foto.usar || s.foto.ref) continue;
+    const pal = (s.foto.palabras || []).concat(tokens(s.foto.descripcion || '')).map(w => norm(w)).filter(w => w.length >= 3);
+    const pts = it => { const t = norm(it.nombre || ''); return pal.reduce((n, w) => n + (t.includes(w) ? (RE_MODELO.test(w) ? 3 : 1) : 0), 0); };
+    const propias = (S.banco || []).concat(S.propias || []).filter(x => !usadas.has(x.id)).map(x => ({ x, p: pts(x) })).sort((a, b) => b.p - a.p);
+    let ref = null;
+    if (s.foto.fuente !== 'stock' && propias[0] && propias[0].p > 0) ref = propias[0].x;
+    if (!ref && S.marcaSrv && S.marcaSrv.pexels){
+      try { const q = (s.foto.palabras || []).filter(w => /^[a-z0-9 -]+$/i.test(w)).slice(0, 4).join(' ') || s.foto.descripcion; const r = await apiX('imagen', { accion: 'buscar', q, orientacion: 'portrait' }); ref = (r.items || []).find(x => !usadas.has(x.id)) || null; } catch(e){}
+    }
+    if (!ref && propias[0]) ref = propias[0].x;
+    if (ref){ s.foto.ref = { fuente: ref.fuente, id: ref.id, url: ref.url || '', nombre: ref.nombre || '' }; usadas.add(ref.id); }
+  }
+  await traerImgs(pz.slides.map(s => s.foto && s.foto.usar && s.foto.ref).filter(Boolean));
+}
+
+/* --- Motor de dibujo (plantillas de la marca) --- */
+function tamPieza(tipo){ return tipo === 'historias' ? { W: 1080, H: 1920 } : { W: 1080, H: 1350 }; }
+function lineas(ctx, txt, maxW){
+  const out = []; String(txt || '').split('\n').forEach(par => { let l = ''; par.split(/\s+/).forEach(w => { const t = l ? l + ' ' + w : w; if (ctx.measureText(t).width > maxW && l){ out.push(l); l = w; } else l = t; }); if (l) out.push(l); });
+  return out;
+}
+// Ajusta el tamaño del texto para que quepa en el ancho y alto disponibles.
+function encajar(ctx, txt, fam, peso, maxW, maxH, grande, chico, lh){
+  const f = sz => peso + ' ' + sz + 'px "' + fam + '", "Arial Narrow", Arial, sans-serif';
+  for (let sz = grande; sz >= chico; sz -= 4){ ctx.font = f(sz); const L = lineas(ctx, txt, maxW); if (L.length * sz * lh <= maxH) return { sz, L, f: f(sz) }; }
+  ctx.font = f(chico); return { sz: chico, L: lineas(ctx, txt, maxW), f: f(chico) };
+}
+function escribir(ctx, b, x, y, lh, align){ if (b.f) ctx.font = b.f; ctx.textAlign = align || 'left'; ctx.textBaseline = 'top'; b.L.forEach((l, i) => ctx.fillText(l, x, y + i * b.sz * lh)); return y + b.L.length * b.sz * lh; }
+function cubrir(ctx, img, x, y, w, h){ const r = Math.max(w / img.width, h / img.height), iw = img.width * r, ih = img.height * r; ctx.save(); ctx.beginPath(); ctx.rect(x, y, w, h); ctx.clip(); ctx.drawImage(img, x + (w - iw) / 2, y + (h - ih) / 2, iw, ih); ctx.restore(); }
+function rrect(ctx, x, y, w, h, r){ ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); }
+let _logoImg = null, _logoSrc = '';
+async function prepararLogo(m){ if (m.logoData && m.logoData !== _logoSrc){ try { _logoImg = await cargarImg(m.logoData); _logoSrc = m.logoData; } catch(e){ _logoImg = null; } } if (!m.logoData) _logoImg = null; }
+function marcaEsquina(ctx, m, x, y, claro, alto){
+  alto = alto || 54;
+  if (_logoImg){ const w = _logoImg.width * alto / _logoImg.height; ctx.save(); if (claro && m.logoInvertir) ctx.filter = 'invert(1)'; ctx.drawImage(_logoImg, x, y, w, alto); ctx.restore(); return; }
+  ctx.fillStyle = claro ? m.colores.tinta : '#FFFFFF'; ctx.font = '800 ' + Math.round(alto * 0.62) + 'px "' + m.fuenteTitulo + '", Arial, sans-serif'; ctx.textAlign = 'left'; ctx.textBaseline = 'top'; ctx.fillText('BLACKLINE', x, y + alto * 0.18);
+}
+function tt(m, t){ return m.mayusculas ? String(t || '').toUpperCase() : String(t || ''); }
+function dibujarSlide(pz, i, m){
+  const { W, H } = tamPieza(pz.tipo), s = pz.slides[i], cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+  const ctx = cv.getContext('2d'), C = m.colores, hist = pz.tipo === 'historias', P = 84, top = hist ? 230 : 96, bot = hist ? H - 330 : H - 110;
+  const img = s.foto && s.foto.usar && s.foto.ref ? _img[s.foto.ref.fuente + ':' + s.foto.ref.id] : null;
+  const claro = m.alternar && !img && (s.layout === 'texto' || s.layout === 'lista' || s.layout === 'comparativa') && i % 2 === 1;
+  const fondo = claro ? C.claro : C.fondo, tinta = claro ? C.tinta : C.texto;
+  const kicker = (y, color) => { if (!s.kicker) return y; ctx.font = '700 30px "' + m.fuenteTexto + '", Arial, sans-serif'; const w = ctx.measureText(tt(m, s.kicker)).width + 36; ctx.fillStyle = C.acento; rrect(ctx, P, y, w, 52, 26); ctx.fill(); ctx.fillStyle = '#FFFFFF'; ctx.textBaseline = 'middle'; ctx.textAlign = 'left'; ctx.fillText(tt(m, s.kicker), P + 18, y + 27); return y + 76; };
+  const pie = (oscuro) => { ctx.font = '600 28px "' + m.fuenteTexto + '", Arial, sans-serif'; ctx.fillStyle = oscuro ? 'rgba(255,255,255,.75)' : 'rgba(0,0,0,.55)'; ctx.textBaseline = 'alphabetic'; ctx.textAlign = 'left'; ctx.fillText(m.handle, P, H - (hist ? 250 : 52)); if (!hist && pz.slides.length > 1){ ctx.textAlign = 'right'; ctx.fillText((i + 1) + ' / ' + pz.slides.length, W - P, H - 52); } };
+  const L = s.layout;
+  if ((L === 'portada' || L === 'foto' || L === 'dato') && img){
+    cubrir(ctx, img, 0, 0, W, H);
+    const g = ctx.createLinearGradient(0, H * (L === 'dato' ? 0 : 0.35), 0, H); g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, 'rgba(0,0,0,.88)'); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    if (L === 'dato'){ ctx.fillStyle = 'rgba(0,0,0,.35)'; ctx.fillRect(0, 0, W, H); }
+    const g2 = ctx.createLinearGradient(0, 0, 0, top + 200); g2.addColorStop(0, 'rgba(0,0,0,.45)'); g2.addColorStop(1, 'rgba(0,0,0,0)'); ctx.fillStyle = g2; ctx.fillRect(0, 0, W, top + 200);
+    marcaEsquina(ctx, m, P, top - 20, false);
+    ctx.fillStyle = '#FFFFFF';
+    if (L === 'dato'){
+      const n = encajar(ctx, s.numero || '', m.fuenteTitulo, m.pesoTitulo, W - 2 * P, 360, 300, 120, 0.95); ctx.fillStyle = C.acento; let y = escribir(ctx, n, P, H * 0.36, 0.95);
+      ctx.fillStyle = '#FFFFFF'; const t = encajar(ctx, tt(m, s.titulo), m.fuenteTitulo, m.pesoTitulo, W - 2 * P, 220, 84, 48, 1.02); y = escribir(ctx, t, P, y + 20, 1.02);
+      if (s.texto){ ctx.fillStyle = 'rgba(255,255,255,.88)'; const b = encajar(ctx, s.texto, m.fuenteTexto, 400, W - 2 * P, bot - y - 20, 40, 30, 1.3); escribir(ctx, b, P, y + 24, 1.3); }
+    } else {
+      const altoT = L === 'portada' ? 470 : 300, t = encajar(ctx, tt(m, s.titulo), m.fuenteTitulo, m.pesoTitulo, W - 2 * P, altoT, L === 'portada' ? 150 : 96, 56, 0.98);
+      const b = s.texto ? encajar(ctx, s.texto, m.fuenteTexto, 400, W - 2 * P, 200, 40, 30, 1.3) : null;
+      const bloque = t.L.length * t.sz * 0.98 + (b ? b.L.length * b.sz * 1.3 + 30 : 0) + (s.kicker ? 76 : 0);
+      let y = bot - bloque; y = kicker(y); ctx.fillStyle = '#FFFFFF'; y = escribir(ctx, t, P, y, 0.98);
+      if (b){ ctx.fillStyle = 'rgba(255,255,255,.9)'; escribir(ctx, b, P, y + 30, 1.3); }
+    }
+    pie(true); return cv;
+  }
+  if (L === 'cta'){
+    ctx.fillStyle = C.acento; ctx.fillRect(0, 0, W, H);
+    if (img){ ctx.globalAlpha = 0.22; cubrir(ctx, img, 0, 0, W, H); ctx.globalAlpha = 1; }
+    marcaEsquina(ctx, m, P, top, false, 70);
+    ctx.fillStyle = '#FFFFFF'; const t = encajar(ctx, tt(m, s.titulo || 'Hablemos'), m.fuenteTitulo, m.pesoTitulo, W - 2 * P, H * 0.3, 140, 64, 0.98); let y = escribir(ctx, t, P, H * (hist ? 0.36 : 0.3), 0.98);
+    if (s.texto){ ctx.fillStyle = 'rgba(255,255,255,.92)'; const b = encajar(ctx, s.texto, m.fuenteTexto, 400, W - 2 * P, 240, 44, 30, 1.3); y = escribir(ctx, b, P, y + 30, 1.3); }
+    const btn = s.items && s.items[0] ? s.items[0] : 'Escríbenos al WhatsApp'; ctx.font = '700 40px "' + m.fuenteTexto + '", Arial, sans-serif'; const bw = Math.min(W - 2 * P, ctx.measureText(btn).width + 90);
+    ctx.fillStyle = '#FFFFFF'; rrect(ctx, P, y + 50, bw, 96, 48); ctx.fill(); ctx.fillStyle = C.acento; ctx.textBaseline = 'middle'; ctx.textAlign = 'left'; ctx.fillText(btn, P + 45, y + 99);
+    ctx.fillStyle = 'rgba(255,255,255,.9)'; ctx.font = '600 32px "' + m.fuenteTexto + '", Arial, sans-serif'; ctx.textBaseline = 'top'; ctx.fillText('Link en la bio · ' + m.handle, P, y + 180);
+    return cv;
+  }
+  if (L === 'pregunta'){
+    ctx.fillStyle = C.fondo; ctx.fillRect(0, 0, W, H); if (img){ cubrir(ctx, img, 0, 0, W, H); ctx.fillStyle = 'rgba(0,0,0,.55)'; ctx.fillRect(0, 0, W, H); }
+    marcaEsquina(ctx, m, P, top, false);
+    ctx.fillStyle = C.acento; ctx.font = '700 34px "' + m.fuenteTexto + '", Arial, sans-serif'; ctx.textAlign = 'left'; ctx.textBaseline = 'top'; ctx.fillText(tt(m, s.kicker || 'Pregunta'), P, H * 0.3);
+    ctx.fillStyle = '#FFFFFF'; const t = encajar(ctx, s.titulo, m.fuenteTitulo, m.pesoTitulo, W - 2 * P, H * 0.28, 120, 60, 1); let y = escribir(ctx, t, P, H * 0.3 + 60, 1);
+    ctx.strokeStyle = 'rgba(255,255,255,.6)'; ctx.lineWidth = 3; ctx.setLineDash([14, 12]); rrect(ctx, P, y + 60, W - 2 * P, 260, 36); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle = 'rgba(255,255,255,.8)'; ctx.font = '600 34px "' + m.fuenteTexto + '", Arial, sans-serif'; ctx.textAlign = 'center'; ctx.fillText(s.texto || 'Respóndenos por mensaje 💬', W / 2, y + 170);
+    return cv;
+  }
+  // texto, lista, comparativa (y portada/foto/dato sin foto)
+  ctx.fillStyle = fondo; ctx.fillRect(0, 0, W, H);
+  let y = top;
+  marcaEsquina(ctx, m, P, y, claro, 46); y += 110;
+  if (img && L !== 'comparativa'){ const ih = hist ? 640 : 470; ctx.save(); rrect(ctx, P, y, W - 2 * P, ih, 28); ctx.clip(); cubrir(ctx, img, P, y, W - 2 * P, ih); ctx.restore(); y += ih + 44; }
+  y = kicker(y);
+  if (L === 'dato' && s.numero){ ctx.fillStyle = C.acento; const n = encajar(ctx, s.numero, m.fuenteTitulo, m.pesoTitulo, W - 2 * P, 300, 280, 110, 0.95); y = escribir(ctx, n, P, y, 0.95) + 10; }
+  ctx.fillStyle = tinta; const t = encajar(ctx, tt(m, s.titulo), m.fuenteTitulo, m.pesoTitulo, W - 2 * P, img ? 220 : 360, (L === 'portada' && !img) ? 150 : hist ? 120 : 100, 52, 1); y = escribir(ctx, t, P, y, 1);
+  ctx.fillStyle = C.acento; ctx.fillRect(P, y + 24, 120, 10); y += 70;
+  const resto = bot - y;
+  if (L === 'lista' && (s.items || []).length){
+    const it = s.items.slice(0, 6), h = Math.min(hist ? 210 : 150, resto / it.length), r = hist ? 42 : 34;
+    it.forEach((x, k) => { const yy = y + k * h; ctx.fillStyle = C.acento; ctx.beginPath(); ctx.arc(P + r, yy + r + 4, r, 0, Math.PI * 2); ctx.fill(); ctx.fillStyle = '#FFFFFF'; ctx.font = '800 ' + (r + 2) + 'px "' + m.fuenteTitulo + '", Arial, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(String(k + 1), P + r, yy + r + 6);
+      ctx.fillStyle = tinta; const b = encajar(ctx, x, m.fuenteTexto, 600, W - 2 * P - 2 * r - 32, h - 16, hist ? 58 : 44, 28, 1.2); escribir(ctx, b, P + 2 * r + 32, yy + 10, 1.2); });
+  } else if (L === 'comparativa' && (s.items || []).length){
+    const filas = s.items.map(x => String(x).split('|').map(z => z.trim())), cw = (W - 2 * P - 24) / 2, h = Math.min(130, resto / filas.length);
+    filas.forEach((f, k) => { const yy = y + k * h, cab = k === 0;
+      [0, 1].forEach(c => { const xx = P + c * (cw + 24); ctx.fillStyle = cab ? C.acento : (claro ? 'rgba(0,0,0,.06)' : 'rgba(255,255,255,.08)'); rrect(ctx, xx, yy, cw, h - 14, 18); ctx.fill();
+        ctx.fillStyle = cab ? '#FFFFFF' : tinta; const b = encajar(ctx, cab ? tt(m, f[c] || '') : (f[c] || ''), cab ? m.fuenteTitulo : m.fuenteTexto, cab ? m.pesoTitulo : 500, cw - 40, h - 40, cab ? 48 : 36, 24, 1.15); escribir(ctx, b, xx + 20, yy + (h - 14 - b.L.length * b.sz * 1.15) / 2, 1.15); }); });
+  } else if (s.texto){
+    ctx.fillStyle = claro ? 'rgba(0,0,0,.78)' : 'rgba(255,255,255,.86)'; const b = encajar(ctx, s.texto, m.fuenteTexto, 400, W - 2 * P, resto, 52, 30, 1.35); escribir(ctx, b, P, y, 1.35);
+  }
+  pie(!claro); return cv;
+}
+async function renderPieza(pz){
+  const m = marca(); await cargarFuentes(m); await prepararLogo(m); await resolverFotos(pz);
+  return pz.slides.map((_, i) => dibujarSlide(pz, i, m));
+}
+
+/* --- Vista: Redes → Estudio --- */
+function redesEstudio(){
+  if (extNivel() < 15) return '<div class="sec rd-con"><div class="wh">' + icon('spark') + 'Estudio de contenido</div><p>El agente diseña carruseles e historias con tu marca, a partir de lo que está pasando en la tienda. Tú los revisas, pides cambios y publicas con un toque. Necesita la versión nueva del script.</p><button class="btn sm" id="rUpd">Ver cómo actualizar</button></div>';
+  if (!S.piezas){ if (!S._estPend){ S._estPend = 1; loadEstudio(true).then(() => { S._estPend = 0; if (S.tab === 'redes') render(); }); } return '<div class="empty"><span class="spin"></span>Cargando el estudio…</div>'; }
+  const srv = S.marcaSrv || {}, falta = [];
+  if (!(srv.marca)) falta.push(['Kit de marca', 'Colores, tipografías y logo de tu Instagram.', 'marca']);
+  if (!srv.banco) falta.push(['Banco de imágenes', 'En Apps Script ejecuta autorizarEstudio: crea la carpeta de Drive donde subes tus fotos.', '']);
+  if (!srv.alojamiento) falta.push(['Publicar con un toque', 'Falta el alojamiento de imágenes (GITHUB_TOKEN). Mientras, puedes compartir a Instagram desde el teléfono.', 'guia']);
+  const tmp = temporadaPV();
+  let html = '<div class="est-top"><div><div class="wh" style="margin:0">' + icon('spark') + 'Estudio de contenido</div><div class="wsub">Temporada: <b>' + esc(tmp.k) + '</b> · ' + esc(tmp.t.split(':')[1] || '') + '</div></div><div class="est-acts"><button class="btn sm sec" id="esMarca">' + icon('target') + ' Kit de marca</button><button class="btn sm" id="esNueva">' + icon('spark') + ' Crear con IA</button></div></div>';
+  if (falta.length) html += '<div class="w est-setup"><div class="lab2">Para dejarlo listo</div>' + falta.map(f => '<div class="est-f">' + icon('flag') + '<div><b>' + esc(f[0]) + '</b><span>' + esc(f[1]) + '</span></div>' + (f[2] === 'marca' ? '<button class="btn sm" data-esm="1">Configurar</button>' : f[2] === 'guia' ? '<a class="btn sm sec" target="_blank" href="https://github.com/SnowPv/Organizador/blob/main/docs/INSTAGRAM.md#estudio-de-contenido" style="text-decoration:none">Ver cómo</a>' : '') + '</div>').join('') + (srv.banco ? '' : '') + '</div>';
+  if (srv.banco) html += '<div class="wsub" style="margin:0 2px 12px">Banco de imágenes: <a href="' + esc(srv.banco) + '" target="_blank">abrir la carpeta de Drive</a>. Sube fotos reales con nombres descriptivos (por ejemplo «levo-sendero-pichijuan.jpg») y el agente las elige solas.' + (srv.pexels ? ' También usa el banco gratuito Pexels.' : '') + '</div>';
+  const grupos = [['Borrador', 'Para revisar'], ['Aprobado', 'Aprobadas'], ['Programado', 'Programadas'], ['Error', 'Con error'], ['Publicado', 'Publicadas']];
+  if (!S.piezas.length) html += '<div class="sec seg-empty"><div class="empty">' + icon('camera') + '<b>Aún no hay piezas</b>Toca «Crear con IA»: el agente mira la temporada, lo que preguntan tus clientes, lo que más se vende y el stock, y te propone un carrusel o historias listos para revisar.</div></div>';
+  grupos.forEach(([e, t]) => { const L = S.piezas.filter(p => p.estado === e); if (!L.length) return;
+    html += '<div class="lab2" style="margin:14px 2px 8px">' + t + ' <span class="num">' + L.length + '</span></div><div class="pz-grid">' + L.map(p => '<button class="pz" data-pz="' + esc(p.id) + '"><span class="pz-th' + (p.tipo === 'historias' ? ' v' : '') + '" id="th-' + esc(p.id) + '">' + (S._thumbs && S._thumbs[p.id] ? '<img src="' + S._thumbs[p.id] + '" alt="">' : '<span class="spin"></span>') + '</span><span class="pz-b"><b>' + esc(p.titulo || 'Sin título') + '</b><small>' + (p.tipo === 'historias' ? 'Historias' : 'Carrusel') + ' · ' + ((p.diseno && p.diseno.slides) || []).length + (p.tipo === 'historias' ? ' pantallas' : ' láminas') + (p.programado && e === 'Programado' ? ' · ' + esc(fmt(p.programado.slice(0, 10)) + ' ' + p.programado.slice(11)) : '') + '</small>' + (p.error ? '<small class="err">' + esc(p.error.slice(0, 90)) + '</small>' : '') + '</span></button>').join('') + '</div>'; });
+  return html;
+}
+async function miniaturas(){
+  S._thumbs = S._thumbs || {};
+  for (const p of (S.piezas || []).slice(0, 18)){
+    if (S._thumbs[p.id] || !p.diseno || !p.diseno.slides || !p.diseno.slides.length) continue;
+    try { const pz = Object.assign({ tipo: p.tipo }, p.diseno, { slides: [p.diseno.slides[0]] }); const m = marca(); await cargarFuentes(m); await prepararLogo(m); await resolverFotos(pz);
+      const cv = dibujarSlide(pz, 0, m), sm = document.createElement('canvas'); sm.width = 270; sm.height = cv.height * 270 / cv.width; sm.getContext('2d').drawImage(cv, 0, 0, sm.width, sm.height); S._thumbs[p.id] = sm.toDataURL('image/jpeg', .8);
+      const el = document.getElementById('th-' + p.id); if (el) el.innerHTML = '<img src="' + S._thumbs[p.id] + '" alt="">'; } catch(e){}
+  }
+}
+function bindEstudio(){
+  const nb = $('#esNueva'); if (nb) nb.onclick = () => crearPieza();
+  $$('#esMarca,[data-esm]').forEach(b => b.onclick = () => abrirMarca());
+  $$('[data-pz]').forEach(b => b.onclick = () => { const p = S.piezas.find(x => x.id === b.dataset.pz); if (p) abrirPieza(p); });
+  miniaturas();
+}
+
+/* --- Crear con IA --- */
+function contextoPieza(tema, tipo, idea){
+  const m = marca(), tmp = temporadaPV(), recientes = (S.piezas || []).slice(0, 10).map(p => p.titulo).filter(Boolean);
+  return ['TIPO PEDIDO: ' + (tipo === 'historias' ? 'historias (3 a 5 pantallas verticales)' : 'carrusel (5 a 8 láminas)'),
+    'TEMA: ' + (tema || (idea ? 'la idea del calendario «' + idea.tema + '» (' + idea.formato + ', ' + idea.fecha + '): ' + String(idea.idea || '').slice(0, 400) : 'elige tú el tema más oportuno según los datos de abajo')),
+    'MARCA: ' + m.nombre + ' (' + m.handle + '). Tono: ' + m.tono,
+    'CONTEXTO DEL NEGOCIO: ' + m.contexto, 'Peso objetivo de e-bikes en el contenido: ' + m.focoEbike + '%.',
+    'TEMPORADA ACTUAL: ' + tmp.t,
+    'PIEZAS RECIENTES (no repetir): ' + (recientes.join('; ') || 'ninguna'),
+    '', contextoContenido()].join('\n');
+}
+function crearPieza(idea){
+  if (!iaDisponible()){ toast('Falta la clave de Claude o la versión nueva del script'); return; }
+  const prox = (S.cont || []).filter(x => x.fecha >= hoy() && /Carrusel|Historia/.test(x.formato) && x.estado !== 'Publicado' && !(S.piezas || []).some(p => p.contenido === x.id)).slice(0, 6);
+  const md = modal(icon('spark') + ' Crear con IA', '<label class="l" style="margin-top:0">Formato</label><div class="seg" id="cp_t"><button type="button" class="pill on" data-v="carrusel">Carrusel</button><button type="button" class="pill" data-v="historias">Historias</button></div>' +
+    (prox.length ? '<label class="l">Desde tu calendario (opcional)</label><select id="cp_i"><option value="">—</option>' + prox.map(x => '<option value="' + esc(x.id) + '"' + (idea && idea.id === x.id ? ' selected' : '') + '>' + esc(fmt(x.fecha) + ' · ' + x.formato + ' · ' + x.tema) + '</option>').join('') + '</select>' : '') +
+    '<label class="l">Tema (opcional)</label><textarea class="note" id="cp_q" placeholder="Déjalo vacío y el agente elige lo más oportuno: temporada, lo que preguntan tus clientes, lo que más se vende y el stock. O escribe, por ejemplo: «Guía para elegir talla de Levo» o «Mantención de primavera»."></textarea>' +
+    '<div class="wsub" style="margin-top:8px">Tarda unos 20 segundos: el agente escribe, elige las fotos y la app la diseña con tu marca.</div><div class="btns"><button class="btn" id="cp_go">' + icon('spark') + ' Crear</button></div>');
+  bindPills('cp_t'); if (idea){ md.el.querySelectorAll('#cp_t .pill').forEach(b => b.classList.toggle('on', (idea.formato === 'Historia') === (b.dataset.v === 'historias'))); }
+  md.el.querySelector('#cp_go').onclick = async () => {
+    const b = md.el.querySelector('#cp_go'), tipo = (md.el.querySelector('#cp_t .on') || {}).dataset.v || 'carrusel', iid = md.el.querySelector('#cp_i') ? md.el.querySelector('#cp_i').value : '', it = (S.cont || []).find(x => x.id === iid);
+    b.disabled = true; b.innerHTML = '<span class="spin"></span>El agente está creando…';
+    try {
+      if (!S.base) await loadBase(false);
+      const r = (await apiX('asistente', { modo: 'pieza', contexto: contextoPieza(md.el.querySelector('#cp_q').value.trim(), tipo, it) })).r;
+      r.tipo = tipo; b.innerHTML = '<span class="spin"></span>Eligiendo fotos y diseñando…';
+      await renderPieza(r);
+      const res = await apiX('piezas', { guardar: { tipo, estado: 'Borrador', titulo: r.titulo, pilar: r.pilar, caption: r.caption, hashtags: r.hashtags, diseno: r, contenido: it ? it.id : '' } });
+      S.piezas = res.items; md.cerrar(); const p = S.piezas.find(x => x.id === res.id); if (p) abrirPieza(p); render();
+    } catch(e){ b.disabled = false; b.textContent = 'Crear'; toast('No se pudo: ' + e.message); }
+  };
+}
+
+/* --- Editor de una pieza: vista previa, edición, cambios con IA, aprobar, programar, publicar, compartir --- */
+async function abrirPieza(p){
+  const pz = Object.assign({ tipo: p.tipo }, JSON.parse(JSON.stringify(p.diseno || {})));
+  pz.slides = pz.slides || []; let sel = 0, canvases = [];
+  const md = modal(esc(p.titulo || 'Pieza'), '<div id="pzE"><div class="empty"><span class="spin"></span>Diseñando…</div></div>', { wide: true }); md.el.classList.add('pzm');
+  const box = md.el.querySelector('#pzE');
+  const repintar = async () => { canvases = await renderPieza(pz); pintar(); };
+  const guardar = async (extra) => { const res = await apiX('piezas', { guardar: Object.assign({ id: p.id, tipo: pz.tipo, estado: p.estado === 'Publicado' ? 'Publicado' : 'Borrador', titulo: pz.titulo, pilar: pz.pilar, caption: pz.caption, hashtags: pz.hashtags, diseno: pz, contenido: p.contenido, imagenes: p.imagenes, programado: p.programado }, extra || {}) }); S.piezas = res.items; Object.assign(p, S.piezas.find(x => x.id === p.id) || {}); if (S._thumbs) delete S._thumbs[p.id]; };
+  const pintar = () => {
+    const s = pz.slides[sel] || {}, ref = s.foto && s.foto.ref, pub = p.estado === 'Publicado', alo = S.marcaSrv && S.marcaSrv.alojamiento;
+    box.innerHTML = '<div class="pz-strip' + (pz.tipo === 'historias' ? ' v' : '') + '">' + canvases.map((c, i) => '<button class="pz-sl' + (i === sel ? ' on' : '') + '" data-sl="' + i + '"><img src="' + c.toDataURL('image/jpeg', .82) + '" alt="Lámina ' + (i + 1) + '"><span>' + (i + 1) + '</span></button>').join('') + '</div>' +
+      '<div class="pz-cols"><div class="pz-ed"><div class="lab2">Lámina ' + (sel + 1) + ' de ' + pz.slides.length + '</div>' +
+        '<div class="rs-row"><div><label class="l">Diseño</label><select id="pe_l">' + ['portada', 'texto', 'lista', 'comparativa', 'dato', 'foto', 'pregunta', 'cta'].map(x => '<option' + (x === s.layout ? ' selected' : '') + '>' + x + '</option>').join('') + '</select></div><div><label class="l">Etiqueta</label><input type="text" id="pe_k" value="' + esc(s.kicker || '') + '"></div></div>' +
+        '<label class="l">Título</label><input type="text" id="pe_t" value="' + esc(s.titulo || '') + '">' +
+        (s.layout === 'dato' ? '<label class="l">Cifra</label><input type="text" id="pe_n" value="' + esc(s.numero || '') + '">' : '') +
+        '<label class="l">' + (s.layout === 'lista' || s.layout === 'comparativa' ? 'Ítems (uno por línea' + (s.layout === 'comparativa' ? ', «A | B»; la primera línea son los títulos' : '') + ')' : s.layout === 'cta' ? 'Texto (y en ítems, el texto del botón)' : 'Texto') + '</label>' +
+        (s.layout === 'lista' || s.layout === 'comparativa' || s.layout === 'cta' ? '<textarea class="note" id="pe_i" rows="4">' + esc((s.items || []).join('\n')) + '</textarea>' : '') + '<textarea class="note" id="pe_x" rows="3">' + esc(s.texto || '') + '</textarea>' +
+        '<div class="pz-foto"><span class="pz-fth">' + (ref && _img[ref.fuente + ':' + ref.id] ? '<img src="' + _img[ref.fuente + ':' + ref.id].src + '" alt="">' : icon('camera')) + '</span><div><b>' + (s.foto && s.foto.usar ? (ref ? esc(ref.nombre || 'Foto') : 'Sin foto encontrada') : 'Sin foto') + '</b><small>' + (ref ? ({ drive: 'Tu banco de Drive', ig: 'Tu Instagram', stock: 'Pexels' })[ref.fuente] || '' : esc((s.foto && s.foto.descripcion) || '')) + '</small></div><button class="btn sm sec" id="pe_f">Cambiar</button>' + (s.foto && s.foto.usar ? '<button class="btn sm sec" id="pe_sf">Quitar</button>' : '') + '</div>' +
+        '<div class="btns" style="margin-top:10px"><button class="btn sm sec" id="pe_up">↑</button><button class="btn sm sec" id="pe_dn">↓</button><button class="btn sm sec" id="pe_dup">Duplicar</button><button class="btn sm bad" id="pe_del">Eliminar</button><button class="btn sm" id="pe_ap">Aplicar</button></div></div>' +
+      '<div class="pz-side"><label class="l" style="margin-top:0">Texto de la publicación</label><textarea class="note" id="pe_c" rows="6">' + esc(pz.caption || '') + '</textarea><label class="l">Hashtags</label><input type="text" id="pe_h" value="' + esc(pz.hashtags || '') + '">' +
+        (pz.por_que ? '<div class="hint">Por qué ahora: ' + esc(pz.por_que) + '</div>' : '') +
+        '<div class="pz-ia"><label class="l">Pedir cambios al agente</label><textarea class="note" id="pe_q" rows="2" placeholder="Ej.: más corto, enfócalo en la Levo SL, agrega una lámina de tallas, cambia el tono a más técnico…"></textarea><button class="btn sm" id="pe_ia">' + icon('spark') + ' Pedir cambios</button></div>' +
+        (pub ? '<div class="pz-ok">' + icon('check') + ' Publicada' + (p.link ? ' · <a href="' + esc(p.link) + '" target="_blank">ver en Instagram</a>' : '') + '</div>' : '') +
+        (p.error ? '<div class="im-warn" style="margin-top:10px">' + icon('flag') + '<span>' + esc(p.error) + '</span></div>' : '') +
+        '<div class="pz-acc">' + (pub ? '' : '<button class="btn" id="pe_pub"' + (alo ? '' : ' title="Falta el alojamiento de imágenes"') + '>' + icon('arrow') + ' Publicar ahora</button><div class="rs-row"><input type="datetime-local" id="pe_d" value="' + esc(p.programado || sugerirHorario()) + '"><button class="btn sec" id="pe_pr">Programar</button></div>') +
+          '<div class="btns" style="margin-top:6px"><button class="btn sm sec" id="pe_sh">' + icon('box') + ' Compartir / descargar</button>' + (pub ? '' : '<button class="btn sm sec" id="pe_ok">Aprobar</button>') + '<button class="btn sm bad" id="pe_rm">Eliminar pieza</button></div>' +
+          (alo || pub ? '' : '<div class="hint">Para publicar con un toque falta el alojamiento de imágenes (ver guía). Mientras, «Compartir» abre Instagram en tu teléfono con las imágenes y copia el texto.</div>') + '</div></div></div>';
+    const $b = q => box.querySelector(q), leer = () => { const x = pz.slides[sel]; x.layout = $b('#pe_l').value; x.kicker = $b('#pe_k').value; x.titulo = $b('#pe_t').value; x.texto = $b('#pe_x').value; if ($b('#pe_n')) x.numero = $b('#pe_n').value; if ($b('#pe_i')) x.items = $b('#pe_i').value.split('\n').map(z => z.trim()).filter(Boolean); pz.caption = $b('#pe_c').value; pz.hashtags = $b('#pe_h').value; };
+    box.querySelectorAll('[data-sl]').forEach(b => b.onclick = () => { leer(); sel = +b.dataset.sl; pintar(); });
+    $b('#pe_ap').onclick = async () => { leer(); const b = $b('#pe_ap'); b.disabled = true; b.innerHTML = '<span class="spin"></span>'; canvases = await renderPieza(pz); pintar(); guardar().catch(e => toast('No se guardó: ' + e.message)); };
+    $b('#pe_up').onclick = () => { leer(); if (sel > 0){ [pz.slides[sel - 1], pz.slides[sel]] = [pz.slides[sel], pz.slides[sel - 1]]; [canvases[sel - 1], canvases[sel]] = [canvases[sel], canvases[sel - 1]]; sel--; repintar(); } };
+    $b('#pe_dn').onclick = () => { leer(); if (sel < pz.slides.length - 1){ [pz.slides[sel + 1], pz.slides[sel]] = [pz.slides[sel], pz.slides[sel + 1]]; sel++; repintar(); } };
+    $b('#pe_dup').onclick = () => { leer(); pz.slides.splice(sel + 1, 0, JSON.parse(JSON.stringify(pz.slides[sel]))); sel++; repintar(); };
+    $b('#pe_del').onclick = () => { if (pz.slides.length <= 1) return; pz.slides.splice(sel, 1); sel = Math.max(0, sel - 1); repintar(); };
+    $b('#pe_sf') && ($b('#pe_sf').onclick = () => { leer(); pz.slides[sel].foto = Object.assign({}, pz.slides[sel].foto, { usar: false }); repintar(); });
+    $b('#pe_f').onclick = () => { leer(); elegirFoto(pz.tipo, ref2 => { const x = pz.slides[sel]; x.foto = Object.assign({ palabras: [], descripcion: '', fuente: 'propia' }, x.foto, { usar: true, ref: ref2 }); repintar(); }); };
+    $b('#pe_ia').onclick = async () => { leer(); const q = $b('#pe_q').value.trim(); if (!q){ toast('Escribe qué quieres cambiar'); return; } const b = $b('#pe_ia'); b.disabled = true; b.innerHTML = '<span class="spin"></span>Corrigiendo…';
+      try { const sinRef = JSON.parse(JSON.stringify(pz)); sinRef.slides.forEach(z => { if (z.foto) delete z.foto.ref; });
+        const r = (await apiX('asistente', { modo: 'pieza', contexto: contextoPieza('', pz.tipo) + '\n\nPIEZA ACTUAL:\n' + JSON.stringify(sinRef) + '\n\nCAMBIOS PEDIDOS: ' + q })).r;
+        r.tipo = pz.tipo; r.slides.forEach((z, k) => { const prev = pz.slides[k]; if (prev && prev.foto && prev.foto.ref && z.foto && z.foto.usar && norm(z.foto.descripcion) === norm(prev.foto.descripcion || '')) z.foto.ref = prev.foto.ref; });
+        Object.keys(pz).forEach(k => delete pz[k]); Object.assign(pz, r); sel = Math.min(sel, pz.slides.length - 1); canvases = await renderPieza(pz); pintar(); await guardar(); toast('✓ Cambios aplicados');
+      } catch(e){ b.disabled = false; b.textContent = 'Pedir cambios'; toast('No se pudo: ' + e.message); } };
+    $b('#pe_sh').onclick = () => { leer(); compartirPieza(pz, canvases); };
+    $b('#pe_rm').onclick = async () => { const b = $b('#pe_rm'); if (b.dataset.c !== '1'){ b.dataset.c = '1'; b.textContent = '¿Seguro? Toca otra vez'; return; } try { const r = await apiX('piezas', { borrar: p.id }); S.piezas = r.items; md.cerrar(); render(); } catch(e){ toast('No se pudo: ' + e.message); } };
+    $b('#pe_ok') && ($b('#pe_ok').onclick = async () => { leer(); try { await guardar({ estado: 'Aprobado' }); toast('✓ Aprobada'); md.cerrar(); render(); } catch(e){ toast('No se pudo: ' + e.message); } });
+    $b('#pe_pub') && ($b('#pe_pub').onclick = () => { leer(); publicarPieza(p, pz, canvases, null, $b('#pe_pub'), md); });
+    $b('#pe_pr') && ($b('#pe_pr').onclick = () => { leer(); const d = $b('#pe_d').value; if (!d){ toast('Elige fecha y hora'); return; } publicarPieza(p, pz, canvases, d, $b('#pe_pr'), md); });
+  };
+  try { await repintar(); } catch(e){ box.innerHTML = '<div class="empty">No se pudo diseñar: ' + esc(e.message) + '</div>'; }
+}
+function sugerirHorario(){
+  const E = S.igEst && S.igEst.estrategia, h = hoy(), d = addDays(h, 1);
+  const hr = E && E.horarios && E.horarios[0] && /^\d{1,2}:\d{2}/.test(E.horarios[0].hora) ? E.horarios[0].hora.slice(0, 5).padStart(5, '0') : '19:30';
+  return d + 'T' + hr;
+}
+async function jpegs(canvases){ return canvases.map(c => c.toDataURL('image/jpeg', 0.9)); }
+async function publicarPieza(p, pz, canvases, cuando, btn, md){
+  const alo = S.marcaSrv && S.marcaSrv.alojamiento;
+  if (!alo){ toast('Falta el alojamiento de imágenes: usa «Compartir» o revisa la guía'); return; }
+  const txt0 = btn.innerHTML; btn.disabled = true;
+  try {
+    const J = await jpegs(canvases), urls = [];
+    for (let i = 0; i < J.length; i++){ btn.innerHTML = '<span class="spin"></span>Subiendo ' + (i + 1) + '/' + J.length + '…'; const r = await apiX('subirMedia', { data: J[i], nombre: p.id + '-' + (i + 1) + '-' + Date.now().toString(36) }); urls.push(r.url); }
+    p.imagenes = urls;
+    if (cuando){ p.programado = cuando; await apiX('piezas', { guardar: { id: p.id, tipo: pz.tipo, estado: 'Programado', titulo: pz.titulo, pilar: pz.pilar, caption: pz.caption, hashtags: pz.hashtags, diseno: pz, contenido: p.contenido, imagenes: urls, programado: cuando } });
+      toast('📅 Programada para el ' + fmt(cuando.slice(0, 10)) + ' a las ' + cuando.slice(11) + ' (se publica sola, con un margen de hasta una hora)'); }
+    else {
+      await apiX('piezas', { guardar: { id: p.id, tipo: pz.tipo, estado: 'Aprobado', titulo: pz.titulo, pilar: pz.pilar, caption: pz.caption, hashtags: pz.hashtags, diseno: pz, contenido: p.contenido, imagenes: urls } });
+      btn.innerHTML = '<span class="spin"></span>Publicando en Instagram…';
+      const r = await apiX('publicar', { id: p.id }); confetti(60); toast('🎉 Publicada en Instagram');
+      if (r.link) setTimeout(() => window.open(r.link, '_blank'), 600);
+    }
+    const res = await apiX('piezas', {}); S.piezas = res.items; md.cerrar(); S.igAt = 0; render();
+  } catch(e){ btn.disabled = false; btn.innerHTML = txt0; toast('No se pudo: ' + e.message); try { S.piezas = (await apiX('piezas', {})).items; } catch(x){} }
+}
+async function compartirPieza(pz, canvases){
+  const texto = (pz.caption || '') + (pz.hashtags ? '\n\n' + pz.hashtags : '');
+  try { await navigator.clipboard.writeText(texto); } catch(e){}
+  const files = await Promise.all(canvases.map((c, i) => new Promise(r => c.toBlob(b => r(new File([b], 'blackline-' + (i + 1) + '.jpg', { type: 'image/jpeg' })), 'image/jpeg', 0.92))));
+  if (navigator.canShare && navigator.canShare({ files })){ try { await navigator.share({ files, text: texto }); toast('Texto copiado: pégalo en Instagram'); return; } catch(e){ if (e.name === 'AbortError') return; } }
+  files.forEach((f, i) => { const a = document.createElement('a'); a.href = URL.createObjectURL(f); a.download = f.name; document.body.appendChild(a); setTimeout(() => { a.click(); a.remove(); }, i * 300); });
+  toast('Imágenes descargadas · texto copiado');
+}
+// Selector de fotos: tus publicaciones, tu banco de Drive y Pexels.
+async function elegirFoto(tipo, cb){
+  const md = modal(icon('camera') + ' Elegir foto', '<div class="seg" id="ef_t"><button type="button" class="pill on" data-v="ig">Tu Instagram</button><button type="button" class="pill" data-v="drive">Banco de Drive</button>' + (S.marcaSrv && S.marcaSrv.pexels ? '<button type="button" class="pill" data-v="stock">Pexels</button>' : '') + '</div><div class="tbar" id="ef_b" style="margin-top:10px"><input type="text" id="ef_q" placeholder="Buscar (ej.: levo, lago, sendero)"></div><div id="ef_g" class="ef-g"><div class="empty"><span class="spin"></span></div></div>', { wide: true });
+  await bancoListas();
+  let fuente = 'ig';
+  const pintar = async () => {
+    const q = norm(md.el.querySelector('#ef_q').value), g = md.el.querySelector('#ef_g');
+    if (fuente === 'stock'){
+      if (!q){ g.innerHTML = '<div class="wsub">Escribe qué buscar (en inglés funciona mejor: mountain bike, lake, rain…).</div>'; return; }
+      g.innerHTML = '<div class="empty"><span class="spin"></span></div>'; const r = await apiX('imagen', { accion: 'buscar', q, orientacion: tipo === 'historias' ? 'portrait' : 'portrait' }); S._stock = r.items || [];
+      g.innerHTML = S._stock.map((x, i) => '<button class="ef-i" data-ef="' + i + '"><img src="' + esc(x.thumb) + '" alt="" loading="lazy"><small>' + esc(x.autor) + '</small></button>').join('') || '<div class="wsub">Sin resultados.</div>';
+      g.querySelectorAll('[data-ef]').forEach(b => b.onclick = async () => { const x = S._stock[+b.dataset.ef]; b.classList.add('cargando'); await traerImgs([x]); md.cerrar(); cb({ fuente: 'stock', id: x.id, url: x.url, nombre: 'Foto de ' + x.autor + ' (Pexels)' }); });
+      return;
+    }
+    const L = (fuente === 'ig' ? S.propias : S.banco).filter(x => !q || norm(x.nombre).includes(q)).slice(0, 30);
+    if (!L.length){ g.innerHTML = '<div class="wsub">' + (fuente === 'drive' ? 'Tu banco de Drive está vacío o falta autorizarlo (autorizarEstudio). Sube fotos con nombres descriptivos.' : 'No hay fotos.') + '</div>'; return; }
+    if (fuente === 'drive'){ const falt = L.filter(x => !_img['drive:' + x.id]); g.innerHTML = '<div class="empty"><span class="spin"></span>Cargando miniaturas…</div>'; await traerImgs(falt.slice(0, 18), 400); }
+    g.innerHTML = L.map((x, i) => { const src = fuente === 'ig' ? x.thumb : (_img['drive:' + x.id] || {}).src; return '<button class="ef-i" data-ef="' + i + '">' + (src ? '<img src="' + esc(src) + '" alt="" loading="lazy">' : '<span class="spin"></span>') + '<small>' + esc((x.nombre || '').slice(0, 40)) + '</small></button>'; }).join('');
+    g.querySelectorAll('[data-ef]').forEach(b => b.onclick = async () => { const x = L[+b.dataset.ef]; b.classList.add('cargando'); delete _img[x.fuente + ':' + x.id]; await traerImgs([x]); md.cerrar(); cb({ fuente: x.fuente, id: x.id, nombre: x.nombre }); });
+  };
+  md.el.querySelectorAll('#ef_t [data-v]').forEach(b => b.onclick = () => { fuente = b.dataset.v; md.el.querySelectorAll('#ef_t [data-v]').forEach(z => z.classList.toggle('on', z === b)); pintar(); });
+  let tq; md.el.querySelector('#ef_q').oninput = () => { clearTimeout(tq); tq = setTimeout(pintar, 400); };
+  pintar();
+}
+
+/* --- Kit de marca --- */
+function abrirMarca(){
+  const m = marca(), C = m.colores;
+  const md = modal(icon('target') + ' Kit de marca', '<div class="mk">' +
+    '<div class="mk-prev" id="mk_p"></div><div class="mk-f">' +
+    '<div class="lab2">Colores</div><div class="mk-c">' + [['fondo', 'Fondo'], ['texto', 'Texto'], ['acento', 'Acento'], ['claro', 'Fondo claro'], ['tinta', 'Texto sobre claro']].map(([k, t]) => '<label><input type="color" id="mk_' + k + '" value="' + esc(C[k]) + '"><span>' + t + '</span></label>').join('') + '</div>' +
+    (igActivo() ? '<button class="btn sm sec" id="mk_det" style="margin-top:8px">' + icon('spark') + ' Detectar colores de mi Instagram</button><div class="mk-sw" id="mk_sw"></div>' : '') +
+    '<div class="lab2" style="margin-top:14px">Tipografías</div><div class="rs-row"><div><label class="l">Títulos</label><select id="mk_ft">' + FUENTES_MARCA.map(f => '<option' + (f === m.fuenteTitulo ? ' selected' : '') + '>' + f + '</option>').join('') + '</select></div><div><label class="l">Textos</label><select id="mk_fx">' + FUENTES_MARCA.map(f => '<option' + (f === m.fuenteTexto ? ' selected' : '') + '>' + f + '</option>').join('') + '</select></div></div>' +
+    '<label class="row" style="gap:8px;margin-top:10px;font-size:14px"><input type="checkbox" id="mk_may"' + (m.mayusculas ? ' checked' : '') + ' style="width:18px;height:18px"> Títulos en mayúsculas</label><label class="row" style="gap:8px;margin-top:6px;font-size:14px"><input type="checkbox" id="mk_alt"' + (m.alternar ? ' checked' : '') + ' style="width:18px;height:18px"> Alternar fondo oscuro y claro en las láminas</label>' +
+    '<div class="lab2" style="margin-top:14px">Logo</div><div class="row" style="gap:10px;align-items:center"><span class="mk-logo" id="mk_lg">' + (m.logoData ? '<img src="' + m.logoData + '" alt="">' : 'Sin logo') + '</span><label class="btn sm sec">Subir logo (PNG con fondo transparente)<input type="file" id="mk_lf" accept="image/*" style="display:none"></label></div>' +
+    '<label class="row" style="gap:8px;margin-top:6px;font-size:14px"><input type="checkbox" id="mk_inv"' + (m.logoInvertir ? ' checked' : '') + ' style="width:18px;height:18px"> Invertir el logo sobre fondos claros</label>' +
+    '<div class="rs-row"><div><label class="l">Usuario</label><input type="text" id="mk_h" value="' + esc(m.handle) + '"></div><div><label class="l">Peso de e-bikes en el contenido</label><input type="number" id="mk_eb" min="0" max="100" value="' + m.focoEbike + '"></div></div>' +
+    '<label class="l">Tono</label><input type="text" id="mk_to" value="' + esc(m.tono) + '"><label class="l">Contexto del negocio (lo lee el agente)</label><textarea class="note" id="mk_cx" rows="5">' + esc(m.contexto) + '</textarea>' +
+    '<div class="btns"><button class="btn" id="mk_ok">Guardar kit de marca</button></div></div></div>', { wide: true });
+  md.el.classList.add('pzm');
+  let logo = m.logoData;
+  const leer = () => ({ nombre: m.nombre, handle: md.el.querySelector('#mk_h').value.trim() || m.handle, web: m.web, colores: { fondo: md.el.querySelector('#mk_fondo').value, texto: md.el.querySelector('#mk_texto').value, acento: md.el.querySelector('#mk_acento').value, claro: md.el.querySelector('#mk_claro').value, tinta: md.el.querySelector('#mk_tinta').value },
+    fuenteTitulo: md.el.querySelector('#mk_ft').value, pesoTitulo: 800, fuenteTexto: md.el.querySelector('#mk_fx').value, mayusculas: md.el.querySelector('#mk_may').checked, alternar: md.el.querySelector('#mk_alt').checked, logoData: logo, logoInvertir: md.el.querySelector('#mk_inv').checked,
+    tono: md.el.querySelector('#mk_to').value.trim(), contexto: md.el.querySelector('#mk_cx').value.trim(), focoEbike: Math.max(0, Math.min(100, +md.el.querySelector('#mk_eb').value || 50)) });
+  const prev = async () => {
+    const mm = Object.assign({}, MARCA_BASE, leer()); await cargarFuentes(mm); await prepararLogo(mm);
+    const demo = { tipo: 'carrusel', slides: [{ layout: 'texto', kicker: 'Temporada e-bike', titulo: '¿Qué Levo es para ti?', texto: 'Autonomía, peso y uso: te ayudamos a elegir la e-bike correcta para los senderos del sur.', items: [], foto: { usar: false } }, { layout: 'lista', kicker: '', titulo: 'Antes de salir', texto: '', items: ['Revisa la presión', 'Carga la batería', 'Lubrica la cadena'], foto: { usar: false } }] };
+    const a = dibujarSlide(demo, 0, mm), b = dibujarSlide(demo, 1, mm);
+    md.el.querySelector('#mk_p').innerHTML = '<img src="' + a.toDataURL('image/jpeg', .8) + '" alt="Vista previa"><img src="' + b.toDataURL('image/jpeg', .8) + '" alt="Vista previa">';
+  };
+  md.el.querySelectorAll('input,select,textarea').forEach(x => { if (x.id !== 'mk_lf') x.addEventListener('change', prev); });
+  md.el.querySelector('#mk_lf').onchange = async e => {
+    const f = e.target.files[0]; if (!f) return; const im = await cargarImg(URL.createObjectURL(f));
+    for (const max of [360, 260, 180]){ const r = Math.min(1, max / Math.max(im.width, im.height)), c = document.createElement('canvas'); c.width = Math.round(im.width * r); c.height = Math.round(im.height * r); c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); logo = c.toDataURL('image/png'); if (logo.length < 40000) break; }
+    md.el.querySelector('#mk_lg').innerHTML = '<img src="' + logo + '" alt="">'; prev();
+  };
+  const det = md.el.querySelector('#mk_det'); if (det) det.onclick = async () => {
+    det.disabled = true; det.innerHTML = '<span class="spin"></span>Mirando tus publicaciones…';
+    try { await bancoListas(); const L = (S.propias || []).slice(0, 9); await traerImgs(L, 240);
+      const cnt = {}; L.forEach(x => { const im = _img['ig:' + x.id]; if (!im) return; const c = document.createElement('canvas'); c.width = 48; c.height = 48; const k = c.getContext('2d'); k.drawImage(im, 0, 0, 48, 48); const d = k.getImageData(0, 0, 48, 48).data;
+        for (let i = 0; i < d.length; i += 4){ const r = d[i] >> 4, g = d[i + 1] >> 4, b2 = d[i + 2] >> 4, key = r + ',' + g + ',' + b2; cnt[key] = (cnt[key] || 0) + 1; } });
+      const hex = v => '#' + v.split(',').map(n => ((+n << 4) + 8).toString(16).padStart(2, '0')).join('');
+      const top = Object.entries(cnt).sort((a, b) => b[1] - a[1]).slice(0, 40).map(e => hex(e[0])).filter((h, i, a) => a.findIndex(z => Math.abs(parseInt(z.slice(1), 16) - parseInt(h.slice(1), 16)) < 0x0a0a0a) === i).slice(0, 8);
+      md.el.querySelector('#mk_sw').innerHTML = '<div class="wsub">Colores frecuentes en tus publicaciones (toca uno para usarlo de acento):</div>' + top.map(h => '<button class="sw" data-sw="' + h + '" style="background:' + h + '" title="' + h + '"></button>').join('');
+      md.el.querySelectorAll('[data-sw]').forEach(b => b.onclick = () => { md.el.querySelector('#mk_acento').value = b.dataset.sw; prev(); });
+      det.style.display = 'none';
+    } catch(e){ det.disabled = false; det.textContent = 'Detectar colores de mi Instagram'; toast('No se pudo: ' + e.message); }
+  };
+  md.el.querySelector('#mk_ok').onclick = async () => { const b = md.el.querySelector('#mk_ok'); b.disabled = true; b.innerHTML = '<span class="spin"></span>Guardando…'; try { S.marcaSrv = await apiX('marca', { guardar: leer() }); S._thumbs = {}; toast('✓ Kit de marca guardado'); md.cerrar(); render(); } catch(e){ b.disabled = false; b.textContent = 'Guardar kit de marca'; toast('No se pudo: ' + e.message); } };
+  prev();
 }
 
 /* ---------- vista: Negocios (pipeline de ventas estilo CRM) ---------- */
@@ -2950,7 +3419,7 @@ function metricasNeg(){
   };
 }
 // Contactos con señales de compra y sin negociación abierta.
-function oportunidades(){
+function oportunidadesNeg(){
   if (!S.base) return [];
   const con = new Set(abiertos().map(n => n.contacto)), I = S.base.interacciones || [], h = hoy();
   return contactos().filter(c => ['Cliente', 'Por clasificar'].includes(c.tipo) && !con.has(c.id)).map(c => {
@@ -3053,7 +3522,7 @@ function resumenNegHTML(m){
   return html + oportunidadesHTML() + '</div>';
 }
 function oportunidadesHTML(){
-  const O = oportunidades(); if (!O.length) return '';
+  const O = oportunidadesNeg(); if (!O.length) return '';
   return card('Oportunidades detectadas' + ib('oportunidades'), '💡', O.map(x => '<div class="sug"><span class="ic">' + avatar(x.c, 38) + '</span><div class="grow"><div class="tt">' + esc(x.c.nombre || x.c.email) + '</div><div class="st">' + esc((x.rec[0] && x.rec[0].detalle) || x.c.etiquetas || '') + '</div></div><button class="btn sm" data-opc="' + esc(x.c.id) + '">＋ Negocio</button></div>').join(''));
 }
 function pipelineHTML(){

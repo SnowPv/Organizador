@@ -15,8 +15,8 @@
  * Para actualizar este archivo más adelante: reemplaza todo su contenido y repite los dos pasos anteriores.
  */
 
-const EX_VERSION = '2026-10-27';
-const EX_NIVEL = 14;      // la app lo usa para saber qué funciones tiene este script
+const EX_VERSION = '2026-10-29';
+const EX_NIVEL = 15;      // la app lo usa para saber qué funciones tiene este script
 const EX_HOJA = 'Tareas';
 const EX_PRIMERA = 4;
 const EX_ULTIMA = 400;
@@ -130,6 +130,11 @@ function app_extra_(p) {
     case 'oportunidad': return ex_oportunidad_(p);
     case 'leadsCanal': return ex_leadsCanal_(p);
     case 'igEstrategia': return ex_igEstrategia_(p);
+    case 'marca':      return ex_marca_(p);
+    case 'imagen':     return ex_imagen_(p);
+    case 'piezas':     return ex_piezas_(p);
+    case 'subirMedia': return ex_subirMedia_(p);
+    case 'publicar':   return ex_publicarPieza_(p);
     default:           return { ok: false, error: 'op desconocida: ' + p.op };
   }
 }
@@ -1109,6 +1114,180 @@ function ex_igEstrategia_(p) {
   const e = leer(2), i = leer(3), b = leer(4);
   return { ok: true, estrategia: e.e, fecha: e.fecha, insights: i.e, insightsFecha: i.fecha, insightsBase: b.e, insightsBaseFecha: b.fecha };
 }
+/* ---------- Estudio de contenido: marca, banco de imágenes, piezas (carruseles e historias), alojamiento y publicación ---------- */
+// Propiedades del script: GITHUB_TOKEN (token con permiso de escritura solo en el repositorio de imágenes),
+// MEDIA_REPO (opcional; por defecto SnowPv/Organizador-media), PEXELS_KEY (opcional, banco de fotos gratis).
+const EX_CAB_PIEZAS = ['ID', 'Creado', 'Tipo', 'Estado', 'Título', 'Pilar', 'Texto', 'Hashtags', 'Diseño (JSON)', 'Programado', 'Imágenes', 'ID Instagram', 'Link', 'Error', 'Contenido'];
+const EX_CARPETA_BANCO = 'Organizador · Banco de imágenes';
+
+// Ejecútala una vez (▶) después de actualizar: da el permiso de Google Drive y crea la carpeta del banco de imágenes.
+function autorizarEstudio() {
+  const f = ex_carpetaBanco_();
+  Logger.log('Listo ✓ · Sube tus fotos a esta carpeta de Drive (ponles nombres descriptivos, por ejemplo "levo-sendero-pichijuan.jpg"): ' + f.getUrl());
+}
+function ex_carpetaBanco_() {
+  const pr = PropertiesService.getScriptProperties(), id = pr.getProperty('EX_BANCO_ID');
+  if (id) { try { return DriveApp.getFolderById(id); } catch (e) {} }
+  const it = DriveApp.getFoldersByName(EX_CARPETA_BANCO), f = it.hasNext() ? it.next() : DriveApp.createFolder(EX_CARPETA_BANCO);
+  pr.setProperty('EX_BANCO_ID', f.getId());
+  return f;
+}
+
+// Kit de marca (colores, tipografías, logo, tono y contexto del negocio), guardado en la hoja "Marca".
+function ex_marca_(p) {
+  const sh = ex_hojaCab_('Marca', ['Actualizado', 'Marca (JSON)']);
+  if (p.guardar) sh.getRange(2, 1, 1, 2).setValues([[new Date(), JSON.stringify(p.guardar).slice(0, 45000)]]);
+  if (p.logo) {   // logo en base64 → archivo en la carpeta del banco
+    const b = Utilities.newBlob(Utilities.base64Decode(String(p.logo).replace(/^data:[^,]+,/, '')), p.tipoLogo || 'image/png', 'logo-marca.png');
+    const f = ex_carpetaBanco_().createFile(b);
+    const v = sh.getLastRow() >= 2 ? sh.getRange(2, 2).getValue() : '{}'; let m = {}; try { m = JSON.parse(v || '{}'); } catch (e) {}
+    m.logo = f.getId(); sh.getRange(2, 1, 1, 2).setValues([[new Date(), JSON.stringify(m)]]);
+  }
+  const v = sh.getLastRow() >= 2 ? sh.getRange(2, 1, 1, 2).getValues()[0] : null; let m = null; try { m = v && v[1] ? JSON.parse(v[1]) : null; } catch (e) {}
+  const pr = PropertiesService.getScriptProperties();
+  return { ok: true, marca: m, alojamiento: !!pr.getProperty('GITHUB_TOKEN'), pexels: !!pr.getProperty('PEXELS_KEY'), banco: pr.getProperty('EX_BANCO_ID') ? 'https://drive.google.com/drive/folders/' + pr.getProperty('EX_BANCO_ID') : '' };
+}
+
+// Banco de imágenes: tus fotos de Instagram, la carpeta de Drive y Pexels. Las imágenes se entregan en base64
+// para que la app pueda dibujarlas (el navegador no deja exportar imágenes de otros sitios).
+function ex_imagen_(p) {
+  const pr = PropertiesService.getScriptProperties();
+  if (p.accion === 'listar') {
+    const out = [];
+    try {
+      const it = ex_carpetaBanco_().getFiles();
+      while (it.hasNext() && out.length < 300) { const f = it.next(); if (/^image\//.test(f.getMimeType()) && !/^logo-marca/.test(f.getName())) out.push({ fuente: 'drive', id: f.getId(), nombre: f.getName().replace(/\.[a-z0-9]+$/i, ''), fecha: f.getDateCreated().toISOString() }); }
+    } catch (e) { return { ok: true, items: [], error: 'Falta autorizar Google Drive: ejecuta autorizarEstudio en el editor.' }; }
+    return { ok: true, items: out };
+  }
+  if (p.accion === 'buscar') {   // Pexels
+    const k = pr.getProperty('PEXELS_KEY'); if (!k) return { ok: true, items: [], sinClave: true };
+    const r = UrlFetchApp.fetch('https://api.pexels.com/v1/search?per_page=12&orientation=' + (p.orientacion || 'portrait') + '&query=' + encodeURIComponent(p.q || 'mountain bike'), { headers: { Authorization: k }, muteHttpExceptions: true });
+    const j = JSON.parse(r.getContentText() || '{}');
+    return { ok: true, items: (j.photos || []).map(function (x) { return { fuente: 'stock', id: String(x.id), nombre: x.alt || '', autor: x.photographer || '', thumb: x.src.medium, url: x.src.large2x || x.src.large }; }) };
+  }
+  if (p.accion === 'traer') {   // una o varias imágenes en base64 (máx. 12 por llamada)
+    const tok = ex_igToken_();
+    return { ok: true, items: (p.items || []).slice(0, 12).map(function (x) {
+      try {
+        let blob;
+        if (x.fuente === 'drive') blob = UrlFetchApp.fetch('https://drive.google.com/thumbnail?id=' + encodeURIComponent(x.id) + '&sz=w' + (x.ancho || 1600), { headers: { Authorization: 'Bearer ' + ScriptApp.getOAuthToken() } }).getBlob();
+        else if (x.fuente === 'ig') { const m = ex_igGet_('/' + x.id + '?fields=media_url,thumbnail_url,media_type', tok); blob = UrlFetchApp.fetch(m.media_type === 'VIDEO' ? m.thumbnail_url : m.media_url).getBlob(); }
+        else if (x.fuente === 'stock' && /^https:\/\/images\.pexels\.com\//.test(x.url || '')) blob = UrlFetchApp.fetch(x.url.split('?')[0] + '?auto=compress&cs=tinysrgb&w=' + (x.ancho || 1600)).getBlob();
+        else return { id: x.id, error: 'fuente no permitida' };
+        return { id: x.id, fuente: x.fuente, data: 'data:' + (blob.getContentType() || 'image/jpeg') + ';base64,' + Utilities.base64Encode(blob.getBytes()) };
+      } catch (e) { return { id: x.id, error: e.message }; }
+    }) };
+  }
+  if (p.accion === 'propias') {   // miniaturas de tus publicaciones con foto (para elegir)
+    const tok = ex_igToken_(); if (!tok) return { ok: true, items: [] };
+    const j = ex_igGet_('/me/media?fields=id,caption,media_type,media_url,thumbnail_url,timestamp&limit=50', tok);
+    return { ok: true, items: (j.data || []).filter(function (m) { return m.media_url || m.thumbnail_url; }).map(function (m) { return { fuente: 'ig', id: m.id, nombre: String(m.caption || '').split('\n')[0].slice(0, 120), thumb: m.media_type === 'VIDEO' ? m.thumbnail_url : m.media_url, fecha: m.timestamp }; }) };
+  }
+  throw new Error('acción desconocida');
+}
+
+// Piezas: listar, guardar (nueva o editada), cambiar estado o programar.
+function ex_piezas_(p) {
+  const sh = ex_hojaCab_('Piezas', EX_CAB_PIEZAS), C = EX_CAB_PIEZAS.length, tz = ex_tz_();
+  const leer = function () { const n = sh.getLastRow() - 1; return n > 0 ? sh.getRange(2, 1, n, C).getValues() : []; };
+  if (p.guardar) {
+    const x = p.guardar, filas = leer(), i = x.id ? filas.findIndex(function (r) { return String(r[0]) === String(x.id); }) : -1;
+    const id = i >= 0 ? String(filas[i][0]) : 'pz-' + Date.now().toString(36);
+    const fila = [id, i >= 0 ? filas[i][1] : new Date(), x.tipo || 'carrusel', x.estado || 'Borrador', x.titulo || '', x.pilar || '', x.caption || '', x.hashtags || '', JSON.stringify(x.diseno || {}).slice(0, 45000),
+      x.programado ? Utilities.parseDate(String(x.programado).replace('T', ' '), tz, 'yyyy-MM-dd HH:mm') : '', (x.imagenes || []).join('\n'), i >= 0 ? filas[i][11] : '', i >= 0 ? filas[i][12] : '', '', x.contenido || (i >= 0 ? filas[i][14] : '')];
+    if (i >= 0) sh.getRange(i + 2, 1, 1, C).setValues([fila]); else sh.appendRow(fila);
+    p.id = id;
+  }
+  if (p.borrar) { const filas = leer(), i = filas.findIndex(function (r) { return String(r[0]) === String(p.borrar); }); if (i >= 0) sh.deleteRow(i + 2); }
+  const items = leer().filter(function (r) { return r[0]; }).map(function (r) {
+    let d = {}; try { d = JSON.parse(r[8] || '{}'); } catch (e) {}
+    return { id: String(r[0]), creado: r[1] instanceof Date ? r[1].toISOString() : '', tipo: r[2], estado: r[3], titulo: r[4], pilar: r[5], caption: r[6], hashtags: r[7], diseno: d,
+      programado: r[9] instanceof Date ? Utilities.formatDate(r[9], tz, "yyyy-MM-dd'T'HH:mm") : '', imagenes: String(r[10] || '').split('\n').filter(String), igId: String(r[11] || ''), link: String(r[12] || ''), error: String(r[13] || ''), contenido: String(r[14] || '') };
+  }).reverse();
+  return { ok: true, items: items, id: p.id || '' };
+}
+
+// Alojamiento: sube un JPEG al repositorio público de imágenes (GitHub) y devuelve el link directo que Instagram acepta.
+function ex_subirMedia_(p) {
+  const pr = PropertiesService.getScriptProperties(), tok = pr.getProperty('GITHUB_TOKEN');
+  if (!tok) throw new Error('Falta GITHUB_TOKEN en las propiedades del script (alojamiento de imágenes).');
+  const repo = pr.getProperty('MEDIA_REPO') || 'SnowPv/Organizador-media', tz = ex_tz_();
+  const datos = String(p.data || '').replace(/^data:image\/jpeg;base64,/, '');
+  if (!datos || datos.length > 11000000) throw new Error('imagen vacía o demasiado grande');
+  const ruta = 'media/' + Utilities.formatDate(new Date(), tz, 'yyyy/MM') + '/' + String(p.nombre || ('img-' + Date.now())).replace(/[^a-z0-9._-]/gi, '-') + '.jpg';
+  const r = UrlFetchApp.fetch('https://api.github.com/repos/' + repo + '/contents/' + ruta, { method: 'put', muteHttpExceptions: true, contentType: 'application/json',
+    headers: { Authorization: 'Bearer ' + tok, Accept: 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' },
+    payload: JSON.stringify({ message: 'Imagen ' + ruta, content: datos, branch: 'main' }) });
+  const j = JSON.parse(r.getContentText() || '{}');
+  if (r.getResponseCode() >= 300) throw new Error('GitHub respondió ' + r.getResponseCode() + ': ' + String(j.message || '').slice(0, 120));
+  return { ok: true, url: 'https://raw.githubusercontent.com/' + repo + '/main/' + ruta };
+}
+
+// Publicación en Instagram (carrusel, imagen o historias). Si la pieza tiene fecha, la ronda horaria la publica sola.
+function ex_igPost_(ruta, datos, tok) {
+  const payload = Object.assign({ access_token: tok }, datos);
+  const r = UrlFetchApp.fetch(EX_IG_API + ruta, { method: 'post', payload: payload, muteHttpExceptions: true });
+  const j = JSON.parse(r.getContentText() || '{}');
+  if (j.error) throw new Error('Instagram: ' + (j.error.error_user_msg || j.error.message || 'error') + (j.error.code ? ' (' + j.error.code + ')' : ''));
+  return j;
+}
+function ex_igEsperar_(id, tok) {
+  for (let k = 0; k < 20; k++) {
+    const s = ex_igGet_('/' + id + '?fields=status_code', tok).status_code;
+    if (s === 'FINISHED' || s === 'PUBLISHED') return true;
+    if (s === 'ERROR' || s === 'EXPIRED') throw new Error('Instagram no pudo procesar la imagen (' + s + ')');
+    Utilities.sleep(3000);
+  }
+  throw new Error('Instagram tardó demasiado en procesar la imagen');
+}
+function ex_contenedor_(datos, tok, uid) {
+  let ultimo;
+  for (let k = 0; k < 2; k++) {   // si recién se subió, a veces el link demora unos segundos en estar disponible
+    try { const c = ex_igPost_('/' + uid + '/media', datos, tok); ex_igEsperar_(c.id, tok); return c.id; } catch (e) { ultimo = e; Utilities.sleep(5000); }
+  }
+  throw ultimo;
+}
+function ex_publicarPieza_(p) {
+  const tok = ex_igToken_(); if (!tok) throw new Error('falta IG_TOKEN');
+  const sh = ex_hojaCab_('Piezas', EX_CAB_PIEZAS), n = sh.getLastRow() - 1, filas = n > 0 ? sh.getRange(2, 1, n, EX_CAB_PIEZAS.length).getValues() : [];
+  const i = filas.findIndex(function (r) { return String(r[0]) === String(p.id); }); if (i < 0) throw new Error('no encuentro la pieza');
+  const f = filas[i], urls = String(f[10] || '').split('\n').filter(String), texto = String(f[6] || '') + (f[7] ? '\n\n' + f[7] : '');
+  if (!urls.length) throw new Error('la pieza no tiene imágenes subidas');
+  const uid = String(ex_igGet_('/me?fields=user_id', tok).user_id);
+  try {
+    let mediaId, link = '';
+    if (String(f[2]) === 'historias') {
+      urls.forEach(function (u) { const c = ex_contenedor_({ media_type: 'STORIES', image_url: u }, tok, uid); mediaId = ex_igPost_('/' + uid + '/media_publish', { creation_id: c }, tok).id; });
+    } else if (urls.length === 1) {
+      const c = ex_contenedor_({ image_url: urls[0], caption: texto }, tok, uid); mediaId = ex_igPost_('/' + uid + '/media_publish', { creation_id: c }, tok).id;
+    } else {
+      const hijos = urls.slice(0, 10).map(function (u) { return ex_contenedor_({ image_url: u, is_carousel_item: 'true' }, tok, uid); });
+      const c = ex_contenedor_({ media_type: 'CAROUSEL', children: hijos.join(','), caption: texto }, tok, uid);
+      mediaId = ex_igPost_('/' + uid + '/media_publish', { creation_id: c }, tok).id;
+    }
+    try { link = ex_igGet_('/' + mediaId + '?fields=permalink', tok).permalink || ''; } catch (e) {}
+    sh.getRange(i + 2, 4).setValue('Publicado'); sh.getRange(i + 2, 12, 1, 3).setValues([["'" + mediaId, link, '']]);
+    if (f[14]) { try { ex_contenido_({ accion: 'estado', id: String(f[14]), estado: 'Publicado', post: String(mediaId) }); } catch (e) {} }
+    return { ok: true, id: String(mediaId), link: link };
+  } catch (err) {
+    let msg = err.message;
+    if (/\(10\)|\(200\)|permission|permiso/i.test(msg)) msg += ' · Revisa que la app de Meta tenga el permiso instagram_business_content_publish y genera un token nuevo.';
+    if (/media|download|URI|imagen/i.test(msg)) msg += ' · Revisa que el repositorio de imágenes sea público.';
+    sh.getRange(i + 2, 4).setValue('Error'); sh.getRange(i + 2, 14).setValue(msg.slice(0, 400));
+    throw new Error(msg);
+  }
+}
+// Cada hora: publica las piezas programadas cuya hora ya llegó.
+function ex_rondaPublicar_() {
+  const sh = SpreadsheetApp.getActive().getSheetByName('Piezas'); if (!sh || !PropertiesService.getScriptProperties().getProperty('IG_TOKEN')) return;
+  const n = sh.getLastRow() - 1; if (n < 1) return;
+  const ahora = new Date();
+  sh.getRange(2, 1, n, EX_CAB_PIEZAS.length).getValues().forEach(function (r) {
+    if (r[3] === 'Programado' && r[9] instanceof Date && r[9] <= ahora) { try { ex_publicarPieza_({ id: String(r[0]) }); } catch (e) { console.log('Publicar ' + r[0] + ': ' + e.message); } }
+  });
+}
+
 // Ejecútala una vez después de guardar IG_TOKEN: trae los datos y muestra el resultado.
 function probarInstagram() {
   PropertiesService.getScriptProperties().setProperty('IG_TOKEN_RENOVADO', new Date().toISOString());
@@ -1153,6 +1332,19 @@ const EX_AS_SISTEMA = {
     '- metas a 30 días con kpi (usa estos nombres: seguidores, alcance_28d, interaccion, publicaciones_semana, toques_links_28d, leads_instagram_28d), nombre legible, valor actual y meta realista.',
     'Lo que hoy más pesa en Instagram: tiempo de visualización, me gusta por alcance y envíos por alcance (que la gente lo comparta por mensaje). Usa los datos de la cuenta antes que reglas generales y no inventes cifras. Español de Chile, directo. Responde solo con el JSON pedido.'
   ].join('\n'),
+  pieza: [
+    'Eres el director creativo y diseñador de contenido de Instagram de Blackline Puerto Varas, tienda de bicicletas Specialized con taller en Puerto Varas, Chile. Creas carruseles e historias listos para publicar, que se dibujan con plantillas de la marca.',
+    'Lo que sabes del negocio: el fuerte y principal motor de ventas son las e-bikes (Turbo Levo, Levo SL, Kenevo, Turbo Vado, Turbo Como, Creo): la tienda es experta y ahí pone más esfuerzo. Pero el catálogo Specialized es amplio (MTB trail y enduro, XC, ruta, gravel, urbano, niños, ropa, cascos, repuestos, taller) y hay clientes de todo tipo; se han vendido S-Works en todas las disciplinas. En Puerto Varas llueve mucho: en invierno las ventas bajan y desde primavera la demanda sube fuerte; en verano llegan turistas, muchos argentinos de Bariloche. Usa el contexto del negocio y la temporada que se te entregan.',
+    'Reglas de contenido:',
+    '- Atingente: cada pieza nace de algo real que se te entrega (lo que preguntan los clientes, lo que más se vende, stock que llegó, la temporada y el clima, eventos, negociaciones sin contenido). Dale prioridad a e-bikes (más o menos la mitad de las piezas) sin olvidar las otras disciplinas.',
+    '- Carrusel: 5 a 8 láminas. La primera es un gancho fuerte (portada con foto); luego valor concreto (consejos, comparación, guía de talla, datos, mitos y realidades); la última invita a actuar (cta). Historias: 3 a 5, verticales, más directas; la última invita a escribir al WhatsApp.',
+    '- Texto en láminas: títulos cortos (máximo 7 palabras), textos de máximo 30 palabras, listas de 3 a 5 ítems de máximo 8 palabras. Nada de párrafos largos. Español de Chile, cercano y experto, sin exageraciones ni promesas vacías.',
+    '- Usa los layouts disponibles: portada (foto de fondo + título grande), texto (fondo de color + título + texto), lista (título + ítems numerados), comparativa (dos columnas con título A y B y filas en items con el formato "A | B"), dato (un número o cifra grande + texto, sobre foto), foto (foto protagonista con un título breve), cta (llamado a la acción final). En historias usa portada, texto, pregunta (una pregunta grande para responder por mensaje) y cta.',
+    '- Para cada lámina con foto describe qué foto buscar: palabras clave en español e inglés (modelo, lugar, acción), y la fuente preferida: propia (fotos de la tienda en su Instagram o su banco de Drive, mejor para productos y clientes reales) o stock (paisajes, ciclismo genérico). Nunca pidas fotos de personas específicas.',
+    '- Nunca inventes precios, promociones ni stock que no estén en los datos. Si hay stock en los datos puedes mencionarlo.',
+    '- caption: texto de la publicación (gancho en la primera línea, valor, llamado a la acción; si el cta es WhatsApp termina con «Escríbenos al WhatsApp, link en la bio»). hashtags: 5 a 10, mezcla locales (#puertovaras #surdechile #lagollanquihue) y del tema. alt: descripción breve para accesibilidad.',
+    'Si se entrega una PIEZA ACTUAL con CAMBIOS PEDIDOS, devuelve la pieza completa corregida respetando lo que no se pidió cambiar. Responde solo con el JSON pedido.'
+  ].join('\n'),
   insights: [
     'Eres el analista de crecimiento de Blackline Puerto Varas (tienda de bicicletas Specialized con taller, en Puerto Varas, Chile). Tu trabajo: leer los datos que te entrega la app, detectar patrones, anticipar lo que va a pasar y decir qué hacer para crecer en ventas.',
     'Recibes datos calculados por la app (no los recalcules ni inventes otros): series semanales, tendencias, proyecciones simples, comparaciones entre grupos y totales. El ÁREA te dice si analizas Instagram o la base de clientes.',
@@ -1192,6 +1384,15 @@ const EX_AS_ESQUEMA = {
     ideas: { type: 'array', items: { type: 'object', additionalProperties: false, required: ['fecha', 'formato', 'tema', 'idea', 'guion', 'relacionado', 'texto', 'hashtags', 'objetivo', 'por_que'], properties: {
       fecha: { type: 'string' }, hora: { type: 'string' }, formato: { type: 'string', enum: ['Reel', 'Carrusel', 'Historia', 'Post'] }, pilar: { type: 'string', enum: ['Producto y stock', 'Taller y consejos', 'Comunidad y salidas', 'Clientes y entregas', 'Promociones', 'Lugar y estilo de vida'] }, tema: { type: 'string' }, idea: { type: 'string' }, guion: { type: 'string' }, relacionado: { type: 'string' }, texto: { type: 'string' }, hashtags: { type: 'string' },
       cta: { type: 'string', enum: ['WhatsApp', 'Web', 'Visita', 'Guardar', 'Compartir'] }, objetivo: { type: 'string', enum: ['Ventas', 'Comunidad', 'Alcance', 'Educación', 'Postventa'] }, por_que: { type: 'string' } } } } } },
+  pieza: { type: 'object', additionalProperties: false, required: ['titulo', 'tipo', 'pilar', 'objetivo', 'por_que', 'slides', 'caption', 'hashtags', 'cta', 'alt'], properties: {
+    titulo: { type: 'string' }, tipo: { type: 'string', enum: ['carrusel', 'historias'] },
+    pilar: { type: 'string', enum: ['Producto y stock', 'Taller y consejos', 'Comunidad y salidas', 'Clientes y entregas', 'Promociones', 'Lugar y estilo de vida'] },
+    objetivo: { type: 'string', enum: ['Ventas', 'Comunidad', 'Alcance', 'Educación', 'Postventa'] }, por_que: { type: 'string' },
+    slides: { type: 'array', items: { type: 'object', additionalProperties: false, required: ['layout', 'kicker', 'titulo', 'texto', 'items', 'numero', 'foto'], properties: {
+      layout: { type: 'string', enum: ['portada', 'texto', 'lista', 'comparativa', 'dato', 'foto', 'pregunta', 'cta'] }, kicker: { type: 'string' }, titulo: { type: 'string' }, texto: { type: 'string' },
+      items: { type: 'array', items: { type: 'string' } }, numero: { type: 'string' },
+      foto: { type: 'object', additionalProperties: false, required: ['usar', 'descripcion', 'palabras', 'fuente'], properties: { usar: { type: 'boolean' }, descripcion: { type: 'string' }, palabras: { type: 'array', items: { type: 'string' } }, fuente: { type: 'string', enum: ['propia', 'stock'] } } } } } },
+    caption: { type: 'string' }, hashtags: { type: 'string' }, cta: { type: 'string', enum: ['WhatsApp', 'Web', 'Visita', 'Guardar', 'Compartir'] }, alt: { type: 'string' } } },
   insights: { type: 'object', additionalProperties: false, required: ['resumen', 'predicciones', 'recomendaciones', 'alertas'], properties: {
     resumen: { type: 'string' },
     predicciones: { type: 'array', items: { type: 'object', additionalProperties: false, required: ['titulo', 'detalle', 'horizonte', 'base', 'confianza'], properties: { titulo: { type: 'string' }, detalle: { type: 'string' }, horizonte: { type: 'string' }, base: { type: 'string' }, confianza: { type: 'string', enum: ['alta', 'media', 'baja'] } } } },
@@ -1224,7 +1425,7 @@ function ex_parecido_(a, b) {
   return Math.max(comunes / (A.length + B.length - comunes), comunes >= 3 ? comunes / Math.min(A.length, B.length) * 0.9 : 0);
 }
 function ex_asistente_(p) {
-  const modo = ['semana', 'contenido', 'tareas', 'redes', 'insights'].indexOf(p.modo) >= 0 ? p.modo : 'dia';
+  const modo = ['semana', 'contenido', 'tareas', 'redes', 'insights', 'pieza'].indexOf(p.modo) >= 0 ? p.modo : 'dia';
   const ctx = String(p.contexto || '').slice(0, 40000);
   if (!ctx) throw new Error('sin contexto');
   return { ok: true, modo: modo, r: ex_llamarClaude_(ctx, EX_AS_SISTEMA[modo], EX_AS_ESQUEMA[modo]) };
@@ -1777,7 +1978,7 @@ function ex_conLock_(fn) {
   if (!lock.tryLock(30000)) return;
   try { fn(); } finally { lock.releaseLock(); }
 }
-function ex_tareaHoraria() { if (ex_cuentaVigente_()) ex_conLock_(ex_sincCalendario_); }
+function ex_tareaHoraria() { if (!ex_cuentaVigente_()) return; ex_conLock_(ex_sincCalendario_); try { ex_rondaPublicar_(); } catch (e) { console.log('Publicar: ' + e.message); } }
 function ex_tareaBase() {
   if (!ex_cuentaVigente_()) return;
   ex_conLock_(ex_escanearBase_);
