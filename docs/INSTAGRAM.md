@@ -12,6 +12,41 @@ En la app, la pestaña **Redes** muestra las métricas, qué formatos y días fu
 
 Como todo queda en tu Google Sheet, Claude también puede leerlo y analizarlo con el conector de Google Sheets.
 
+## Qué hace la pestaña Redes
+
+- **Resumen:**
+  - Seguidores (nuevos y bajas), alcance, interacción, toques en links y clientes que llegaron desde Instagram.
+  - Recomendaciones calculadas con tus datos.
+  - Constancia semanal contra tu meta.
+  - Rendimiento por formato: alcance, interacción, guardados y envíos por cada 1.000 personas alcanzadas.
+  - Mapa de calor de día y hora para publicar, temas (pilares) y mejores publicaciones.
+- **Contenido:**
+  - Calendario semanal con estados (Idea → Planificado → Grabado → Publicado) y banco de ideas.
+  - Cada idea trae su código (IG-XXXX) y su link a WhatsApp.
+  - Cuando publicas, la app la cruza con la publicación real y muestra cómo le fue.
+- **Audiencia:**
+  - Qué modelos y servicios piden tus clientes en WhatsApp contra cuánto los muestras en Instagram ("falta contenido").
+  - Ciudades, países, edades y género de tus seguidores.
+- **Leads:**
+  - Embudo de Instagram a ventas: alcance → interacciones → toques en links → conversaciones de WhatsApp → negociaciones.
+  - Qué publicación o link trajo cada cliente.
+  - Generador de links con código para la bio, las historias y la web (con UTM para Google Analytics).
+- **Estrategia (IA):**
+  - Diagnóstico de la cuenta.
+  - Frecuencia por formato, horarios y mezcla de temas.
+  - Acciones para conseguir más clientes por WhatsApp y la web.
+  - Metas a 30 días con avance.
+  - El calendario con IA sigue esta estrategia.
+
+El script guarda las historias cada 6 horas, porque Instagram las borra a las 24 horas. La audiencia se actualiza una vez por semana: Instagram la entrega desde los 100 seguidores.
+
+**Para medir clientes desde Instagram:**
+- Usa los links con código.
+- Configura el botón de contacto de WhatsApp en tu perfil.
+- Termina cada publicación con un llamado a la acción.
+
+La app reconoce el código en el chat y también frases como "te vi en Instagram".
+
 ## Requisitos
 
 - La cuenta de Instagram de la tienda debe ser **profesional (Empresa o Creador)**. Para revisarlo: Instagram → Configuración → *Tipo de cuenta y herramientas* → *Cambiar a cuenta profesional*.

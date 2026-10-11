@@ -580,6 +580,82 @@ nav.bottom button span .ico{width:21px;height:21px}
 .rs-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .rs-row input[type=text]{margin-top:0}
 @media (max-width:700px){.rs-grid,.rs-row{grid-template-columns:1fr}}
+/* Redes: analítica, calendario semanal, leads y estrategia */
+.t-ok{background:rgba(19,179,134,.15);color:var(--ok-ink)}.t-bad{background:rgba(240,68,97,.12);color:var(--bad-ink)}.t-acc{background:var(--accent-soft);color:var(--accent-ink)}
+.rd-con{padding:18px}.rd-con p{line-height:1.5;margin:4px 0 12px;max-width:70ch}.rd-con ol{margin:0 0 14px;padding-left:20px;line-height:1.7;font-size:14px}
+.kstrip.k5{grid-template-columns:repeat(5,minmax(0,1fr))}.kstrip.k4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.dl{display:block;font-size:11.5px;font-weight:600;margin-top:2px}.dl.up{color:var(--ok-ink)}.dl.dn{color:var(--bad-ink)}
+.lg-dot{display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--accent);margin-right:4px}
+.rd-recs .recs{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px}
+.rec{display:flex;gap:10px;align-items:flex-start;background:var(--soft);border-radius:12px;padding:11px 12px}
+.rec .ico{width:18px;height:18px;color:var(--accent);flex:none;margin-top:1px}.rec.mal .ico{color:var(--warn-ink)}
+.rec b{display:block;font-size:13.5px;line-height:1.35}.rec span{display:block;font-size:12.5px;color:var(--muted);margin-top:3px;line-height:1.4}
+.cbars{position:relative;display:flex;align-items:flex-end;gap:8px;height:130px;padding-top:14px;margin-top:6px}
+.cb{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:3px;min-width:0}
+.cb i{display:block;width:100%;max-width:34px;background:var(--s2);border-radius:5px 5px 2px 2px;min-height:2px}.cb.now i{background:var(--accent)}
+.cb b{font-size:12px}.cb small{font-size:10px;color:var(--muted);white-space:nowrap}
+.cmeta{position:absolute;left:0;right:0;border-top:1.5px dashed var(--warn-ink);margin-bottom:34px;pointer-events:none}
+.cmeta em{position:absolute;right:0;top:-17px;font-size:10.5px;font-style:normal;color:var(--warn-ink);font-weight:700;background:var(--card);padding:0 4px}
+.tw{overflow-x:auto}.rtab{width:100%;min-width:420px;border-collapse:collapse;font-size:13px}
+.rtab th{font-size:11px;font-weight:700;color:var(--muted);text-align:left;padding:6px 6px;border-bottom:1px solid var(--line);text-transform:uppercase;letter-spacing:.03em;vertical-align:bottom}
+.rtab th span{text-transform:none;font-weight:500;letter-spacing:0}
+.rtab td{padding:9px 6px;border-bottom:1px solid var(--line);vertical-align:middle}.rtab td small{display:block;color:var(--muted);font-size:11.5px}
+.rtab td:nth-child(2){min-width:120px}.rtab .mini{height:6px;background:var(--soft);border-radius:3px;overflow:hidden;margin-bottom:3px}.rtab .mini i{display:block;height:100%;background:var(--accent);border-radius:3px}
+.heat{display:grid;grid-template-columns:44px repeat(4,minmax(0,1fr));gap:4px;margin-top:10px;font-size:11.5px}
+.heat .hh{text-align:center;color:var(--muted);font-weight:600;line-height:1.2}.heat .hh small{font-weight:400;font-size:10px}
+.heat .hd{color:var(--muted);font-weight:600;display:flex;align-items:center;text-transform:capitalize}
+.heat .hc{border-radius:7px;height:34px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;font-variant-numeric:tabular-nums}
+.heat .vac{background:var(--soft)}.heat .l0{background:#EEF3FA;color:var(--muted)}.heat .l1{background:var(--s1);color:#163B6B}.heat .l2{background:var(--s2);color:#0F2E57}.heat .l3{background:var(--s3);color:#fff}.heat .l4{background:var(--s5);color:#fff}
+.pil{display:grid;grid-template-columns:minmax(110px,40%) 1fr 54px;gap:10px;align-items:center;padding:6px 0}
+.pil .pn{font-size:13px;font-weight:600;min-width:0}.pil .pn small{display:block;font-weight:400;color:var(--muted);font-size:11.5px;line-height:1.3}
+.pil b{text-align:right;font-size:13px}
+.ct-top{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:12px}
+.ct-nav{display:flex;gap:8px;align-items:center}.ct-nav b{min-width:120px;text-align:center}
+.ct-meta{display:flex;gap:6px;flex-wrap:wrap}.ct-acts{display:flex;gap:6px}
+.ct-acts .btn{display:inline-flex;align-items:center;gap:6px}.ct-acts .btn .ico{width:16px;height:16px}
+.week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px}
+.wd{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:8px;display:flex;flex-direction:column;gap:6px;min-height:150px;min-width:0}
+.wd.hoy{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}.wd.pas{background:var(--soft)}
+.wdh{display:flex;justify-content:space-between;align-items:baseline;font-size:12px;color:var(--muted);text-transform:capitalize}.wdh span{font-size:15px;font-weight:700;color:var(--ink)}
+.ctc{display:flex;flex-direction:column;gap:2px;text-align:left;border:0;border-left:3px solid var(--s2);background:var(--soft);border-radius:8px;padding:6px 7px;cursor:pointer;font:inherit;color:var(--ink);min-width:0}
+.ctc.f-reel{border-left-color:var(--accent)}.ctc.f-historia{border-left-color:var(--s1)}.ctc.f-carrusel{border-left-color:var(--s3)}
+.ctc.e-publicado{background:var(--accent-soft)}.ctc.e-idea{opacity:.7}
+.ctf{font-size:10.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.03em}
+.ctt{font-size:12.5px;font-weight:600;line-height:1.3;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}
+.cte{font-size:10.5px;color:var(--muted)}.ctr{font-size:11px;color:var(--accent-ink);font-weight:700;display:flex;align-items:center;gap:3px}.ctr .ico{width:12px;height:12px}
+.ctadd{margin-top:auto;border:1px dashed var(--line);background:none;border-radius:8px;color:var(--muted);padding:4px;cursor:pointer;font:inherit}
+.ctadd:hover{border-color:var(--s2);color:var(--accent-ink)}
+.ct-st{margin:6px 0 12px}
+.ct-res{display:grid;grid-template-columns:repeat(4,minmax(0,1fr)) auto;gap:8px;align-items:center;background:var(--soft);border-radius:12px;padding:10px 12px;margin-bottom:8px}
+.ct-res small{display:block;font-size:10.5px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.03em}.ct-res b{font-size:16px}
+.dem{display:grid;grid-template-columns:minmax(80px,auto) 1fr auto;gap:8px 12px;align-items:center;font-size:13px}
+.dem .dh{font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.03em}
+.dem .dn{font-weight:600}.dbar{display:flex;align-items:center;gap:8px}.dbar i{display:block;height:10px;background:var(--accent);border-radius:5px;min-width:3px}
+.dpost{font-size:12.5px;color:var(--muted);white-space:nowrap}.dpost.gap{color:var(--warn-ink);font-weight:700}
+.funnel{display:flex;flex-direction:column;gap:10px;margin-top:6px}
+.fs{display:grid;grid-template-columns:120px 1fr 80px;gap:4px 12px;align-items:center}
+.fs .fl{font-weight:600;font-size:13.5px}.fs .fb{height:14px;background:var(--soft);border-radius:7px;overflow:hidden}.fs .fb i{display:block;height:100%;border-radius:7px}
+.fs b{text-align:right;font-size:15px}.fs small{grid-column:2 / 4;color:var(--muted);font-size:12px;margin-top:-2px}
+.lk-row{display:grid;grid-template-columns:170px 1fr;gap:10px;align-items:center;margin-top:10px}.lk-row label{font-size:13px;font-weight:600}
+.lk-row input{max-width:260px}
+.lk-out{display:grid;grid-template-columns:1fr auto;gap:4px 10px;align-items:center;background:var(--soft);border-radius:10px;padding:9px 11px;margin-top:10px}
+.lk-out small{grid-column:1 / -1;font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.03em}
+.lk-out code{font-size:12px;overflow-wrap:anywhere;min-width:0}
+.lk .wsub{margin-top:10px}
+.est-head{display:flex;gap:14px;align-items:flex-start;justify-content:space-between}.est-head p{margin:0 0 6px;line-height:1.5;max-width:75ch}
+.dg{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-top:1px solid var(--line)}.dg:first-of-type{border-top:0}
+.dg .tag{flex:none;text-transform:capitalize}.dg b{display:block;font-size:13.5px}.dg span{display:block;font-size:13px;color:var(--muted);line-height:1.4}
+.dg .nn{flex:none;width:22px;height:22px;border-radius:7px;background:var(--accent);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center}
+.mt{display:grid;grid-template-columns:1fr auto;gap:4px 10px;padding:8px 0;border-top:1px solid var(--line);font-size:13px}.mt:first-of-type{border-top:0}
+.mt .pb{grid-column:1 / -1}
+@media (max-width:900px){.kstrip.k5{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:760px){
+  .week{grid-template-columns:1fr;gap:6px}.wd{min-height:0;flex-direction:row;flex-wrap:wrap;align-items:center;padding:8px 10px}.wdh{flex:1 1 auto;width:auto;justify-content:flex-start;gap:8px}.ctc{flex:1 1 100%;order:2}.ctadd{margin-top:0;flex:0 0 auto;padding:4px 12px;order:1}
+  .kstrip.k5,.kstrip.k4{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .ct-res{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .lk-row{grid-template-columns:1fr}.fs{grid-template-columns:100px 1fr 64px}
+  .est-head{flex-direction:column}
+}
 /* CRM: perfiles, segmentos, importación masiva y oportunidades */
 .num{font-variant-numeric:tabular-nums}
 .pcs{display:flex;gap:4px;flex-wrap:wrap}
@@ -615,7 +691,7 @@ nav.bottom button span .ico{width:21px;height:21px}
 .hb{display:grid;grid-template-columns:minmax(80px,30%) 1fr 34px;gap:10px;align-items:center;width:100%;border:0;background:none;padding:5px 0;cursor:pointer;font:inherit;color:var(--ink);text-align:left;border-radius:8px}
 .hb:hover .hl{color:var(--accent-ink)}
 .hl{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.hbar{height:10px;background:var(--soft);border-radius:5px;overflow:hidden}.hbar i{display:block;height:100%;border-radius:5px}
+.hbt{height:10px;background:var(--soft);border-radius:5px;overflow:hidden}.hbt i{display:block;height:100%;border-radius:5px}
 .hb b{font-size:13px;text-align:right}
 .opgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
 .op{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:6px;transition:opacity .2s,transform .2s}
@@ -876,7 +952,7 @@ async function api(action, extra){
 function apiX(op, extra){ return api('extra', Object.assign({ op }, extra || {})); }
 // Nivel 2 del script Extras: recordatorios y base de contactos. Nivel 3: la base solo usa contacto@blacklinechile.cl. Nivel 4: eventos de varios días.
 function extNivel(){ return S.extInactivo ? 0 : (S.ext && S.ext.nivel) || 1; }
-function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < 12; }
+function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < 13; }
 let sincTimer = null;
 // Después de cambiar tareas, el script actualiza los recordatorios del calendario (en segundo plano).
 function sincPronto(){
@@ -1926,15 +2002,24 @@ function ctoTab(c, tab){
   }
 }
 
-/* ---------- Redes: Instagram (métricas) y calendario de contenido con IA ---------- */
+/* ---------- Redes: Instagram (métricas, audiencia, leads), estrategia y calendario de contenido con IA ---------- */
 function igActivo(){ return extNivel() >= 11 && !!(S.ext && S.ext.instagram && S.ext.instagram.activo); }
 async function loadIG(forzar){
   if (extNivel() < 11) return;
   if (!forzar && S.cont && Date.now() - S.igAt < 10 * 60000) return;
-  try { const [a, b] = await Promise.all([igActivo() ? apiX('instagram') : Promise.resolve(null), apiX('contenido')]); S.ig = a; S.cont = b.items || []; S.igAt = Date.now(); lsSet('igCache', { ig: S.ig, cont: S.cont }); }
-  catch(e){ if (!S.ig){ const c = lsGet('igCache', null); if (c){ S.ig = c.ig; S.cont = c.cont; } } }
+  try {
+    const [a, b, e] = await Promise.all([igActivo() ? apiX('instagram') : Promise.resolve(null), apiX('contenido'), extNivel() >= 13 ? apiX('igEstrategia').catch(() => null) : Promise.resolve(null)]);
+    S.ig = a; S.cont = b.items || []; if (e) S.igEst = e; S.igAt = Date.now(); lsSet('igCache', { ig: S.ig, cont: S.cont, est: S.igEst });
+  } catch(e){ if (!S.ig){ const c = lsGet('igCache', null); if (c){ S.ig = c.ig; S.cont = c.cont; S.igEst = c.est; } } }
+}
+async function loadLeads(forzar){
+  if (extNivel() < 13) return;
+  if (!forzar && S.leadsCanal && Date.now() - S.leadsAt < 15 * 60000) return;
+  try { S.leadsCanal = await apiX('leadsCanal', forzar ? { forzar: 1 } : {}); S.leadsAt = Date.now(); } catch(e){}
 }
 const FMT_IG = { REELS: 'Reel', FEED: 'Post / carrusel', STORY: 'Historia' };
+function fmtPost(x){ return x.formato === 'REELS' ? 'Reel' : x.formato === 'STORY' ? 'Historia' : x.tipo === 'CAROUSEL_ALBUM' ? 'Carrusel' : x.tipo === 'VIDEO' ? 'Video' : 'Foto'; }
+// Se mantiene para Inicio y el asistente.
 function igMetricas(){
   const I = S.ig || { dias: [], posts: [] }, D = I.dias || [], h = hoy();
   const ult = D.slice(-28), prev = D.slice(-56, -28), sum = (L, k) => L.reduce((s, d) => s + (+d[k] || 0), 0);
@@ -1944,75 +2029,322 @@ function igMetricas(){
   const P = (I.posts || []).filter(x => x.fecha.slice(0, 10) >= addDays(h, -90));
   const porFmt = {}; P.forEach(x => { const k = FMT_IG[x.formato] || x.formato || 'Otro'; (porFmt[k] = porFmt[k] || []).push(x); });
   const porDia = [0, 1, 2, 3, 4, 5, 6].map(d => { const L = P.filter(x => pd(x.fecha.slice(0, 10)).getDay() === d); return { d, n: L.length, prom: L.length ? L.reduce((s, x) => s + x.interacciones, 0) / L.length : 0 }; });
-  return { D, seg, dSeg: seg != null && segAntes != null ? seg - segAntes : null, alc, alcPrev: sum(prev, 'alcance'), inter, tasa: alc ? inter / alc : null, P, porFmt, porDia, links: sum(ult, 'links') };
+  return { D, seg, dSeg: seg != null && segAntes != null ? seg - segAntes : null, alc, alcPrev: sum(prev, 'alcance'), inter, interPrev: sum(prev, 'interacciones'), tasa: alc ? inter / alc : null, P, porFmt, porDia, links: sum(ult, 'links'), linksPrev: sum(prev, 'links'), tMensaje: sum(ult, 'tMensaje'), nuevos: sum(ult, 'nuevos'), bajas: sum(ult, 'bajas'), conBotones: ult.some(d => d.tMensaje !== '' && d.tMensaje != null) };
 }
+
+// Pilares de contenido: se detectan por las palabras del texto de cada publicación.
+const PILARES = [
+  { k: 'Producto y stock', re: /\b(levo|kenevo|vado|como|creo|stumpjumper|stumpy|epic|chisel|tarmac|roubaix|aethos|diverge|crux|s-?works|llego|lleg[oó]|disponible|stock|nueva|nuevo modelo|unboxing|lanzamiento|talla)\b/ },
+  { k: 'Taller y consejos', re: /\b(taller|mantenci|servicio|tip|consejo|como (cuidar|revisar|limpiar|elegir)|presion|cadena|suspension|bateria|frenos|ajuste|revision|mecanic)/ },
+  { k: 'Comunidad y salidas', re: /\b(salida|rodada|ruta|sendero|grupo|evento|carrera|pichijuan|comunidad|nos vemos|te esperamos|clinica|test ride)/ },
+  { k: 'Clientes y entregas', re: /\b(entrega|felicidades|felicitamos|nuevo dueno|nueva duena|gracias a|disfrutala|cliente)/ },
+  { k: 'Promociones', re: /\b(oferta|descuento|cuotas|promo|precio|liquidacion|black ?friday|cyber|%)/ },
+  { k: 'Lugar y estilo de vida', re: /\b(lago|volcan|osorno|llanquihue|puerto varas|paisaje|atardecer|invierno|verano|lluvia|nieve)/ }
+];
+// Modelo principal nombrado en un texto («Turbo Levo Comp» → levo; «Stumpy» → stumpjumper).
+function modeloDe(t){ const L = (norm(t).match(new RegExp(RE_MODELO.source, 'g')) || []).map(x => x === 'stumpy' ? 'stumpjumper' : x); const f = L.filter(x => x !== 'turbo' && x !== 's-works'); return f[0] || L[0] || ''; }
+function pilarDe(texto){ const t = norm(texto); const p = PILARES.find(x => x.re.test(t)); return p ? p.k : 'Otro'; }
+const FRANJAS = [['Mañana', 7, 12], ['Mediodía', 12, 15], ['Tarde', 15, 19], ['Noche', 19, 24]];
+const RE_CTA = /whats|wsp|wasap|escr[ií]be|link en (la )?bio|dm|mensaje|reserva|agenda|pasa a|ven a|visit|cotiza/i;
+const med = L => { if (!L.length) return 0; const a = L.slice().sort((x, y) => x - y), m = Math.floor(a.length / 2); return a.length % 2 ? a[m] : (a[m - 1] + a[m]) / 2; };
+const pctT = (x, d) => (x * 100).toFixed(d == null ? 1 : d) + '%';
+
+// Análisis completo: lo usan las pestañas de Redes, las recomendaciones y la IA.
+function igAnalisis(){
+  if (S._igA && S._igA.src === S.ig && S._igA.cont === S.cont && S._igA.base === S.base && S._igA.leads === S.leadsCanal) return S._igA.r;
+  const m = igMetricas(), h = hoy(), P = m.P.filter(x => x.formato !== 'STORY'), H = (((S.ig || {}).posts) || []).filter(x => x.formato === 'STORY' && x.fecha.slice(0, 10) >= addDays(h, -28));
+  const alcMed = med(P.map(x => x.alcance)) || 1;
+  // Por formato
+  const fm = {}; P.forEach(x => { const k = fmtPost(x); (fm[k] = fm[k] || []).push(x); });
+  const formatos = Object.entries(fm).map(([k, L]) => ({ k, n: L.length, alc: med(L.map(x => x.alcance)), er: med(L.map(x => x.alcance ? x.interacciones / x.alcance : 0)), valor: med(L.map(x => x.alcance ? (x.guardados + x.compartidos) / x.alcance * 1000 : 0)), ver: L.filter(x => +x.reelSeg).length ? med(L.filter(x => +x.reelSeg).map(x => +x.reelSeg)) : null })).sort((a, b) => b.alc - a.alc);
+  // Horario: día × franja, alcance relativo a tu mediana (1 = normal)
+  const celdas = {}; P.forEach(x => { const d = pd(x.fecha.slice(0, 10)).getDay(), hr = +x.fecha.slice(11, 13) || 12, f = FRANJAS.findIndex(z => hr >= z[1] && hr < z[2]); if (f < 0) return; const k = d + ':' + f; (celdas[k] = celdas[k] || []).push(x.alcance / alcMed); });
+  const heat = {}; Object.entries(celdas).forEach(([k, L]) => { heat[k] = { n: L.length, v: L.reduce((s, x) => s + x, 0) / L.length }; });
+  const mejores = Object.entries(heat).filter(e => e[1].n >= 2).sort((a, b) => b[1].v - a[1].v).slice(0, 3).map(([k, v]) => { const [d, f] = k.split(':').map(Number); return { d, f, v: v.v, n: v.n }; });
+  // Pilares
+  const pil = {}; P.forEach(x => { const k = pilarDe(x.texto); (pil[k] = pil[k] || []).push(x); });
+  const pilares = Object.entries(pil).map(([k, L]) => ({ k, n: L.length, mix: L.length / (P.length || 1), alc: med(L.map(x => x.alcance)), er: med(L.map(x => x.alcance ? x.interacciones / x.alcance : 0)) })).sort((a, b) => b.n - a.n);
+  // Constancia: publicaciones por semana (últimas 8)
+  const lunes = d => { const x = pd(d); const w = (x.getDay() + 6) % 7; return addDays(d, -w); }, sem = [];
+  for (let i = 7; i >= 0; i--) sem.push({ ini: addDays(lunes(h), -7 * i), n: 0 });
+  P.forEach(x => { const l = lunes(x.fecha.slice(0, 10)), s = sem.find(z => z.ini === l); if (s) s.n++; });
+  const porSem = sem.slice(0, 7).reduce((s, x) => s + x.n, 0) / 7;
+  const tasas = { guardado: med(P.map(x => x.alcance ? x.guardados / x.alcance : 0)), compartido: med(P.map(x => x.alcance ? x.compartidos / x.alcance : 0)), er: med(P.map(x => x.alcance ? x.interacciones / x.alcance : 0)) };
+  const conCta = P.length ? P.filter(x => RE_CTA.test(x.texto || '')).length / P.length : 0;
+  // Lo que busca tu público (chats de WhatsApp) y cuánto lo cubres en Instagram
+  const textos = norm(P.map(x => x.texto).join(' ') + ' ' + (S.cont || []).filter(x => x.fecha >= addDays(h, -30)).map(x => x.tema + ' ' + x.idea).join(' '));
+  const dem = {}, disc = {}, inten = {};
+  perfiles().forEach(pf => {
+    const p = pf.p || {}; if (/proveedor|sin_relacion/.test(pf.ciclo || '')) return;
+    const vistos = new Set(); (p.intereses || []).concat((p.bicis || []).map(b => b.modelo)).forEach(t => { const mm = modeloDe(t); if (mm && !vistos.has(mm)){ vistos.add(mm); dem[mm] = (dem[mm] || 0) + 1; } });
+    (p.disciplinas || []).forEach(d => { disc[d] = (disc[d] || 0) + 1; });
+    if (p.intencion && p.intencion !== 'ninguna') inten[p.intencion] = (inten[p.intencion] || 0) + 1;
+  });
+  const demanda = Object.entries(dem).map(([k, n]) => ({ k, n, posts: (textos.match(new RegExp('\\b' + k + '\\b', 'g')) || []).length })).sort((a, b) => b.n - a.n).slice(0, 10);
+  // Leads desde Instagram y la web
+  const L = ((S.leadsCanal || {}).leads || []), ig = L.filter(x => x.canal === 'instagram'), web = L.filter(x => x.canal === 'web');
+  const de = (arr, dias) => arr.filter(x => x.fecha >= addDays(h, -dias));
+  const negDe = id => negocios().filter(n => n.contacto === id);
+  const conv = arr => { let neg = 0, gan = 0, monto = 0; arr.forEach(x => { const N = negDe(x.id); if (N.length) neg++; N.filter(n => n.estado === 'Ganada').forEach(n => { gan++; monto += +n.valor || 0; }); }); return { neg, gan, monto }; };
+  const porRef = {}; ig.concat(web).filter(x => x.ref).forEach(x => { (porRef[x.ref] = porRef[x.ref] || []).push(x); });
+  const r = { m, P, H, formatos, heat, mejores, pilares, sem, porSem, tasas, conCta, demanda, disc, inten, alcMed,
+    leads: { ig, web, ig28: de(ig, 28), web28: de(web, 28), ig56: de(ig, 56).length - de(ig, 28).length, conv: conv(ig), convWeb: conv(web), porRef, hay: !!S.leadsCanal } };
+  S._igA = { src: S.ig, cont: S.cont, base: S.base, leads: S.leadsCanal, r };
+  return r;
+}
+function metaFrecuencia(){
+  const f = S.igEst && S.igEst.estrategia && S.igEst.estrategia.frecuencia;
+  return f ? { reels: +f.reels_semana || 0, carruseles: +f.carruseles_semana || 0, posts: +f.posts_semana || 0, historias: +f.historias_dia || 0 } : { reels: 2, carruseles: 1, posts: 1, historias: 1 };
+}
+// Recomendaciones calculadas con tus datos (sin IA): se ven siempre.
+function igRecomendaciones(a){
+  const R = [], mf = metaFrecuencia(), metaSem = mf.reels + mf.carruseles + mf.posts;
+  if (a.formatos.length >= 2 && a.formatos[0].n >= 2){ const f0 = a.formatos[0], f1 = a.formatos[a.formatos.length - 1]; const x = f1.alc ? f0.alc / f1.alc : 0; if (x >= 1.3) R.push({ ic: 'chart', t: 'Tus ' + f0.k.toLowerCase() + 's llegan a ' + x.toFixed(1).replace('.', ',') + ' veces más personas que tus ' + f1.k.toLowerCase() + 's', d: 'Dale prioridad a ese formato y usa el otro para lo que se guarda (consejos, comparativas).' }); }
+  if (a.P.length) R.push(a.porSem + 0.3 < metaSem ? { ic: 'cal', t: 'Publicas ' + a.porSem.toFixed(1).replace('.', ',') + ' veces por semana; tu meta es ' + metaSem, d: 'La constancia pesa más que publicar mucho un día y nada el resto. Prepara 1 o 2 grabaciones por semana y prográmalas.', mal: 1 } : { ic: 'check', t: 'Vas al día con tu frecuencia (' + a.porSem.toFixed(1).replace('.', ',') + ' por semana)', d: 'Mantén el ritmo y sube la calidad de los ganchos.' });
+  if (a.mejores.length){ const b = a.mejores[0]; R.push({ ic: 'clock', t: 'Tu mejor momento: ' + DIAS_L[b.d] + ' en la ' + FRANJAS[b.f][0].toLowerCase() + ' (' + FRANJAS[b.f][1] + '–' + FRANJAS[b.f][2] + ' h)', d: 'Ahí tus publicaciones llegan ' + Math.round((b.v - 1) * 100) + '% más lejos que lo normal (' + b.n + ' publicaciones). Programa lo más importante en esa franja.' }); }
+  const prod = a.pilares.find(p => p.k === 'Producto y stock'); if (prod && prod.mix > 0.6 && a.P.length >= 6) R.push({ ic: 'flag', t: 'El ' + pctT(prod.mix, 0) + ' de lo que publicas es producto', d: 'Mezcla con taller, comunidad y clientes: generan confianza y se comparten más. Una buena regla: 2 de valor por cada 1 de venta.', mal: 1 });
+  const pBest = a.pilares.filter(p => p.n >= 2).sort((x, y) => y.alc - x.alc)[0]; if (pBest && pBest.alc > a.alcMed * 1.2) R.push({ ic: 'target', t: '«' + pBest.k + '» es tu tema que más alcanza', d: 'Llega ' + Math.round((pBest.alc / a.alcMed - 1) * 100) + '% más lejos que tu publicación típica. Repite el ángulo con otros productos o rutas.' });
+  if (a.P.length >= 4 && a.tasas.guardado < 0.01) R.push({ ic: 'note', t: 'Pocos guardados (' + pctT(a.tasas.guardado) + ' del alcance)', d: 'Lo que se guarda es lo útil: carruseles de consejos (presión de neumáticos, cuidar la batería, elegir talla). Instagram lo premia.', mal: 1 });
+  if (a.P.length >= 4 && a.tasas.compartido < 0.005) R.push({ ic: 'users', t: 'Se comparte poco (' + pctT(a.tasas.compartido) + ' del alcance)', d: 'Lo que se envía a un amigo: rutas épicas de la zona, humor de ciclistas, «etiqueta a con quién harías esta ruta». Los envíos son lo que más empuja el alcance.', mal: 1 });
+  a.demanda.filter(d => d.n >= 3 && d.posts <= 1).slice(0, 2).forEach(d => R.push({ ic: 'spark', t: d.n + ' clientes preguntaron por ' + d.k.charAt(0).toUpperCase() + d.k.slice(1) + ' y casi no aparece en tu Instagram', d: 'Haz un reel o carrusel que responda lo que preguntan (talla, autonomía, precio en cuotas, prueba).' }));
+  if (a.P.length >= 4 && a.conCta < 0.4) R.push({ ic: 'arrow', t: 'Solo el ' + pctT(a.conCta, 0) + ' de tus publicaciones invita a escribir', d: 'Cierra cada publicación con una acción concreta: «Escríbenos al WhatsApp (link en la bio)» o «Pasa a probarla».', mal: 1 });
+  if (a.leads.hay && !a.leads.ig.some(x => x.ref)) R.push({ ic: 'box', t: 'Aún no mides qué publicación te trae clientes', d: 'Usa los links con código (pestaña Leads) en la bio y en las historias: así sabrás qué contenido genera conversaciones y ventas.' });
+  if (!a.H.length) R.push({ ic: 'camera', t: 'Sin historias en las últimas 4 semanas', d: 'Las historias son tu canal directo a WhatsApp: 1 a 3 al día con el sticker de link al chat y encuestas.', mal: 1 });
+  return R;
+}
+
 function viewRedes(){
   if (S.extInactivo || extNivel() < 11){
     $('#view').innerHTML = '<div class="sec" style="padding:20px"><div class="wh">' + icon('camera') + 'Instagram y calendario de contenido</div><p style="margin:0 0 12px;line-height:1.5">Conecta Instagram con la API oficial de Meta (gratis): la app guarda tus métricas todos los días y el asistente arma un calendario de contenido con lo que está pasando en la tienda.</p><button class="btn" id="rAct">Actualizar el script</button></div>';
     $('#rAct').onclick = showExtrasUpdate; return;
   }
   if (!S.cont){ $('#view').innerHTML = '<div class="empty"><span class="spin"></span>Cargando…</div>'; loadIG(true).then(() => { if (S.tab === 'redes') render(); }); return; }
-  if (!igActivo()){
-    $('#view').innerHTML = calendarioHTML() + '<div class="sec" style="padding:20px"><div class="wh">' + icon('camera') + 'Conecta tu Instagram</div><p style="margin:0 0 10px;line-height:1.5">Falta el token de Instagram en el script (propiedad <b>IG_TOKEN</b>). Son unos 15 minutos y es gratis: la guía está en <b>docs/INSTAGRAM.md</b> del repositorio.</p><ol style="margin:0 0 12px;padding-left:20px;line-height:1.7;font-size:14px"><li>Cuenta de Instagram profesional (empresa o creador).</li><li>App en developers.facebook.com con el producto Instagram → «API setup with Instagram login» → generar token.</li><li>Guardar el token en Propiedades del script como IG_TOKEN y ejecutar <b>probarInstagram</b>.</li></ol><a class="btn sec" href="https://github.com/SnowPv/Organizador/blob/main/docs/INSTAGRAM.md" target="_blank" style="display:inline-block;text-decoration:none">Abrir la guía</a></div>';
-    bindCalendario(); return;
-  }
-  if (!S.ig){ $('#view').innerHTML = '<div class="empty"><span class="spin"></span>Cargando Instagram…</div>'; loadIG(true).then(() => { if (S.tab === 'redes') render(); }); return; }
-  const m = igMetricas(), h = hoy();
-  const ks = (key, v, l, extra) => '<div class="ks1" data-info="' + key + '"><div><b>' + v + '</b><small>' + l + ib(key) + '</small>' + (extra || '') + '</div></div>';
-  const delta = (a, b) => b ? '<small style="color:' + (a >= b ? 'var(--ok-ink)' : 'var(--bad-ink)') + '">' + (a >= b ? '▲ ' : '▼ ') + Math.abs(Math.round((a - b) / b * 100)) + '% vs 28 d antes</small>' : '';
-  let html = '<div class="kstrip">' + ks('igSeg', m.seg != null ? m.seg.toLocaleString('es-CL') : '–', 'seguidores', m.dSeg != null ? '<small style="color:' + (m.dSeg >= 0 ? 'var(--ok-ink)' : 'var(--bad-ink)') + '">' + (m.dSeg >= 0 ? '+' : '') + m.dSeg + ' en 28 días</small>' : '') +
-    ks('igAlc', m.alc.toLocaleString('es-CL'), 'alcance 28 días', delta(m.alc, m.alcPrev)) + ks('igInter', m.inter.toLocaleString('es-CL'), 'interacciones 28 días') + ks('igTasa', m.tasa != null ? (m.tasa * 100).toFixed(1) + '%' : '–', 'tasa de interacción') + '</div>';
-  html += '<div class="ihead"><div class="grow wsub" style="font-size:13px">@' + esc(S.ig.usuario || '') + ' · actualizado ' + (S.ig.sinc ? haceTxt(S.ig.sinc.slice(0, 10)) : 'nunca') + '</div><button class="btn sm sec" id="igSinc">↻ Actualizar ahora</button><button class="btn" id="igPlan">' + icon('spark') + ' Calendario de contenido</button></div>';
-  // alcance diario
-  const D = m.D.slice(-30), maxA = Math.max(1, ...D.map(d => +d.alcance || 0));
-  let izq = '<div class="w" style="margin-bottom:14px"><div class="wh">' + icon('chart') + 'Alcance por día · 30 días' + ib('igAlc') + '</div><div class="bars" style="height:120px">' + D.map(d => '<i style="height:' + ((+d.alcance || 0) / maxA * 100) + '%" data-t="' + esc(fmt(d.fecha)) + ': ' + (+d.alcance || 0).toLocaleString('es-CL') + '"></i>').join('') + '</div><div class="bx"><span>' + (D[0] ? fmt(D[0].fecha) : '') + '</span><span>ayer</span></div></div>';
-  izq += calendarioHTML(true);
-  // qué funciona
-  const fm = Object.entries(m.porFmt).map(([k, L]) => [k, L.length, L.reduce((s, x) => s + x.interacciones, 0) / L.length, L.reduce((s, x) => s + x.alcance, 0) / L.length]).sort((a, b) => b[2] - a[2]);
-  const maxF = Math.max(1, ...fm.map(x => x[2])), maxDi = Math.max(1, ...m.porDia.map(x => x.prom));
-  let der = '<div class="w" style="margin-bottom:14px"><div class="wh">' + icon('target') + 'Qué funciona · 90 días' + ib('igFunciona') + '</div><div class="wsub">Interacciones promedio por publicación</div><div class="hbar">' + (fm.length ? fm.map(x => '<span>' + esc(x[0]) + ' (' + x[1] + ')</span><div class="tr"><i style="width:' + (x[2] / maxF * 100) + '%;background:var(--s4)"></i></div><b>' + Math.round(x[2]) + '</b>').join('') : '<span>Sin datos</span><div></div><b></b>') + '</div>' +
-    '<div class="wsub" style="margin-top:14px">Por día de publicación</div><div class="hbar">' + [1, 2, 3, 4, 5, 6, 0].map(d => { const x = m.porDia[d]; return '<span>' + DIAS_L[d] + '</span><div class="tr"><i style="width:' + (x.prom / maxDi * 100) + '%;background:var(--s3)"></i></div><b>' + (x.n ? Math.round(x.prom) : '–') + '</b>'; }).join('') + '</div></div>';
-  const top = m.P.slice().sort((a, b) => b.interacciones - a.interacciones || b.likes - a.likes).slice(0, 6);
-  der += '<div class="sec"><div class="sh">Mejores publicaciones · 90 días</div><div class="wl">' + (top.length ? top.map(x => '<a class="it" href="' + esc(x.link) + '" target="_blank" style="text-decoration:none;color:inherit"><span class="dot" style="background:' + (x.formato === 'REELS' ? 'var(--accent)' : 'var(--s2)') + '"></span><div class="tx">' + esc(String(x.texto || '(sin texto)').split('\n')[0].slice(0, 70)) + '<small>' + esc(fmt(x.fecha.slice(0, 10))) + ' · ' + esc(FMT_IG[x.formato] || x.formato) + ' · alcance ' + x.alcance.toLocaleString('es-CL') + ' · ' + x.guardados + ' guardados</small></div><span class="rt"><b style="color:var(--ink)">' + x.interacciones + '</b><br>interacc.</span></a>').join('') : '<div class="wsub" style="padding:4px 0 10px">Aún no hay publicaciones sincronizadas.</div>') + '</div></div>';
-  html += '<div class="cols2"><div>' + izq + '</div><div>' + der + '</div></div>';
+  if (igActivo() && !S.ig){ $('#view').innerHTML = '<div class="empty"><span class="spin"></span>Cargando Instagram…</div>'; loadIG(true).then(() => { if (S.tab === 'redes') render(); }); return; }
+  if (!S.leadsCanal && extNivel() >= 13 && !S._leadsPend){ S._leadsPend = 1; loadLeads().then(() => { S._leadsPend = 0; if (S.tab === 'redes') render(); }); }
+  if (!S.base && !S._basePend){ S._basePend = 1; loadBase(false).then(() => { S._basePend = 0; if (S.tab === 'redes') render(); }); }
+  const tabs = [['resumen', 'Resumen'], ['contenido', 'Contenido'], ['audiencia', 'Audiencia'], ['leads', 'Leads'], ['estrategia', 'Estrategia']];
+  const t = S.rtab || (igActivo() ? 'resumen' : 'contenido');
+  let html = '<div class="btabs"><div class="tabs">' + tabs.map(x => '<button class="' + (x[0] === t ? 'on' : '') + '" data-rt="' + x[0] + '">' + x[1] + '</button>').join('') + '</div>' +
+    (igActivo() ? '<button class="btn sm sec" id="igSinc">↻ Actualizar</button>' : '') + '<button class="btn sm" id="igPlan">' + icon('spark') + ' Planificar contenido</button></div>';
+  html += ({ resumen: redesResumen, contenido: redesContenido, audiencia: redesAudiencia, leads: redesLeads, estrategia: redesEstrategia })[t]();
   $('#view').innerHTML = html;
-  $('#igSinc').onclick = async e => { const b = e.target.closest('button'); b.disabled = true; b.innerHTML = '<span class="spin"></span>Actualizando…'; try { const r = await apiX('instagram', { sinc: 1 }); S.ig = r; toast('Instagram actualizado ✓ · ' + (r.resultado ? r.resultado.publicaciones + ' publicaciones' : '')); render(); } catch(err){ b.disabled = false; b.textContent = '↻ Actualizar ahora'; toast('No se pudo: ' + err.message); } };
+  $$('[data-rt]').forEach(b => b.onclick = () => { S.rtab = b.dataset.rt; viewRedes(); });
+  const sb = $('#igSinc'); if (sb) sb.onclick = async e => { const b = e.target.closest('button'); b.disabled = true; b.innerHTML = '<span class="spin"></span>Actualizando…'; try { const r = await apiX('instagram', { sinc: 1 }); S.ig = r; await loadLeads(true); toast('Instagram actualizado ✓'); render(); } catch(err){ b.disabled = false; b.textContent = '↻ Actualizar'; toast('No se pudo: ' + err.message); } };
   $('#igPlan').onclick = () => planContenido();
-  bindCalendario();
+  bindRedes(t);
 }
+function igConectarHTML(){
+  return '<div class="sec rd-con"><div class="wh">' + icon('camera') + 'Conecta tu Instagram</div><p>Con la cuenta conectada verás alcance, qué formatos y horarios funcionan, tu audiencia y cuántos clientes te llegan desde Instagram. Mientras tanto, el calendario, la audiencia de tus chats y los links con código ya funcionan.</p><ol><li>Activa la verificación en dos pasos con una app de autenticación (no SMS).</li><li>Crea la app en developers.facebook.com → Instagram → «API setup with Instagram login» → genera el token.</li><li>Guárdalo como <b>IG_TOKEN</b> en Propiedades del script y ejecuta <b>probarInstagram</b>.</li></ol><a class="btn sm sec" href="https://github.com/SnowPv/Organizador/blob/main/docs/INSTAGRAM.md" target="_blank" style="text-decoration:none">Abrir la guía</a></div>';
+}
+function redesResumen(){
+  if (!igActivo()) return igConectarHTML();
+  const a = igAnalisis(), m = a.m, h = hoy();
+  const ks = (key, v, l, extra) => '<div class="ks1" data-info="' + key + '"><div><b class="num">' + v + '</b><small>' + l + ib(key) + '</small>' + (extra || '') + '</div></div>';
+  const delta = (x, y) => { if (!y) return ''; const d = Math.round((x - y) / y * 100); return '<small class="dl ' + (d > 0 ? 'up' : d < 0 ? 'dn' : '') + '">' + (d > 0 ? '▲ ' : d < 0 ? '▼ ' : '= ') + Math.abs(d) + '% vs 28 d antes</small>'; };
+  let html = '<div class="kstrip k5">' + ks('igSeg', m.seg != null ? m.seg.toLocaleString('es-CL') : '–', 'seguidores', m.conBotones && (m.nuevos || m.bajas) ? '<small class="dl up">+' + m.nuevos + ' nuevos · −' + m.bajas + ' en 28 d</small>' : m.dSeg != null ? '<small class="dl ' + (m.dSeg >= 0 ? 'up' : 'dn') + '">' + (m.dSeg >= 0 ? '+' : '') + m.dSeg + ' en 28 días</small>' : '') +
+    ks('igAlc', m.alc.toLocaleString('es-CL'), 'alcance 28 d', delta(m.alc, m.alcPrev)) + ks('igTasa', m.tasa != null ? pctT(m.tasa) : '–', 'interacción / alcance', delta(m.inter, m.interPrev)) +
+    ks('igLinks', m.links.toLocaleString('es-CL'), 'toques en links 28 d', delta(m.links, m.linksPrev)) + ks('igLeads', a.leads.hay ? a.leads.ig28.length : '–', 'clientes desde IG 28 d', a.leads.hay && a.leads.ig56 ? delta(a.leads.ig28.length, a.leads.ig56) : '') + '</div>';
+  html += '<div class="wsub" style="margin:-4px 2px 12px">@' + esc(S.ig.usuario || '') + ' · datos de ' + (S.ig.sinc ? haceTxt(S.ig.sinc.slice(0, 10)) : 'nunca') + '</div>';
+  // Alcance con marcas de publicaciones
+  const D = m.D.slice(-30), maxA = Math.max(1, ...D.map(d => +d.alcance || 0)), pubs = new Set(a.P.map(x => x.fecha.slice(0, 10)));
+  let izq = '<div class="w" style="margin-bottom:14px"><div class="wh">' + icon('chart') + 'Alcance por día · 30 días' + ib('igAlc') + '<span class="wsub" style="margin:0 0 0 auto"><i class="lg-dot"></i> día con publicación</span></div><div class="bars" style="height:130px">' + D.map(d => '<i class="' + (pubs.has(d.fecha) ? 'hit' : '') + '" style="height:' + ((+d.alcance || 0) / maxA * 100) + '%" data-t="' + esc(fmt(d.fecha)) + ': ' + (+d.alcance || 0).toLocaleString('es-CL') + '"></i>').join('') + '</div><div class="bx"><span>' + (D[0] ? fmt(D[0].fecha) : '') + '</span><span>ayer</span></div></div>';
+  // Constancia
+  const mf = metaFrecuencia(), meta = mf.reels + mf.carruseles + mf.posts, mxS = Math.max(meta, ...a.sem.map(x => x.n), 1);
+  izq += '<div class="w" style="margin-bottom:14px"><div class="wh">' + icon('cal') + 'Constancia · publicaciones por semana' + ib('igConst') + '</div><div class="cbars">' + a.sem.map((s, i) => '<div class="cb' + (i === a.sem.length - 1 ? ' now' : '') + '"><i style="height:' + (s.n / mxS * 100) + '%"></i><b class="num">' + s.n + '</b><small>' + esc(fmt(s.ini).replace(/^\S+\s/, '')) + '</small></div>').join('') + '<span class="cmeta" style="bottom:' + (meta / mxS * 100) + '%"><em>meta ' + meta + '</em></span></div></div>';
+  // Formatos
+  const mxF = Math.max(1, ...a.formatos.map(x => x.alc));
+  izq += '<div class="w"><div class="wh">' + icon('target') + 'Por formato · 90 días' + ib('igFunciona') + '</div>' + (a.formatos.length ? '<div class="tw"><table class="rtab"><thead><tr><th>Formato</th><th>Alcance típico</th><th>Interacción</th><th>Guardados + envíos<br><span>por 1.000</span></th></tr></thead><tbody>' + a.formatos.map(f => '<tr><td><b>' + esc(f.k) + '</b><small>' + f.n + ' publ.' + (f.ver ? ' · ' + f.ver.toFixed(1).replace('.', ',') + ' s vistos' : '') + '</small></td><td><div class="mini"><i style="width:' + (f.alc / mxF * 100) + '%"></i></div><span class="num">' + Math.round(f.alc).toLocaleString('es-CL') + '</span></td><td class="num">' + pctT(f.er) + '</td><td class="num">' + f.valor.toFixed(1).replace('.', ',') + '</td></tr>').join('') + '</tbody></table></div>' : '<div class="wsub">Aún no hay publicaciones sincronizadas.</div>') + '</div>';
+  // Mejor horario
+  const mxH = Math.max(1.0001, ...Object.values(a.heat).map(x => x.v));
+  let der = '<div class="w" style="margin-bottom:14px"><div class="wh">' + icon('clock') + 'Cuándo publicar' + ib('igFranja') + '</div><div class="wsub">Alcance de tus publicaciones según día y hora, comparado con tu publicación típica. Más oscuro = llega más lejos.</div><div class="heat"><span></span>' + FRANJAS.map(f => '<span class="hh">' + f[0] + '<br><small>' + f[1] + '–' + f[2] + '</small></span>').join('') +
+    [1, 2, 3, 4, 5, 6, 0].map(d => '<span class="hd">' + DIAS_L[d].slice(0, 3) + '</span>' + FRANJAS.map((f, fi) => { const c = a.heat[d + ':' + fi]; if (!c) return '<span class="hc vac"></span>'; const lvl = Math.max(0, Math.min(4, Math.round((c.v / mxH) * 4))); return '<span class="hc l' + lvl + '" title="' + esc(DIAS_L[d] + ' ' + f[0].toLowerCase() + ': ' + c.n + ' publ., ' + (c.v >= 1 ? '+' : '') + Math.round((c.v - 1) * 100) + '% vs típica') + '">' + (c.v >= 1 ? '+' : '') + Math.round((c.v - 1) * 100) + '%</span>'; }).join('')).join('') + '</div>' +
+    (a.mejores.length ? '<div class="wsub" style="margin-top:8px">Mejores franjas: ' + a.mejores.map(b => '<b>' + DIAS_L[b.d] + ' ' + FRANJAS[b.f][0].toLowerCase() + '</b>').join(', ') + '. Se afina con cada publicación.</div>' : '<div class="wsub" style="margin-top:8px">Necesito al menos 2 publicaciones por franja para recomendar horarios.</div>') + '</div>';
+  // Pilares
+  const mxP = Math.max(1, ...a.pilares.map(x => x.alc));
+  der += '<div class="w" style="margin-bottom:14px"><div class="wh">' + icon('flag') + 'Temas (pilares) · 90 días' + ib('igPilares') + '</div>' + (a.pilares.length ? a.pilares.map((p, i) => '<div class="pil"><span class="pn">' + esc(p.k) + '<small>' + p.n + ' publ. · ' + pctT(p.mix, 0) + ' del total</small></span><span class="hbt"><i style="width:' + (p.alc / mxP * 100) + '%;background:' + SEQ[Math.max(0, 4 - i)] + '"></i></span><b class="num">' + Math.round(p.alc).toLocaleString('es-CL') + '</b></div>').join('') + '<div class="wsub" style="margin-top:6px">Barra = alcance típico de cada tema.</div>' : '<div class="wsub">Sin datos.</div>') + '</div>';
+  // Mejores publicaciones
+  const top = a.P.slice().sort((x, y) => (y.alcance ? (y.interacciones + y.compartidos * 2 + y.guardados * 2) / Math.sqrt(y.alcance) : 0) - (x.alcance ? (x.interacciones + x.compartidos * 2 + x.guardados * 2) / Math.sqrt(x.alcance) : 0)).slice(0, 5);
+  der += '<div class="sec"><div class="sh">Mejores publicaciones · 90 días</div><div class="wl">' + (top.length ? top.map(x => '<a class="it" href="' + esc(x.link) + '" target="_blank" style="text-decoration:none;color:inherit"><span class="dot" style="background:' + (x.formato === 'REELS' ? 'var(--accent)' : 'var(--s2)') + '"></span><div class="tx">' + esc(String(x.texto || '(sin texto)').split('\n')[0].slice(0, 70)) + '<small>' + esc(fmt(x.fecha.slice(0, 10))) + ' · ' + esc(fmtPost(x)) + ' · ' + esc(pilarDe(x.texto)) + ' · alcance ' + x.alcance.toLocaleString('es-CL') + ' · ' + x.guardados + ' guard. · ' + x.compartidos + ' envíos</small></div><span class="rt"><b style="color:var(--ink)">' + x.interacciones + '</b><br>interacc.</span></a>').join('') : '<div class="wsub" style="padding:4px 0 10px">Aún no hay publicaciones sincronizadas.</div>') + '</div></div>';
+  // Recomendaciones (arriba, ancho completo)
+  const R = igRecomendaciones(a);
+  html += R.length ? '<div class="w rd-recs" style="margin-bottom:14px"><div class="wh">' + icon('spark') + 'Lo que te recomiendo según tus datos<span class="r"><button class="btn sm sec" data-rt2="estrategia">Estrategia con IA</button></span></div><div class="recs">' + R.slice(0, 6).map(x => '<div class="rec' + (x.mal ? ' mal' : '') + '">' + icon(x.ic) + '<div><b>' + esc(x.t) + '</b><span>' + esc(x.d) + '</span></div></div>').join('') + '</div></div>' : '';
+  return html + '<div class="cols2"><div>' + izq + '</div><div>' + der + '</div></div>';
+}
+
+/* --- Contenido: calendario semanal, banco de ideas y resultados de lo publicado --- */
+const EST_CT = ['Idea', 'Planificado', 'Grabado', 'Publicado'];
+const PILARES_K = PILARES.map(p => p.k);
+// Cruza lo planificado con lo publicado (por código o por fecha y formato).
+function postDeIdea(x){
+  const P = ((S.ig || {}).posts) || [];
+  if (x.post){ const p = P.find(y => y.id === x.post); if (p) return p; }
+  if (x.codigo){ const p = P.find(y => String(y.texto || '').toUpperCase().includes(x.codigo)); if (p) return p; }
+  if (x.estado !== 'Publicado' && x.fecha > hoy()) return null;
+  const fx = x.formato === 'Reel' ? 'Reel' : x.formato === 'Historia' ? 'Historia' : null;
+  return P.find(y => Math.abs(diffDays(y.fecha.slice(0, 10), x.fecha)) <= 1 && (!fx || fmtPost(y) === fx) && pilarDe(y.texto) === (x.pilar || pilarDe(y.texto))) || null;
+}
+function redesContenido(){
+  const h = hoy(), C = (S.cont || []).filter(x => x.estado !== 'Descartado');
+  const lunes = (() => { const d = pd(h); return addDays(h, -((d.getDay() + 6) % 7)); })();
+  const nSem = S.ctSem || 0, ini = addDays(lunes, nSem * 7), dias = [0, 1, 2, 3, 4, 5, 6].map(i => addDays(ini, i));
+  const atras = C.filter(x => x.fecha < h && x.estado !== 'Publicado' && x.estado !== 'Idea' && !postDeIdea(x));
+  const banco = C.filter(x => x.estado === 'Idea');
+  const mf = metaFrecuencia(), deSem = C.filter(x => x.fecha >= ini && x.fecha <= addDays(ini, 6) && x.estado !== 'Idea');
+  const cuenta = f => deSem.filter(x => x.formato === f).length;
+  let html = '<div class="ct-top"><div class="ct-nav"><button class="btn sm sec" data-cs="-1" aria-label="Semana anterior">←</button><b>' + (nSem === 0 ? 'Esta semana' : nSem === 1 ? 'Próxima semana' : 'Semana del ' + fmt(ini)) + '</b><button class="btn sm sec" data-cs="1" aria-label="Semana siguiente">→</button></div>' +
+    '<div class="ct-meta">' + [['Reel', mf.reels], ['Carrusel', mf.carruseles], ['Post', mf.posts]].map(([f, n]) => '<span class="pc' + (cuenta(f) >= n && n ? ' lc' : '') + '">' + f + 's ' + cuenta(f) + '/' + n + '</span>').join('') + '<span class="pc">Historias: ' + mf.historias + ' al día</span></div>' +
+    '<div class="ct-acts"><button class="btn sm sec" id="igNew">＋ Idea</button><button class="btn sm sec" id="ctLinks">' + icon('box') + ' Links con código</button></div></div>';
+  if (atras.length) html += '<div class="im-warn" style="margin:0 0 12px">' + icon('flag') + '<span><b>' + atras.length + (atras.length === 1 ? ' publicación planificada ya pasó su fecha.' : ' publicaciones planificadas ya pasaron su fecha.') + '</b> Márcalas como publicadas (o muévelas) para que el análisis cuadre.</span></div>';
+  html += '<div class="week">' + dias.map(d => { const L = C.filter(x => x.fecha === d && x.estado !== 'Idea').sort((a, b) => String(a.hora).localeCompare(String(b.hora)));
+    return '<div class="wd' + (d === h ? ' hoy' : '') + (d < h ? ' pas' : '') + '"><div class="wdh"><b>' + DIAS_L[pd(d).getDay()].slice(0, 3) + '</b><span class="num">' + +d.slice(8) + '</span></div>' + L.map(x => { const p = postDeIdea(x), est = p ? 'Publicado' : x.estado;
+      return '<button class="ctc f-' + norm(x.formato) + ' e-' + norm(est) + '" data-ct="' + esc(x.id) + '"><span class="ctf">' + esc(x.formato) + (x.hora ? ' · ' + esc(x.hora) : '') + '</span><span class="ctt">' + esc(x.tema || x.idea) + '</span>' + (p ? '<span class="ctr num">' + icon('chart') + ' ' + (+p.alcance || 0).toLocaleString('es-CL') + '</span>' : '<span class="cte">' + esc(est) + '</span>') + '</button>'; }).join('') + '<button class="ctadd" data-cadd="' + d + '" aria-label="Agregar el ' + esc(fmt(d)) + '">＋</button></div>'; }).join('') + '</div>';
+  html += '<div class="cols2" style="margin-top:14px"><div class="sec"><div class="sh">' + icon('spark') + ' Banco de ideas <span class="n">' + banco.length + '</span></div>' + (banco.length ? '<div class="wl">' + banco.map(x => '<div class="it" data-ct="' + esc(x.id) + '"><span class="dot" style="background:var(--s2)"></span><div class="tx">' + esc(x.tema) + '<small>' + esc(x.formato) + (x.pilar ? ' · ' + esc(x.pilar) : '') + '</small></div><span class="rt">Sin fecha</span></div>').join('') + '</div>' : '<div class="wsub" style="padding:4px 0 10px">Guarda aquí ideas sin fecha. Cuando generes con IA, puedes dejar algunas para después.</div>') + '</div>';
+  const pub = C.filter(x => postDeIdea(x)).slice(-8).reverse();
+  html += '<div class="sec"><div class="sh">' + icon('chart') + ' Resultados de lo planificado</div>' + (pub.length ? '<div class="wl">' + pub.map(x => { const p = postDeIdea(x), lc = (((S.leadsCanal || {}).leads) || []).filter(l => l.ref === x.codigo).length;
+    return '<div class="it" data-ct="' + esc(x.id) + '"><span class="dot" style="background:var(--accent)"></span><div class="tx">' + esc(x.tema) + '<small>' + esc(fmt(x.fecha)) + ' · ' + esc(x.formato) + ' · alcance ' + (+p.alcance || 0).toLocaleString('es-CL') + ' · ' + (p.alcance ? pctT(p.interacciones / p.alcance) : '–') + ' interacción</small></div><span class="rt">' + (lc ? '<b style="color:var(--ink)">' + lc + '</b><br>leads' : (p.alcance >= (igActivo() ? igAnalisis().alcMed : 0) ? '▲ sobre<br>tu típica' : '▼ bajo<br>tu típica')) + '</span></div>'; }).join('') + '</div>' : '<div class="wsub" style="padding:4px 0 10px">Cuando publiques lo planificado, aquí verás cómo le fue a cada idea y cuántos clientes trajo su código.</div>') + '</div></div>';
+  return html;
+}
+
+/* --- Audiencia: lo que busca tu público (chats) y datos demográficos de Instagram --- */
+function redesAudiencia(){
+  const a = igAnalisis(), demo = (S.ig && S.ig.audiencia) || null;
+  let html = '<div class="wsub" style="margin:0 2px 12px">Lo que tu público busca, sacado de los perfiles que el agente armó con tus chats de WhatsApp, comparado con cuánto lo muestras en Instagram (últimos 90 días).</div>';
+  const mxD = Math.max(1, ...a.demanda.map(x => x.n));
+  html += '<div class="cols2"><div><div class="w" style="margin-bottom:14px"><div class="wh">' + icon('users') + 'Modelos que más preguntan' + ib('igDemanda') + '</div>' + (a.demanda.length ? '<div class="dem"><span class="dh"></span><span class="dh">Clientes interesados</span><span class="dh">Publicaciones</span>' + a.demanda.map(d => '<span class="dn">' + esc(d.k.charAt(0).toUpperCase() + d.k.slice(1)) + '</span><span class="dbar"><i style="width:' + (d.n / mxD * 100) + '%"></i><b class="num">' + d.n + '</b></span><span class="dpost' + (d.posts <= 1 && d.n >= 3 ? ' gap' : '') + '">' + d.posts + (d.posts <= 1 && d.n >= 3 ? ' · falta contenido' : '') + '</span>').join('') + '</div>' : '<div class="wsub">Cuando importes tus chats, aquí verás qué modelos piden más tus clientes.</div>') + '</div>';
+  const bar = (titulo, obj, L, info) => { const E = Object.entries(obj).sort((x, y) => y[1] - x[1]).slice(0, 7), mx = Math.max(1, ...E.map(e => e[1])); return '<div class="w" style="margin-bottom:14px"><div class="wh">' + titulo + (info ? ib(info) : '') + '</div>' + (E.length ? E.map((e, i) => '<div class="pil"><span class="pn">' + esc(L[e[0]] || e[0]) + '</span><span class="hbt"><i style="width:' + (e[1] / mx * 100) + '%;background:' + SEQ[Math.max(0, 4 - i)] + '"></i></span><b class="num">' + (+e[1]).toLocaleString('es-CL') + '</b></div>').join('') : '<div class="wsub">Sin datos todavía.</div>') + '</div>'; };
+  html += bar('Qué buscan', a.inten, L_INT) + '</div><div>' + bar('Disciplinas de tus clientes', a.disc, L_DISC);
+  if (demo && demo.items && demo.items.length){
+    const grupos = {}; demo.items.forEach(x => { (grupos[x.tipo] = grupos[x.tipo] || []).push(x); });
+    const tit = { city: 'Ciudades de tus seguidores', country: 'Países', age: 'Edades', gender: 'Género' }, Lg = { M: 'Hombres', F: 'Mujeres', U: 'Sin dato' }, Lp = { CL: 'Chile', AR: 'Argentina', US: 'Estados Unidos', BR: 'Brasil', ES: 'España', PE: 'Perú', UY: 'Uruguay', DE: 'Alemania', MX: 'México', CO: 'Colombia' };
+    ['city', 'country', 'age', 'gender'].filter(k => grupos[k]).forEach(k => { const obj = {}; grupos[k].forEach(x => { obj[x.clave] = x.valor; }); html += bar(tit[k], obj, k === 'gender' ? Lg : k === 'country' ? Lp : {}, k === 'city' ? 'igCiudades' : ''); });
+    html += '<div class="wsub" style="margin:-6px 2px 12px">Datos de Instagram del ' + esc(fmt(demo.fecha || hoy())) + '.</div>';
+  } else html += '<div class="w" style="margin-bottom:14px"><div class="wh">' + icon('target') + 'Demografía de seguidores</div><div class="wsub">' + (igActivo() ? 'Instagram entrega ciudades, países, edades y género cuando la cuenta tiene más de 100 seguidores. Se actualiza una vez por semana con la nueva versión del script.' : 'Disponible al conectar Instagram.') + '</div></div>';
+  return html + '</div></div>';
+}
+
+/* --- Leads: de Instagram y la web a WhatsApp y a ventas --- */
+function redesLeads(){
+  if (extNivel() < 13) return '<div class="sec rd-con"><div class="wh">' + icon('box') + 'Mide los clientes que llegan desde Instagram</div><p>Actualiza el script a la versión nueva para ver cuántas conversaciones de WhatsApp vienen de Instagram y de la web, y qué publicación las trajo.</p><button class="btn sm" id="rUpd">Ver cómo actualizar</button></div>';
+  const a = igAnalisis(), L = a.leads, m = a.m, alc = m.alc;
+  const pasos = [['Alcance', igActivo() ? alc : null, 'personas vieron tus publicaciones'], ['Interacciones', igActivo() ? m.inter : null, 'likes, comentarios, guardados y envíos'], ['Toques en links', igActivo() ? m.links : null, m.conBotones ? m.tMensaje + ' al botón de mensaje, el resto a la bio y otros botones' : 'en tu perfil (bio, WhatsApp, web)'], ['Conversaciones', L.ig28.length, 'te escribieron desde Instagram'], ['Negociaciones', L.ig28.filter(x => negocios().some(n => n.contacto === x.id)).length, 'se volvieron oportunidad de venta']];
+  const mxp = Math.max(1, ...pasos.map(p => +p[1] || 0));
+  let html = '<div class="w" style="margin-bottom:14px"><div class="wh">' + icon('arrow') + 'De Instagram a ventas · 28 días' + ib('igEmbudo') + '</div><div class="funnel">' + pasos.map((p, i) => '<div class="fs"><span class="fl">' + p[0] + '</span><span class="fb"><i style="width:' + (p[1] == null ? 0 : Math.max(2, Math.sqrt(p[1] / mxp) * 100)) + '%;background:' + SEQ[Math.max(0, 4 - i)] + '"></i></span><b class="num">' + (p[1] == null ? '–' : (+p[1]).toLocaleString('es-CL')) + '</b><small>' + p[2] + (i > 0 && pasos[i - 1][1] && p[1] != null ? ' · ' + pctT(p[1] / pasos[i - 1][1]) : '') + '</small></div>').join('') + '</div>' +
+    '<div class="wsub" style="margin-top:8px">En total (todo el historial): <b>' + L.ig.length + '</b> clientes llegaron desde Instagram y <b>' + L.web.length + '</b> desde la web; ' + L.conv.gan + ' compraron' + (L.conv.monto ? ' (' + clpCorto(L.conv.monto) + ')' : '') + '. Se detectan por el código del link o porque lo dicen («te vi en Instagram»).</div></div>';
+  const refs = Object.entries(L.porRef).sort((x, y) => y[1].length - x[1].length);
+  html += '<div class="cols2"><div class="sec"><div class="sh">' + icon('target') + ' Qué publicación o link trae clientes</div>' + (refs.length ? '<div class="wl">' + refs.map(([ref, arr]) => { const it = (S.cont || []).find(x => x.codigo === ref); const g = arr.filter(x => negocios().some(n => n.contacto === x.id && n.estado === 'Ganada')).length;
+    return '<div class="it"><span class="dot" style="background:var(--accent)"></span><div class="tx">' + esc(it ? it.tema : ref.startsWith('BIO') ? 'Link de la bio' : ref.startsWith('HIS') ? 'Historias' : ref.startsWith('WEB') ? 'Página web' : ref) + '<small>' + esc(ref) + (it ? ' · ' + esc(it.formato) + ' del ' + esc(fmt(it.fecha)) : '') + '</small></div><span class="rt"><b style="color:var(--ink)">' + arr.length + '</b> leads' + (g ? '<br>' + g + ' ventas' : '') + '</span></div>'; }).join('') + '</div>' : '<div class="wsub" style="padding:4px 0 10px">Todavía ningún cliente llegó con un código. Crea tus links abajo y úsalos en la bio, en las historias y en las publicaciones.</div>') + '</div>';
+  const rec = L.ig.slice().sort((x, y) => y.fecha.localeCompare(x.fecha)).slice(0, 8);
+  html += '<div class="sec"><div class="sh">' + icon('users') + ' Últimos clientes desde Instagram</div>' + (rec.length ? '<div class="wl">' + rec.map(x => { const c = contactoPorId(x.id), pf = perfilDe(x.id); return '<div class="it" data-lc="' + esc(x.id) + '"><span class="dot" style="background:var(--s3)"></span><div class="tx">' + esc(c ? c.nombre || c.email : x.id) + '<small>' + esc(fmt(x.fecha)) + (x.ref ? ' · ' + esc(x.ref) : ' · lo mencionó') + (pf && pf.p && pf.p.intereses && pf.p.intereses[0] ? ' · ' + esc(pf.p.intereses[0]) : '') + '</small></div><span class="rt">' + (pf ? pf.prob + '%<br>prob.' : '') + '</span></div>'; }).join('') + '</div>' : '<div class="wsub" style="padding:4px 0 10px">Aparecerán aquí cuando importes chats donde el cliente llegó desde Instagram.</div>') + '</div></div>';
+  html += linksHTML();
+  return html;
+}
+function waTienda(){ return (lsGet('waTienda', '') || '').replace(/\D/g, ''); }
+function linksHTML(item){
+  const tel = waTienda(), cod = item ? item.codigo : (S.lkCod || 'BIO-PERFIL'), tema = item ? item.tema : '';
+  const txt = (item ? 'Hola! Vi en Instagram «' + tema + '» y quiero más información' : 'Hola! Los vi en Instagram y quiero más información') + ' (ref ' + cod + ')';
+  const wa = tel ? 'https://wa.me/' + tel + '?text=' + encodeURIComponent(txt) : '';
+  const web = 'https://blacklinechile.cl/?utm_source=instagram&utm_medium=' + (cod.startsWith('HIS') ? 'historia' : cod.startsWith('BIO') ? 'bio' : 'publicacion') + '&utm_campaign=' + encodeURIComponent(cod.toLowerCase());
+  return '<div class="w lk" style="margin-top:14px"><div class="wh">' + icon('box') + 'Links con código' + ib('igLinksCod') + '</div><div class="wsub">Cada link lleva un código. Cuando el cliente escribe, el código queda en el chat y la app sabe de dónde vino.</div>' +
+    '<div class="lk-row"><label for="lk_tel">WhatsApp de la tienda</label><input type="tel" id="lk_tel" placeholder="+56 9 …" value="' + esc(tel ? '+' + tel : '') + '"></div>' +
+    (item ? '' : '<div class="lk-row"><label>Dónde lo vas a usar</label><div class="seg" id="lk_cod">' + [['BIO-PERFIL', 'Bio del perfil'], ['HIS-' + hoy().slice(5).replace('-', ''), 'Historia de hoy'], ['WEB-SITIO', 'Página web']].map(x => '<button type="button" class="pill' + (x[0] === cod ? ' on' : '') + '" data-v="' + x[0] + '">' + x[1] + '</button>').join('') + '</div></div>') +
+    '<div class="lk-out"><small>Link a WhatsApp</small><code>' + esc(wa || 'Escribe primero el WhatsApp de la tienda') + '</code>' + (wa ? '<button class="btn sm" data-cp="' + esc(wa) + '">Copiar</button>' : '') + '</div>' +
+    '<div class="lk-out"><small>Link a la web (para Google Analytics)</small><code>' + esc(web) + '</code><button class="btn sm sec" data-cp="' + esc(web) + '">Copiar</button></div>' +
+    '<div class="wsub">Úsalo en: la bio (enlace a WhatsApp), el sticker de link en historias y el texto «escríbenos, link en la bio». ' + (item ? 'Este código es solo de esta publicación.' : 'Para una publicación puntual, abre la idea en Contenido y copia su link.') + '</div></div>';
+}
+function bindLinks(root, item){
+  const t = root.querySelector('#lk_tel'); if (t) t.onchange = () => { lsSet('waTienda', t.value.replace(/\D/g, '').replace(/^9(\d{8})$/, '569$1')); item ? (root.querySelector('.lk').outerHTML = linksHTML(item), bindLinks(root, item)) : viewRedes(); };
+  root.querySelectorAll('#lk_cod [data-v]').forEach(b => b.onclick = () => { S.lkCod = b.dataset.v; viewRedes(); });
+  root.querySelectorAll('[data-cp]').forEach(b => b.onclick = async () => { try { await navigator.clipboard.writeText(b.dataset.cp); toast('Link copiado ✓'); } catch(e){ toast('No se pudo copiar: mantén apretado el link para copiarlo'); } });
+}
+
+/* --- Estrategia: diagnóstico con IA, frecuencia, horarios, mix de temas y metas --- */
+function redesEstrategia(){
+  const E = S.igEst && S.igEst.estrategia, a = igAnalisis();
+  if (!E) return '<div class="sec rd-con"><div class="wh">' + icon('spark') + 'Tu estrategia de Instagram</div><p>El asistente revisa tus métricas, lo que preguntan tus clientes en WhatsApp, tu stock y tu agenda, y te propone: qué publicar y con qué frecuencia, en qué horarios, qué mezcla de temas, cómo conseguir más conversaciones por WhatsApp y visitas a la web, y metas para los próximos 30 días.</p><button class="btn" id="estGo">' + icon('spark') + ' Armar mi estrategia</button>' + (extNivel() < 13 ? '<div class="hint">Necesita la versión nueva del script.</div>' : '') + '</div>';
+  const f = E.frecuencia || {}, tg = { fortaleza: 't-ok', debilidad: 't-bad', oportunidad: 't-acc' };
+  const actual = { seguidores: a.m.seg, alcance_28d: a.m.alc, interaccion: a.m.tasa != null ? +(a.m.tasa * 100).toFixed(1) : null, publicaciones_semana: +a.porSem.toFixed(1), toques_links_28d: a.m.links, leads_instagram_28d: a.leads.ig28.length };
+  let html = '<div class="w est-head"><div><div class="wh" style="margin-bottom:6px">' + icon('spark') + 'Tu estrategia</div><p>' + esc(E.resumen) + '</p><div class="wsub">Armada el ' + esc(S.igEst.fecha ? fmt(S.igEst.fecha.slice(0, 10)) : '') + ' · conviene renovarla una vez al mes.</div></div><button class="btn sm sec" id="estGo">↻ Renovar</button></div>';
+  html += '<div class="kstrip k4" style="margin-top:14px">' + [['Reels', f.reels_semana, 'por semana'], ['Carruseles', f.carruseles_semana, 'por semana'], ['Posts', f.posts_semana, 'por semana'], ['Historias', f.historias_dia, 'al día']].map(x => '<div class="ks1"><div><b class="num">' + (x[1] != null ? x[1] : '–') + '</b><small>' + x[0] + ' ' + x[2] + '</small></div></div>').join('') + '</div>' + (f.motivo ? '<div class="wsub" style="margin:-4px 2px 14px">' + esc(f.motivo) + '</div>' : '');
+  html += '<div class="cols2"><div><div class="w" style="margin-bottom:14px"><div class="wh">' + icon('target') + 'Diagnóstico</div>' + (E.diagnostico || []).map(d => '<div class="dg"><span class="tag ' + (tg[d.tipo] || 't-acc') + '">' + esc(d.tipo) + '</span><div><b>' + esc(d.titulo) + '</b><span>' + esc(d.detalle) + '</span></div></div>').join('') + '</div>' +
+    '<div class="w" style="margin-bottom:14px"><div class="wh">' + icon('arrow') + 'Más clientes por WhatsApp y la web</div>' + (E.acciones_leads || []).map((x, i) => '<div class="dg"><span class="nn num">' + (i + 1) + '</span><div><b>' + esc(x.accion) + '</b><span>' + esc(x.detalle) + '</span></div></div>').join('') + '</div></div>';
+  const mxP = Math.max(1, ...(E.pilares || []).map(p => +p.porcentaje || 0));
+  html += '<div><div class="w" style="margin-bottom:14px"><div class="wh">' + icon('flag') + 'Mezcla de temas recomendada</div>' + (E.pilares || []).map((p, i) => '<div class="pil"><span class="pn">' + esc(p.pilar) + '<small>' + esc(p.motivo) + '</small></span><span class="hbt"><i style="width:' + ((+p.porcentaje || 0) / mxP * 100) + '%;background:' + SEQ[Math.max(0, 4 - i)] + '"></i></span><b class="num">' + (+p.porcentaje || 0) + '%</b></div>').join('') + '</div>' +
+    '<div class="w" style="margin-bottom:14px"><div class="wh">' + icon('clock') + 'Horarios</div>' + (E.horarios || []).map(x => '<div class="dg"><span class="tag t-acc">' + esc(x.dia + ' ' + x.hora) + '</span><div><span>' + esc(x.motivo) + '</span></div></div>').join('') + '</div>' +
+    '<div class="w"><div class="wh">' + icon('chart') + 'Metas a 30 días</div>' + (E.metas || []).map(x => { const act = actual[x.kpi] != null ? actual[x.kpi] : x.actual; const p = x.meta ? Math.max(0, Math.min(1, (+act || 0) / x.meta)) : 0; return '<div class="mt"><span>' + esc(x.nombre || x.kpi) + '</span><span class="num">' + (act != null && act !== '' ? (+act).toLocaleString('es-CL') : '–') + ' / ' + (+x.meta).toLocaleString('es-CL') + '</span><span class="pb"><i style="width:' + (p * 100) + '%"></i></span></div>'; }).join('') + '</div></div></div>';
+  return html;
+}
+async function armarEstrategia(btn){
+  if (!iaDisponible()){ toast('Falta la versión nueva del script o tu clave de Claude'); return; }
+  if (extNivel() < 13){ toast('Actualiza el script para guardar la estrategia'); return; }
+  if (btn){ btn.disabled = true; btn.innerHTML = '<span class="spin"></span>Analizando tu cuenta…'; }
+  try {
+    await loadLeads(true);
+    const r = (await apiX('asistente', { modo: 'redes', contexto: contextoRedes() })).r;
+    S.igEst = await apiX('igEstrategia', { guardar: r }); S._igA = null;
+    toast('Estrategia lista ✓'); S.rtab = 'estrategia'; render();
+  } catch(e){ if (btn){ btn.disabled = false; btn.textContent = 'Armar mi estrategia'; } toast('No se pudo: ' + e.message); }
+}
+// Contexto para la IA: todas las métricas, la audiencia de los chats, leads, stock y agenda.
+function contextoRedes(){
+  const a = igAnalisis(), m = a.m, h = hoy(), demo = (S.ig && S.ig.audiencia) || null;
+  const stk = S.base && S.base.stock && S.base.stock.items ? S.base.stock.items.filter(x => x.l && diffDays(x.l, h) <= 30).map(x => x.p + (x.v ? ' ' + x.v : '')) : [];
+  const ev = S.google && S.google.eventos ? S.google.eventos.filter(e => e.fecha >= h && e.fecha <= addDays(h, 30)) : [];
+  return ['Hoy es ' + fmtLong(h) + '. Tienda en Puerto Varas, Chile (temporada alta de ciclismo: primavera y verano; clientes argentinos de Bariloche).',
+    '', 'CUENTA @' + ((S.ig && S.ig.usuario) || '') + (igActivo() ? '' : ' (Instagram aún no conectado: usa solo lo que sí hay)') + ': seguidores ' + (m.seg != null ? m.seg : 's/d') + (m.dSeg != null ? ' (' + (m.dSeg >= 0 ? '+' : '') + m.dSeg + ' en 28 días)' : '') + '; alcance 28 d ' + m.alc + ' (28 d antes ' + m.alcPrev + '); interacciones 28 d ' + m.inter + '; tasa ' + (m.tasa != null ? pctT(m.tasa) : 's/d') + '; toques en links 28 d ' + m.links + '.',
+    'Publicaciones por semana (8 semanas, de la más antigua a la actual): ' + a.sem.map(s => s.n).join(', ') + '. Historias últimas 4 semanas: ' + a.H.length + '.',
+    'POR FORMATO (90 d): ' + (a.formatos.map(f => f.k + ': ' + f.n + ' publ., alcance típico ' + Math.round(f.alc) + ', interacción ' + pctT(f.er) + ', guardados+envíos por 1000 ' + f.valor.toFixed(1) + (f.ver ? ', ' + f.ver.toFixed(1) + ' s vistos en promedio' : '')).join(' | ') || 'sin datos'),
+    'MEJORES FRANJAS (alcance vs típica): ' + (a.mejores.map(b => DIAS_L[b.d] + ' ' + FRANJAS[b.f][0] + ' ' + FRANJAS[b.f][1] + '-' + FRANJAS[b.f][2] + 'h ' + (b.v >= 1 ? '+' : '') + Math.round((b.v - 1) * 100) + '% (' + b.n + ' publ.)').join('; ') || 'pocos datos'),
+    'TEMAS (90 d): ' + (a.pilares.map(p => p.k + ' ' + pctT(p.mix, 0) + ' del total, alcance típico ' + Math.round(p.alc)).join('; ') || 'sin datos'),
+    'TASAS: guardado ' + pctT(a.tasas.guardado, 2) + ', envíos ' + pctT(a.tasas.compartido, 2) + ', interacción ' + pctT(a.tasas.er) + '; publicaciones con llamado a la acción ' + pctT(a.conCta, 0) + '.',
+    'MEJORES PUBLICACIONES: ' + a.P.slice().sort((x, y) => (y.compartidos * 3 + y.guardados * 2 + y.interacciones) - (x.compartidos * 3 + x.guardados * 2 + x.interacciones)).slice(0, 5).map(x => '[' + fmtPost(x) + ', ' + x.fecha.slice(0, 16) + ', alcance ' + x.alcance + ', ' + x.guardados + ' guard., ' + x.compartidos + ' envíos] ' + String(x.texto || '').split('\n')[0].slice(0, 100)).join(' | '),
+    'PEORES PUBLICACIONES: ' + a.P.slice().sort((x, y) => x.alcance - y.alcance).slice(0, 3).map(x => '[' + fmtPost(x) + ', alcance ' + x.alcance + '] ' + String(x.texto || '').split('\n')[0].slice(0, 80)).join(' | '),
+    '', 'AUDIENCIA DE INSTAGRAM: ' + (demo && demo.items ? demo.items.slice(0, 30).map(x => x.tipo + ' ' + x.clave + ': ' + x.valor).join(', ') : 'sin datos'),
+    'LO QUE BUSCAN TUS CLIENTES EN WHATSAPP (modelos: clientes interesados / publicaciones que lo muestran): ' + (a.demanda.map(d => d.k + ' ' + d.n + '/' + d.posts).join(', ') || 'sin chats perfilados'),
+    'Intención de los clientes: ' + Object.entries(a.inten).map(e => (L_INT[e[0]] || e[0]) + ' ' + e[1]).join(', ') + '. Disciplinas: ' + Object.entries(a.disc).map(e => (L_DISC[e[0]] || e[0]) + ' ' + e[1]).join(', ') + '.',
+    'LEADS: desde Instagram en 28 días ' + a.leads.ig28.length + ' (28 días antes ' + a.leads.ig56 + '); historial ' + a.leads.ig.length + ' de Instagram (' + a.leads.conv.gan + ' compraron) y ' + a.leads.web.length + ' de la web. Códigos con leads: ' + (Object.entries(a.leads.porRef).map(e => e[0] + ' ' + e[1].length).join(', ') || 'ninguno (aún no usa links con código)'),
+    'STOCK QUE LLEGÓ (30 días): ' + (stk.slice(0, 15).join(', ') || 'sin datos de Bsale'),
+    'AGENDA PRÓXIMOS 30 DÍAS: ' + (ev.map(e => e.fecha + ' ' + e.titulo).join('; ') || 'sin eventos'),
+    'Equipo: el encargado graba y publica; un vendedor apoya en marketing. Tiempo limitado: prefiere 1 o 2 sesiones de grabación por semana.'].join('\n');
+}
+function bindRedes(t){
+  $$('[data-rt2]').forEach(b => b.onclick = () => { S.rtab = b.dataset.rt2; viewRedes(); });
+  const eg = $('#estGo'); if (eg) eg.onclick = () => armarEstrategia(eg);
+  const ru = $('#rUpd'); if (ru) ru.onclick = showExtrasUpdate;
+  if (t === 'contenido'){
+    $$('[data-cs]').forEach(b => b.onclick = () => { S.ctSem = (S.ctSem || 0) + +b.dataset.cs; viewRedes(); });
+    $$('[data-cadd]').forEach(b => b.onclick = () => openIdea(null, { fecha: b.dataset.cadd }));
+    const n = $('#igNew'); if (n) n.onclick = () => openIdea(null);
+    const lk = $('#ctLinks'); if (lk) lk.onclick = () => { S.rtab = 'leads'; viewRedes(); setTimeout(() => { const x = $('.lk'); if (x) x.scrollIntoView({ behavior: 'smooth' }); }, 60); };
+    $$('[data-ct]').forEach(b => b.onclick = () => openIdea((S.cont || []).find(x => x.id === b.dataset.ct)));
+  }
+  if (t === 'leads'){ bindLinks($('#view')); $$('[data-lc]').forEach(b => b.onclick = () => { const c = contactoPorId(b.dataset.lc); if (c) openCto(c, { tab: 'perfil' }); }); }
+}
+// Para Inicio y Hoy: lo mismo de antes (el calendario completo vive en Redes → Contenido).
 function calendarioHTML(sinBoton){
-  const h = hoy(), C = (S.cont || []).filter(x => x.estado !== 'Descartado').sort((a, b) => a.fecha.localeCompare(b.fecha));
-  const prox = C.filter(x => x.fecha >= h && x.estado !== 'Publicado'), pasadas = C.filter(x => x.fecha < h && x.estado !== 'Publicado');
-  return '<div class="sec"><div class="sh">' + icon('cal') + ' Calendario de contenido <span class="n">' + prox.length + ' próximas</span><span class="r">' + (sinBoton ? '' : '<button class="btn sm" id="ctPlan">' + icon('spark') + ' Generar con IA</button>') + '<button class="btn sm sec" id="igNew">＋ Idea</button></span></div>' +
-    (pasadas.length ? '<div class="hint" style="color:var(--bad-ink)">' + pasadas.length + ' publicaciones planificadas ya pasaron su fecha sin marcarse como publicadas.</div>' : '') +
-    (prox.length || pasadas.length ? '<div class="wl">' + pasadas.concat(prox).map(x => '<div class="it" data-ct="' + esc(x.id) + '"><span class="dot" style="background:' + (x.fecha < h ? 'var(--bad)' : x.formato === 'Reel' ? 'var(--accent)' : 'var(--s2)') + '"></span><div class="tx">' + esc(x.tema || x.idea) + '<small>' + esc(fmt(x.fecha)) + ' · ' + esc(x.formato) + (x.relacionado ? ' · 🔗 ' + esc(x.relacionado) : x.objetivo ? ' · ' + esc(x.objetivo) : '') + '</small></div><span class="rt">' + esc(x.estado) + '</span></div>').join('') + '</div>' : '<div class="wsub" style="padding:4px 0 10px">Sin publicaciones planificadas. El asistente te propone las próximas 2 semanas según lo que pasa en la tienda.</div>') + '</div>';
+  const h = hoy(), C = (S.cont || []).filter(x => x.estado !== 'Descartado' && x.estado !== 'Idea').sort((a, b) => a.fecha.localeCompare(b.fecha));
+  const prox = C.filter(x => x.fecha >= h && x.estado !== 'Publicado').slice(0, 6);
+  return '<div class="sec"><div class="sh">' + icon('cal') + ' Próximas publicaciones <span class="n">' + prox.length + '</span></div>' + (prox.length ? '<div class="wl">' + prox.map(x => '<div class="it" data-ct="' + esc(x.id) + '"><span class="dot" style="background:' + (x.formato === 'Reel' ? 'var(--accent)' : 'var(--s2)') + '"></span><div class="tx">' + esc(x.tema || x.idea) + '<small>' + esc(fmt(x.fecha)) + (x.hora ? ' ' + esc(x.hora) : '') + ' · ' + esc(x.formato) + '</small></div><span class="rt">' + esc(x.estado) + '</span></div>').join('') + '</div>' : '<div class="wsub" style="padding:4px 0 10px">Sin publicaciones planificadas.</div>') + '</div>';
 }
-function bindCalendario(){
-  const p = $('#ctPlan'); if (p) p.onclick = () => planContenido();
-  const n = $('#igNew'); if (n) n.onclick = () => openIdea(null);
-  $$('[data-ct]').forEach(b => b.onclick = () => openIdea((S.cont || []).find(x => x.id === b.dataset.ct)));
-}
+function bindCalendario(){ $$('[data-ct]').forEach(b => b.onclick = () => openIdea((S.cont || []).find(x => x.id === b.dataset.ct))); }
 function contextoContenido(){
-  const h = hoy(), m = igMetricas();
-  const ev = S.google && S.google.eventos ? S.google.eventos.filter(e => e.fecha >= h && e.fecha <= addDays(h, 21)) : [];
+  const h = hoy(), E = S.igEst && S.igEst.estrategia, mf = metaFrecuencia();
   const interes = {}; contactos().forEach(c => String(c.etiquetas || '').split(',').map(x => x.trim()).filter(Boolean).forEach(x => { interes[x] = (interes[x] || 0) + 1; }));
   const an = S.neg ? metricasNeg().an : [], gan = negocios().filter(n => n.estado === 'Ganada' && fechaCierre(n) >= addDays(h, -30));
   const mk = pendientes().filter(t => /marketing|redes|reel|instagram|evento|salida/i.test((t.categoria || '') + ' ' + t.tarea));
-  const fm = Object.entries(m.porFmt).map(([k, L]) => k + ': ' + L.length + ' publicaciones, ' + Math.round(L.reduce((s, x) => s + x.interacciones, 0) / L.length) + ' interacciones y ' + Math.round(L.reduce((s, x) => s + x.alcance, 0) / L.length) + ' de alcance promedio');
-  return ['Hoy es ' + fmtLong(h) + '. Planifica desde mañana por 2 semanas (fechas en formato AAAA-MM-DD).',
-    '', 'INSTAGRAM @' + ((S.ig && S.ig.usuario) || '') + ': ' + (m.seg != null ? m.seg + ' seguidores' : '') + '; alcance 28 días ' + m.alc + '; interacciones 28 días ' + m.inter + '.',
-    'Por formato (90 días): ' + (fm.join('; ') || 'sin datos'),
-    'Por día de la semana (interacciones promedio): ' + m.porDia.filter(x => x.n).map(x => DIAS_L[x.d] + ' ' + Math.round(x.prom)).join(', '),
-    'Mejores publicaciones: ' + m.P.slice().sort((a, b) => b.interacciones - a.interacciones).slice(0, 5).map(x => '[' + (FMT_IG[x.formato] || x.formato) + ', ' + x.interacciones + ' interacc.] ' + String(x.texto || '').split('\n')[0].slice(0, 90)).join(' | '),
+  const ev = S.google && S.google.eventos ? S.google.eventos.filter(e => e.fecha >= h && e.fecha <= addDays(h, 21)) : [];
+  return [contextoRedes(),
+    '', 'ESTRATEGIA VIGENTE: ' + (E ? E.resumen + ' Frecuencia: ' + mf.reels + ' reels, ' + mf.carruseles + ' carruseles y ' + mf.posts + ' posts por semana, ' + mf.historias + ' historias al día. Horarios: ' + (E.horarios || []).map(x => x.dia + ' ' + x.hora).join(', ') + '. Mezcla: ' + (E.pilares || []).map(p => p.pilar + ' ' + p.porcentaje + '%').join(', ') : 'aún no definida; usa ' + mf.reels + ' reels, ' + mf.carruseles + ' carrusel y ' + mf.posts + ' post por semana y elige horarios con las mejores franjas.'),
+    'Pilares disponibles (usa exactamente uno por idea): ' + PILARES_K.join(', ') + '.',
     '', 'AGENDA PRÓXIMAS 3 SEMANAS:', ev.length ? ev.map(e => '- ' + e.fecha + ' ' + e.titulo + (e.lugar ? ' (' + e.lugar + ')' : '')).join('\n') : '(sin eventos)',
-    '', 'PROYECTOS: ' + (S.data.proyectos || []).map(p => p.nombre + ' — ' + (p.objetivo || '')).join('; '),
+    'PROYECTOS: ' + (S.data.proyectos || []).map(p => p.nombre + ' — ' + (p.objetivo || '')).join('; '),
     'TAREAS DE MARKETING/EVENTOS PENDIENTES: ' + (mk.map(t => t.tarea + (t.limite ? ' (' + t.limite + ')' : '')).join('; ') || 'ninguna'),
-    'LO QUE MÁS PIDEN LOS CLIENTES (etiquetas de contactos): ' + Object.entries(interes).sort((a, b) => b[1] - a[1]).slice(0, 15).map(x => x[0] + ' (' + x[1] + ')').join(', '),
+    'ETIQUETAS DE CONTACTOS MÁS COMUNES: ' + Object.entries(interes).sort((a, b) => b[1] - a[1]).slice(0, 15).map(x => x[0] + ' (' + x[1] + ')').join(', '),
     'NEGOCIACIONES ABIERTAS (producto): ' + an.slice(0, 20).map(x => x.n.producto || x.n.titulo).join('; '),
     'VENTAS ÚLTIMOS 30 DÍAS: ' + (gan.map(n => n.producto || n.titulo).join('; ') || 'ninguna registrada'),
     'PRODUCTOS EN NEGOCIACIÓN O ENCARGADOS SIN CONTENIDO EN INSTAGRAM: ' + (productosSinContenido().map(x => x.producto + ' [' + x.etapa + (x.notas ? '; ' + x.notas.slice(0, 120) : '') + ']').join('; ') || 'ninguno detectado'),
-    'LO QUE SE HABLA EN LOS CHATS (resúmenes del agente): ' + (((S.base && S.base.interacciones) || []).filter(i => /agente/i.test(i.tipo)).slice(0, 25).map(i => i.detalle.slice(0, 220)).join(' | ') || 'sin resúmenes'),
-    'YA PLANIFICADO (no repetir): ' + ((S.cont || []).filter(x => x.fecha >= h && x.estado !== 'Descartado').map(x => x.fecha + ' ' + x.formato + ': ' + x.tema).join('; ') || 'nada')].join('\n');
+    'LO QUE SE HABLA EN LOS CHATS (resúmenes del agente): ' + (perfiles().slice(0, 25).map(pf => pf.resumen).filter(Boolean).map(x => x.slice(0, 200)).join(' | ') || 'sin resúmenes'),
+    'YA PLANIFICADO (no repetir): ' + ((S.cont || []).filter(x => x.fecha >= h && x.estado !== 'Descartado').map(x => x.fecha + ' ' + x.formato + ': ' + x.tema).join('; ') || 'nada'),
+    '', 'Planifica desde mañana por 2 semanas (fechas AAAA-MM-DD, hora HH:MM), respetando la frecuencia y los horarios.'].join('\n');
 }
 // Productos de negociaciones abiertas que nunca aparecen en los textos de tus publicaciones de Instagram.
 function productosSinContenido(){
@@ -2025,42 +2357,58 @@ function productosSinContenido(){
 async function planContenido(n){
   if (!iaDisponible()){ toast(extNivel() < 11 ? 'Actualiza el script para usar el asistente de contenido' : 'Falta tu clave de Claude (ANTHROPIC_API_KEY)'); return; }
   if (!S.cont) await loadIG(true);
+  if (!S.base) await loadBase(false);
   const enfoque = n ? '\n\nENFOQUE ESPECIAL: en vez de 2 semanas, genera 3 ideas (1 Reel con guion completo, 1 Carrusel y 1 secuencia de Historias) solo sobre «' + (n.producto || n.titulo) + '» de la negociación «' + n.titulo + '» (etapa ' + n.etapa + (n.notas ? '; notas: ' + n.notas : '') + '). Piensa en el momento de la llegada a la tienda y la entrega. En relacionado pon exactamente: ' + n.titulo + '. Usa fechas cercanas a la fecha de cierre esperada (' + (n.cierre || addDays(hoy(), 7)) + ').' : '';
-  const md = modal(icon('spark') + (n ? ' Contenido para ' + esc(n.producto || n.titulo) : ' Calendario de contenido · 2 semanas'), '<div class="empty"><span class="spin"></span>El asistente está revisando la tienda y tus métricas…</div>', { wide: true });
+  const md = modal(icon('spark') + (n ? ' Contenido para ' + esc(n.producto || n.titulo) : ' Contenido · próximas 2 semanas'), '<div class="empty"><span class="spin"></span>El asistente está revisando tus métricas, tu estrategia y lo que pasa en la tienda…</div>', { wide: true });
   try {
     const r = (await apiX('asistente', { modo: 'contenido', contexto: contextoContenido() + enfoque })).r;
     if (n) r.ideas.forEach(x => { x.relacionado = n.titulo; });
-    md.el.querySelector('.empty').outerHTML = '<p style="margin:2px 0 8px">' + esc(r.resumen) + '</p>' + r.ideas.map((x, i) => '<div class="blk"><label style="display:flex;gap:10px;flex:1;cursor:pointer"><input type="checkbox" data-ii="' + i + '" checked style="width:20px;height:20px;margin-top:2px;flex:none"><span class="hr" style="width:64px">' + esc(fmt(x.fecha)) + '<br><span style="color:var(--muted);font-weight:600">' + esc(x.formato) + '</span></span><span class="tx"><b>' + esc(x.tema) + '</b><small>' + esc(x.idea) + '</small>' + (x.relacionado ? '<small>🔗 ' + esc(x.relacionado) + '</small>' : '') + (x.guion ? '<details style="margin-top:4px"><summary style="font-size:12.5px;color:var(--accent-ink);cursor:pointer">Ver guion</summary><div style="white-space:pre-wrap;font-size:12.5px;margin-top:4px">' + esc(x.guion) + '</div></details>' : '') + '<small style="color:var(--accent-ink)">Por qué ahora: ' + esc(x.por_que) + '</small></span></label></div>').join('') +
-      '<label class="row" style="margin-top:12px;gap:8px;font-size:14px;font-weight:600"><input type="checkbox" id="ii_tk" checked style="width:20px;height:20px"> Crear una tarea por publicación (preparar/grabar el día antes)</label><div class="btns"><button class="btn" id="ii_ok">Guardar en el calendario</button></div>';
-    md.el.querySelector('#ii_ok').onclick = async () => {
+    md.el.querySelector('.empty').outerHTML = '<p style="margin:2px 0 8px">' + esc(r.resumen) + '</p>' + r.ideas.map((x, i) => '<div class="blk"><label style="display:flex;gap:10px;flex:1;cursor:pointer;min-width:0"><input type="checkbox" data-ii="' + i + '" checked style="width:20px;height:20px;margin-top:2px;flex:none"><span class="hr" style="width:70px">' + esc(fmt(x.fecha)) + '<br><span style="color:var(--muted);font-weight:600">' + esc(x.formato) + (x.hora ? '<br>' + esc(x.hora) : '') + '</span></span><span class="tx" style="min-width:0"><b>' + esc(x.tema) + '</b><small>' + esc(x.idea) + '</small><span class="pcs" style="margin-top:4px">' + (x.pilar ? '<span class="pc">' + esc(x.pilar) + '</span>' : '') + (x.cta ? '<span class="pc lc">' + esc(x.cta) + '</span>' : '') + (x.relacionado ? '<span class="pc">🔗 ' + esc(x.relacionado) + '</span>' : '') + '</span>' + (x.guion ? '<details style="margin-top:4px"><summary style="font-size:12.5px;color:var(--accent-ink);cursor:pointer">Ver guion</summary><div style="white-space:pre-wrap;font-size:12.5px;margin-top:4px">' + esc(x.guion) + '</div></details>' : '') + '<small style="color:var(--accent-ink)">Por qué ahora: ' + esc(x.por_que) + '</small></span></label></div>').join('') +
+      '<label class="row" style="margin-top:12px;gap:8px;font-size:14px;font-weight:600"><input type="checkbox" id="ii_tk" checked style="width:20px;height:20px"> Crear una tarea por publicación (preparar o grabar el día antes)</label><div class="btns"><button class="btn sec" id="ii_banco">Guardar como ideas sin fecha</button><button class="btn" id="ii_ok">Guardar en el calendario</button></div>';
+    const guardar = async (banco) => {
       const sel = [...md.el.querySelectorAll('[data-ii]')].filter(x => x.checked).map(x => r.ideas[+x.dataset.ii]); if (!sel.length){ toast('Marca al menos una'); return; }
-      const b = md.el.querySelector('#ii_ok'); b.disabled = true; b.innerHTML = '<span class="spin"></span>Guardando…';
+      const b = md.el.querySelector(banco ? '#ii_banco' : '#ii_ok'); b.disabled = true; b.innerHTML = '<span class="spin"></span>Guardando…';
       try {
-        const res = await apiX('contenido', { accion: 'guardar', items: sel.map(x => Object.assign({}, x, { idea: x.idea + (x.guion ? '\n\nGUION:\n' + x.guion : '') })) }); S.cont = res.items;
-        if (md.el.querySelector('#ii_tk').checked) for (const x of sel) await api('add', { tarea: { tarea: (x.formato === 'Reel' ? 'Grabar reel: ' : 'Preparar ' + x.formato.toLowerCase() + ': ') + x.tema, area: 'Trabajo', categoria: (S.data.config.categorias.find(c => c.nombre === 'Marketing') || {}).nombre || '', proyecto: '', limite: addDays(x.fecha, -1) < hoy() ? hoy() : addDays(x.fecha, -1), urgente: 'No', importante: 'Sí', tamano: 'Mediana', notas: '📸 Contenido ' + x.fecha + ' · ' + x.idea, estado: 'Pendiente' } });
-        md.cerrar(); toast('📅 ' + sel.length + ' publicaciones en tu calendario'); S.mutado = true; load(); if (n && $('#ng_root')) openDeal(negocios().find(y => y.id === n.id) || n, { tab: 'resumen' }); else render();
-      } catch(e){ b.disabled = false; b.textContent = 'Guardar en el calendario'; toast('No se pudo guardar: ' + e.message); }
+        const res = await apiX('contenido', { accion: 'guardar', items: sel.map(x => Object.assign({}, x, { estado: banco ? 'Idea' : 'Planificado', idea: x.idea + (x.guion ? '\n\nGUION:\n' + x.guion : '') })) }); S.cont = res.items;
+        if (!banco && md.el.querySelector('#ii_tk').checked) for (const x of sel) await api('add', { tarea: { tarea: (x.formato === 'Reel' ? 'Grabar reel: ' : 'Preparar ' + x.formato.toLowerCase() + ': ') + x.tema, area: 'Trabajo', categoria: (S.data.config.categorias.find(c => c.nombre === 'Marketing') || {}).nombre || '', proyecto: '', limite: addDays(x.fecha, -1) < hoy() ? hoy() : addDays(x.fecha, -1), urgente: 'No', importante: 'Sí', tamano: 'Mediana', notas: '📸 Contenido ' + x.fecha + (x.hora ? ' ' + x.hora : '') + ' · ' + x.idea, estado: 'Pendiente' } });
+        md.cerrar(); toast(banco ? '💡 ' + sel.length + ' ideas guardadas' : '📅 ' + sel.length + ' publicaciones en tu calendario'); S.mutado = true; if (!banco) load(); S.rtab = 'contenido';
+        if (n && $('#ng_root')) openDeal(negocios().find(y => y.id === n.id) || n, { tab: 'resumen' }); else render();
+      } catch(e){ b.disabled = false; b.textContent = banco ? 'Guardar como ideas sin fecha' : 'Guardar en el calendario'; toast('No se pudo guardar: ' + e.message); }
     };
+    md.el.querySelector('#ii_ok').onclick = () => guardar(false);
+    md.el.querySelector('#ii_banco').onclick = () => guardar(true);
   } catch(e){ md.el.querySelector('.empty').innerHTML = 'No se pudo armar el calendario: ' + esc(e.message); }
 }
-function openIdea(x){
-  const nueva = !x; x = x || { fecha: addDays(hoy(), 1), formato: 'Reel', tema: '', idea: '', texto: '', hashtags: '', objetivo: 'Ventas', estado: 'Planificado' };
-  const md = modal(nueva ? 'Nueva publicación' : esc(x.tema || 'Publicación'), nueva ?
-    '<label class="l" style="margin-top:0">Tema</label><input type="text" id="id_t" placeholder="Ej.: Test ride de la Levo en Pichijuán"><label class="l">Fecha</label><input type="date" id="id_f" value="' + esc(x.fecha) + '"><label class="l">Formato</label><div class="choice" id="id_fm">' + ['Reel', 'Carrusel', 'Historia', 'Post'].map(f => '<button data-f="' + f + '" class="' + (f === 'Reel' ? 'on' : '') + '">' + f + '</button>').join('') + '</div><label class="l">Idea</label><textarea class="note" id="id_i"></textarea><div class="btns"><button class="btn" id="id_ok">Guardar</button></div>' :
-    '<div class="tm" style="margin:0 0 10px"><span class="d">' + esc(fmtLong(x.fecha)) + '</span><span>' + esc(x.formato) + '</span><span>' + esc(x.objetivo) + '</span><span class="pill2">' + esc(x.estado) + '</span></div>' +
-    (x.relacionado ? '<div class="hint" style="margin:0 0 6px">🔗 Vinculado a: <b>' + esc(x.relacionado) + '</b></div>' : '') + (x.idea ? '<div class="lab" style="font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;margin:8px 0 4px">Idea / guion</div><p style="margin:0;line-height:1.5;white-space:pre-wrap">' + esc(x.idea) + '</p>' : '') +
-    (x.texto ? '<div class="lab" style="font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;margin:14px 0 4px">Texto sugerido</div><div class="calc" style="background:var(--soft);border-radius:12px;padding:12px;white-space:pre-wrap;font-size:14px">' + esc(x.texto + (x.hashtags ? '\n\n' + x.hashtags : '')) + '</div><button class="btn sm sec" id="id_cp" style="margin-top:8px">Copiar texto</button>' : '') +
-    (x.por_que ? '<p class="hint">Por qué ahora: ' + esc(x.por_que) + '</p>' : '') +
-    '<div class="btns"><button class="btn sec" data-es="Descartado">Descartar</button><button class="btn sec" data-es="Planificado">Planificado</button><button class="btn" data-es="Publicado" style="background:var(--ok)">✓ Publicado</button></div>', { wide: !nueva });
+function openIdea(x, pre){
+  const nueva = !x; pre = pre || {};
+  x = x || { fecha: pre.fecha || addDays(hoy(), 1), formato: 'Reel', tema: '', idea: '', texto: '', hashtags: '', objetivo: 'Ventas', estado: 'Planificado', pilar: '', hora: '', cta: '' };
   if (nueva){
+    const md = modal('Nueva publicación', '<label class="l" style="margin-top:0">Tema</label><input type="text" id="id_t" placeholder="Ej.: Test ride de la Levo en Pichijuán">' +
+      '<div class="rs-row"><div><label class="l">Fecha</label><input type="date" id="id_f" value="' + esc(x.fecha) + '"></div><div><label class="l">Hora</label><input type="time" id="id_h"></div></div>' +
+      '<label class="l">Formato</label><div class="choice" id="id_fm">' + ['Reel', 'Carrusel', 'Historia', 'Post'].map(f => '<button data-f="' + f + '" class="' + (f === 'Reel' ? 'on' : '') + '">' + f + '</button>').join('') + '</div>' +
+      '<label class="l">Tema (pilar)</label><select id="id_p"><option value="">—</option>' + PILARES_K.map(p => '<option>' + esc(p) + '</option>').join('') + '</select>' +
+      '<label class="l">Idea</label><textarea class="note" id="id_i"></textarea><label class="row" style="gap:8px;margin-top:10px;font-size:14px"><input type="checkbox" id="id_b" style="width:18px;height:18px"> Guardar sin fecha (banco de ideas)</label><div class="btns"><button class="btn" id="id_ok">Guardar</button></div>');
     md.el.querySelectorAll('[data-f]').forEach(b => b.onclick = () => md.el.querySelectorAll('[data-f]').forEach(y => y.classList.toggle('on', y === b)));
     md.el.querySelector('#id_ok').onclick = async () => { const t = md.el.querySelector('#id_t').value.trim(); if (!t){ toast('Ponle un tema'); return; }
-      const fm = (md.el.querySelector('#id_fm .on') || {}).dataset.f || 'Reel';
-      try { const r = await apiX('contenido', { accion: 'guardar', items: [{ fecha: md.el.querySelector('#id_f').value, formato: fm, tema: t, idea: md.el.querySelector('#id_i').value.trim(), objetivo: '', estado: 'Planificado' }] }); S.cont = r.items; md.cerrar(); render(); } catch(e){ toast('No se pudo guardar: ' + e.message); } };
+      const fm = (md.el.querySelector('#id_fm .on') || {}).dataset.f || 'Reel', banco = md.el.querySelector('#id_b').checked;
+      try { const r = await apiX('contenido', { accion: 'guardar', items: [{ fecha: banco ? '' : md.el.querySelector('#id_f').value, hora: md.el.querySelector('#id_h').value, formato: fm, tema: t, pilar: md.el.querySelector('#id_p').value, idea: md.el.querySelector('#id_i').value.trim(), objetivo: '', estado: banco ? 'Idea' : 'Planificado' }] }); S.cont = r.items; md.cerrar(); render(); } catch(e){ toast('No se pudo guardar: ' + e.message); } };
     return;
   }
-  const cp = md.el.querySelector('#id_cp'); if (cp) cp.onclick = async () => { try { await navigator.clipboard.writeText(x.texto + (x.hashtags ? '\n\n' + x.hashtags : '')); toast('Texto copiado ✓'); } catch(e){ toast('No se pudo copiar'); } };
-  md.el.querySelectorAll('[data-es]').forEach(b => b.onclick = async () => { b.disabled = true; try { const r = await apiX('contenido', { accion: 'estado', id: x.id, estado: b.dataset.es }); S.cont = r.items; md.cerrar(); if (b.dataset.es === 'Publicado') confetti(40); render(); } catch(e){ b.disabled = false; toast('No se pudo: ' + e.message); } });
+  const p = postDeIdea(x), leads = (((S.leadsCanal || {}).leads) || []).filter(l => l.ref === x.codigo).length;
+  const md = modal(esc(x.tema || 'Publicación'),
+    '<div class="tm" style="margin:0 0 10px"><span class="d">' + (x.fecha ? esc(fmtLong(x.fecha)) : 'Sin fecha') + (x.hora ? ' · ' + esc(x.hora) : '') + '</span><span>' + esc(x.formato) + '</span>' + (x.pilar ? '<span>' + esc(x.pilar) + '</span>' : '') + (x.cta ? '<span>' + esc(x.cta) + '</span>' : '') + (x.codigo ? '<span class="num">' + esc(x.codigo) + '</span>' : '') + '</div>' +
+    '<div class="stepper ct-st">' + EST_CT.map(e => '<button data-es="' + e + '" class="' + ((p ? 'Publicado' : x.estado) === e ? 'on' : '') + '">' + e + '</button>').join('') + '</div>' +
+    (p ? '<div class="ct-res"><div><small>Alcance</small><b class="num">' + (+p.alcance || 0).toLocaleString('es-CL') + '</b></div><div><small>Interacción</small><b class="num">' + (p.alcance ? pctT(p.interacciones / p.alcance) : '–') + '</b></div><div><small>Guardados · envíos</small><b class="num">' + p.guardados + ' · ' + p.compartidos + '</b></div><div><small>Leads (código)</small><b class="num">' + leads + '</b></div><a href="' + esc(p.link) + '" target="_blank" class="btn sm sec" style="text-decoration:none">Ver en Instagram</a></div>' : '') +
+    (x.relacionado ? '<div class="hint" style="margin:8px 0 6px">🔗 Vinculado a: <b>' + esc(x.relacionado) + '</b></div>' : '') + (x.idea ? '<div class="lab2" style="margin-top:12px">Idea / guion</div><p style="margin:0;line-height:1.5;white-space:pre-wrap">' + esc(x.idea) + '</p>' : '') +
+    (x.texto ? '<div class="lab2" style="margin-top:14px">Texto sugerido</div><div class="calc" style="background:var(--soft);border-radius:12px;padding:12px;white-space:pre-wrap;font-size:14px">' + esc(x.texto + (x.hashtags ? '\n\n' + x.hashtags : '')) + '</div><button class="btn sm sec" id="id_cp" style="margin-top:8px">Copiar texto</button>' : '') +
+    (x.por_que ? '<p class="hint">Por qué ahora: ' + esc(x.por_que) + '</p>' : '') +
+    (x.codigo ? linksHTML(x) : '') +
+    '<div class="rs-row" style="margin-top:12px"><div><label class="l">Mover a</label><input type="date" id="id_mv" value="' + esc(x.fecha) + '"></div><div><label class="l">Hora</label><input type="time" id="id_hr" value="' + esc(x.hora) + '"></div></div>' +
+    '<div class="btns"><button class="btn bad" data-es="Descartado">Descartar</button><button class="btn sec" id="id_sv">Guardar fecha y hora</button></div>', { wide: true });
+  bindLinks(md.el, x);
+  const cp = md.el.querySelector('#id_cp'); if (cp) cp.onclick = async () => { try { await navigator.clipboard.writeText(x.texto + (x.hashtags ? '\n\n' + x.hashtags : '') + (x.cta && x.codigo ? '' : '')); toast('Texto copiado ✓'); } catch(e){ toast('No se pudo copiar'); } };
+  md.el.querySelector('#id_sv').onclick = async () => { try { const r = await apiX('contenido', { accion: 'editar', id: x.id, fecha: md.el.querySelector('#id_mv').value, estado: x.estado === 'Idea' && md.el.querySelector('#id_mv').value ? 'Planificado' : '', campos: { hora: md.el.querySelector('#id_hr').value } }); S.cont = r.items; md.cerrar(); toast('Guardado ✓'); render(); } catch(e){ toast('No se pudo: ' + e.message); } };
+  md.el.querySelectorAll('[data-es]').forEach(b => b.onclick = async () => { b.disabled = true; try { const r = await apiX('contenido', { accion: 'estado', id: x.id, estado: b.dataset.es, post: b.dataset.es === 'Publicado' && p ? p.id : undefined }); S.cont = r.items; md.cerrar(); if (b.dataset.es === 'Publicado') confetti(40); render(); } catch(e){ b.disabled = false; toast('No se pudo: ' + e.message); } });
 }
 
 /* ---------- vista: Negocios (pipeline de ventas estilo CRM) ---------- */
@@ -2524,6 +2872,15 @@ function saludDesglose(n){
   return L;
 }
 const INFO = {
+  igLinks: { t: '🔗 Toques en links', d: 'Veces que alguien tocó un link o botón de tu perfil en los últimos 28 días: el link de la bio y los botones de contacto (mensaje o WhatsApp, llamar, cómo llegar). Es el paso entre «me gustó» y «te escribo».' },
+  igLeads: { t: '💬 Clientes desde Instagram', d: 'Conversaciones de WhatsApp de los últimos 28 días en que el cliente llegó desde Instagram. Se detectan por el código de tus links (por ejemplo «ref IG-LEVO») o porque lo dice en sus primeros mensajes («te vi en Instagram», «vi el reel»). Requiere importar los chats.' },
+  igConst: { t: '📅 Constancia', d: 'Publicaciones de feed y reels por semana en las últimas 8 semanas. La línea es tu meta según la estrategia. Publicar parejo cada semana rinde más que hacer mucho un día y nada el resto.' },
+  igFranja: { t: '🕒 Cuándo publicar', d: 'Agrupa tus publicaciones de los últimos 90 días por día y franja horaria, y compara su alcance con el de tu publicación típica (la mediana). +40% significa que ahí llegas 40% más lejos que lo normal.', f: 'Valor de cada celda = promedio de (alcance de la publicación ÷ alcance mediano de tus publicaciones). Se recomienda una franja solo si tiene 2 o más publicaciones.' },
+  igPilares: { t: '🏷️ Temas (pilares)', d: 'La app clasifica cada publicación según las palabras de su texto: producto y stock, taller y consejos, comunidad y salidas, clientes y entregas, promociones, lugar y estilo de vida. Muestra cuánto publicas de cada uno y cuánto alcanza.' },
+  igDemanda: { t: '🔎 Lo que preguntan', d: 'Modelos que nombran tus clientes en WhatsApp (intereses y bicis que tienen, según los perfiles del agente) y cuántas veces aparecen en tus publicaciones de los últimos 90 días. «Falta contenido» marca lo que piden mucho y casi no muestras.' },
+  igEmbudo: { t: '🧭 De Instagram a ventas', d: 'Cada paso del camino: cuántos vieron tu contenido, cuántos interactuaron, cuántos tocaron un link, cuántos te escribieron por WhatsApp y cuántos se volvieron negociación. El % es el paso respecto del anterior.' },
+  igLinksCod: { t: '🏷️ Links con código', d: 'Links a WhatsApp con un mensaje ya escrito que termina en «(ref CÓDIGO)». Cuando el cliente lo envía, el código queda en el chat y la app sabe qué publicación, historia o link lo trajo. Para la web, el link lleva parámetros UTM que puedes ver en Google Analytics.' },
+  igCiudades: { t: '📍 Ciudades', d: 'De dónde son tus seguidores, según Instagram (los 20 principales). Útil para decidir si hablarle también a Bariloche, Osorno o Puerto Montt. Instagram lo entrega desde los 100 seguidores.' },
   probmedia: { t: '🎯 Probabilidad media de venta', d: 'Promedio de la probabilidad de compra de tus prospectos activos (oportunidades y prospectos que escribieron en los últimos 60 días). La calcula la app con reglas de vendedor, no la inventa la IA.',
     f: 'Suma puntos por intención (alta 45, media 25, baja 10), plazo inmediato (+15), si dio talla, altura o presupuesto (+5 c/u, máx. 15), si ya es cliente (+10) y si escribió hace menos de 7 días (+10). Resta si escribió hace 30–60 días (−10), más de 60 (−25) o si puso objeciones de precio o competencia (−5).' },
   prob: { t: '🎯 Probabilidad de cierre', d: 'Qué tan probable es que la negociación termine en venta. No la inventa una IA: es una fórmula con dos ingredientes, la etapa en que está y la salud del negocio.',
@@ -2961,7 +3318,7 @@ function frecDe(pf){ const n = (pf.m || {}).sesiones12 || 0; return n >= 4 ? 'fr
 function segNombre(f){ if (!f) return ''; if (f.campo === 'vista') return (VISTAS_INT.find(x => x.k === f.valor) || {}).t; const L = { ciclo: k => CICLO[k] && CICLO[k].t, disciplinas: k => L_DISC[k], gama: k => 'Gama ' + (L_GAMA[k] || k).toLowerCase(), experiencia: k => L_EXP[k], frecuencia: k => L_FREC[k] }; return (L[f.campo] || (k => k))(f.valor); }
 function barrasHTML(titulo, campo, cuentas, labels, info){
   const E = Object.entries(cuentas).filter(e => e[0] !== 'desconocido' && e[1]).sort((a, b) => b[1] - a[1]), mx = Math.max(1, ...E.map(e => e[1])), sd = cuentas.desconocido || 0;
-  return '<div class="w seg-w"><div class="wh">' + titulo + '</div>' + (E.length ? E.map((e, i) => '<button class="hb" data-sg="' + campo + '|' + esc(e[0]) + '"><span class="hl">' + esc(labels[e[0]] || e[0]) + '</span><span class="hbar"><i style="width:' + (e[1] / mx * 100) + '%;background:' + SEQ[Math.max(0, 4 - i)] + '"></i></span><b class="num">' + e[1] + '</b></button>').join('') : '<div class="wsub">Aún sin datos.</div>') + (sd ? '<div class="wsub" style="margin-top:6px">' + sd + ' sin dato</div>' : '') + '</div>';
+  return '<div class="w seg-w"><div class="wh">' + titulo + '</div>' + (E.length ? E.map((e, i) => '<button class="hb" data-sg="' + campo + '|' + esc(e[0]) + '"><span class="hl">' + esc(labels[e[0]] || e[0]) + '</span><span class="hbt"><i style="width:' + (e[1] / mx * 100) + '%;background:' + SEQ[Math.max(0, 4 - i)] + '"></i></span><b class="num">' + e[1] + '</b></button>').join('') : '<div class="wsub">Aún sin datos.</div>') + (sd ? '<div class="wsub" style="margin-top:6px">' + sd + ' sin dato</div>' : '') + '</div>';
 }
 function segmentosHTML(){
   const P = perfiles(), pend = perfPendientes();
