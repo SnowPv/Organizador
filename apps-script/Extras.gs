@@ -15,8 +15,8 @@
  * Para actualizar este archivo más adelante: reemplaza todo su contenido y repite los dos pasos anteriores.
  */
 
-const EX_VERSION = '2026-10-20';
-const EX_NIVEL = 11;      // la app lo usa para saber qué funciones tiene este script
+const EX_VERSION = '2026-10-22';
+const EX_NIVEL = 12;      // la app lo usa para saber qué funciones tiene este script
 const EX_HOJA = 'Tareas';
 const EX_PRIMERA = 4;
 const EX_ULTIMA = 400;
@@ -125,6 +125,9 @@ function app_extra_(p) {
     case 'asistente':  return ex_asistente_(p);
     case 'instagram':  return ex_instagram_(p);
     case 'contenido':  return ex_contenido_(p);
+    case 'perfilar':   return ex_perfilarOp_(p);
+    case 'perfilCorregir': return ex_corregirPerfil_(p);
+    case 'oportunidad': return ex_oportunidad_(p);
     default:           return { ok: false, error: 'op desconocida: ' + p.op };
   }
 }
@@ -310,8 +313,9 @@ function ex_leerBase_() {
   const ni = b.is.getLastRow() - 1;
   const inter = (ni > 0 ? b.is.getRange(2, 1, ni, 6).getValues() : []).filter(function (r) { return r[1]; })
     .map(function (r) { const neg = String(r[5]).match(/^d:([^:]+):/); return { fecha: f(r[0]), id: String(r[1]), tipo: r[2], detalle: r[3], link: r[4], neg: neg ? neg[1] : '' }; })
-    .sort(function (a, b2) { return b2.fecha.localeCompare(a.fecha); }).slice(0, 600);
-  return { ok: true, contactos: contactos, interacciones: inter };
+    .sort(function (a, b2) { return b2.fecha.localeCompare(a.fecha); }).slice(0, 1500);
+  let bs = null; try { bs = ex_bsaleResumen_(); } catch (e) {}
+  return { ok: true, contactos: contactos, interacciones: inter, perfiles: ex_leerPerfiles_(), oportunidades: ex_leerOps_(), stock: bs };
 }
 
 function ex_guardarContacto_(c) {
@@ -754,6 +758,7 @@ function ex_importarChat_(p) {
     ex_recalcular_(b.cs, b.is);
   }
   const out = { ok: true, id: id, importados: nuevas.length, repetidos: (p.mensajes || []).length - nuevas.length };
+  if (p.masivo) { ex_encolarPerfil_(id, nombre); return out; }
   if (p.analizar && PropertiesService.getScriptProperties().getProperty('ANTHROPIC_API_KEY')) {
     try { out.agente = ex_agente_(id); } catch (err) { out.errorAgente = err.message; }
   }
@@ -1108,6 +1113,19 @@ const EX_AG_SISTEMA = [
   '6. Definir la próxima acción más efectiva para avanzar la venta, con fecha.',
   '7. Indicar si el cliente está esperando respuesta del encargado (su último mensaje no tiene respuesta).',
   '8. Proponer una idea breve de respuesta (tono cercano, chileno, profesional) solo si el cliente espera respuesta; si no, deja el texto vacío.',
+  '9. Armar el PERFIL del contacto como lo haría un vendedor experto de bicicletas (ver reglas abajo).',
+  '10. Proponer hasta 3 RECOMENDACIONES futuras para venderle más (no son tareas): avisar cuando llegue algo que pidió y no había, mantención a los 6 meses de su compra, revisar batería antes de que venza la garantía (2 años), ofrecer upgrade o parte de pago si su bici tiene 3 o más años, reactivar un interés antiguo, invitar a una salida o clínica si es principiante. Cada una con fecha sugerida (AAAA-MM-DD) y el producto relacionado.',
+  '',
+  'Reglas del perfil:',
+  '- relacion: lead (consulta, aún no compra), cliente (ya compró o hizo un servicio), recurrente (compró o vino varias veces), solo_taller (solo mantención o reparación), club_institucion, proveedor, marca (representante de una marca), personal (conversación privada del encargado), spam, desconocido.',
+  '- experiencia: principiante, intermedio, avanzado, competidor o desconocido (por cómo habla, sus rutas, carreras, la bici que tiene).',
+  '- gama según el modelo o presupuesto: entrada (< $1,5 M), media ($1,5 a 4 M), alta ($4 a 8 M), premium (> $8 M o S-Works); desconocido si no hay pistas.',
+  '- disciplinas solo si se dicen o se deducen claro del modelo: Levo y Kenevo → emtb; Vado y Como → ebike_urbana; Tarmac, Roubaix, Allez, Aethos → ruta; Diverge, Crux → gravel; Epic, Chisel → xc; Stumpjumper → trail; Enduro, Status, Demo → enduro o dh_park.',
+  '- bicis: solo las del contacto (no las de terceros que menciona), con año y talla si aparecen; compro_en_tienda sí solo si consta que la compró en Blackline.',
+  '- compras: solo lo que la conversación muestra que compró, pagó o retiró en la tienda, con fecha aproximada (AAAA-MM-DD o AAAA-MM).',
+  '- intencion: lo principal que busca hoy; fuerza_intencion: alta (pregunta precio o stock de algo concreto, quiere reservar, probar, pagar o cuotas), media (compara, pide información de un modelo), baja (curiosidad general), ninguna.',
+  '- evidencia: copia textual corta (máximo 120 caracteres) del mensaje del cliente que mejor muestra su intención o perfil. confianza: baja si la conversación es corta, ambigua o no sabes con seguridad.',
+  '- Si un dato no aparece usa desconocido, texto vacío, 0 o lista vacía. Nunca inventes.',
   '',
   'Si la conversación es antigua o fue importada, crea tareas solo para compromisos que sigan pendientes: si la fecha ya pasó y no hay señales de que se cumplió, agéndala para hoy; si ya se cumplió, no la crees.',
   'Si se entrega STOCK EN BSALE, úsalo: di en el resumen si lo que pide está disponible (modelo y talla), menciona la disponibilidad real en la idea de respuesta y en la próxima acción, y si no hay stock de lo pedido sugiere la alternativa disponible más parecida o encargarla. Nunca prometas stock que no aparece.',
@@ -1116,7 +1134,7 @@ const EX_AG_SISTEMA = [
 
 const EX_AG_ESQUEMA = {
   type: 'object', additionalProperties: false,
-  required: ['resumen', 'temperatura', 'contacto', 'negociacion', 'tareas', 'proxima_accion', 'esperando_respuesta', 'idea_respuesta'],
+  required: ['resumen', 'temperatura', 'contacto', 'negociacion', 'tareas', 'proxima_accion', 'esperando_respuesta', 'idea_respuesta', 'perfil', 'recomendaciones'],
   properties: {
     resumen: { type: 'string' },
     temperatura: { type: 'string', enum: ['caliente', 'tibio', 'frio', 'sin_intencion'] },
@@ -1150,7 +1168,38 @@ const EX_AG_ESQUEMA = {
     },
     proxima_accion: { type: 'object', additionalProperties: false, required: ['texto', 'fecha'], properties: { texto: { type: 'string' }, fecha: { type: 'string' } } },
     esperando_respuesta: { type: 'boolean' },
-    idea_respuesta: { type: 'string' }
+    idea_respuesta: { type: 'string' },
+    perfil: {
+      type: 'object', additionalProperties: false,
+      required: ['relacion', 'experiencia', 'gama', 'disciplinas', 'bicis', 'talla', 'altura_cm', 'presupuesto_clp', 'pago', 'intencion', 'fuerza_intencion', 'plazo', 'intereses', 'sensibilidad_precio', 'factores', 'objeciones', 'pref_contacto', 'compras', 'ultimo_servicio', 'evidencia', 'confianza'],
+      properties: {
+        relacion: { type: 'string', enum: ['lead', 'cliente', 'recurrente', 'solo_taller', 'club_institucion', 'proveedor', 'marca', 'personal', 'spam', 'desconocido'] },
+        experiencia: { type: 'string', enum: ['principiante', 'intermedio', 'avanzado', 'competidor', 'desconocido'] },
+        gama: { type: 'string', enum: ['entrada', 'media', 'alta', 'premium', 'desconocido'] },
+        disciplinas: { type: 'array', items: { type: 'string', enum: ['emtb', 'enduro', 'trail', 'xc', 'dh_park', 'ruta', 'gravel', 'ebike_urbana', 'urbano', 'infantil', 'cicloturismo'] } },
+        bicis: { type: 'array', items: { type: 'object', additionalProperties: false, required: ['modelo', 'anio', 'talla', 'compro_en_tienda'], properties: { modelo: { type: 'string' }, anio: { type: 'string' }, talla: { type: 'string' }, compro_en_tienda: { type: 'string', enum: ['si', 'no', 'desconocido'] } } } },
+        talla: { type: 'string' },
+        altura_cm: { type: 'integer' },
+        presupuesto_clp: { type: 'integer' },
+        pago: { type: 'string', enum: ['cuotas', 'contado', 'parte_de_pago', 'desconocido'] },
+        intencion: { type: 'string', enum: ['compra_bici', 'upgrade_componentes', 'repuesto_accesorio', 'servicio_taller', 'garantia', 'solo_info', 'venta_usada', 'ninguna'] },
+        fuerza_intencion: { type: 'string', enum: ['alta', 'media', 'baja', 'ninguna'] },
+        plazo: { type: 'string', enum: ['inmediato', '1_3_meses', 'mas_3_meses', 'sin_plazo'] },
+        intereses: { type: 'array', items: { type: 'string' } },
+        sensibilidad_precio: { type: 'string', enum: ['baja', 'media', 'alta', 'desconocida'] },
+        factores: { type: 'array', items: { type: 'string', enum: ['marca', 'bateria_autonomia', 'peso', 'stock_inmediato', 'garantia', 'financiamiento', 'recomendacion', 'postventa', 'precio', 'diseno'] } },
+        objeciones: { type: 'array', items: { type: 'string', enum: ['precio', 'sin_stock', 'talla', 'espera_importacion', 'duda_ebike', 'pareja_familia', 'competencia', 'otra'] } },
+        pref_contacto: { type: 'string', enum: ['texto', 'audio', 'llamada', 'presencial', 'desconocido'] },
+        compras: { type: 'array', items: { type: 'object', additionalProperties: false, required: ['producto', 'fecha'], properties: { producto: { type: 'string' }, fecha: { type: 'string' } } } },
+        ultimo_servicio: { type: 'string' },
+        evidencia: { type: 'string' },
+        confianza: { type: 'string', enum: ['alta', 'media', 'baja'] }
+      }
+    },
+    recomendaciones: {
+      type: 'array',
+      items: { type: 'object', additionalProperties: false, required: ['tipo', 'texto', 'fecha', 'producto'], properties: { tipo: { type: 'string', enum: ['avisar_stock', 'mantencion', 'bateria', 'upgrade', 'reactivar', 'seguimiento', 'postventa', 'invitacion', 'otro'] }, texto: { type: 'string' }, fecha: { type: 'string' }, producto: { type: 'string' } } }
+    }
   }
 };
 
@@ -1188,15 +1237,18 @@ function ex_llamarClaude_(contexto, sistema, esquema) {
 }
 
 // Arma el contexto (perfil, negociación abierta, tareas abiertas y la conversación) para un contacto.
-function ex_contextoAgente_(id) {
+function ex_contextoAgente_(id, opt) {
+  opt = opt || {};
   const tz = ex_tz_(), b = ex_baseHojas_();
   const c = ex_filasContactos_(b.cs).filter(function (r) { return String(r[0]) === id; })[0];
   if (!c) throw new Error('no encuentro el contacto ' + id);
   const fmt = function (d) { return d instanceof Date ? Utilities.formatDate(d, tz, 'yyyy-MM-dd HH:mm') : String(d || ''); };
   const wa = ex_hojaWa_(), nw = wa.getLastRow() - 1;
-  const chat = (nw > 0 ? wa.getRange(2, 1, nw, EX_CAB_WA.length).getValues() : []).filter(function (r) { return String(r[6]) === id; })
-    .sort(function (x, y) { return x[0] - y[0]; }).slice(-150)
-    .map(function (r) { return '[' + fmt(r[0]) + '] ' + (r[1] === 'Enviado' ? 'TIENDA' : 'CLIENTE') + ': ' + String(r[4]).slice(0, 400); });
+  const filasWa = (nw > 0 ? wa.getRange(2, 1, nw, EX_CAB_WA.length).getValues() : []).filter(function (r) { return String(r[6]) === id; })
+    .sort(function (x, y) { return x[0] - y[0]; });
+  const linea = function (r) { return '[' + fmt(r[0]) + '] ' + (r[1] === 'Enviado' ? 'TIENDA' : 'CLIENTE') + ': ' + String(r[4]).slice(0, 400); };
+  // Historia larga: el comienzo (quién es, qué compró) y lo más reciente.
+  const chat = filasWa.length > 200 ? filasWa.slice(0, 40).map(linea).concat(['… (' + (filasWa.length - 200) + ' mensajes omitidos) …'], filasWa.slice(-160).map(linea)) : filasWa.map(linea);
   const ni = b.is.getLastRow() - 1;
   const otras = (ni > 0 ? b.is.getRange(2, 1, ni, 4).getValues() : []).filter(function (r) { return String(r[1]) === id && !/whatsapp|agente/i.test(r[2]); })
     .sort(function (x, y) { return x[0] - y[0]; }).slice(-15).map(function (r) { return '[' + fmt(r[0]) + '] ' + r[2] + ': ' + r[3]; });
@@ -1205,6 +1257,7 @@ function ex_contextoAgente_(id) {
     .filter(function (r) { return r[1] && r[0] !== true && String(r[14]).indexOf(id) >= 0; }).map(function (r) { return '- ' + r[1] + (r[9] instanceof Date ? ' (' + ex_ymd_(r[9], tz) + ')' : ''); });
   const contexto = [
     'Hoy es ' + Utilities.formatDate(new Date(), tz, "EEEE yyyy-MM-dd HH:mm") + ' (hora de Chile).',
+    opt.masivo ? 'MODO HISTORIAL: este chat se importó como historial junto a muchos otros. No crees tareas. Negociación solo si hay intención real y el cliente escribió en los últimos ' + EX_PERF_DIAS_NEG + ' días.' : '',
     '', 'CONTACTO: ' + JSON.stringify({ nombre: c[2], tipo: c[1], empresa: c[3], email: c[4], telefono: String(c[5] || ''), etiquetas: c[6], notas: c[7] }),
     '', 'NEGOCIACIÓN ABIERTA: ' + (neg ? JSON.stringify({ titulo: neg[1], etapa: neg[3], valor: neg[4], producto: neg[5], proxima_accion: neg[8], notas: neg[12] }) : 'ninguna'),
     '', 'TAREAS ABIERTAS CON ESTE CONTACTO:', tareas.length ? tareas.join('\n') : '(ninguna)',
@@ -1212,7 +1265,7 @@ function ex_contextoAgente_(id) {
     '', 'CONVERSACIÓN DE WHATSAPP (más antigua primero):', chat.length ? chat.join('\n') : '(sin mensajes)'
   ].join('\n');
   const stock = ex_bsaleParaAgente_(chat.slice(-60).join(' ') + ' ' + (neg ? neg[5] : '') + ' ' + c[6]);
-  return { contexto: stock ? contexto + '\n\nSTOCK EN BSALE (consultado ahora, productos que se mencionan):\n' + stock : contexto, c: c, neg: neg };
+  return { contexto: stock ? contexto + '\n\nSTOCK EN BSALE (consultado ahora, productos que se mencionan):\n' + stock : contexto, c: c, neg: neg, filasWa: filasWa, chatTexto: filasWa.filter(function (r) { return r[1] !== 'Enviado'; }).map(function (r) { return r[4]; }).join(' ') };
 }
 
 // Analiza la conversación de un contacto y aplica los cambios al CRM (desde la app: ya corre con el Sheet tomado).
@@ -1222,7 +1275,8 @@ function ex_agente_(id) {
   return ex_aplicarAgente_(id, ctx, ex_llamarClaude_(ctx.contexto));
 }
 
-function ex_aplicarAgente_(id, ctx, a) {
+function ex_aplicarAgente_(id, ctx, a, opt) {
+  opt = opt || {};
   const tz = ex_tz_();
   const b = ex_baseHojas_(), filas = ex_filasContactos_(b.cs), i = filas.findIndex(function (r) { return String(r[0]) === id; });
   const cambios = [], c = filas[i], ac = a.contacto || {};
@@ -1234,11 +1288,27 @@ function ex_aplicarAgente_(id, ctx, a) {
   (ac.etiquetas || []).forEach(function (t) { if (t && !tags.some(function (x) { return ex_norm_(x) === ex_norm_(t); })) tags.push(t); });
   if (tags.join(', ') !== String(c[6] || '')) { b.cs.getRange(i + 2, 7).setValue(tags.slice(0, 12).join(', ')); cambios.push('etiquetas'); }
   if (ac.datos_clave && !c[7]) b.cs.getRange(i + 2, 8).setValue('🧠 ' + ac.datos_clave);
+  // Perfil: lo extraído por la IA + métricas de los mensajes + puntajes. Lo que tú corregiste no se pisa.
+  const met = ex_metricasWa_(ctx.filasWa || []), pf = a.perfil || {};
+  ex_verificarEvidencia_(pf, ctx.chatTexto || '');
+  const prev = ex_leerPerfiles_()[id] || {}, conf = prev.confirmado || {};
+  Object.keys(conf).forEach(function (k) { if (prev.p && prev.p[k] !== undefined) pf[k] = prev.p[k]; });
+  const sc = ex_puntuar_(pf, met);
+  ex_guardarPerfil_(id, ac.nombre || c[2], pf, met, sc, a, '✓ Listo', conf);
+  a._perfil = { ciclo: sc.ciclo, clase: sc.clase, prob: sc.prob, gama: pf.gama, experiencia: pf.experiencia, disciplinas: pf.disciplinas || [], confianza: pf.confianza, relacion: pf.relacion };
+  a._masivo = !!opt.masivo; a._met = met;
   if (ac.tipo === 'Ignorar' && c[1] === 'Por clasificar') return ex_registrarAgente_(id, c, a, cambios.concat('marcado Ignorar'));
   // Negociación
   const n = a.negociacion || {}, etapas = ['Nuevo', 'Contactado', 'Prueba / visita', 'Cotización', 'Negociación'];
   let negId = ctx.neg ? String(ctx.neg[0]) : '';
-  if (!ctx.neg && n.accion === 'crear' && etapas.indexOf(n.etapa) >= 0) {
+  // Regla de negociaciones: solo con intención real de compra o servicio y si el cliente escribió en los últimos 60 días.
+  const intencionVenta = ['compra_bici', 'upgrade_componentes', 'servicio_taller', 'repuesto_accesorio'].indexOf(pf.intencion) >= 0;
+  const abrir = met.diasCliente <= EX_PERF_DIAS_NEG && ['proveedor', 'marca', 'personal', 'spam'].indexOf(pf.relacion) < 0 && (intencionVenta || !a.perfil) && (sc.prob >= 35 || pf.fuerza_intencion === 'alta' || (!opt.masivo && n.accion === 'crear'));
+  if (!ctx.neg && n.accion === 'crear' && !abrir) cambios.push('negociación no abierta (' + (met.diasCliente > EX_PERF_DIAS_NEG ? 'conversación de hace más de ' + EX_PERF_DIAS_NEG + ' días' : 'poca intención de compra') + ')');
+  // En historial, si los puntajes muestran una venta probable aunque la IA no lo propuso, igual se abre (en "Contactado").
+  if (!ctx.neg && abrir && n.accion !== 'crear' && opt.masivo && sc.prob >= 50) { n.accion = 'crear'; if (etapas.indexOf(n.etapa) < 0) n.etapa = 'Contactado'; }
+  if (!ctx.neg && abrir && n.accion === 'crear' && etapas.indexOf(n.etapa) >= 0) {
+    a._negAbierta = true;
     negId = ex_guardarNegocio_({ titulo: n.titulo || (ac.nombre || c[2]) + (n.producto ? ' – ' + n.producto : ''), contacto: id, etapa: n.etapa, producto: n.producto, valor: n.valor_estimado || 0, origen: '🧠 Agente WhatsApp', proxima: (a.proxima_accion || {}).texto || '', fechaProx: (a.proxima_accion || {}).fecha || '', cierre: ex_diaYmd_(ex_proxima_(ex_dia_(ex_hoyYmd_(tz)), 'Quincenal')) }).id;
     cambios.push('negociación nueva: ' + n.etapa);
   } else if (ctx.neg && n.accion !== 'ninguna') {
@@ -1255,7 +1325,7 @@ function ex_aplicarAgente_(id, ctx, a) {
   // Recordatorios de lo conversado (sin repetir los que ya creó ni duplicar tareas pendientes parecidas).
   const props = PropertiesService.getScriptProperties(), hechas = JSON.parse(props.getProperty('EX_AG_TAREAS') || '[]');
   const pend = ex_hoja_().getRange(EX_PRIMERA, 1, EX_ULTIMA - EX_PRIMERA + 1, 15).getValues().filter(function (r) { return r[1] && r[0] !== true; }).map(function (r) { return { t: String(r[1]), n: String(r[14] || '') }; });
-  (a.tareas || []).slice(0, 4).forEach(function (t) {
+  (opt.masivo ? [] : (a.tareas || [])).slice(0, 4).forEach(function (t) {
     if (!t.texto) return;
     const k = ex_firma_(id + '|' + ex_norm_(t.texto) + '|' + t.fecha);
     if (hechas.indexOf(k) >= 0) return;
@@ -1272,11 +1342,213 @@ function ex_aplicarAgente_(id, ctx, a) {
 function ex_registrarAgente_(id, c, a, cambios) {
   const b = ex_baseHojas_();
   b.is.appendRow([new Date(), id, '🧠 Agente', a.resumen + (a.contacto && a.contacto.datos_clave ? ' · ' + a.contacto.datos_clave : ''), '', 'ai:' + id + ':' + Date.now()]);
-  if (a.esperando_respuesta && a.idea_respuesta) b.is.appendRow([new Date(), id, '🧠 Idea de respuesta', a.idea_respuesta, '', 'ai:' + id + ':r' + Date.now()]);
+  if (a.esperando_respuesta && a.idea_respuesta && !(a._masivo && a._met && a._met.diasCliente > EX_PERF_DIAS_IDEA) && !(a._perfil && /personal|spam/.test(a._perfil.relacion))) b.is.appendRow([new Date(), id, '🧠 Idea de respuesta', a.idea_respuesta, '', 'ai:' + id + ':r' + Date.now()]);
   ex_hojaAg_().appendRow([new Date(), id, (a.contacto && a.contacto.nombre) || c[2], a.resumen, a.temperatura, cambios.join(' · '), a.esperando_respuesta ? a.idea_respuesta : '']);
   ex_recalcular_(b.cs, b.is);
   PropertiesService.getScriptProperties().setProperty('EX_AG_ULTIMO', new Date().toISOString());
-  return { ok: true, resumen: a.resumen, temperatura: a.temperatura, cambios: cambios, esperando: a.esperando_respuesta, idea: a.idea_respuesta };
+  return { ok: true, id: id, nombre: (a.contacto && a.contacto.nombre) || c[2], tipo: (a.contacto && a.contacto.tipo) || c[1], resumen: a.resumen, temperatura: a.temperatura, cambios: cambios, esperando: a.esperando_respuesta, idea: a.idea_respuesta, perfil: a._perfil || null, negocio: !!a._negAbierta };
+}
+
+/* ---------- Perfiles de clientes: el agente ordena la base por ti ---------- */
+// Una fila por contacto en la hoja "Perfiles": lo que el agente entendió (experiencia, gama, disciplinas, bicis, intención…)
+// más métricas calculadas de los mensajes (frecuencia, recencia, respuesta) y puntajes (probabilidad de venta, potencial).
+const EX_HOJA_PERF = 'Perfiles';
+const EX_CAB_PERF = ['ID', 'Estado', 'Nombre', 'Ciclo', 'Clase', 'Prob. venta', 'Potencial', 'Relación', 'Experiencia', 'Gama', 'Disciplinas', 'Bicicletas', 'Talla / altura', 'Presupuesto', 'Intención', 'Plazo', 'Intereses', 'Sensibilidad precio', 'Objeciones', 'Compras', 'Consultas 12m', 'Frecuencia', 'Mensajes', 'Primer contacto', 'Último del cliente', 'Respuesta tienda (min)', 'Resumen', 'Confianza', 'Actualizado', 'Datos'];
+const EX_PERF_DIAS_NEG = 60;        // solo se abren negociaciones si el cliente escribió en los últimos 60 días
+const EX_PERF_DIAS_IDEA = 14;       // en importación masiva, idea de respuesta solo si escribió en los últimos 14 días
+const EX_HOJA_OPS = 'Oportunidades';
+const EX_CAB_OPS = ['Clave', 'Estado', 'Hasta', 'Contacto', 'Detalle', 'Fecha'];
+
+function ex_hojaPerf_() { return ex_hojaCab_(EX_HOJA_PERF, EX_CAB_PERF); }
+function ex_filasPerf_(sh) { const n = sh.getLastRow() - 1; return n > 0 ? sh.getRange(2, 1, n, EX_CAB_PERF.length).getValues() : []; }
+
+// Métricas de la conversación, calculadas de las fechas (no las adivina la IA).
+function ex_metricasWa_(filas) {
+  const ahora = new Date(), dia = 86400000, met = { mensajes: filas.length, recibidos: 0, enviados: 0, primera: '', ultimaCliente: '', ultima: '', diasCliente: 9999, sesiones12: 0, sesiones: 0, respuestaMin: null, sinRespuesta: 0 };
+  if (!filas.length) return met;
+  const tz = ex_tz_(), resp = [];
+  let prev = null, pendiente = null;
+  filas.forEach(function (r) {
+    const f = r[0] instanceof Date ? r[0] : null; if (!f) return;
+    const cli = r[1] !== 'Enviado';
+    if (cli) met.recibidos++; else met.enviados++;
+    if (!prev || f - prev > 3 * dia) { met.sesiones++; if (ahora - f < 365 * dia) met.sesiones12++; if (pendiente) met.sinRespuesta++; pendiente = null; }
+    if (cli) { if (!pendiente) pendiente = f; met.ultimaCliente = f; }
+    else if (pendiente) { resp.push((f - pendiente) / 60000); pendiente = null; }
+    prev = f;
+  });
+  const primera = filas[0][0], ultima = filas[filas.length - 1][0];
+  met.primera = primera instanceof Date ? ex_ymd_(primera, tz) : '';
+  met.ultima = ultima instanceof Date ? ex_ymd_(ultima, tz) : '';
+  if (met.ultimaCliente) { met.diasCliente = Math.floor((ahora - met.ultimaCliente) / dia); met.ultimaCliente = ex_ymd_(met.ultimaCliente, tz); }
+  if (resp.length) { resp.sort(function (a, b) { return a - b; }); met.respuestaMin = Math.round(resp[Math.floor(resp.length / 2)]); }
+  met.esperando = !!pendiente;
+  return met;
+}
+
+// Puntajes explicables (reglas de vendedor), sobre lo que extrajo la IA y las métricas.
+function ex_puntuar_(p, met) {
+  p = p || {}; const cli = ['proveedor', 'marca', 'personal', 'spam'].indexOf(p.relacion) < 0;
+  let prob = { alta: 45, media: 25, baja: 10 }[p.fuerza_intencion] || 0;
+  if (['compra_bici', 'upgrade_componentes'].indexOf(p.intencion) >= 0) prob += 5;
+  prob += { inmediato: 15, '1_3_meses': 5 }[p.plazo] || 0;
+  prob += Math.min(15, (p.talla ? 5 : 0) + (p.altura_cm ? 5 : 0) + (p.presupuesto_clp ? 5 : 0));
+  if (p.relacion === 'recurrente' || (p.bicis || []).some(function (b) { return b.compro_en_tienda === 'si'; })) prob += 10;
+  const d = met.diasCliente;
+  prob += d <= 7 ? 10 : d <= 30 ? 0 : d <= 60 ? -10 : -25;
+  if ((p.objeciones || []).some(function (o) { return o === 'precio' || o === 'competencia'; })) prob -= 5;
+  prob = cli ? Math.max(0, Math.min(100, prob)) : 0;
+  let pts = { premium: 3, alta: 3, media: 1 }[p.gama] || 0;
+  if ((p.disciplinas || []).indexOf('emtb') >= 0) pts += 2;
+  if ((p.bicis || []).length >= 2) pts += 1;
+  if (p.intencion === 'servicio_taller' || p.relacion === 'solo_taller' || p.ultimo_servicio) pts += 1;
+  if ((p.compras || []).length) pts += 1;
+  if (p.relacion === 'recurrente' || met.sesiones12 >= 3) pts += 2;
+  if (!cli) pts = 0;
+  const clase = !cli ? '–' : pts >= 5 ? 'A' : pts >= 3 ? 'B' : 'C';
+  // Ciclo de vida
+  const compras = (p.compras || []).map(function (c) { return String(c.fecha || ''); }).filter(function (f) { return /^\d{4}-\d{2}/.test(f); }).sort();
+  const ultCompra = compras.length ? Math.floor((Date.now() - new Date(compras[compras.length - 1].slice(0, 10) + (compras[compras.length - 1].length === 7 ? '-15' : '')).getTime()) / 86400000) : null;
+  const esCliente = (p.compras || []).length || ['cliente', 'recurrente', 'solo_taller'].indexOf(p.relacion) >= 0;
+  let ciclo;
+  if (['proveedor', 'marca'].indexOf(p.relacion) >= 0) ciclo = 'proveedor';
+  else if (['personal', 'spam'].indexOf(p.relacion) >= 0) ciclo = 'sin_relacion';
+  else if (p.relacion === 'club_institucion') ciclo = d <= 180 ? 'institucion' : 'en_riesgo';
+  else if (esCliente) ciclo = ultCompra != null && ultCompra <= 90 ? 'cliente_nuevo' : d <= 180 ? 'cliente_activo' : d <= 540 ? 'en_riesgo' : 'perdido';
+  else ciclo = prob >= 35 && d <= EX_PERF_DIAS_NEG ? 'oportunidad' : d <= EX_PERF_DIAS_NEG ? 'lead_activo' : 'lead_frio';
+  const frecuencia = met.sesiones12 >= 4 ? 'frecuente' : met.sesiones12 >= 2 ? 'ocasional' : met.sesiones12 === 1 ? 'una vez' : 'sin consultas 12m';
+  return { prob: prob, potencial: Math.min(100, pts * 12), clase: clase, ciclo: ciclo, frecuencia: frecuencia };
+}
+
+// ¿La cita de evidencia está realmente en el chat? Si no, baja la confianza (evita datos inventados).
+function ex_verificarEvidencia_(p, chatTexto) {
+  if (!p) return;
+  const ev = ex_norm_(p.evidencia || '').replace(/[^a-z0-9 ]+/g, ' ').replace(/\s+/g, ' ').trim();
+  if (!ev) { if (p.confianza === 'alta') p.confianza = 'media'; return; }
+  const tx = ex_norm_(chatTexto).replace(/[^a-z0-9 ]+/g, ' ').replace(/\s+/g, ' ');
+  const trozo = ev.split(' ').slice(0, 6).join(' ');
+  if (trozo.length >= 8 && tx.indexOf(trozo) < 0) { p.confianza = 'baja'; p.evidencia_no_verificada = true; }
+}
+
+function ex_guardarPerfil_(id, nombre, p, met, sc, a, estado, conf) {
+  const sh = ex_hojaPerf_(), filas = ex_filasPerf_(sh), i = filas.findIndex(function (r) { return String(r[0]) === id; });
+  const L = function (x) { return (x || []).filter(String).join(', '); };
+  const datos = { p: p || {}, m: met || {}, s: sc || {}, r: (a && a.recomendaciones) || [], resumen: (a && a.resumen) || '', t: new Date().toISOString(), confirmado: conf || {} };
+  const fila = [id, estado || '✓ Listo', nombre, sc.ciclo || '', sc.clase || '', sc.prob, sc.potencial, p.relacion || '', p.experiencia || '', p.gama || '', L(p.disciplinas),
+    (p.bicis || []).map(function (b) { return [b.modelo, b.anio, b.talla].filter(String).join(' '); }).join(' · '), [p.talla, p.altura_cm ? p.altura_cm + ' cm' : ''].filter(String).join(' · '),
+    p.presupuesto_clp || '', [p.intencion, p.fuerza_intencion].filter(String).join(' · '), p.plazo || '', L(p.intereses), p.sensibilidad_precio || '', L(p.objeciones),
+    (p.compras || []).map(function (c) { return c.producto + (c.fecha ? ' (' + c.fecha + ')' : ''); }).join(' · '), met.sesiones12, sc.frecuencia, met.mensajes, met.primera, met.ultimaCliente,
+    met.respuestaMin == null ? '' : met.respuestaMin, (a && a.resumen) || '', p.confianza || '', new Date(), JSON.stringify(datos).slice(0, 45000)];
+  if (i >= 0) sh.getRange(i + 2, 1, 1, fila.length).setValues([fila]); else sh.appendRow(fila);
+}
+
+// Pone en cola de análisis (la ronda automática los procesa aunque la app esté cerrada).
+function ex_encolarPerfil_(id, nombre) {
+  const sh = ex_hojaPerf_(), filas = ex_filasPerf_(sh), i = filas.findIndex(function (r) { return String(r[0]) === id; });
+  if (i >= 0) sh.getRange(i + 2, 2).setValue('⏳ Pendiente');
+  else sh.appendRow([id, '⏳ Pendiente', /^[+=@-]/.test(String(nombre)) ? "'" + nombre : nombre]);
+}
+function ex_pendientesPerf_() { return ex_filasPerf_(ex_hojaPerf_()).filter(function (r) { return /Pendiente/.test(String(r[1])); }).map(function (r) { return String(r[0]); }); }
+
+// Analiza un contacto en modo historial y devuelve un resumen corto para el panel de progreso.
+function ex_perfilar_(id, masivo) {
+  const ctx = ex_contextoAgente_(id, { masivo: masivo });
+  const a = ex_llamarClaude_(ctx.contexto);
+  const r = ex_aplicarAgente_(id, ctx, a, { masivo: masivo });
+  return r;
+}
+function ex_perfilarOp_(p) {
+  if (p.ids) return { ok: true, pendientes: ex_pendientesPerf_().length };
+  const id = String(p.id || ''); if (!id) throw new Error('falta el contacto');
+  try { return ex_perfilar_(id, p.masivo !== false); }
+  catch (err) {
+    const sh = ex_hojaPerf_(), filas = ex_filasPerf_(sh), i = filas.findIndex(function (r) { return String(r[0]) === id; });
+    if (i >= 0 && /Pendiente/.test(String(filas[i][1]))) sh.getRange(i + 2, 2).setValue(/401|ANTHROPIC/.test(err.message) ? '⏳ Pendiente' : '⚠️ Error: ' + err.message.slice(0, 80));
+    throw err;
+  }
+}
+
+// Ronda automática: sigue con los pendientes mientras haya tiempo (unos 4 minutos por ejecución).
+function ex_rondaPerfiles_() {
+  if (!PropertiesService.getScriptProperties().getProperty('ANTHROPIC_API_KEY')) return;
+  const t0 = Date.now(), ids = ex_pendientesPerf_();
+  for (let k = 0; k < ids.length && Date.now() - t0 < 240000; k++) {
+    try { const ctx = ex_contextoAgente_(ids[k], { masivo: true }), a = ex_llamarClaude_(ctx.contexto); ex_conLock_(function () { ex_aplicarAgente_(ids[k], ex_contextoAgente_(ids[k], { masivo: true }), a, { masivo: true }); }); }
+    catch (err) { console.log('Perfil ' + ids[k] + ': ' + err.message); if (/401|credit|429/.test(err.message)) return; try { ex_perfilarError_(ids[k], err); } catch (e) {} }
+  }
+}
+function ex_perfilarError_(id, err) { const sh = ex_hojaPerf_(), filas = ex_filasPerf_(sh), i = filas.findIndex(function (r) { return String(r[0]) === id; }); if (i >= 0) sh.getRange(i + 2, 2).setValue('⚠️ Error: ' + String(err.message).slice(0, 80)); }
+
+function ex_leerPerfiles_() {
+  const out = {};
+  ex_filasPerf_(ex_hojaPerf_()).forEach(function (r) {
+    if (!r[0]) return;
+    let d = {}; try { d = JSON.parse(r[29] || '{}'); } catch (e) {}
+    out[String(r[0])] = { estado: String(r[1] || ''), ciclo: r[3], clase: r[4], prob: Number(r[5]) || 0, potencial: Number(r[6]) || 0, p: d.p || {}, m: d.m || {}, r: d.r || [], resumen: d.resumen || '', act: d.t || '', confirmado: d.confirmado || {} };
+  });
+  return out;
+}
+// Corrección manual de un campo del perfil (queda como "confirmado" y el agente no lo vuelve a pisar).
+function ex_corregirPerfil_(p) {
+  const sh = ex_hojaPerf_(), filas = ex_filasPerf_(sh), i = filas.findIndex(function (r) { return String(r[0]) === String(p.id); });
+  if (i < 0) throw new Error('ese contacto aún no tiene perfil');
+  let d = {}; try { d = JSON.parse(filas[i][29] || '{}'); } catch (e) {}
+  d.p = d.p || {}; d.confirmado = d.confirmado || {};
+  Object.keys(p.campos || {}).forEach(function (k) { d.p[k] = p.campos[k]; d.confirmado[k] = true; });
+  const sc = ex_puntuar_(d.p, d.m || {}); d.s = sc;
+  ex_guardarPerfil_(String(p.id), filas[i][2], d.p, d.m || {}, sc, { resumen: d.resumen, recomendaciones: d.r }, '✓ Listo', d.confirmado);
+  return { ok: true, perfil: ex_leerPerfiles_()[String(p.id)] };
+}
+
+// Estado de las oportunidades de contacto (hecha, descartada o pospuesta), compartido entre teléfono y PC.
+function ex_oportunidad_(p) {
+  const sh = ex_hojaCab_(EX_HOJA_OPS, EX_CAB_OPS), n = sh.getLastRow() - 1;
+  if (p.clave) {
+    const filas = n > 0 ? sh.getRange(2, 1, n, 1).getValues() : [], i = filas.findIndex(function (r) { return String(r[0]) === String(p.clave); });
+    const fila = [String(p.clave), String(p.estado || 'hecha'), p.hasta ? ex_aFecha_(String(p.hasta), ex_tz_()) : '', String(p.contacto || ''), String(p.detalle || '').slice(0, 300), new Date()];
+    if (i >= 0) sh.getRange(i + 2, 1, 1, fila.length).setValues([fila]); else sh.appendRow(fila);
+    if (p.contacto && p.estado === 'hecha') { const b = ex_baseHojas_(); b.is.appendRow([new Date(), String(p.contacto), '💡 Oportunidad', String(p.detalle || 'Contactado').slice(0, 300), '', 'op:' + Date.now()]); ex_recalcular_(b.cs, b.is); }
+  }
+  return { ok: true, estados: ex_leerOps_() };
+}
+function ex_leerOps_() {
+  const sh = SpreadsheetApp.getActive().getSheetByName(EX_HOJA_OPS); if (!sh) return {};
+  const n = sh.getLastRow() - 1, tz = ex_tz_(), out = {};
+  (n > 0 ? sh.getRange(2, 1, n, 6).getValues() : []).forEach(function (r) { if (r[0]) out[String(r[0])] = { e: String(r[1]), h: r[2] instanceof Date ? ex_ymd_(r[2], tz) : '', f: r[5] instanceof Date ? ex_ymd_(r[5], tz) : '', c: String(r[3]) }; });
+  return out;
+}
+
+/* ---------- Bsale: arribos y stock crítico (una vez al día) ---------- */
+const EX_HOJA_BSTOCK = 'Bsale stock';
+const EX_CAB_BSTOCK = ['ID variante', 'Stock', 'Actualizado', 'Llegó', 'Crítico'];
+function ex_bsaleSincStock_() {
+  if (!ex_bsaleToken_()) return 0;
+  const tot = {};
+  ex_bsaleTodo_('/stocks.json').forEach(function (s) { const id = String(s.variant && s.variant.id); if (id) tot[id] = (tot[id] || 0) + (+s.quantityAvailable || 0); });
+  const sh = ex_hojaCab_(EX_HOJA_BSTOCK, EX_CAB_BSTOCK), n = sh.getLastRow() - 1, ant = {};
+  (n > 0 ? sh.getRange(2, 1, n, 5).getValues() : []).forEach(function (r) { ant[String(r[0])] = r; });
+  const hoy = new Date(), filas = Object.keys(tot).map(function (id) {
+    const a = ant[id], s = tot[id], prev = a ? +a[1] || 0 : null;
+    const llego = prev !== null && prev <= 0 && s > 0 ? hoy : (a ? a[3] : '');
+    const critico = prev !== null && prev > 2 && s > 0 && s <= 2 ? hoy : (s > 2 ? '' : (a ? a[4] : ''));
+    return [id, s, hoy, llego, critico];
+  });
+  if (n > 0) sh.getRange(2, 1, n, 5).clearContent();
+  if (filas.length) sh.getRange(2, 1, filas.length, 5).setValues(filas);
+  return filas.length;
+}
+// Para la app: productos con stock (y los que llegaron o quedan pocos), para cruzar con los intereses de los clientes.
+function ex_bsaleResumen_() {
+  if (!ex_bsaleToken_()) return null;
+  const sh = SpreadsheetApp.getActive().getSheetByName(EX_HOJA_BSTOCK); if (!sh) return { items: [] };
+  const n = sh.getLastRow() - 1, tz = ex_tz_(), st = {};
+  (n > 0 ? sh.getRange(2, 1, n, 5).getValues() : []).forEach(function (r) { st[String(r[0])] = r; });
+  const items = [];
+  ex_bsaleCatalogo_Leer_().forEach(function (v) {
+    const r = st[v.id]; if (!r || !(+r[1] > 0)) return;
+    items.push({ p: v.producto, v: v.variante, s: +r[1], l: r[3] instanceof Date ? ex_ymd_(r[3], tz) : '', c: r[4] instanceof Date ? ex_ymd_(r[4], tz) : '' });
+  });
+  return { items: items.slice(0, 4000) };
 }
 
 // Ronda automática (cada 10 min): analiza las conversaciones con mensajes nuevos que ya se calmaron.
@@ -1318,11 +1590,11 @@ function ex_tareaHoraria() { if (ex_cuentaVigente_()) ex_conLock_(ex_sincCalenda
 function ex_tareaBase() {
   if (!ex_cuentaVigente_()) return;
   ex_conLock_(ex_escanearBase_);
-  if (ex_bsaleToken_()) { try { ex_bsaleCatalogo_(); } catch (e) { console.log('Bsale: ' + e.message); } }   // renueva el catálogo una vez al día
+  if (ex_bsaleToken_()) { try { ex_bsaleCatalogo_(); ex_bsaleSincStock_(); } catch (e) { console.log('Bsale: ' + e.message); } }   // catálogo y stock (arribos, stock crítico)
   const pr = PropertiesService.getScriptProperties();
   if (pr.getProperty('IG_TOKEN') && String(pr.getProperty('EX_IG_SINC') || '').slice(0, 10) !== new Date().toISOString().slice(0, 10)) { try { ex_igSinc_(); } catch (e) { console.log('Instagram: ' + e.message); } }
 }
-function ex_tareaAgente() { if (ex_cuentaVigente_()) ex_rondaAgente_(); }
+function ex_tareaAgente() { if (!ex_cuentaVigente_()) return; ex_rondaAgente_(); ex_rondaPerfiles_(); }
 
 /* ---------- hábitos: mes nuevo ---------- */
 // Guarda el resumen del mes que termina en "Historial hábitos" y deja la grilla lista para el mes actual.

@@ -503,6 +503,7 @@ nav.bottom button span .ico{width:21px;height:21px}
 #view{min-width:0;overflow-x:clip}
 @media (min-width:1000px){.cols2{grid-template-columns:minmax(0,1.6fr) minmax(300px,1fr)}}
 .sec{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:6px 16px 10px;margin-bottom:14px}
+.btn.sec{padding:14px 16px;margin-bottom:0;border-radius:12px}.btn.sm.sec{padding:9px 13px}.qadd .btn.sec{padding:0 14px}
 .sec > .sh{display:flex;align-items:center;gap:8px;padding:10px 0 4px;font-weight:700;font-size:14px}
 .sec > .sh .n{color:var(--muted);font-weight:600;font-size:13px}
 .sec > .sh .r{margin-left:auto;display:flex;gap:6px}
@@ -579,6 +580,114 @@ nav.bottom button span .ico{width:21px;height:21px}
 .rs-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .rs-row input[type=text]{margin-top:0}
 @media (max-width:700px){.rs-grid,.rs-row{grid-template-columns:1fr}}
+/* CRM: perfiles, segmentos, importación masiva y oportunidades */
+.num{font-variant-numeric:tabular-nums}
+.pcs{display:flex;gap:4px;flex-wrap:wrap}
+.pc{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;font-weight:600;color:var(--muted);background:var(--soft);border:1px solid var(--line);border-radius:999px;padding:2px 8px;white-space:nowrap}
+.pc.lc{color:var(--accent-ink);background:var(--accent-soft);border-color:transparent}
+.pc svg{width:12px;height:12px}
+.aidot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--accent);margin-left:6px;vertical-align:middle;opacity:.7}
+.btabs{display:flex;gap:10px;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap}
+.btabs .tabs{margin:0;flex:1;min-width:0}
+.btabs .btn{display:inline-flex;align-items:center;gap:6px}.btabs .btn svg{width:16px;height:16px}
+.fchips{display:flex;gap:10px;align-items:center;margin:0 0 12px}
+.fchip{border:0;background:var(--accent);color:#fff;border-radius:999px;padding:7px 12px;font-weight:700;font-size:13px;cursor:pointer}
+.fchip span{opacity:.8;margin-left:4px}
+.seg-prog{display:flex;gap:12px;align-items:center;background:var(--accent-soft);border-radius:14px;padding:12px 14px;margin-bottom:14px}
+.seg-prog b{display:block;font-size:14px}.seg-prog small{color:var(--muted);font-size:12.5px}
+.seg-empty .empty svg{display:block;width:30px;height:30px;margin:0 auto 10px;color:var(--accent)}
+.seg-empty .empty b{display:block;color:var(--ink);font-size:16px;margin-bottom:6px}
+.stack{display:flex;height:14px;border-radius:7px;overflow:hidden;background:var(--soft);gap:2px}
+.stack.big{height:22px;border-radius:8px}
+.stack i{display:block;height:100%;cursor:pointer;min-width:3px;transition:filter .15s}.stack i:hover{filter:brightness(.92)}
+.stack-lg{display:flex;flex-wrap:wrap;gap:4px 14px;margin-top:10px}
+.stack-lg > *{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted);border:0;background:none;padding:2px 0;cursor:pointer;font-family:inherit}
+.stack-lg i{width:10px;height:10px;border-radius:3px;display:inline-block;border:1px solid rgba(0,0,0,.06)}
+.stack-lg b{color:var(--ink)}
+.vint{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:14px}
+.vi{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;cursor:pointer;text-align:left;font:inherit;color:var(--ink);transition:border-color .15s,box-shadow .15s}
+.vi:hover{border-color:var(--s2);box-shadow:var(--shadow-sm)}
+.vi svg{width:18px;height:18px;color:var(--accent);flex:none}
+.vi span{flex:1;min-width:0;font-size:13.5px;font-weight:600;line-height:1.25}
+.vi b{font-size:17px}
+.vi.cero{opacity:.55}
+.seg-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.hb{display:grid;grid-template-columns:minmax(80px,30%) 1fr 34px;gap:10px;align-items:center;width:100%;border:0;background:none;padding:5px 0;cursor:pointer;font:inherit;color:var(--ink);text-align:left;border-radius:8px}
+.hb:hover .hl{color:var(--accent-ink)}
+.hl{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hbar{height:10px;background:var(--soft);border-radius:5px;overflow:hidden}.hbar i{display:block;height:100%;border-radius:5px}
+.hb b{font-size:13px;text-align:right}
+.opgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.op{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:6px;transition:opacity .2s,transform .2s}
+.op.fuera{opacity:0;transform:translateY(6px)}
+.op-h{display:flex;align-items:center;gap:8px;font-size:11.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.op-ic{width:26px;height:26px;border-radius:8px;background:var(--accent-soft);color:var(--accent-ink);display:flex;align-items:center;justify-content:center}.op-ic svg{width:15px;height:15px}
+.op-cl{margin-left:auto;font-size:11px;background:var(--soft);border-radius:6px;padding:2px 7px;color:var(--ink)}
+.op-n{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.op-n b{font-size:15px;margin-right:2px}
+.op-ti{font-weight:700;font-size:14.5px;line-height:1.35}
+.op-why{font-size:13px;color:var(--muted);line-height:1.4}
+.op-msg{min-height:80px!important;width:100%;border:1px solid var(--line);background:var(--soft);border-radius:10px;padding:8px 10px;font:inherit;font-size:13.5px;line-height:1.45;resize:vertical;color:var(--ink);min-height:62px}
+.op-msg:focus{background:var(--card);outline:2px solid var(--accent-soft);border-color:var(--s2)}
+.op .acts{margin-top:4px;flex-wrap:nowrap;align-items:center}.op .acts .btn{white-space:nowrap;flex:none;padding:8px 11px}.op .acts .btn:first-child{flex:1 1 auto;justify-content:center}.op-x{padding:8px 10px!important}
+.acts .btn{white-space:nowrap}
+.undo{margin-left:12px;border:0;background:none;color:#9CC3F5;font-weight:800;cursor:pointer;font:inherit;font-weight:800}
+.pf-score{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px}
+.pf-score > div{background:var(--soft);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:4px}
+.pf-score small,.pf-f small,.pf-met small{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.pf-score b{font-size:22px;line-height:1.1}
+.pf-ev{margin-top:8px;font-size:13px;color:var(--muted);font-style:italic;border-left:2px solid var(--s2);padding-left:8px}
+.pf-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 14px}
+.pf-f{padding:9px 0;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:2px;min-width:0}
+.pf-f b{font-size:14px;font-weight:600;line-height:1.35;overflow-wrap:anywhere}
+.pf-f.ed{cursor:pointer}.pf-f.ed:hover b{color:var(--accent-ink)}
+.pf-met{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:6px}
+.pf-met > div{background:var(--soft);border-radius:10px;padding:8px 10px}.pf-met b{display:block;font-size:16px}
+.pf-rec{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--line)}
+.pf-rec svg{width:16px;height:16px;color:var(--accent);flex:none;margin-top:2px}.pf-rec b{display:block;font-size:13.5px;font-weight:600}.pf-rec small{color:var(--muted);font-size:12px}
+/* importación masiva */
+.pop.imx{max-width:760px}
+.im-step{display:flex;gap:6px;margin-bottom:16px}
+.im-step span{flex:1;font-size:12px;font-weight:700;color:var(--muted);padding-top:8px;border-top:3px solid var(--line)}
+.im-step span.on{color:var(--ink);border-color:var(--accent)}.im-step span.ok{color:var(--accent-ink);border-color:var(--s2)}
+.im-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+.im-kpis > div{background:var(--soft);border-radius:12px;padding:10px 12px}.im-kpis b{display:block;font-size:22px;font-variant-numeric:tabular-nums;letter-spacing:-.01em}.im-kpis small{font-size:12px;color:var(--muted)}
+.im-years{display:flex;align-items:flex-end;gap:6px;margin:0 0 14px;flex-wrap:wrap}
+.im-years > div{display:flex;flex-direction:column;align-items:center;gap:3px}.im-years i{display:block;width:26px;background:var(--s2);border-radius:4px 4px 2px 2px}.im-years small{font-size:10.5px;color:var(--muted)}
+.im-years .wsub{flex-basis:100%}
+.im-how{border:1px solid var(--line);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.im-how > div{display:flex;gap:10px;font-size:13.5px;line-height:1.45}.im-how svg{width:17px;height:17px;flex:none;color:var(--accent);margin-top:1px}
+.im-list{margin-top:12px;border:1px solid var(--line);border-radius:12px;padding:8px 12px}.im-list summary{cursor:pointer;font-weight:600;font-size:13.5px}
+.im-list[open]{max-height:280px;overflow:auto}
+.im-r{padding:6px 0;border-top:1px solid var(--line);display:flex;flex-direction:column}.im-r b{font-size:13.5px}.im-r small{font-size:12px;color:var(--muted)}.im-r.off{opacity:.45}
+.im-big{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin:6px 0 12px}
+.im-big b{font-size:44px;font-weight:800;letter-spacing:-.02em;line-height:1}.im-big > span{font-size:20px;color:var(--muted);font-weight:700}.im-big small{flex-basis:100%;color:var(--muted);font-size:13.5px}
+.segbar{display:flex;height:10px;border-radius:5px;background:var(--soft);overflow:hidden;gap:2px}
+.segbar i{display:block;height:100%;transition:width .4s ease}.segbar .d{background:var(--accent)}.segbar .r{background:var(--s1);animation:pulso 1.4s ease-in-out infinite}.segbar .f{background:#E7A23B}
+@keyframes pulso{50%{opacity:.5}}
+.seglg{display:flex;gap:14px;flex-wrap:wrap;margin:8px 0 14px;font-size:12.5px;color:var(--muted)}
+.seglg span{display:inline-flex;align-items:center;gap:6px}.seglg i{width:9px;height:9px;border-radius:3px;display:inline-block}.seglg .d{background:var(--accent)}.seglg .r{background:var(--s1)}.seglg .f{background:#E7A23B}.seglg svg{width:13px;height:13px}
+.im-feed{display:flex;flex-direction:column;min-height:120px}
+.im-f{display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid var(--line);animation:entra .25s ease}
+.im-f:first-child{border-top:0}
+.im-f .av{width:32px;height:32px;border-radius:50%;background:var(--accent-soft);color:var(--accent-ink);font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex:none}
+.im-f > div{flex:1;min-width:0}.im-f b{font-size:14px;display:block;margin-bottom:3px}
+@keyframes entra{from{opacity:0;transform:translateY(-8px)}}
+.im-done{display:flex;gap:14px;align-items:center;margin-bottom:14px}.im-done h3{margin:0;font-size:20px}
+.im-warn{display:flex;gap:10px;align-items:flex-start;background:rgba(245,165,36,.12);border-radius:12px;padding:10px 12px;margin-top:12px;font-size:13.5px;line-height:1.45}.im-warn svg{width:17px;height:17px;color:var(--warn-ink);flex:none;margin-top:1px}
+.imx-pill{position:fixed;left:50%;transform:translateX(-50%);top:calc(10px + env(safe-area-inset-top));z-index:30;border:0;background:var(--ink);color:#fff;border-radius:999px;padding:9px 16px 11px;font-weight:700;font-size:13px;display:flex;gap:8px;align-items:center;box-shadow:var(--shadow-md);overflow:hidden;font-variant-numeric:tabular-nums}
+.imx-pill i{position:absolute;left:0;bottom:0;height:3px;background:var(--s2);transition:width .4s}
+.imx-pill .spin{border-color:rgba(255,255,255,.3);border-top-color:#fff}
+@media (prefers-reduced-motion:reduce){.im-f,.op,.segbar i,.segbar .r{animation:none;transition:none}}
+@media (max-width:760px){
+  .vint{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .seg-grid,.pf-grid{grid-template-columns:1fr}
+  .im-kpis,.pf-met{grid-template-columns:repeat(2,1fr)}
+  .opgrid{grid-template-columns:1fr}
+  .op .acts{flex-wrap:wrap}.op .acts .btn:first-child{flex-basis:100%}.op .acts .btn:not(:first-child){flex:1 1 0;justify-content:center}.op-x{flex:0 0 auto!important;margin-left:0}
+  .op{min-width:0}
+  .pop.imx{max-height:94vh}
+  .btabs .tabs{flex-basis:100%}
+}
 /* Hoy: resumen visual, 3 pasos y modo enfoque */
 @media (max-width:600px){details.sec > summary.sh{flex-wrap:wrap}details.sec > summary.sh .r{margin-left:0;width:100%}details.sec > summary.sh .r .btn{flex:1}}
 .hy-hero{display:grid;grid-template-columns:1fr auto;gap:14px 18px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;margin-bottom:14px}
@@ -767,7 +876,7 @@ async function api(action, extra){
 function apiX(op, extra){ return api('extra', Object.assign({ op }, extra || {})); }
 // Nivel 2 del script Extras: recordatorios y base de contactos. Nivel 3: la base solo usa contacto@blacklinechile.cl. Nivel 4: eventos de varios días.
 function extNivel(){ return S.extInactivo ? 0 : (S.ext && S.ext.nivel) || 1; }
-function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < 11; }
+function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < 12; }
 let sincTimer = null;
 // Después de cambiar tareas, el script actualiza los recordatorios del calendario (en segundo plano).
 function sincPronto(){
@@ -854,7 +963,7 @@ function render(){
   head();
   if (!S.data){ $('#view').innerHTML = '<div class="empty"><span class="spin"></span>Cargando…</div>'; return; }
   ({ inicio: viewInicio, hoy: viewHoy, tareas: viewTareas, habitos: () => S.subH === 'semana' ? viewSemana() : viewHabitos(), semana: viewSemana, proy: viewProy, base: viewBase, negocios: viewNegocios, redes: viewRedes })[S.tab]();
-  focusPill();
+  focusPill(); imxPill();
 }
 
 /* ---------- lógica: listas y prioridad inteligente ---------- */
@@ -1464,6 +1573,33 @@ function leerChatWhatsApp(txt){
   });
   return { mensajes, autores, diaPrimero };
 }
+// Un .zip con muchos chats adentro (por ejemplo, una carpeta descargada de Drive con un .zip por chat) se abre en archivos sueltos.
+async function expandirArchivos(files){
+  const out = [];
+  const unzip = async (buf, prof) => {
+    const dv = new DataView(buf.buffer, buf.byteOffset, buf.byteLength); let fin = -1;
+    for (let i = buf.length - 22; i >= Math.max(0, buf.length - 66000); i--) if (dv.getUint32(i, true) === 0x06054b50){ fin = i; break; }
+    if (fin < 0) return null;
+    const total = dv.getUint16(fin + 10, true), utf = new TextDecoder('utf-8'), E = [];
+    let pos = dv.getUint32(fin + 16, true);
+    for (let k = 0; k < total && dv.getUint32(pos, true) === 0x02014b50; k++){
+      const metodo = dv.getUint16(pos + 10, true), tam = dv.getUint32(pos + 20, true), ln = dv.getUint16(pos + 28, true), le = dv.getUint16(pos + 30, true), lc = dv.getUint16(pos + 32, true), local = dv.getUint32(pos + 42, true);
+      const n = utf.decode(buf.subarray(pos + 46, pos + 46 + ln)); if (!/__MACOSX/.test(n)) E.push({ n, metodo, tam, local });
+      pos += 46 + ln + le + lc;
+    }
+    const zips = E.filter(e => /\.zip$/i.test(e.n)), txts = E.filter(e => /\.txt$/i.test(e.n));
+    if (!zips.length && txts.length <= 1) return null;   // un chat normal: lo lee leerArchivoChat
+    const sacar = async e => { const ini = e.local + 30 + dv.getUint16(e.local + 26, true) + dv.getUint16(e.local + 28, true), d = buf.subarray(ini, ini + e.tam);
+      return e.metodo === 0 ? d : new Uint8Array(await new Response(new Blob([d]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).arrayBuffer()); };
+    for (const e of zips.concat(txts)){ try { const b = await sacar(e), nom = e.n.split('/').pop(); if (/\.zip$/i.test(nom) && prof < 2){ const sub = await unzip(b, prof + 1); if (sub) continue; } out.push(new File([b], /^_?chat\.txt$/i.test(nom) ? e.n.split('/').slice(-2, -1)[0] + '.txt' : nom)); } catch(err){} }
+    return true;
+  };
+  for (const f of files){
+    try { const buf = new Uint8Array(await f.arrayBuffer()); if (buf[0] === 0x50 && buf[1] === 0x4B && typeof DecompressionStream !== 'undefined' && await unzip(buf, 0)) continue; } catch(e){}
+    out.push(f);
+  }
+  return out;
+}
 // Lee el archivo exportado de WhatsApp: .txt directo o .zip (saca el .txt de adentro, sin librerías).
 async function leerArchivoChat(blob, nombre){
   const buf = new Uint8Array(await blob.arrayBuffer());
@@ -1496,7 +1632,7 @@ async function leerArchivoChat(blob, nombre){
 function openImportar(pre){
   pre = pre || {};
   if (extNivel() < 8){ toast('Actualiza el script Extras para importar chats'); return showExtrasSetup(); }
-  sheet('<h3>📥 Importar chat de WhatsApp</h3><div class="hint">Para negociaciones en curso o clientes antiguos. En WhatsApp abre el chat → <b>⋮ → Más → Exportar chat → Sin archivos</b> y compártelo con <b>Organizador</b>. Desde el PC, sube aquí los archivos .zip o .txt (puedes elegir varios a la vez; la app los descomprime sola).</div>' +
+  sheet('<h3>📥 Importar chat de WhatsApp</h3><div class="hint">Para negociaciones en curso o clientes antiguos. En WhatsApp abre el chat → <b>⋮ → Más → Exportar chat → Sin archivos</b> y compártelo con <b>Organizador</b>. Desde el PC, sube aquí los .zip o .txt. Puedes elegir cientos a la vez, o el .zip de una carpeta de Drive: el agente perfila a cada cliente.</div>' +
     '<div id="imp_paso1"' + (pre.txt || pre.files ? ' style="display:none"' : '') + '><label class="btn sec" style="display:block;text-align:center;margin-top:12px">📄 Elegir archivos (.zip o .txt)<input type="file" id="imp_f" multiple accept=".zip,.txt,text/plain,application/zip,application/x-zip-compressed" style="display:none"></label></div><div id="imp_paso2"></div>');
   const mostrar = (txt, archivo) => {
     const r = leerChatWhatsApp(txt), autores = Object.entries(r.autores).sort((a, b) => b[1] - a[1]);
@@ -1588,10 +1724,11 @@ function openImportar(pre){
     };
   };
   if (pre.txt) mostrar(pre.txt, pre.nombre);
-  if (pre.files) mostrarVarios(pre.files);
+  if (pre.files){ closeSheet(); expandirArchivos(pre.files).then(openImportMasivo); return; }
   $('#imp_f').onchange = async e => {
-    const fs = Array.from(e.target.files || []); if (!fs.length) return;
-    if (fs.length > 1) return mostrarVarios(fs);
+    let fs = Array.from(e.target.files || []); if (!fs.length) return;
+    fs = await expandirArchivos(fs);
+    if (fs.length > 1){ closeSheet(); return openImportMasivo(fs); }
     try { const r = await leerArchivoChat(fs[0], fs[0].name); mostrar(r.txt, r.nombre); } catch(err){ toast('No pude abrir el archivo: ' + err.message); }
   };
 }
@@ -1628,34 +1765,53 @@ function viewBase(){
   if (!S.base){ $('#view').innerHTML = '<div class="empty"><span class="spin"></span>Cargando tu base de datos…</div>'; loadBase(true).then(() => { if (S.tab === 'base') render(); }); return; }
   const todos = contactos(), cuenta = t => todos.filter(c => c.tipo === t).length, frios = contactosFrios();
   const q = norm(S.bq);
+  const conPerf = perfiles().length, vt = S.bv || (conPerf || perfPendientes() ? 'seg' : 'lista'), nOps = oportunidades().length;
+  let top = '<div class="btabs"><div class="tabs">' + [['seg', 'Resumen'], ['lista', 'Lista · ' + todos.length], ['ops', 'A quién escribir' + (nOps ? ' · ' + nOps : '')]].map(t => '<button class="' + (vt === t[0] ? 'on' : '') + '" data-bv="' + t[0] + '">' + t[1] + '</button>').join('') + '</div>' +
+    (extNivel() >= 8 ? '<button class="btn sm" id="bImp2">' + icon('users') + ' Importar chats</button>' : '') + '</div>';
+  if (vt !== 'lista'){
+    $('#view').innerHTML = top + (vt === 'seg' ? segmentosHTML() : opsHTML());
+    bindBaseTop();
+    if (vt === 'ops'){ const L2 = oportunidades(); bindOps($('#view'), L2, () => viewBase()); }
+    return;
+  }
   let L = todos.filter(c => S.bf === 'todos' ? true : S.bf === 'esperan' ? !!agenteDe(c.id).idea : S.bf === 'frios' ? frios.includes(c) : S.bf === 'otros' ? !['Cliente', 'Proveedor', 'Por clasificar'].includes(c.tipo) : c.tipo === S.bf);
   if (q) L = L.filter(c => norm([c.nombre, c.empresa, c.email, c.telefono, c.etiquetas, c.notas].join(' ')).includes(q));
-  L.sort((a, b) => (b.ultima || '').localeCompare(a.ultima || '') || String(a.nombre).localeCompare(String(b.nombre)));
+  if (S.bseg) L = L.filter(c => filtroSeg(perfilDe(c.id)));
+  if (S.bseg) L.sort((a, b) => ((perfilDe(b.id) || {}).prob || 0) + ((perfilDe(b.id) || {}).potencial || 0) / 2 - ((perfilDe(a.id) || {}).prob || 0) - ((perfilDe(a.id) || {}).potencial || 0) / 2);
+  if (!S.bseg) L.sort((a, b) => (b.ultima || '').localeCompare(a.ultima || '') || String(a.nombre).localeCompare(String(b.nombre)));
   const filtros = [['todos', 'Todos'], ['Cliente', 'Clientes'], ['Proveedor', 'Proveedores'], ['Por clasificar', 'Por clasificar'], ['frios', 'Sin contacto +30 d'], ['otros', 'Otros']].concat(extNivel() >= 7 ? [['esperan', 'Esperan respuesta']] : []);
   const esperan = todos.filter(c => agenteDe(c.id).idea).length;
-  let html = '<div class="kstrip"><div class="ks1" data-bfj="todos"><div><b>' + todos.length + '</b><small>contactos</small></div></div><div class="ks1" data-bfj="Cliente"><div><b>' + cuenta('Cliente') + '</b><small>clientes</small></div></div>' +
+  let html = top + (S.bseg ? '<div class="fchips"><button class="fchip" id="bsegX">' + esc(segNombre(S.bseg)) + ' <span>✕</span></button><span class="wsub">' + L.length + ' contactos</span></div>' : '') + '<div class="kstrip"><div class="ks1" data-bfj="todos"><div><b>' + todos.length + '</b><small>contactos</small></div></div><div class="ks1" data-bfj="Cliente"><div><b>' + cuenta('Cliente') + '</b><small>clientes</small></div></div>' +
     '<div class="ks1" data-bfj="esperan"><div><b style="color:' + (esperan ? 'var(--bad-ink)' : 'inherit') + '">' + esperan + '</b><small>esperan respuesta</small></div></div><div class="ks1" data-bfj="frios"><div><b>' + frios.length + '</b><small>sin contacto +30 d</small></div></div></div>';
   html += '<div class="tbar"><input type="text" id="bq" placeholder="🔎 Buscar nombre, empresa, teléfono o interés" value="' + esc(S.bq) + '"><select id="bfs">' + filtros.map(f => '<option value="' + f[0] + '"' + (S.bf === f[0] ? ' selected' : '') + '>' + f[1] + '</option>').join('') + '</select>' +
     (extNivel() >= 8 ? '<button class="btn sm sec" id="bImp">📥 Importar chats</button>' : '') + '<button class="btn sm sec" id="bScan">↻ Revisar correo</button><button class="btn sm" id="bNew">＋ Nuevo</button></div>';
   const negDe = c => negocios().filter(n => n.contacto === c.id && n.estado === 'Abierta')[0];
   if (!L.length) html += '<div class="sec"><div class="empty">' + (todos.length ? 'Nada con este filtro 🔍' : 'Aún no hay contactos. Importa tus chats de WhatsApp o agrega uno a mano.') + '</div></div>';
-  else if (ANCHO()) html += '<div class="tablewrap"><table class="ntable ctable"><thead><tr><th>Nombre</th><th>Tipo</th><th>Teléfono</th><th>Correo</th><th>Negociación abierta</th><th>Última interacción</th></tr></thead><tbody>' +
+  else if (ANCHO()) html += '<div class="tablewrap"><table class="ntable ctable"><thead><tr><th>Nombre</th><th>Perfil</th><th>Prob.</th><th>Teléfono</th><th>Negociación abierta</th><th>Última interacción</th></tr></thead><tbody>' +
     L.map(c => { const n = negDe(c), idea = agenteDe(c.id).idea; return '<tr data-c="' + esc(c.id) + '"><td><div class="row" style="gap:10px">' + avatar(c, 32) + '<div style="min-width:0"><b>' + esc(c.nombre || c.email) + '</b>' + (c.empresa || c.etiquetas ? '<div class="hint" style="margin:1px 0 0">' + esc([c.empresa, c.etiquetas].filter(Boolean).join(' · ').slice(0, 60)) + '</div>' : '') + '</div></div></td>' +
-      '<td style="white-space:nowrap"><span class="dot" style="background:' + (TIPO_COL[c.tipo] || '#98A2B3') + ';margin-right:6px"></span>' + esc(c.tipo) + '</td><td style="white-space:nowrap">' + esc(c.telefono || '–') + '</td><td>' + esc(c.email || '–') + '</td>' +
+      '<td>' + (perfilDe(c.id) && perfilDe(c.id).p ? '<div class="pcs">' + chipsPerfil(perfilDe(c.id), 3) + '</div>' : '<span class="dot" style="background:' + (TIPO_COL[c.tipo] || '#98A2B3') + ';margin-right:6px"></span>' + esc(c.tipo)) + '</td><td class="num">' + (perfilDe(c.id) && /oportunidad|lead/.test(perfilDe(c.id).ciclo || '') ? perfilDe(c.id).prob + '%' : '<span class="hint">–</span>') + '</td><td style="white-space:nowrap">' + esc(c.telefono || '–') + '</td>' +
       '<td>' + (n ? '<span class="dot" style="background:' + etapaDe(n).c + ';margin-right:6px"></span>' + esc(n.etapa) + (n.valor ? ' · ' + clpCorto(n.valor) : '') : '<span class="hint">–</span>') + '</td><td style="white-space:nowrap">' + (idea ? '<span class="pill2 bad">Espera respuesta</span> ' : '') + haceTxt(c.ultima) + '</td></tr>'; }).join('') + '</tbody></table></div>';
-  else html += '<div class="sec">' + L.map(c => { const n = negDe(c), idea = agenteDe(c.id).idea; return '<div class="ct-row" data-c="' + esc(c.id) + '">' + avatar(c, 40) + '<div class="grow"><b style="font-size:14.5px">' + esc(c.nombre || c.email) + '</b><div class="tm"><span>' + esc(c.tipo) + '</span>' + (n ? '<span>' + esc(n.etapa) + (n.valor ? ' · ' + clpCorto(n.valor) : '') + '</span>' : '') + (idea ? '<span class="d bad">Espera respuesta</span>' : '') + '</div></div><div class="ct-last">' + haceTxt(c.ultima) + '</div></div>'; }).join('') + '</div>';
+  else html += '<div class="sec">' + L.map(c => { const n = negDe(c), idea = agenteDe(c.id).idea; return '<div class="ct-row" data-c="' + esc(c.id) + '">' + avatar(c, 40) + '<div class="grow"><b style="font-size:14.5px">' + esc(c.nombre || c.email) + '</b>' + (perfilDe(c.id) && perfilDe(c.id).p ? '<div class="pcs" style="margin-top:4px">' + chipsPerfil(perfilDe(c.id), 3) + '</div>' : '') + '<div class="tm"><span>' + esc(c.tipo) + '</span>' + (n ? '<span>' + esc(n.etapa) + (n.valor ? ' · ' + clpCorto(n.valor) : '') + '</span>' : '') + (idea ? '<span class="d bad">Espera respuesta</span>' : '') + '</div></div><div class="ct-last">' + haceTxt(c.ultima) + '</div></div>'; }).join('') + '</div>';
   $('#view').innerHTML = html;
   const bq = $('#bq'); bq.oninput = () => { S.bq = bq.value; const pos = bq.selectionStart; viewBase(); const b2 = $('#bq'); b2.focus(); b2.setSelectionRange(pos, pos); };
   $('#bfs').onchange = e => { S.bf = e.target.value; viewBase(); };
   $$('[data-bfj]').forEach(b => b.onclick = () => { S.bf = b.dataset.bfj; viewBase(); });
   $$('[data-c]').forEach(b => b.onclick = () => openContacto(contactoPorId(b.dataset.c)));
   $('#bNew').onclick = () => openContacto(null);
+  bindBaseTop();
+  const bx = $('#bsegX'); if (bx) bx.onclick = () => { S.bseg = null; viewBase(); };
   const bi = $('#bImp'); if (bi) bi.onclick = () => openImportar();
   $('#bScan').onclick = async e => {
     const b = e.target; b.disabled = true; b.innerHTML = '<span class="spin"></span>Revisando…';
     try { const r = await apiX('escanear'); toast('✓ ' + r.nuevos + ' contactos nuevos · ' + r.interacciones + ' interacciones'); await loadBase(true); render(); }
     catch(err){ b.disabled = false; b.textContent = '↻ Revisar correo'; toast('No se pudo revisar: ' + err.message); }
   };
+}
+function bindBaseTop(){
+  $$('[data-bv]').forEach(b => b.onclick = () => { S.bv = b.dataset.bv; if (S.bv !== 'lista') S.bseg = null; viewBase(); });
+  $$('[data-sg]').forEach(b => b.onclick = () => { const [campo, valor] = b.dataset.sg.split('|'); S.bseg = { campo, valor }; S.bv = 'lista'; S.bf = 'todos'; viewBase(); window.scrollTo(0, 0); });
+  const bi = $('#bImp2'); if (bi) bi.onclick = () => openImportar();
+  const si = $('#segImp'); if (si) si.onclick = () => openImportar();
 }
 function openContacto(c, opt){
   if (c && !(opt && opt.editar)) return openCto(c, opt);
@@ -1707,7 +1863,7 @@ function openContacto(c, opt){
 /* ---------- ficha de contacto: acciones rápidas, próximo paso y pestañas ---------- */
 function openCto(c, opt){
   opt = opt || {};
-  const tab = opt.tab || S.ctab || 'resumen'; S.ctab = tab;
+  let tab = opt.tab || S.ctab || 'resumen'; if (tab === 'perfil' && !perfilDe(c.id)) tab = 'resumen'; S.ctab = tab;
   const tel = String(c.telefono || '').replace(/[^\d+]/g, ''), wa = tel.replace(/^\+/, '').replace(/^9(\d{8})$/, '569$1');
   const negs = negocios().filter(x => x.contacto === c.id), abierta = negs.find(x => x.estado === 'Abierta');
   const tareas = tareasDe(c).filter(t => !t.hecho).sort(ordenar), inter = ((S.base && S.base.interacciones) || []).filter(i => i.id === c.id);
@@ -1717,7 +1873,9 @@ function openCto(c, opt){
   const t0 = tareas[0];
   const vencP = t0 ? (t0.limite && t0.limite < hoy()) : abierta && abierta.proxima ? (abierta.fechaProx && abierta.fechaProx < hoy()) : true;
   html += '<div class="nextc' + (vencP ? ' bad' : '') + '"><div class="tx"><small>Próximo paso</small>' + (t0 ? '<b>' + esc(t0.tarea) + '</b><span>' + (t0.limite ? (t0.limite < hoy() ? 'Venció ' : '') + fmtLong(t0.limite) : 'sin fecha') + '</span>' : abierta && abierta.proxima ? '<b>' + esc(abierta.proxima) + '</b><span>' + (abierta.fechaProx ? (abierta.fechaProx < hoy() ? 'Venció ' : '') + fmtLong(abierta.fechaProx) : '') + ' · de la negociación</span>' : '<b>Sin próximo paso</b><span>Agenda un seguimiento para no perder a este contacto</span>') + '</div>' + (t0 ? '<button class="btn sm" id="ct_done">✓ Hecho</button>' : '<button class="btn sm" id="ct_seg">Agendar</button>') + '</div>';
-  const tabs = [['resumen', 'Resumen'], ['actividad', 'Actividad (' + inter.length + ')'], ['negocios', 'Negocios (' + negs.length + ')'], ['datos', 'Datos']];
+  const pfC = perfilDe(c.id);
+  if (pfC && pfC.p && pfC.p.relacion) html = html.replace('<div class="qa">', '<div class="pcs" style="margin:-4px 0 12px">' + chipsPerfil(pfC, 4) + '</div><div class="qa">');
+  const tabs = [['resumen', 'Resumen']].concat(pfC ? [['perfil', 'Perfil']] : []).concat([['actividad', 'Actividad (' + inter.length + ')'], ['negocios', 'Negocios (' + negs.length + ')'], ['datos', 'Datos']]);
   html += '<div class="tabs">' + tabs.map(t => '<button class="' + (t[0] === tab ? 'on' : '') + '" data-ctab="' + t[0] + '">' + t[1] + '</button>').join('') + '</div><div id="ctab"></div>';
   sheet(html);
   ctoTab(c, tab);
@@ -1730,6 +1888,7 @@ function openCto(c, opt){
 }
 function ctoTab(c, tab){
   const box = $('#ctab');
+  if (tab === 'perfil') return perfilTab(c, box);
   if (tab === 'resumen'){
     const tareas = tareasDe(c).filter(t => !t.hecho).sort(ordenar);
     box.innerHTML = agenteHTML(c) + (c.etiquetas || c.notas ? '<div class="sec"><div class="sh">Lo que sabemos</div>' + (c.etiquetas ? '<div class="tm" style="margin:0 0 6px">' + String(c.etiquetas).split(',').map(x => '<span class="pill2">' + esc(x.trim()) + '</span>').join('') + '</div>' : '') + (c.notas ? '<div style="font-size:14px;line-height:1.45;padding-bottom:6px">' + esc(c.notas) + '</div>' : '') + '</div>' : '') +
@@ -2365,6 +2524,8 @@ function saludDesglose(n){
   return L;
 }
 const INFO = {
+  probmedia: { t: '🎯 Probabilidad media de venta', d: 'Promedio de la probabilidad de compra de tus prospectos activos (oportunidades y prospectos que escribieron en los últimos 60 días). La calcula la app con reglas de vendedor, no la inventa la IA.',
+    f: 'Suma puntos por intención (alta 45, media 25, baja 10), plazo inmediato (+15), si dio talla, altura o presupuesto (+5 c/u, máx. 15), si ya es cliente (+10) y si escribió hace menos de 7 días (+10). Resta si escribió hace 30–60 días (−10), más de 60 (−25) o si puso objeciones de precio o competencia (−5).' },
   prob: { t: '🎯 Probabilidad de cierre', d: 'Qué tan probable es que la negociación termine en venta. No la inventa una IA: es una fórmula con dos ingredientes, la etapa en que está y la salud del negocio.',
     f: 'Probabilidad = % base de la etapa × (0,55 + 0,45 × salud ÷ 100). Con salud 100 se queda con el % base completo; con salud muy baja baja hasta poco más de la mitad.',
     tabla: () => [['% base de cada etapa', '']].concat(ETAPAS.map(e => [e.ic + ' ' + e.k, Math.round(e.p * 100) + '%'])),
@@ -2510,6 +2671,324 @@ function openNegocio(n, opt){
   };
 }
 
+/* ---------- Perfiles de clientes (los arma el agente) ---------- */
+const CICLO = {
+  oportunidad: { t: 'Oportunidad activa', c: 'var(--s5)' }, lead_activo: { t: 'Prospecto activo', c: 'var(--s4)' }, cliente_nuevo: { t: 'Cliente nuevo', c: 'var(--s3)' },
+  cliente_activo: { t: 'Cliente activo', c: 'var(--s2)' }, institucion: { t: 'Club / institución', c: 'var(--s1)' }, en_riesgo: { t: 'En riesgo', c: '#C9D3E0' },
+  lead_frio: { t: 'Prospecto frío', c: '#DCE2EA' }, perdido: { t: 'Perdido', c: '#E8ECF1' }, proveedor: { t: 'Proveedor', c: '#EEF1F5' }, sin_relacion: { t: 'Sin relación', c: '#F3F5F8' } };
+const L_EXP = { principiante: 'Principiante', intermedio: 'Intermedio', avanzado: 'Avanzado', competidor: 'Competidor', desconocido: 'Sin dato' };
+const L_GAMA = { entrada: 'Entrada', media: 'Media', alta: 'Alta', premium: 'Premium', desconocido: 'Sin dato' };
+const L_DISC = { emtb: 'e-MTB', enduro: 'Enduro', trail: 'Trail', xc: 'XC', dh_park: 'DH / park', ruta: 'Ruta', gravel: 'Gravel', ebike_urbana: 'e-Bike urbana', urbano: 'Urbano', infantil: 'Infantil', cicloturismo: 'Cicloturismo' };
+const L_REL = { lead: 'Prospecto', cliente: 'Cliente', recurrente: 'Recurrente', solo_taller: 'Solo taller', club_institucion: 'Club / institución', proveedor: 'Proveedor', marca: 'Marca', personal: 'Personal', spam: 'Spam', desconocido: 'Sin dato' };
+const L_INT = { compra_bici: 'Comprar bici', upgrade_componentes: 'Upgrade', repuesto_accesorio: 'Repuesto / accesorio', servicio_taller: 'Taller', garantia: 'Garantía', solo_info: 'Solo info', venta_usada: 'Vender usada', ninguna: 'Ninguna' };
+const L_FREC = { 'frecuente': 'Frecuente (4+ al año)', 'ocasional': 'Ocasional (2–3)', 'una vez': 'Una vez', 'sin consultas 12m': 'Sin consultas 12 m' };
+function perfilDe(id){ return S.base && S.base.perfiles ? S.base.perfiles[id] : null; }
+function perfiles(){ return S.base && S.base.perfiles ? Object.entries(S.base.perfiles).map(([id, p]) => Object.assign({ id }, p)).filter(p => p.estado && /Listo/.test(p.estado)) : []; }
+function perfPendientes(){ return S.base && S.base.perfiles ? Object.values(S.base.perfiles).filter(p => /Pendiente/.test(p.estado || '')).length : 0; }
+function chipsPerfil(pf, max){
+  if (!pf || !pf.p) return '';
+  const p = pf.p, ch = [];
+  if (pf.ciclo && CICLO[pf.ciclo]) ch.push('<span class="pc lc">' + esc(CICLO[pf.ciclo].t) + '</span>');
+  (p.disciplinas || []).slice(0, 1).forEach(d => ch.push('<span class="pc">' + esc(L_DISC[d] || d) + '</span>'));
+  if (p.gama && p.gama !== 'desconocido') ch.push('<span class="pc">Gama ' + esc(L_GAMA[p.gama].toLowerCase()) + '</span>');
+  if (p.experiencia && p.experiencia !== 'desconocido') ch.push('<span class="pc">' + esc(L_EXP[p.experiencia]) + '</span>');
+  return ch.slice(0, max || 4).join('');
+}
+const primerNombre = c => String((c && (c.nombre || '')) || '').split(' ')[0] || '';
+const RE_MODELO = /\b(levo|kenevo|vado|como|creo|stumpjumper|stumpy|epic|chisel|rockhopper|tarmac|roubaix|aethos|allez|diverge|crux|sirrus|status|enduro|demo|fuse|riprock|jett|hotrock|turbo|s-works)\b/;
+
+/* ---------- Oportunidades de contacto (el agente decide a quién escribir y por qué) ---------- */
+function indiceStock(){
+  const st = S.base && S.base.stock && S.base.stock.items; if (!st || !st.length) return null;
+  if (S._stIdx && S._stIdx.src === st) return S._stIdx;
+  const idx = { src: st, porPal: {} };
+  st.forEach(x => { tokens(x.p).filter(w => w.length >= 4 && !/^(bicicleta|talla|color|negro|black|gloss|satin|unisex)$/.test(w)).forEach(w => { (idx.porPal[w] = idx.porPal[w] || []).push(x); }); });
+  S._stIdx = idx; return idx;
+}
+// ¿Qué producto con stock calza con lo que pidió el cliente? (palabras distintivas del modelo + talla si la dijo)
+function stockPara(texto, talla){
+  const idx = indiceStock(); if (!idx) return [];
+  const ws = tokens(texto).filter(w => idx.porPal[w] && idx.porPal[w].length <= Math.max(6, idx.src.length * 0.05));
+  if (!ws.length) return [];
+  const cuenta = new Map();
+  ws.forEach(w => idx.porPal[w].forEach(x => cuenta.set(x, (cuenta.get(x) || 0) + 1)));
+  let L = [...cuenta.entries()].filter(e => e[1] >= Math.min(2, ws.length)).map(e => e[0]);
+  const tl = String(talla || '').trim().toUpperCase();
+  if (tl){ const conT = L.filter(x => new RegExp('(^|[^A-Z0-9])' + tl.replace(/[^A-Z0-9]/g, '') + '([^A-Z0-9]|$)').test(String(x.v).toUpperCase())); if (conT.length) L = conT; }
+  return L;
+}
+function oportunidades(){
+  if (!S.base || !S.base.perfiles) return [];
+  const h = hoy(), est = S.base.oportunidades || {}, out = [], dmes = s => { if (!/^\d{4}-\d{2}/.test(s || '')) return null; return diffDays(s.length === 7 ? s + '-15' : s.slice(0, 10), h); };
+  const abiertasDe = new Set(S.neg ? abiertos().map(n => n.contacto) : []);
+  const add = o => { const e = est[o.k]; if (e && (e.e === 'hecha' || e.e === 'descartada' || (e.e === 'pospuesta' && e.h > h))) return; out.push(o); };
+  const msg = {
+    arribo: (n, x) => 'Hola ' + n + '! Te escribo de Blackline 🙌 Te cuento que llegó ' + x + ', que me habías preguntado. ¿Te la reservo o quieres pasar a verla?',
+    critico: (n, x) => 'Hola ' + n + '! Quedan pocas unidades de ' + x + ', que te interesaba. Si la quieres te la puedo apartar 😉',
+    mantencion: (n, x) => 'Hola ' + n + '! ¿Cómo va la ' + x + '? Ya van cerca de 6 meses: es buen momento para su mantención. ¿Te agendo una hora en el taller?',
+    bateria: (n, x) => 'Hola ' + n + '! Tu ' + x + ' está por cumplir 2 años. Te ofrecemos un diagnóstico de batería antes de que termine la garantía. ¿Te agendo?',
+    upgrade: (n, x) => 'Hola ' + n + '! ¿Cómo anda la ' + x + '? Tenemos modelos nuevos y podemos recibir tu bici en parte de pago. ¿Te cuento opciones?',
+    reactivar: n => 'Hola ' + n + '! Hace tiempo que no sabemos de ti 🙂 ¿Cómo va todo con la bici? Tenemos novedades que te pueden gustar.',
+    retomar: (n, x) => 'Hola ' + n + '! Hace un tiempo me preguntaste por ' + x + '. ¿Sigues buscando? Te cuento lo que tenemos disponible 🙌',
+    postventa: (n, x) => 'Hola ' + n + '! ¿Cómo te ha ido con ' + x + '? Cualquier ajuste que necesites, avísame 🙌',
+    temporada: n => 'Hola ' + n + '! Se viene la temporada 🚵 ¿Dejamos tu bici lista? Te agendo la mantención pre-temporada cuando quieras.' };
+  const mes = h.slice(0, 7);
+  perfiles().forEach(pf => {
+    const c = contactoPorId(pf.id); if (!c || c.tipo === 'Ignorar') return;
+    const p = pf.p || {}, m = pf.m || {}, n = primerNombre(c) || '', cli = !/proveedor|sin_relacion/.test(pf.ciclo || ''); if (!cli) return;
+    const base = { c, pf, pot: pf.potencial || 0 };
+    const reciente = (m.diasCliente != null && m.diasCliente < 14) || abiertasDe.has(c.id);
+    // 1) stock que llegó o se está acabando, para lo que pidió
+    const pedidos = (p.intereses || []).concat((pf.r || []).filter(r => r.tipo === 'avisar_stock').map(r => r.producto)).filter(Boolean);
+    pedidos.forEach(q => { if (!RE_MODELO.test(norm(q))) return; const L = stockPara(q, p.talla);
+      const lleg = L.filter(x => x.l && diffDays(x.l, h) <= 21), crit = L.filter(x => x.c && diffDays(x.c, h) <= 14);
+      if (lleg.length){ const x = lleg[0]; add(Object.assign({ k: 'arribo:' + c.id + ':' + norm(x.p).slice(0, 30), tipo: 'arribo', ic: 'box', titulo: 'Llegó ' + x.p + (x.v ? ' · ' + x.v : ''), porque: 'Preguntó por «' + q + '»' + (x.s ? ' · hay ' + x.s + ' en stock' : ''), msg: msg.arribo(n, 'la ' + x.p + (x.v ? ' ' + x.v : '')), pr: 95 }, base)); }
+      else if (crit.length){ const x = crit[0]; add(Object.assign({ k: 'critico:' + c.id + ':' + norm(x.p).slice(0, 30), tipo: 'critico', ic: 'flag', titulo: 'Quedan ' + x.s + ' de ' + x.p, porque: 'Le interesaba «' + q + '»', msg: msg.critico(n, 'la ' + x.p), pr: 85 }, base)); } });
+    // 2) post-venta, mantención y batería según sus compras
+    (p.compras || []).forEach(cp => { const d = dmes(cp.fecha); if (d == null) return; const prod = cp.producto || 'tu bici', bici = RE_MODELO.test(norm(prod));
+      if (d >= 6 && d <= 10) add(Object.assign({ k: 'postventa7:' + c.id + ':' + cp.fecha, tipo: 'postventa', ic: 'spark', titulo: 'Post-venta: ' + prod, porque: 'Compró hace ' + d + ' días', msg: msg.postventa(n, 'la ' + prod), pr: 80 }, base));
+      if (bici && d >= 165 && d <= 215) add(Object.assign({ k: 'mant6:' + c.id + ':' + cp.fecha, tipo: 'mantencion', ic: 'clock', titulo: 'Mantención de los 6 meses', porque: 'Compró ' + prod + ' en ' + fmtMes(cp.fecha), msg: msg.mantencion(n, prod), pr: 75 }, base));
+      if (bici && /levo|kenevo|vado|como|creo|turbo/.test(norm(prod)) && d >= 600 && d <= 670) add(Object.assign({ k: 'bat:' + c.id + ':' + cp.fecha, tipo: 'bateria', ic: 'bolt', titulo: 'Batería: garantía por vencer', porque: prod + ' comprada en ' + fmtMes(cp.fecha) + ' (garantía de 2 años)', msg: msg.bateria(n, prod), pr: 70 }, base)); });
+    if (reciente) return;
+    // 3) recomendaciones del agente con fecha cumplida
+    (pf.r || []).filter(r => r.tipo !== 'avisar_stock' && /^\d{4}-\d{2}-\d{2}$/.test(r.fecha || '') && r.fecha <= addDays(h, 2) && diffDays(r.fecha, h) <= 45).forEach(r =>
+      add(Object.assign({ k: 'rec:' + c.id + ':' + r.tipo + ':' + r.fecha, tipo: r.tipo, ic: 'spark', titulo: r.texto, porque: 'Sugerencia del agente' + (r.producto ? ' · ' + r.producto : ''), msg: (msg[r.tipo] || msg.reactivar)(n, r.producto || 'tu bici'), pr: 65 }, base)));
+    // 4) retomar un interés que se enfrió, reactivar clientes valiosos, upgrade
+    if (pf.ciclo === 'lead_frio' && /alta|media/.test(p.fuerza_intencion || '') && m.diasCliente > 60 && m.diasCliente <= 200) add(Object.assign({ k: 'retomar:' + c.id + ':' + mes, tipo: 'retomar', ic: 'arrow', titulo: 'Retomar: ' + ((p.intereses || [])[0] || L_INT[p.intencion] || 'su consulta'), porque: 'Preguntó hace ' + m.diasCliente + ' días y quedó ahí', msg: msg.retomar(n, (p.intereses || [])[0] || 'una bici'), pr: 60 }, base));
+    if (pf.ciclo === 'en_riesgo' && /A|B/.test(pf.clase || '')) add(Object.assign({ k: 'react:' + c.id + ':' + mes, tipo: 'reactivar', ic: 'users', titulo: 'Reactivar cliente ' + pf.clase, porque: 'Sin contacto hace ' + m.diasCliente + ' días', msg: msg.reactivar(n), pr: 55 }, base));
+    const vieja = (p.bicis || []).find(b => /^\d{4}$/.test(b.anio || '') && +h.slice(0, 4) - +b.anio >= 3);
+    if (vieja && /alta|premium/.test(p.gama || '') && /A|B/.test(pf.clase || '')) add(Object.assign({ k: 'upg:' + c.id + ':' + h.slice(0, 4), tipo: 'upgrade', ic: 'trophy', titulo: 'Upgrade: su ' + vieja.modelo + ' ' + vieja.anio, porque: 'Tiene ' + (+h.slice(0, 4) - +vieja.anio) + ' años · gama ' + (L_GAMA[p.gama] || '').toLowerCase(), msg: msg.upgrade(n, vieja.modelo), pr: 40 }, base));
+    // 5) temporada (agosto–septiembre): mantención pre-temporada a quienes tienen bici
+    if (/-0[89]-/.test(h + '-') && (p.bicis || []).length && /cliente|recurrente|solo_taller/.test(p.relacion || '')) add(Object.assign({ k: 'temp:' + c.id + ':' + h.slice(0, 4), tipo: 'temporada', ic: 'sun', titulo: 'Mantención pre-temporada', porque: 'Tiene ' + p.bicis.map(b => b.modelo).join(', '), msg: msg.temporada(n), pr: 35 }, base));
+  });
+  // Una sola por cliente (la más importante), ordenadas por importancia y potencial.
+  const mejor = {}; out.forEach(o => { const k = o.c.id; if (!mejor[k] || o.pr > mejor[k].pr) mejor[k] = o; });
+  return Object.values(mejor).sort((a, b) => (b.pr + b.pot / 5) - (a.pr + a.pot / 5));
+}
+function fmtMes(s){ const M = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic']; return /^\d{4}-\d{2}/.test(s || '') ? M[+s.slice(5, 7) - 1] + ' ' + s.slice(0, 4) : s; }
+const OP_TIPO = { arribo: 'Llegó stock', critico: 'Stock crítico', mantencion: 'Mantención', bateria: 'Batería', upgrade: 'Upgrade', reactivar: 'Reactivar', retomar: 'Retomar interés', postventa: 'Post-venta', temporada: 'Temporada', seguimiento: 'Seguimiento', invitacion: 'Invitación', otro: 'Sugerencia' };
+function opCardHTML(o, i){
+  const tel = telWA(o.c);
+  return '<div class="op" data-opi="' + i + '"><div class="op-h"><span class="op-ic">' + icon(o.ic) + '</span><span class="op-t">' + esc(OP_TIPO[o.tipo] || 'Sugerencia') + '</span>' + (o.pf.clase && o.pf.clase !== '–' ? '<span class="op-cl">' + esc(o.pf.clase) + '</span>' : '') + '</div>' +
+    '<div class="op-n"><b>' + esc(o.c.nombre || o.c.email) + '</b>' + chipsPerfil(o.pf, 2) + '</div><div class="op-ti">' + esc(o.titulo) + '</div><div class="op-why">' + esc(o.porque) + '</div>' +
+    '<textarea class="op-msg" rows="2" data-opm="' + i + '">' + esc(o.msg) + '</textarea>' +
+    '<div class="acts">' + (tel ? '<button class="btn sm" data-opw="' + i + '">' + icon('note') + ' WhatsApp</button>' : '<button class="btn sm" data-opc="' + i + '">Copiar mensaje</button>') + '<button class="btn sm sec" data-opf="' + i + '">Ficha</button><button class="btn sm sec" data-opp="' + i + '" title="Recordármelo en una semana">1 semana</button><button class="btn sm sec op-x" data-opx="' + i + '" title="Descartar">✕</button></div></div>';
+}
+async function opEstado(o, estado, hasta){
+  const e = S.base.oportunidades = S.base.oportunidades || {}; e[o.k] = { e: estado, h: hasta || '' };
+  try { await apiX('oportunidad', { clave: o.k, estado, hasta: hasta || '', contacto: o.c.id, detalle: (OP_TIPO[o.tipo] || '') + ': ' + o.titulo }); } catch(err){ toast('No se guardó: ' + err.message); }
+}
+function bindOps(root, L, refrescar){
+  const get = el => L[+el.dataset[Object.keys(el.dataset)[0]]];
+  const sacar = (b, txt, undo) => { const card = b.closest('.op'); card.classList.add('fuera'); setTimeout(() => { refrescar(); }, 220); toastUndo(txt, undo); };
+  root.querySelectorAll('[data-opw]').forEach(b => b.onclick = () => { const o = get(b), m = root.querySelector('[data-opm="' + b.dataset.opw + '"]').value; window.open('https://wa.me/' + telWA(o.c) + '?text=' + encodeURIComponent(m), '_blank'); opEstado(o, 'hecha'); sacar(b, '✓ Contactado · ' + primerNombre(o.c), () => opEstado(o, 'nueva')); });
+  root.querySelectorAll('[data-opc]').forEach(b => b.onclick = () => { const o = get(b), m = root.querySelector('[data-opm="' + b.dataset.opc + '"]').value; try { navigator.clipboard.writeText(m); } catch(e){} opEstado(o, 'hecha'); sacar(b, 'Mensaje copiado', () => opEstado(o, 'nueva')); });
+  root.querySelectorAll('[data-opp]').forEach(b => b.onclick = () => { const o = get(b); opEstado(o, 'pospuesta', addDays(hoy(), 7)); sacar(b, 'Vuelve en una semana', () => opEstado(o, 'nueva')); });
+  root.querySelectorAll('[data-opx]').forEach(b => b.onclick = () => { const o = get(b); opEstado(o, 'descartada'); sacar(b, 'Descartada', () => opEstado(o, 'nueva')); });
+  root.querySelectorAll('[data-opf]').forEach(b => b.onclick = () => openCto(get(b).c, { tab: 'perfil' }));
+}
+function toastUndo(txt, fn){
+  toast(txt); const t = $('.toast'); if (!t || !fn) return;
+  const u = document.createElement('button'); u.className = 'undo'; u.textContent = 'Deshacer'; u.onclick = () => { fn(); t.remove(); setTimeout(render, 50); }; t.appendChild(u);
+}
+
+/* ---------- Importación masiva: todos tus chats, el agente perfila a cada cliente ---------- */
+function openImportMasivo(files){
+  if (extNivel() < 12){ const mm = modal(icon('users') + ' Falta un paso', '<p style="margin:0 0 12px;line-height:1.5">Para que el agente perfile a todos tus clientes, primero actualiza el script (Extras.gs) a la versión nueva. Toma 2 minutos.</p><div class="btns"><button class="btn" id="imUpd">Ver cómo actualizar</button></div>'); mm.el.querySelector('#imUpd').onclick = () => { mm.cerrar(); showExtrasSetup(); }; return; }
+  const m = modal(icon('users') + ' Importar tus chats de WhatsApp', '<div id="im"><div class="empty"><span class="spin"></span>Leyendo ' + files.length + ' archivos…</div></div>', { wide: true });
+  m.el.classList.add('imx'); const box = m.el.querySelector('#im');
+  (async () => {
+    const chats = [];
+    for (const f of files){
+      try { const a = await leerArchivoChat(f, f.name), r = leerChatWhatsApp(a.txt); chats.push({ archivo: f.name, nombre: a.nombre, r, error: r.mensajes.length ? '' : 'sin mensajes' }); }
+      catch(err){ chats.push({ archivo: f.name, nombre: '', r: { mensajes: [], autores: {} }, error: err.message }); }
+    }
+    revisar(chats);
+  })();
+  const telDe = x => /^\+?[\d\s()-]{8,}$/.test(x) ? x.replace(/[^\d+]/g, '') : '';
+  function revisar(chats){
+    const ok = chats.filter(c => !c.error);
+    if (!ok.length){ box.innerHTML = '<div class="empty">No encontré chats de WhatsApp en esos archivos.</div>'; return; }
+    const frec = {}; ok.forEach(c => Object.keys(c.r.autores).forEach(a => { frec[a] = (frec[a] || 0) + 1; }));
+    const cands = Object.entries(frec).sort((a, b) => b[1] - a[1]).slice(0, 5);
+    let yo = frec[LS.yoWa] ? LS.yoWa : (cands.find(a => /blackline|gonzalo/i.test(a[0])) || cands[0])[0];
+    const C = contactos();
+    const destino = c => {
+      const otros = Object.entries(c.r.autores).filter(a => a[0] !== yo).sort((a, b) => b[1] - a[1]);
+      const mA = String(c.nombre || '').match(/^(?:chat de whatsapp con|whatsapp chat with|whatsapp chat -)\s*(.+?)$/i);
+      const nombre = (mA ? mA[1].trim() : '') || (otros[0] || [''])[0] || c.nombre, tel = telDe(nombre);
+      const ex = C.find(k => norm(k.nombre) === norm(nombre)) || (tel ? C.find(k => String(k.telefono).replace(/\D/g, '').slice(-9) === tel.replace(/\D/g, '').slice(-9)) : null);
+      const ult = c.r.mensajes[c.r.mensajes.length - 1].fecha.slice(0, 10);
+      return { nombre, tel, existente: ex || null, grupo: otros.length > 1, sinCliente: !otros.length, ult, dias: diffDays(ult, hoy()) };
+    };
+    const pintar = () => {
+      const D = ok.map(c => Object.assign({ c }, destino(c))), validos = D.filter(d => !d.sinCliente && !(S.imSinGrupos !== false && d.grupo));
+      const msgs = validos.reduce((s, d) => s + d.c.r.mensajes.length, 0), rec = validos.filter(d => d.dias <= 60).length, nuevos = validos.filter(d => !d.existente).length;
+      const fechas = validos.map(d => d.ult).sort(), min = Math.ceil(validos.length * 9 / 3 / 60) + Math.ceil(validos.length * 1.5 / 60);
+      const anios = {}; validos.forEach(d => { const y = d.ult.slice(0, 4); anios[y] = (anios[y] || 0) + 1; });
+      const ay = Object.entries(anios).sort(), mx = Math.max(1, ...ay.map(x => x[1]));
+      box.innerHTML = '<div class="im-step"><span class="on">1 Revisar</span><span>2 Analizar</span><span>3 Resultado</span></div>' +
+        '<div class="im-kpis"><div><b>' + validos.length + '</b><small>chats</small></div><div><b>' + msgs.toLocaleString('es-CL') + '</b><small>mensajes</small></div><div><b>' + nuevos + '</b><small>contactos nuevos</small></div><div><b>' + rec + '</b><small>activos (≤ 60 días)</small></div></div>' +
+        (ay.length > 1 ? '<div class="im-years">' + ay.map(x => '<div><i style="height:' + Math.max(6, x[1] / mx * 46) + 'px"></i><small>' + x[0] + '</small></div>').join('') + '<span class="wsub">Último mensaje de cada chat, por año</span></div>' : '') +
+        '<div class="im-how"><div class="lab2">Cómo trabajará el agente</div>' +
+          '<div>' + icon('users') + '<span><b>Perfila a cada contacto:</b> tipo de cliente, experiencia, gama, disciplina, bicis que tiene, intereses, frecuencia de consulta y probabilidad de compra.</span></div>' +
+          '<div>' + icon('deal') + '<span><b>Abre negociaciones solo con opciones reales de venta</b> y conversación de los últimos 60 días (' + rec + ' chats califican por fecha).</span></div>' +
+          '<div>' + icon('check') + '<span><b>No crea tareas.</b> Lo antiguo queda como <b>oportunidades</b> para el momento justo: cuando llegue stock en Bsale, la mantención a los 6 meses, la batería o un upgrade.</span></div>' +
+          '<div>' + icon('flag') + '<span>Lo que ya corregiste a mano no se pisa. Los perfiles dudosos quedan marcados para que los revises.</span></div></div>' +
+        '<div class="lab2" style="margin-top:14px">¿Quién eres tú en los chats?</div>' + pills('im_yo', cands.map(a => ({ v: a[0], t: a[0] + ' (' + a[1] + ')' })), yo) +
+        '<label class="row" style="gap:8px;margin-top:10px;font-size:13.5px"><input type="checkbox" id="im_gr"' + (S.imSinGrupos !== false ? ' checked' : '') + ' style="width:18px;height:18px"> Omitir grupos (' + D.filter(d => d.grupo).length + ')</label>' +
+        '<details class="im-list"><summary>Ver los ' + D.length + ' chats' + (chats.length > ok.length ? ' · ' + (chats.length - ok.length) + ' archivos no se pudieron leer' : '') + '</summary>' + D.map(d => '<div class="im-r' + (validos.includes(d) ? '' : ' off') + '"><b>' + esc(d.existente ? d.existente.nombre || d.nombre : d.nombre) + '</b><small>' + d.c.r.mensajes.length + ' msj · último ' + fmt(d.ult) + (d.existente ? ' · ya está en tu base' : '') + (d.grupo ? ' · grupo' : '') + (d.sinCliente ? ' · solo mensajes tuyos' : '') + '</small></div>').join('') + '</details>' +
+        '<div class="hint">Tiempo estimado: ~' + min + ' min con la app abierta. Si la cierras, el agente sigue solo en el servidor (unos 25 chats cada 10 minutos). Costo aproximado del agente: menos de US$' + Math.max(1, Math.ceil(validos.length * 0.006)) + '.</div>' +
+        '<div class="btns"><button class="btn" id="im_go">' + icon('spark') + ' Importar y analizar ' + validos.length + ' chats</button></div>';
+      bindPills('im_yo', v => { yo = v; pintar(); });
+      box.querySelector('#im_gr').onchange = e => { S.imSinGrupos = e.target.checked; pintar(); };
+      box.querySelector('#im_go').onclick = () => { LS.yoWa = yo; correr(validos.map(d => ({ d, yo }))); };
+    };
+    pintar();
+  }
+  async function correr(lista){
+    const est = { total: lista.length, subidos: 0, listos: 0, fallos: [], feed: [], ids: [], neg: 0, ciclos: {}, baja: 0, t0: Date.now(), fase: 'subir' };
+    S.imx = est;
+    const pintar = () => {
+      if (!box.isConnected) return;
+      const pct = x => (x / est.total * 100).toFixed(1) + '%', enCurso = est.fase === 'analizar' ? Math.min(3, est.total - est.listos - est.fallos.length) : 0;
+      const hechos = est.listos + est.fallos.length, ritmo = est.listos ? (Date.now() - est.tA) / est.listos : 9000, eta = Math.max(0, Math.round((est.total - hechos) * ritmo / 3 / 60000));
+      box.innerHTML = '<div class="im-step"><span class="ok">1 Revisar</span><span class="on">2 Analizar</span><span>3 Resultado</span></div>' +
+        '<div class="im-big"><b class="num">' + (est.fase === 'subir' ? est.subidos : est.listos) + '</b><span>/ ' + est.total + '</span><small>' + (est.fase === 'subir' ? 'chats subidos a tu base' : 'clientes perfilados · ' + (eta ? '~' + eta + ' min restantes' : 'terminando…')) + '</small></div>' +
+        '<div class="segbar">' + (est.fase === 'subir' ? '<i class="d" style="width:' + pct(est.subidos) + '"></i>' : '<i class="d" style="width:' + pct(est.listos) + '"></i><i class="r" style="width:' + pct(enCurso) + '"></i><i class="f" style="width:' + pct(est.fallos.length) + '"></i>') + '</div>' +
+        '<div class="seglg"><span><i class="d"></i>' + (est.fase === 'subir' ? 'Subidos' : 'Listos ' + est.listos) + '</span>' + (est.fase === 'analizar' ? '<span><i class="r"></i>Analizando ' + enCurso + '</span><span><i class="f"></i>Con error ' + est.fallos.length + '</span><span>' + icon('deal') + ' ' + est.neg + ' negociaciones</span>' : '') + '</div>' +
+        '<div class="im-feed">' + (est.feed.length ? est.feed.slice(0, 6).map(f => '<div class="im-f"><span class="av">' + esc(iniciales(f.nombre)) + '</span><div><b>' + esc(f.nombre) + '</b><div class="pcs">' + f.chips + '</div></div>' + (f.neg ? '<span class="pc lc">' + icon('deal') + ' negociación</span>' : '') + '</div>').join('') : '<div class="wsub" style="padding:10px 0">' + (est.fase === 'subir' ? 'Guardando los mensajes en tu Sheet…' : 'El agente está leyendo los primeros chats…') + '</div>') + '</div>' +
+        '<div class="btns"><button class="btn sec" id="im_bg">Seguir en segundo plano</button></div>';
+      box.querySelector('#im_bg').onclick = () => { m.cerrar(); toast('El agente sigue trabajando. Te aviso al terminar.'); render(); };
+    };
+    pintar();
+    for (const x of lista){
+      const d = x.d;
+      try {
+        const contacto = d.existente ? { id: d.existente.id, nombre: d.existente.nombre, telefono: d.existente.telefono } : { nombre: d.nombre, telefono: d.tel };
+        const res = await apiX('importarChat', { contacto, mensajes: d.c.r.mensajes.map(mm => ({ fecha: mm.fecha, saliente: mm.autor === x.yo, texto: mm.texto })), masivo: true });
+        est.ids.push(res.id);
+      } catch(err){ est.fallos.push(d.nombre + ': ' + err.message); }
+      est.subidos++; pintar(); imxPill();
+    }
+    est.fase = 'analizar'; est.tA = Date.now(); est.total = est.ids.length + est.fallos.length; pintar();
+    let k = 0, parar = '';
+    const worker = async () => {
+      while (k < est.ids.length && !parar){
+        const id = est.ids[k++];
+        try {
+          const r = await apiX('perfilar', { id, masivo: true });
+          est.listos++;
+          if (r.negocio) est.neg++;
+          if (r.perfil){ est.ciclos[r.perfil.ciclo] = (est.ciclos[r.perfil.ciclo] || 0) + 1; if (r.perfil.confianza === 'baja') est.baja++; }
+          est.feed.unshift({ nombre: r.nombre || id, chips: chipsPerfil({ ciclo: r.perfil && r.perfil.ciclo, p: r.perfil || {} }, 3), neg: r.negocio });
+        } catch(err){ est.fallos.push(id + ': ' + err.message); if (/401|credit|ANTHROPIC|429/.test(err.message)) parar = err.message; }
+        pintar(); imxPill();
+      }
+    };
+    await Promise.all([worker(), worker(), worker()]);
+    S.imx = null; imxPill();
+    await Promise.all([loadBase(true), loadNeg(true)]); S.mutado = true;
+    if (!box.isConnected){ toast('🧠 Listo: ' + est.listos + ' clientes perfilados · ' + est.neg + ' negociaciones'); render(); return; }
+    resumen(est, parar);
+  }
+  function resumen(est, parar){
+    const C = est.ciclos, tot = Object.values(C).reduce((s, x) => s + x, 0) || 1, ord = Object.keys(CICLO).filter(k => C[k]);
+    const cli = (C.cliente_nuevo || 0) + (C.cliente_activo || 0) + (C.en_riesgo || 0) + (C.perdido || 0), ops = oportunidades().length;
+    box.innerHTML = '<div class="im-step"><span class="ok">1 Revisar</span><span class="ok">2 Analizar</span><span class="on">3 Resultado</span></div>' +
+      '<div class="im-done">' + ringSVG(est.listos / Math.max(1, est.total), 64) + '<div><h3>' + est.listos + ' contactos perfilados</h3><div class="wsub">' + (parar ? 'Se detuvo: ' + esc(parar) + '. Los pendientes los sigue el servidor cuando se resuelva.' : 'Tu base quedó ordenada por el agente.') + '</div></div></div>' +
+      '<div class="im-kpis"><div><b>' + (C.oportunidad || 0) + '</b><small>oportunidades activas</small></div><div><b>' + est.neg + '</b><small>negociaciones abiertas</small></div><div><b>' + cli + '</b><small>clientes</small></div><div><b>' + ops + '</b><small>a quién escribir</small></div></div>' +
+      '<div class="lab2">Ciclo de vida</div><div class="stack">' + ord.map(k => '<i style="width:' + (C[k] / tot * 100) + '%;background:' + CICLO[k].c + '" title="' + esc(CICLO[k].t) + ' ' + C[k] + '"></i>').join('') + '</div>' +
+      '<div class="stack-lg">' + ord.map(k => '<span><i style="background:' + CICLO[k].c + '"></i>' + esc(CICLO[k].t) + ' <b>' + C[k] + '</b></span>').join('') + '</div>' +
+      (est.baja ? '<div class="im-warn">' + icon('flag') + '<span><b>' + est.baja + ' perfiles con poca información.</b> Revísalos cuando tengas tiempo: el agente los marcó para que confirmes.</span></div>' : '') +
+      (est.fallos.length ? '<details class="im-list"><summary>' + est.fallos.length + ' con error</summary>' + est.fallos.map(f => '<div class="im-r"><small>' + esc(f) + '</small></div>').join('') + '</details>' : '') +
+      '<div class="btns"><button class="btn" id="im_seg">Ver segmentos</button>' + (ops ? '<button class="btn sec" id="im_op">A quién escribir (' + ops + ')</button>' : '') + '</div>';
+    box.querySelector('#im_seg').onclick = () => { m.cerrar(); S.bv = 'seg'; go('base'); };
+    const bo = box.querySelector('#im_op'); if (bo) bo.onclick = () => { m.cerrar(); S.bv = 'ops'; go('base'); };
+  }
+}
+function imxPill(){
+  let b = $('#imxPill');
+  const e = S.imx, abierto = $('.pop.imx');
+  if (!e || abierto){ if (b) b.remove(); return; }
+  if (!b){ b = document.createElement('button'); b.id = 'imxPill'; b.className = 'imx-pill'; document.body.appendChild(b); b.onclick = () => toast('El agente sigue perfilando tus chats…'); }
+  const n = e.fase === 'subir' ? e.subidos : e.listos;
+  b.innerHTML = '<span class="spin"></span>' + (e.fase === 'subir' ? 'Subiendo chats ' : 'Perfilando ') + n + '/' + e.total + '<i style="width:' + (n / Math.max(1, e.total) * 100) + '%"></i>';
+}
+// Ficha del perfil: lo que entendió el agente (con su evidencia), métricas de los mensajes y recomendaciones. Todo corregible.
+function perfilTab(c, box){
+  const pf = perfilDe(c.id); if (!pf){ box.innerHTML = '<div class="empty">Aún sin perfil.</div>'; return; }
+  const p = pf.p || {}, m = pf.m || {}, conf = pf.confirmado || {};
+  const ai = k => conf[k] ? '' : '<i class="aidot" title="Lo completó el agente: tócalo para corregir"></i>';
+  const campo = (k, t, v, opciones) => '<div class="pf-f' + (opciones ? ' ed' : '') + '"' + (opciones ? ' data-pfe="' + k + '"' : '') + '><small>' + t + '</small><b>' + (v ? esc(v) : '<span class="hint">Sin dato</span>') + (v ? ai(k) : '') + '</b></div>';
+  const L = (a, M) => (a || []).map(x => M ? M[x] || x : x).join(', ');
+  if (/Pendiente/.test(pf.estado || '')){ box.innerHTML = '<div class="empty"><span class="spin"></span>El agente aún no analiza este chat.</div>'; return; }
+  box.innerHTML = '<div class="pf-score"><div><small>Probabilidad de venta</small><b class="num">' + pf.prob + '%</b><span class="pb"><i style="width:' + pf.prob + '%"></i></span></div><div><small>Potencial</small><b class="num">' + (pf.clase || '–') + '</b><span class="wsub">' + pf.potencial + '/100</span></div><div><small>Ciclo</small><b style="font-size:15px">' + esc((CICLO[pf.ciclo] || {}).t || '–') + '</b><span class="wsub">' + esc(frecDe(pf)) + '</span></div></div>' +
+    (pf.resumen ? '<div class="ai" style="margin-bottom:12px"><div class="wh" style="margin:0">' + icon('spark') + 'Resumen del agente</div><div style="font-size:14px;line-height:1.45;margin-top:6px">' + esc(pf.resumen) + '</div>' + (p.evidencia ? '<div class="pf-ev">«' + esc(p.evidencia) + '»' + (p.evidencia_no_verificada ? ' <span class="tag warn">no verificado</span>' : '') + '</div>' : '') + (p.confianza === 'baja' ? '<div class="hint" style="margin:6px 0 0">' + icon('flag') + ' Poca información: revisa y corrige si algo no calza.</div>' : '') + '</div>' : '') +
+    '<div class="pf-grid">' + campo('relacion', 'Relación', L_REL[p.relacion], L_REL) + campo('experiencia', 'Experiencia', p.experiencia !== 'desconocido' && L_EXP[p.experiencia], L_EXP) + campo('gama', 'Gama', p.gama !== 'desconocido' && L_GAMA[p.gama], L_GAMA) +
+      campo('disciplinas', 'Disciplinas', L(p.disciplinas, L_DISC)) + campo('intencion', 'Busca', [L_INT[p.intencion], p.fuerza_intencion && p.fuerza_intencion !== 'ninguna' ? 'intención ' + p.fuerza_intencion : ''].filter(Boolean).join(' · '), L_INT) +
+      campo('plazo', 'Plazo', ({ inmediato: 'Inmediato', '1_3_meses': '1 a 3 meses', mas_3_meses: 'Más de 3 meses', sin_plazo: '' })[p.plazo]) + campo('bicis', 'Sus bicis', (p.bicis || []).map(b => [b.modelo, b.anio, b.talla].filter(Boolean).join(' ') + (b.compro_en_tienda === 'si' ? ' (Blackline)' : '')).join(' · ')) +
+      campo('talla', 'Talla / altura', [p.talla, p.altura_cm ? p.altura_cm + ' cm' : ''].filter(Boolean).join(' · ')) + campo('presupuesto_clp', 'Presupuesto', p.presupuesto_clp ? clpCorto(p.presupuesto_clp) : '') + campo('pago', 'Pago', p.pago !== 'desconocido' && p.pago ? p.pago.replace(/_/g, ' ') : '') +
+      campo('intereses', 'Intereses', L(p.intereses)) + campo('objeciones', 'Objeciones', L(p.objeciones).replace(/_/g, ' ')) + campo('sensibilidad_precio', 'Sensibilidad al precio', p.sensibilidad_precio !== 'desconocida' ? p.sensibilidad_precio : '') + campo('compras', 'Compras', (p.compras || []).map(x => x.producto + (x.fecha ? ' (' + fmtMes(x.fecha) + ')' : '')).join(' · ')) + '</div>' +
+    '<div class="lab2" style="margin-top:14px">Actividad en WhatsApp</div><div class="pf-met"><div><b class="num">' + (m.mensajes || 0) + '</b><small>mensajes</small></div><div><b class="num">' + (m.sesiones12 || 0) + '</b><small>consultas 12 m</small></div><div><b class="num">' + (m.diasCliente != null && m.diasCliente < 9999 ? m.diasCliente + ' d' : '–') + '</b><small>desde su último msj</small></div><div><b class="num">' + (m.respuestaMin == null ? '–' : m.respuestaMin < 60 ? m.respuestaMin + ' min' : Math.round(m.respuestaMin / 60) + ' h') + '</b><small>tu respuesta (mediana)</small></div></div>' +
+    ((pf.r || []).length ? '<div class="lab2" style="margin-top:14px">Recomendaciones del agente</div>' + pf.r.map(r => '<div class="pf-rec">' + icon('spark') + '<div><b>' + esc(r.texto) + '</b><small>' + esc(OP_TIPO[r.tipo] || r.tipo) + (r.fecha ? ' · ' + fmtRel(r.fecha) : '') + (r.producto ? ' · ' + esc(r.producto) : '') + '</small></div></div>').join('') : '') +
+    '<div class="hint" style="margin-top:12px"><i class="aidot"></i> = lo completó el agente. Toca un campo para corregirlo; lo que corriges no se vuelve a pisar.</div>';
+  box.querySelectorAll('[data-pfe]').forEach(el => el.onclick = () => {
+    const k = el.dataset.pfe, M = { relacion: L_REL, experiencia: L_EXP, gama: L_GAMA, intencion: L_INT }[k]; if (!M) return;
+    const md = modal('Corregir: ' + el.querySelector('small').textContent, '<div class="seg" style="flex-wrap:wrap;gap:6px">' + Object.entries(M).map(([v, t]) => '<button class="pill' + (p[k] === v ? ' on' : '') + '" data-v="' + v + '">' + esc(t) + '</button>').join('') + '</div>');
+    md.el.querySelectorAll('[data-v]').forEach(b => b.onclick = async () => { b.disabled = true; try { const r = await apiX('perfilCorregir', { id: c.id, campos: { [k]: b.dataset.v } }); S.base.perfiles[c.id] = r.perfil; md.cerrar(); toast('✓ Corregido'); perfilTab(c, box); } catch(e){ toast('No se pudo: ' + e.message); b.disabled = false; } });
+  });
+}
+/* ---------- Contactos: segmentos (resumen), lista con filtros y a quién escribir ---------- */
+const VISTAS_INT = [
+  { k: 'op', t: 'Oportunidades activas', ic: 'deal', f: pf => pf.ciclo === 'oportunidad' },
+  { k: 'vip', t: 'Clientes A', ic: 'trophy', f: pf => pf.clase === 'A' && /cliente|riesgo/.test(pf.ciclo) },
+  { k: 'riesgo', t: 'Valiosos inactivos', ic: 'clock', f: pf => /A|B/.test(pf.clase) && /en_riesgo|perdido|lead_frio/.test(pf.ciclo) },
+  { k: 'stock', t: 'Esperan stock', ic: 'box', f: pf => (pf.p.objeciones || []).includes('sin_stock') || (pf.r || []).some(r => r.tipo === 'avisar_stock') },
+  { k: 'ebike', t: 'Mundo e-bike', ic: 'bolt', f: pf => (pf.p.disciplinas || []).some(d => d === 'emtb' || d === 'ebike_urbana') },
+  { k: 'taller', t: 'Clientes de taller', ic: 'target', f: pf => pf.p.relacion === 'solo_taller' || pf.p.intencion === 'servicio_taller' || !!pf.p.ultimo_servicio },
+  { k: 'princ', t: 'Principiantes', ic: 'spark', f: pf => pf.p.experiencia === 'principiante' },
+  { k: 'revisar', t: 'Por revisar', ic: 'flag', f: pf => pf.p.confianza === 'baja' }];
+function filtroSeg(pf){
+  const f = S.bseg; if (!f) return true; if (!pf || !pf.p) return false;
+  if (f.campo === 'vista'){ const v = VISTAS_INT.find(x => x.k === f.valor); return v ? v.f(pf) : true; }
+  if (f.campo === 'ciclo') return pf.ciclo === f.valor;
+  if (f.campo === 'disciplinas') return (pf.p.disciplinas || []).includes(f.valor);
+  if (f.campo === 'frecuencia') return frecDe(pf) === f.valor;
+  return pf.p[f.campo] === f.valor;
+}
+function frecDe(pf){ const n = (pf.m || {}).sesiones12 || 0; return n >= 4 ? 'frecuente' : n >= 2 ? 'ocasional' : n === 1 ? 'una vez' : 'sin consultas 12m'; }
+function segNombre(f){ if (!f) return ''; if (f.campo === 'vista') return (VISTAS_INT.find(x => x.k === f.valor) || {}).t; const L = { ciclo: k => CICLO[k] && CICLO[k].t, disciplinas: k => L_DISC[k], gama: k => 'Gama ' + (L_GAMA[k] || k).toLowerCase(), experiencia: k => L_EXP[k], frecuencia: k => L_FREC[k] }; return (L[f.campo] || (k => k))(f.valor); }
+function barrasHTML(titulo, campo, cuentas, labels, info){
+  const E = Object.entries(cuentas).filter(e => e[0] !== 'desconocido' && e[1]).sort((a, b) => b[1] - a[1]), mx = Math.max(1, ...E.map(e => e[1])), sd = cuentas.desconocido || 0;
+  return '<div class="w seg-w"><div class="wh">' + titulo + '</div>' + (E.length ? E.map((e, i) => '<button class="hb" data-sg="' + campo + '|' + esc(e[0]) + '"><span class="hl">' + esc(labels[e[0]] || e[0]) + '</span><span class="hbar"><i style="width:' + (e[1] / mx * 100) + '%;background:' + SEQ[Math.max(0, 4 - i)] + '"></i></span><b class="num">' + e[1] + '</b></button>').join('') : '<div class="wsub">Aún sin datos.</div>') + (sd ? '<div class="wsub" style="margin-top:6px">' + sd + ' sin dato</div>' : '') + '</div>';
+}
+function segmentosHTML(){
+  const P = perfiles(), pend = perfPendientes();
+  let html = pend || S.imx ? '<div class="seg-prog"><span class="spin"></span><div><b>El agente está perfilando tus chats</b><small>' + (S.imx ? (S.imx.listos || S.imx.subidos) + ' de ' + S.imx.total : pend + ' pendientes · sigue solo en el servidor (unos 25 cada 10 minutos)') + '</small></div></div>' : '';
+  if (!P.length) return html + '<div class="sec seg-empty"><div class="empty">' + icon('users') + '<b>Aún no hay perfiles de clientes</b>Importa tus chats de WhatsApp (puedes elegir cientos a la vez) y el agente arma la ficha de cada cliente: experiencia, gama, disciplina, intereses y probabilidad de compra.<br><button class="btn" id="segImp" style="margin-top:14px">' + icon('users') + ' Importar chats</button></div></div>';
+  const cnt = (fn) => { const o = {}; P.forEach(pf => [].concat(fn(pf)).forEach(v => { if (v) o[v] = (o[v] || 0) + 1; })); return o; };
+  const C = cnt(pf => pf.ciclo), tot = P.length, ord = Object.keys(CICLO).filter(k => C[k]);
+  const cli = P.filter(pf => /cliente|riesgo|perdido/.test(pf.ciclo)).length, opsN = oportunidades().length;
+  const probs = P.filter(pf => /oportunidad|lead_activo/.test(pf.ciclo)).map(pf => pf.prob), pm = probs.length ? Math.round(probs.reduce((s, x) => s + x, 0) / probs.length) : 0;
+  html += '<div class="kstrip"><div class="ks1" data-sg="vista|op"><div><b class="num">' + (C.oportunidad || 0) + '</b><small>oportunidades activas</small></div></div><div class="ks1" data-bv="ops"><div><b class="num">' + opsN + '</b><small>a quién escribir</small></div></div>' +
+    '<div class="ks1"><div><b class="num">' + cli + '</b><small>clientes</small></div></div><div class="ks1" data-info="probmedia"><div><b class="num">' + pm + '%</b><small>prob. media (activos)</small></div></div></div>';
+  html += '<div class="w" style="margin-bottom:14px"><div class="wh">Ciclo de vida <span class="wsub" style="margin:0 0 0 auto">' + tot + ' perfiles</span></div><div class="stack big">' + ord.map(k => '<i data-sg="ciclo|' + k + '" style="width:' + (C[k] / tot * 100) + '%;background:' + CICLO[k].c + '" title="' + esc(CICLO[k].t) + ': ' + C[k] + '"></i>').join('') + '</div>' +
+    '<div class="stack-lg">' + ord.map(k => '<button data-sg="ciclo|' + k + '"><i style="background:' + CICLO[k].c + '"></i>' + esc(CICLO[k].t) + ' <b class="num">' + C[k] + '</b></button>').join('') + '</div></div>';
+  html += '<div class="lab2" style="margin:4px 2px 8px">Listas inteligentes</div><div class="vint">' + VISTAS_INT.map(v => { const n = P.filter(v.f).length; return '<button class="vi' + (n ? '' : ' cero') + '" data-sg="vista|' + v.k + '">' + icon(v.ic) + '<span>' + esc(v.t) + '</span><b class="num">' + n + '</b></button>'; }).join('') + '</div>';
+  html += '<div class="seg-grid">' + barrasHTML('Disciplina', 'disciplinas', cnt(pf => pf.p.disciplinas || []), L_DISC) + barrasHTML('Gama', 'gama', cnt(pf => pf.p.gama || 'desconocido'), L_GAMA) +
+    barrasHTML('Experiencia', 'experiencia', cnt(pf => pf.p.experiencia || 'desconocido'), L_EXP) + barrasHTML('Frecuencia de consulta', 'frecuencia', cnt(frecDe), L_FREC) + '</div>';
+  return html;
+}
+function opsHTML(){
+  const L = oportunidades();
+  if (!perfiles().length) return '<div class="sec"><div class="empty">Cuando el agente perfile tus chats, aquí verás a quién escribir y por qué: stock que llegó, mantenciones, baterías, upgrades y clientes que conviene reactivar.</div></div>';
+  if (!L.length) return '<div class="sec"><div class="empty">' + icon('check') + '<br><b>Estás al día</b><br>No hay contactos sugeridos por ahora. El agente revisa a diario el stock de Bsale y las fechas de tus clientes.</div></div>';
+  const grupos = {}; L.forEach((o, i) => { (grupos[o.tipo] = grupos[o.tipo] || []).push(i); });
+  return '<div class="wsub" style="margin:0 2px 10px">Una sugerencia por cliente, ordenadas por importancia. El mensaje es editable: tócalo antes de enviar.</div>' +
+    '<div class="opgrid">' + L.map(opCardHTML).join('') + '</div>';
+}
+
 /* ---------- vista: Hoy (tu día en 3 pasos: responder, hacer, avanzar) ---------- */
 function telWA(c){ return String((c && c.telefono) || '').replace(/[^\d+]/g, '').replace(/^\+/, '').replace(/^9(\d{8})$/, '569$1'); }
 function iniciales(s){ return String(s || '?').replace(/[^\p{L}\s]/gu, ' ').trim().split(/\s+/).slice(0, 2).map(w => w[0] || '').join('').toUpperCase() || '?'; }
@@ -2540,9 +3019,10 @@ function datosHoy(){
   const ev = S.google && S.google.eventos ? S.google.eventos.filter(e => e.fecha === h) : [];
   const resp = esperanRespuesta(), negs = negsAtencion(), hechas = hechasEl(h), rh = respHoy().ids.length, nh = negsAvanzadasHoy();
   const cont = (S.cont || []).filter(x => x.fecha === h && x.estado === 'Planificado');
-  return { h, venc, hoyL, curso, hacer, top, ev, resp, negs, hechas, rh, nh, cont, oc: ocupados()[h] };
+  let ops = []; try { ops = oportunidades().slice(0, 5); } catch(e){}
+  return { h, venc, hoyL, curso, hacer, top, ev, resp, negs, hechas, rh, nh, cont, ops, oc: ocupados()[h] };
 }
-function pendientesHoyN(){ if (!S.data) return 0; const D = datosHoy(); return D.resp.length + D.hacer.length + D.negs.length; }
+function pendientesHoyN(){ if (!S.data) return 0; const D = datosHoy(); return D.resp.length + D.hacer.length + D.negs.length + D.ops.length; }
 // Resumen del agente: lo importante del día en frases cortas, con lo que pasa en las otras pestañas.
 function briefingHoy(D){
   const L = [], ahora = new Date().toTimeString().slice(0, 5);
@@ -2551,6 +3031,7 @@ function briefingHoy(D){
   const evs = D.ev.filter(e => !e.todoElDia && e.fin > ahora);
   if (evs.length) L.push(['cal', 'A las <b>' + esc(evs[0].inicio) + '</b>: ' + esc(evs[0].titulo) + (evs.length > 1 ? ' y ' + (evs.length - 1) + ' más' : '') + '.']);
   if (D.negs.length){ const v = D.negs.reduce((s, x) => s + (+x.n.valor || 0), 0); L.push(['deal', '<b>' + D.negs.length + (D.negs.length === 1 ? ' negociación necesita' : ' negociaciones necesitan') + ' un empujón</b>' + (v ? ' (' + clpCorto(v) + ' en juego)' : '') + '.']); }
+  if (D.ops.length) L.push(['box', '<b>' + D.ops.length + (D.ops.length === 1 ? ' cliente para contactar' : ' clientes para contactar') + '</b>: ' + esc(D.ops[0].titulo.charAt(0).toLowerCase() + D.ops[0].titulo.slice(1)) + ' (' + esc(primerNombre(D.ops[0].c)) + ').']);
   if (D.venc.length) L.push(['flag', '<b>' + D.venc.length + ' tareas atrasadas.</b> Muévelas o hazlas: no dejes que se acumulen.']);
   if (D.cont.length) L.push(['camera', 'Hoy toca publicar: <b>' + esc(D.cont[0].formato + ' · ' + D.cont[0].tema) + '</b>.']);
   if (!L.length) L.push(['spark', '<b>Día despejado.</b> Buen momento para avanzar un proyecto o preparar contenido.']);
@@ -2587,7 +3068,7 @@ function viewHoy(){
   const pasos = [
     { k: 'resp', n: 1, t: 'Responder', ic: 'note', pend: D.resp.length, hecho: D.rh, sub: D.resp.length ? (D.resp.length === 1 ? 'cliente espera' : 'clientes esperan') : 'nadie espera' },
     { k: 'hacer', n: 2, t: 'Hacer', ic: 'check', pend: D.hacer.length, hecho: D.hechas.length, sub: D.hacer.length === 1 ? 'tarea' : 'tareas' + (D.venc.length ? ' · ' + D.venc.length + ' atrasadas' : '') },
-    { k: 'avanzar', n: 3, t: 'Avanzar', ic: 'deal', pend: D.negs.length, hecho: D.nh, sub: D.negs.length ? 'negociaciones' : 'todo al día' }];
+    { k: 'avanzar', n: 3, t: 'Avanzar', ic: 'deal', pend: D.negs.length + D.ops.length, hecho: D.nh, sub: 'todo al día', txt: [D.negs.length ? D.negs.length + ' negociaciones' : '', D.ops.length ? D.ops.length + ' por contactar' : ''].filter(Boolean).join(' · ') }];
   if (!S.hPaso || !pasos.some(p => p.k === S.hPaso)) S.hPaso = (pasos.find(p => p.pend) || pasos[1]).k;
   const nm = params()['Tu nombre (para el saludo)'], hr = new Date().getHours();
   let html = '<div class="hy-hero"><div class="hy-hl"><div class="hy-g">' + (hr < 12 ? 'Buenos días' : hr < 20 ? 'Buenas tardes' : 'Buenas noches') + (nm ? ', ' + esc(nm) : '') + '</div>' +
@@ -2595,7 +3076,7 @@ function viewHoy(){
     '<div class="hy-cta"><button class="btn" id="hFoco">' + icon('arrow') + ' Empezar mi día</button><button class="btn sec" id="aiDia">' + icon('spark') + ' Planificar con IA</button><button class="btn sec" id="qa" title="Agregar para hoy">' + icon('plus') + '</button></div></div>' +
     '<div class="hy-ring"><div class="rg">' + ringSVG(tot ? hechoTot / tot : 0, 108) + '<div class="rv"><b>' + hechoTot + '</b><small>de ' + tot + '</small></div></div><div class="wsub" style="text-align:center">acciones del día</div></div>' +
     '<div class="hy-tl">' + lineaDiaHTML(D.ev) + '</div></div>';
-  html += '<div class="hy-steps">' + pasos.map(p => { const T = p.pend + p.hecho, ok = !p.pend; return '<button class="hy-step' + (S.hPaso === p.k ? ' on' : '') + (ok ? ' ok' : '') + '" data-paso="' + p.k + '"><span class="num">' + (ok ? icon('check') : p.n) + '</span><span class="tx"><b>' + p.t + '</b><small>' + (ok ? (p.hecho ? p.hecho + ' hechas ✓' : p.sub) : p.pend + ' ' + p.sub) + '</small></span><span class="pb"><i style="width:' + (T ? p.hecho / T * 100 : ok ? 100 : 0) + '%"></i></span></button>'; }).join('') + '</div>';
+  html += '<div class="hy-steps">' + pasos.map(p => { const T = p.pend + p.hecho, ok = !p.pend; return '<button class="hy-step' + (S.hPaso === p.k ? ' on' : '') + (ok ? ' ok' : '') + '" data-paso="' + p.k + '"><span class="num">' + (ok ? icon('check') : p.n) + '</span><span class="tx"><b>' + p.t + '</b><small>' + (ok ? (p.hecho ? p.hecho + ' hechas ✓' : p.sub) : p.txt || p.pend + ' ' + p.sub) + '</small></span><span class="pb"><i style="width:' + (T ? p.hecho / T * 100 : ok ? 100 : 0) + '%"></i></span></button>'; }).join('') + '</div>';
   let izq = '';
   if (S.hPaso === 'resp'){
     izq = '<div class="sec"><div class="sh">' + icon('note') + ' Clientes que esperan respuesta <span class="n">' + D.resp.length + '</span></div><div class="wsub" style="padding:0 0 8px">El agente leyó sus chats y te dejó una idea de respuesta. Revísala, envíala desde WhatsApp y marca «Listo».</div>' +
@@ -2611,6 +3092,7 @@ function viewHoy(){
   } else {
     izq = '<div class="sec"><div class="sh">' + icon('deal') + ' Negociaciones que necesitan un empujón <span class="n">' + D.negs.length + '</span></div><div class="wsub" style="padding:0 0 8px">Ordenadas por monto. Contacta al cliente y registra qué pasó: así no se enfría ninguna venta.</div>' + (D.negs.length ? '<button class="btn" id="hRonda" style="width:100%;margin:2px 0 8px">' + icon('arrow') + ' Empezar ronda de seguimiento (' + D.negs.length + ')</button>' : '') +
       (D.negs.length ? D.negs.map(negHoyHTML).join('') : '<div class="empty">' + (S.neg ? 'Todas tus negociaciones están al día ✓' : '<span class="spin"></span>Cargando negociaciones…') + '</div>') + '</div>';
+    if (D.ops.length) izq += '<div class="sec hy-ops"><div class="sh">' + icon('box') + ' A quién escribir hoy <span class="n">' + D.ops.length + '</span><span class="r"><button class="btn sm sec" id="hOpsAll">Ver todas</button></span></div><div class="wsub" style="padding:0 0 10px">El agente cruzó tus clientes con el stock de Bsale y sus fechas (compras, mantenciones, intereses). El mensaje es editable.</div><div class="opgrid">' + D.ops.map(opCardHTML).join('') + '</div></div>';
   }
   const ahora = new Date().toTimeString().slice(0, 5), man = addDays(h, 1);
   const evM = S.google && S.google.eventos ? S.google.eventos.filter(e => e.fecha === man) : [], tM = pendientes().filter(t => t.limite === man);
@@ -2639,6 +3121,8 @@ function viewHoy(){
   $$('[data-nab]').forEach(b => b.onclick = () => openDeal(D.negs[+b.dataset.nab].n, { tab: 'actividad' }));
   $$('[data-nop]').forEach(b => b.onclick = () => openDeal(D.negs[+b.dataset.nop].n));
   if ($('#hRonda')) $('#hRonda').onclick = () => rondaSeguimiento(null, { todas: true });
+  if (S.hPaso === 'avanzar' && D.ops.length) bindOps($('.hy-ops'), D.ops, () => viewHoy());
+  if ($('#hOpsAll')) $('#hOpsAll').onclick = () => { S.bv = 'ops'; go('base'); };
 }
 /* ---------- Ronda de seguimiento: las negociaciones que hay que seguir, una ventana tras otra ---------- */
 const RE_SEG = /seguimiento|seguir|follow|recontactar|cotizaciones pendientes/i;

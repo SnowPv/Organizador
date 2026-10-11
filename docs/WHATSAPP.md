@@ -105,6 +105,39 @@ Desde otro teléfono, escribe al WhatsApp de la tienda: *"Hola, ¿tienen la Turb
 
 ---
 
+## Importar todos tus chats (importación masiva)
+
+Con esta importación, el agente ordena toda tu base de una vez. Lee cada conversación y arma el perfil de cada contacto:
+- **Quién es:** prospecto, cliente, recurrente, solo taller, club, proveedor o personal.
+- **Cómo anda en bici:** experiencia, gama y disciplinas.
+- **Qué tiene y qué busca:** bicis que tiene, talla, presupuesto, intereses y objeciones.
+- **Su historial:** compras.
+- **Métricas calculadas de los mensajes:** frecuencia de consulta, días desde su último mensaje y tu tiempo de respuesta.
+- **Puntajes:** probabilidad de venta (0 a 100) y potencial (A, B o C).
+
+**Reglas para no llenar la app de cosas inútiles:**
+- **No crea tareas.**
+- **Abre negociaciones solo con una opción real de venta** y si el cliente escribió en los **últimos 60 días**.
+- **Lo antiguo queda como oportunidad** para el momento justo. Las verás en Contactos → *A quién escribir* y en Hoy → paso 3:
+  - llegó a Bsale lo que pidió, o quedan pocas unidades;
+  - mantención a los 6 meses de su compra;
+  - batería antes de que venza la garantía de 2 años;
+  - upgrade o parte de pago;
+  - reactivar a un cliente valioso.
+- **Lo que corriges a mano en la ficha (pestaña Perfil) no se vuelve a pisar.** Los perfiles dudosos quedan en la lista *Por revisar*.
+
+**Cómo exportar muchos chats:** WhatsApp exporta de a un chat.
+1. En cada chat: **⋮ → Más → Exportar chat → Sin archivos → Guardar en Drive**. Guárdalos todos en la **misma carpeta**.
+2. En el PC, abre esa carpeta en Drive y descárgala completa. Drive baja un .zip con todos los chats adentro.
+3. En la app: **Contactos → Importar chats** y elige ese .zip (o todos los archivos sueltos a la vez).
+4. Revisa el resumen, confirma quién eres tú y toca **Importar y analizar**.
+
+La app sube los chats y el agente los analiza de a 3 a la vez. Si cierras la app, el servidor sigue solo, unos 25 chats cada 10 minutos.
+
+**Costo:** con Claude Haiku (el modo por defecto), del orden de medio centavo de dólar por chat.
+
+**Privacidad:** el 1 de diciembre de 2026 entra en vigor la Ley 21.719 de datos personales. Guarda solo lo necesario, borra los datos de quien lo pida y pide permiso antes de enviar promociones por WhatsApp.
+
 ## Importar chats antiguos (negociaciones en curso)
 
 El agente lee todo lo que está guardado de cada cliente: los chats importados más los mensajes nuevos que lleguen por Telnyx. Para sumar una conversación anterior a la conexión:
