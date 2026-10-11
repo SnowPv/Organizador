@@ -134,7 +134,7 @@ Con esta importación, el agente ordena toda tu base de una vez. Lee cada conver
 
 La app sube los chats y el agente los analiza de a 3 a la vez. Si cierras la app, el servidor sigue solo, unos 25 chats cada 10 minutos.
 
-**Costo:** con Claude Haiku (el modo por defecto), del orden de medio centavo de dólar por chat.
+**Costo:** lo cobra Anthropic (la API de Claude) desde el crédito que cargaste en console.anthropic.com. Con Claude Haiku 5.5 (el modo por defecto) es del orden de US$0,002 por chat: unos US$1 por cada 500 chats.
 
 **Privacidad:** el 1 de diciembre de 2026 entra en vigor la Ley 21.719 de datos personales. Guarda solo lo necesario, borra los datos de quien lo pida y pide permiso antes de enviar promociones por WhatsApp.
 
