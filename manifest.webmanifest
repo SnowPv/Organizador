@@ -49,5 +49,39 @@
         }
       ]
     }
-  }
+  },
+  "shortcuts": [
+    {
+      "name": "Hoy",
+      "short_name": "Hoy",
+      "description": "Tu día en 3 pasos",
+      "url": "./?tab=hoy",
+      "icons": [
+        {
+          "src": "icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Negociaciones",
+      "url": "./?tab=negocios",
+      "icons": [
+        {
+          "src": "icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Tareas",
+      "url": "./?tab=tareas",
+      "icons": [
+        {
+          "src": "icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ]
 }

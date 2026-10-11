@@ -561,6 +561,105 @@ nav.bottom button span .ico{width:21px;height:21px}
 .dayh{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;padding:12px 0 2px;display:flex;justify-content:space-between}
 .dayh.hoy{color:var(--accent-ink)}
 .more{border:0;background:none;color:var(--accent-ink);font-weight:600;font-size:13px;padding:8px 0;cursor:pointer}
+.pop.ronda{max-width:860px}
+.pop.ronda .hy-facts{position:sticky;bottom:-22px;background:var(--card);margin:14px -22px -22px;padding:12px 22px 16px;border-top:1px solid var(--line);z-index:2}
+@media (max-width:600px){.pop.ronda .hy-facts #rsOk{flex-basis:100%}}
+.rs-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap;margin:14px 0 10px}
+.rs-head h3{margin:0 0 6px;font-size:20px;line-height:1.25}
+.rs-chips{display:flex;gap:6px;flex-wrap:wrap}
+.rs-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:12px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.rs-box{border-radius:12px;padding:12px;background:var(--accent-soft)}
+.rs-box small,.lab2{display:block;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin:0 0 4px}
+.rs-box b{display:block;font-size:15px;line-height:1.35}.rs-box span{display:block;font-size:13px;color:var(--muted);margin-top:4px;line-height:1.4}
+.rs-form{padding-top:12px}.rs-form .lab2{margin-top:12px}
+.rs-form input[type=text]{width:100%;margin-top:8px}
+.rs-acts{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.rs-acts .pill{padding:6px 11px;font-size:13px}
+.rs-acts input[type=date]{width:auto;padding:6px 10px}
+.rs-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.rs-row input[type=text]{margin-top:0}
+@media (max-width:700px){.rs-grid,.rs-row{grid-template-columns:1fr}}
+/* Hoy: resumen visual, 3 pasos y modo enfoque */
+@media (max-width:600px){details.sec > summary.sh{flex-wrap:wrap}details.sec > summary.sh .r{margin-left:0;width:100%}details.sec > summary.sh .r .btn{flex:1}}
+.hy-hero{display:grid;grid-template-columns:1fr auto;gap:14px 18px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;margin-bottom:14px}
+.hy-g{font-size:20px;font-weight:800;letter-spacing:-.01em;margin-bottom:10px}
+.hy-brief{display:flex;flex-direction:column;gap:7px}
+.hy-brief > div{display:flex;gap:9px;align-items:flex-start;font-size:14px;line-height:1.4;color:var(--ink)}
+.hy-brief svg{width:17px;height:17px;flex:none;margin-top:1px;color:var(--accent)}
+.hy-brief b{font-weight:700}
+.hy-cta{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.hy-cta .btn{display:inline-flex;align-items:center;gap:7px;padding:11px 15px;font-size:14.5px}
+.hy-cta .btn svg{width:17px;height:17px}
+.hy-ring{display:flex;flex-direction:column;align-items:center;justify-content:center}
+.hy-ring .rg{position:relative;width:108px;height:108px}
+.hy-ring .rv{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.hy-ring .rv b{font-size:26px;font-weight:800;line-height:1}.hy-ring .rv small{font-size:12px;color:var(--muted)}
+.hy-tl{grid-column:1 / -1}
+.hy-line .bar{position:relative;height:34px;background:var(--soft);border-radius:10px;overflow:hidden}
+.hy-line .blq{position:absolute;top:4px;bottom:4px;background:var(--s2);border-radius:7px;padding:0 7px;display:flex;align-items:center;min-width:6px;overflow:hidden}
+.hy-line .blq span{font-size:11.5px;font-weight:700;color:#0E2A52;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hy-line .blq.now{background:var(--accent)}.hy-line .blq.now span{color:#fff}
+.hy-line .blq.past{background:var(--s1);opacity:.7}
+.hy-line .nowm{position:absolute;top:0;bottom:0;width:2px;background:var(--bad-ink)}
+.hy-line .nowm::before{content:"";position:absolute;top:-1px;left:-3px;width:8px;height:8px;border-radius:50%;background:var(--bad-ink)}
+.hy-line .ticks{position:relative;height:16px;margin-top:3px}
+.hy-line .ticks span{position:absolute;transform:translateX(-50%);font-size:10.5px;color:var(--muted)}
+.hy-line .ticks span:first-child{transform:none}.hy-line .ticks span:last-child{transform:translateX(-100%)}
+.hy-allday{font-size:12px;color:var(--muted);margin-bottom:6px}
+.hy-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.hy-step{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;align-items:center;text-align:left;background:var(--card);border:1.5px solid var(--line);border-radius:16px;padding:12px 14px;cursor:pointer;color:var(--ink);font:inherit}
+.hy-step .num{grid-row:span 2;width:30px;height:30px;border-radius:50%;background:var(--soft);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:var(--muted)}
+.hy-step .num svg{width:16px;height:16px}
+.hy-step .tx b{display:block;font-size:15px}.hy-step .tx small{display:block;font-size:12.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hy-step .pb{grid-column:2}
+.pb{display:block;height:5px;border-radius:9px;background:var(--soft);overflow:hidden}.pb i{display:block;height:100%;background:var(--accent);border-radius:9px;transition:width .3s}
+.hy-step.on{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.hy-step.on .num{background:var(--accent);color:#fff}
+.hy-step.ok .num{background:rgba(19,179,134,.15);color:var(--ok-ink)}
+.hy-step.ok.on .num{background:var(--ok-ink);color:#fff}
+.hy-item{display:flex;gap:12px;padding:12px 0;border-top:1px solid var(--line)}
+.sec .hy-item:first-of-type{border-top:0}
+.hy-item .av{flex:none;width:38px;height:38px;border-radius:50%;background:var(--accent-soft);color:var(--accent-ink);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13.5px}
+.hy-item .av svg{width:18px;height:18px}
+.hy-item .bd{flex:1;min-width:0}
+.hy-item .tt{font-weight:700;font-size:15px;display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.hy-item .tt small{font-weight:500;color:var(--muted);font-size:12.5px}
+.ctx{font-size:13.5px;color:var(--muted);margin:3px 0;line-height:1.45}.ctx.warn{color:var(--warn-ink);font-weight:600}
+.idea{background:var(--soft);border-radius:12px;padding:10px 12px;margin:8px 0;font-size:14px;line-height:1.45}
+.idea small{display:block;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px}
+.idea textarea{width:100%;border:0;background:transparent;font:inherit;resize:vertical;padding:0;color:var(--ink)}
+.acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.acts .btn{display:inline-flex;align-items:center;gap:6px;text-decoration:none}
+.acts .btn svg,.hy-facts .btn svg{width:16px;height:16px}
+.hy-top .hy-tn{display:flex;align-items:stretch;gap:10px;border-top:1px solid var(--line)}
+.hy-top .hy-tn:first-child{border-top:0}
+.hy-top .hy-tn .k{flex:none;width:26px;height:26px;margin-top:14px;border-radius:8px;background:var(--accent);color:#fff;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center}
+.hy-top .hy-tn .task{flex:1;min-width:0;border-top:0}
+.hy-link{display:flex;align-items:center;gap:10px;width:100%;border:0;background:var(--soft);border-radius:12px;padding:11px 12px;margin:6px 0;font:inherit;font-size:13.5px;color:var(--ink);text-align:left;cursor:pointer}
+.hy-link > b{font-size:16px;color:var(--accent-ink)}
+.hy-link span{flex:1;min-width:0}
+.hy-link svg{width:16px;height:16px;flex:none;color:var(--muted)}
+.hy-fprog{display:flex;justify-content:space-between;font-size:12.5px;font-weight:700;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em}
+.hy-fcard{padding:16px 2px 6px}.hy-fcard h3{margin:0 0 6px;font-size:20px;line-height:1.3}
+.hy-fcard input{width:100%;margin-top:4px}
+.hy-facts{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.hy-facts .btn{display:inline-flex;align-items:center;gap:6px}
+.hy-facts .btn.bad{margin-left:auto}
+.hy-fin{text-align:center;padding:10px 0}.hy-fin h3{margin:10px 0 4px;font-size:20px}.hy-fin p{color:var(--muted);margin:0 0 16px}
+nav.bottom button{position:relative}
+nav.bottom .nb{position:absolute;top:2px;left:calc(50% + 6px);min-width:17px;height:17px;padding:0 4px;border-radius:9px;background:var(--bad-ink);color:#fff;font-size:10.5px;font-weight:800;line-height:17px;text-align:center}
+@media (min-width:1000px){nav.bottom .nb{position:static;margin-left:auto}}
+@media (max-width:600px){
+  .hy-hero{grid-template-columns:1fr;padding:16px}
+  .hy-ring{display:none}
+  .hy-g{font-size:18px}
+  .hy-cta .btn{flex:1;justify-content:center;white-space:nowrap}.hy-cta #hFoco{flex-basis:100%}.hy-cta #qa{flex:none}
+  .hy-steps{gap:6px}
+  .hy-step{grid-template-columns:1fr;padding:10px;gap:6px;justify-items:start}
+  .hy-step .num{grid-row:auto;width:26px;height:26px;font-size:13px}
+  .hy-step .tx small{white-space:normal;font-size:11.5px;line-height:1.3}
+  .hy-step .pb{grid-column:1;width:100%}
+  .hy-facts .btn.bad{margin-left:0}
+}
 .selmode .task .chk{visibility:hidden}
 .selmode .task{position:relative;cursor:pointer}
 .selmode .task::before{content:"";position:absolute;left:2px;top:14px;width:20px;height:20px;border-radius:6px;border:2px solid #C5CBD5;background:var(--card)}
@@ -613,7 +712,7 @@ body:has(.selbar) .fab{display:none}
 const $ = s => document.querySelector(s);
 const $$ = s => document.querySelectorAll(s);
 const LS = window.localStorage;
-let S = { data: null, tab: 'inicio', filtro: 'todas', q: '', verHechas: false, vista: LS.vista || 'lista', offline: false, busy: false, google: null, googleBusy: false, googleAt: 0, ext: null, extInactivo: false, base: null, baseAt: 0, bf: 'todos', bq: '', mutado: false, subH: 'habitos', neg: null, negAt: 0, nv: LS.nv2 || '', nf: 'abiertas', nq: '' };
+let S = { data: null, tab: (/[?&]tab=(hoy|tareas|negocios|base|redes|semana|proy)\b/.exec(location.search) || [])[1] || 'inicio', filtro: 'todas', q: '', verHechas: false, vista: LS.vista || 'lista', offline: false, busy: false, google: null, googleBusy: false, googleAt: 0, ext: null, extInactivo: false, base: null, baseAt: 0, bf: 'todos', bq: '', mutado: false, subH: 'habitos', neg: null, negAt: 0, nv: LS.nv2 || '', nf: 'abiertas', nq: '' };
 let deferredInstall = null;
 
 /* ---------- utilidades ---------- */
@@ -743,6 +842,7 @@ function head(){
   $('#hTitle').innerHTML = (S.tab === 'inicio' && S.data ? saludoTxt() : TITLES[S.tab]) + (S.offline ? '<span class="chip-off">sin conexión</span>' : '');
   $('#hSub').innerHTML = S.busy ? '<span class="spin"></span>Actualizando…' : fmtLong(hoy());
   $$('nav.bottom button').forEach(b => b.classList.toggle('on', b.dataset.tab === S.tab));
+  const hb = $('nav.bottom [data-tab=hoy]'); if (hb){ let n = 0; try { n = pendientesHoyN(); } catch(e){} let x = hb.querySelector('.nb'); if (!x){ x = document.createElement('i'); x.className = 'nb'; hb.appendChild(x); } x.textContent = n > 99 ? '99+' : n; x.style.display = n ? '' : 'none'; }
 }
 function go(tab){ S.tab = tab; render(); window.scrollTo(0, 0); }
 $$('nav.bottom button').forEach(b => b.onclick = () => go(b.dataset.tab));
@@ -2410,34 +2510,273 @@ function openNegocio(n, opt){
   };
 }
 
-/* ---------- vista: Hoy ---------- */
-function viewHoy(){
-  const h = hoy(), P = pendientes(), venc = vencidas().sort((a, b) => puntaje(b).s - puntaje(a).s);
-  const hoyL = P.filter(t => t.limite === h).sort((a, b) => puntaje(b).s - puntaje(a).s);
+/* ---------- vista: Hoy (tu día en 3 pasos: responder, hacer, avanzar) ---------- */
+function telWA(c){ return String((c && c.telefono) || '').replace(/[^\d+]/g, '').replace(/^\+/, '').replace(/^9(\d{8})$/, '569$1'); }
+function iniciales(s){ return String(s || '?').replace(/[^\p{L}\s]/gu, ' ').trim().split(/\s+/).slice(0, 2).map(w => w[0] || '').join('').toUpperCase() || '?'; }
+function respHoy(){ const r = lsGet('respHoy', {}); return r.dia === hoy() ? r : { dia: hoy(), ids: [] }; }
+// Clientes que esperan respuesta: el agente dejó una idea y aún no la marcas como respondida.
+function esperanRespuesta(){
+  if (!S.base) return [];
+  const R = lsGet('respondidos', {});
+  return contactos().map(c => ({ c, g: agenteDe(c.id) })).filter(x => x.g.idea && R[x.c.id] !== x.g.idea.fecha + '|' + String(x.g.idea.detalle).slice(0, 24)).sort((a, b) => String(a.g.idea.fecha).localeCompare(String(b.g.idea.fecha)));
+}
+async function marcarRespondido(x, nota){
+  const R = lsGet('respondidos', {}); R[x.c.id] = x.g.idea.fecha + '|' + String(x.g.idea.detalle).slice(0, 24); lsSet('respondidos', R);
+  const rh = respHoy(); if (rh.ids.indexOf(x.c.id) < 0) rh.ids.push(x.c.id); lsSet('respHoy', rh);
+  try { await apiX('nota', { id: x.c.id, texto: '✅ Respondido' + (nota ? ': ' + nota : '') }); } catch(e){}
+}
+function negsAtencion(){
+  if (!S.neg) return [];
+  const pend = metricasNeg().an.filter(x => requiereAtencion(x.a) && x.n.actividad !== hoy());
+  return pend.sort((a, b) => (b.n.valor || 0) - (a.n.valor || 0));
+}
+function negsAvanzadasHoy(){ return S.neg ? abiertos().filter(n => n.actividad === hoy()).length : 0; }
+function datosHoy(){
+  const h = hoy(), P = pendientes(), ord = (a, b) => puntaje(b).s - puntaje(a).s;
+  const venc = vencidas().sort(ord), hoyL = P.filter(t => t.limite === h).sort(ord);
   const curso = P.filter(t => t.estado === 'En curso' && !(t.limite && t.limite <= h));
-  const hechas = hechasEl(h), total = hoyL.length + hechas.length;
+  const hacer = venc.concat(hoyL);
+  const top = hacer.slice().sort(ord).slice(0, 3);
   const ev = S.google && S.google.eventos ? S.google.eventos.filter(e => e.fecha === h) : [];
-  const prox = P.filter(t => t.limite > h && t.limite <= addDays(h, 7)).sort(ordenar);
-  const oc = ocupados()[h];
-  let html = '<div class="kstrip"><div class="ks1"><div class="rg" style="position:relative">' + ringSVG(total ? hechas.length / total : 0, 46) + '</div><div><b>' + hechas.length + '/' + total + '</b><small>hechas hoy</small></div></div>' +
-    '<div class="ks1" data-jump="sv"><div><b style="color:' + (venc.length ? 'var(--bad-ink)' : 'inherit') + '">' + venc.length + '</b><small>vencidas</small></div></div><div class="ks1" data-jump="sh"><div><b>' + hoyL.length + '</b><small>para hoy</small></div></div><div class="ks1"><div><b>' + ev.length + '</b><small>eventos hoy</small></div></div></div>';
-  html += '<div class="ihead"><button class="quick" id="qa"><b>+</b>Agregar para hoy…</button><button class="btn" id="aiDia">' + icon('spark') + ' Planificar mi día</button></div>';
-  if (oc) html += '<div class="nextc" style="margin-bottom:14px"><div class="tx"><small>Día ocupado</small><b>' + esc(oc.titulo) + '</b><span>Haz solo lo urgente; el asistente puede mover lo demás.</span></div></div>';
+  const resp = esperanRespuesta(), negs = negsAtencion(), hechas = hechasEl(h), rh = respHoy().ids.length, nh = negsAvanzadasHoy();
+  const cont = (S.cont || []).filter(x => x.fecha === h && x.estado === 'Planificado');
+  return { h, venc, hoyL, curso, hacer, top, ev, resp, negs, hechas, rh, nh, cont, oc: ocupados()[h] };
+}
+function pendientesHoyN(){ if (!S.data) return 0; const D = datosHoy(); return D.resp.length + D.hacer.length + D.negs.length; }
+// Resumen del agente: lo importante del día en frases cortas, con lo que pasa en las otras pestañas.
+function briefingHoy(D){
+  const L = [], ahora = new Date().toTimeString().slice(0, 5);
+  if (D.oc) L.push(['clock', '<b>Día ocupado</b> (' + esc(D.oc.titulo) + '): haz solo lo urgente.']);
+  if (D.resp.length) L.push(['note', '<b>' + D.resp.length + (D.resp.length === 1 ? ' cliente espera' : ' clientes esperan') + ' respuesta.</b> Empieza por ' + esc(D.resp[0].c.nombre || D.resp[0].c.email) + '.']);
+  const evs = D.ev.filter(e => !e.todoElDia && e.fin > ahora);
+  if (evs.length) L.push(['cal', 'A las <b>' + esc(evs[0].inicio) + '</b>: ' + esc(evs[0].titulo) + (evs.length > 1 ? ' y ' + (evs.length - 1) + ' más' : '') + '.']);
+  if (D.negs.length){ const v = D.negs.reduce((s, x) => s + (+x.n.valor || 0), 0); L.push(['deal', '<b>' + D.negs.length + (D.negs.length === 1 ? ' negociación necesita' : ' negociaciones necesitan') + ' un empujón</b>' + (v ? ' (' + clpCorto(v) + ' en juego)' : '') + '.']); }
+  if (D.venc.length) L.push(['flag', '<b>' + D.venc.length + ' tareas atrasadas.</b> Muévelas o hazlas: no dejes que se acumulen.']);
+  if (D.cont.length) L.push(['camera', 'Hoy toca publicar: <b>' + esc(D.cont[0].formato + ' · ' + D.cont[0].tema) + '</b>.']);
+  if (!L.length) L.push(['spark', '<b>Día despejado.</b> Buen momento para avanzar un proyecto o preparar contenido.']);
+  return L.slice(0, 4);
+}
+// Línea de tiempo del día (horario de tienda), con los eventos como bloques y una marca de "ahora".
+function lineaDiaHTML(ev){
+  const timed = ev.filter(e => !e.todoElDia && e.inicio), m = s => { const [a, b] = String(s).split(':'); return (+a) * 60 + (+b || 0); };
+  let ini = 9 * 60, fin = 20 * 60; timed.forEach(e => { ini = Math.min(ini, Math.floor(m(e.inicio) / 60) * 60); fin = Math.max(fin, Math.ceil(m(e.fin || e.inicio) / 60) * 60); });
+  const pct = x => ((x - ini) / (fin - ini) * 100).toFixed(2), now = new Date(), nm = now.getHours() * 60 + now.getMinutes();
+  let ticks = ''; for (let x = ini; x <= fin; x += 180) ticks += '<span style="left:' + pct(x) + '%">' + (x / 60) + ':00</span>';
+  const bl = timed.map(e => { const a = m(e.inicio), b = Math.max(a + 30, m(e.fin || e.inicio)); return '<div class="blq' + (nm >= a && nm < b ? ' now' : nm >= b ? ' past' : '') + '" style="left:' + pct(a) + '%;width:' + (b - a) / (fin - ini) * 100 + '%" title="' + esc(e.inicio + ' ' + e.titulo) + '"><span>' + esc(e.titulo) + '</span></div>'; }).join('');
+  const todo = ev.filter(e => e.todoElDia).map(e => '<span class="tag">' + esc(e.titulo) + '</span>').join(' ');
+  return '<div class="hy-line">' + (todo ? '<div class="hy-allday">Todo el día: ' + todo + '</div>' : '') + '<div class="bar">' + bl + (nm > ini && nm < fin ? '<i class="nowm" style="left:' + pct(nm) + '%"></i>' : '') + '</div><div class="ticks">' + ticks + '</div>' + (timed.length ? '' : '<div class="wsub" style="margin-top:6px">Sin reuniones con hora: tienes el día libre para vender y avanzar.</div>') + '</div>';
+}
+function respHTML(x, i){
+  const c = x.c, g = x.g, tel = telWA(c), res = g.r ? String(g.r.detalle).split(' · ')[0] : '';
+  return '<div class="hy-item"><div class="av">' + esc(iniciales(c.nombre || c.email)) + '</div><div class="bd"><div class="tt">' + esc(c.nombre || c.email) + '<small>' + esc(fmtRel(g.idea.fecha)) + '</small></div>' +
+    (res ? '<div class="ctx">' + esc(res.length > 160 ? res.slice(0, 157) + '…' : res) + '</div>' : '') +
+    '<div class="idea"><small>Idea de respuesta del agente</small>' + esc(g.idea.detalle) + '</div>' +
+    '<div class="acts">' + (tel ? '<a class="btn sm" target="_blank" href="https://wa.me/' + esc(tel) + '?text=' + encodeURIComponent(g.idea.detalle) + '" data-rwa="' + i + '">' + icon('note') + ' Responder por WhatsApp</a>' : '<button class="btn sm" data-rcp="' + i + '">Copiar idea</button>') +
+    '<button class="btn sm sec" data-rfi="' + i + '">Ver ficha</button><button class="btn sm sec" data-rok="' + i + '">' + icon('check') + ' Listo</button></div></div></div>';
+}
+function negHoyHTML(x, i){
+  const n = x.n, c = n.contacto ? contactoPorId(n.contacto) : null, tel = telWA(c);
+  return '<div class="hy-item"><div class="av deal">' + icon('deal') + '</div><div class="bd"><div class="tt">' + esc(n.titulo) + '<small>' + (n.valor ? clpCorto(n.valor) + ' · ' : '') + esc(n.etapa) + '</small></div>' +
+    '<div class="ctx warn">' + esc(motivoAlerta(n, x.a)) + '</div>' + (n.proxima ? '<div class="ctx">Próximo paso: <b>' + esc(n.proxima) + '</b>' + (n.fechaProx ? ' · ' + esc(fmtRel(n.fechaProx)) : '') + '</div>' : '') +
+    '<div class="acts"><button class="btn sm" data-nab="' + i + '">Registrar avance</button>' + (tel ? '<a class="btn sm sec" target="_blank" href="https://wa.me/' + esc(tel) + '">' + icon('note') + ' WhatsApp</a><a class="btn sm sec" href="tel:' + esc(tel) + '">' + icon('phone') + ' Llamar</a>' : '') + '<button class="btn sm sec" data-nop="' + i + '">Abrir</button></div></div></div>';
+}
+function viewHoy(){
+  if (!S.hoyCarga){ S.hoyCarga = 1; const p = []; if (!S.neg) p.push(loadNeg(false)); if (!S.base) p.push(loadBase(false)); if (!S.cont && extNivel() >= 11) p.push(loadIG(false)); if (p.length) Promise.all(p.map(x => x && x.catch ? x.catch(() => {}) : x)).then(() => { if (S.tab === 'hoy') render(); }); }
+  const D = datosHoy(), h = D.h;
+  const tot = D.resp.length + D.rh + D.hacer.length + D.hechas.length + D.negs.length + D.nh, hechoTot = D.rh + D.hechas.length + D.nh;
+  const pasos = [
+    { k: 'resp', n: 1, t: 'Responder', ic: 'note', pend: D.resp.length, hecho: D.rh, sub: D.resp.length ? (D.resp.length === 1 ? 'cliente espera' : 'clientes esperan') : 'nadie espera' },
+    { k: 'hacer', n: 2, t: 'Hacer', ic: 'check', pend: D.hacer.length, hecho: D.hechas.length, sub: D.hacer.length === 1 ? 'tarea' : 'tareas' + (D.venc.length ? ' · ' + D.venc.length + ' atrasadas' : '') },
+    { k: 'avanzar', n: 3, t: 'Avanzar', ic: 'deal', pend: D.negs.length, hecho: D.nh, sub: D.negs.length ? 'negociaciones' : 'todo al día' }];
+  if (!S.hPaso || !pasos.some(p => p.k === S.hPaso)) S.hPaso = (pasos.find(p => p.pend) || pasos[1]).k;
+  const nm = params()['Tu nombre (para el saludo)'], hr = new Date().getHours();
+  let html = '<div class="hy-hero"><div class="hy-hl"><div class="hy-g">' + (hr < 12 ? 'Buenos días' : hr < 20 ? 'Buenas tardes' : 'Buenas noches') + (nm ? ', ' + esc(nm) : '') + '</div>' +
+    '<div class="hy-brief">' + briefingHoy(D).map(l => '<div>' + icon(l[0]) + '<span>' + l[1] + '</span></div>').join('') + '</div>' +
+    '<div class="hy-cta"><button class="btn" id="hFoco">' + icon('arrow') + ' Empezar mi día</button><button class="btn sec" id="aiDia">' + icon('spark') + ' Planificar con IA</button><button class="btn sec" id="qa" title="Agregar para hoy">' + icon('plus') + '</button></div></div>' +
+    '<div class="hy-ring"><div class="rg">' + ringSVG(tot ? hechoTot / tot : 0, 108) + '<div class="rv"><b>' + hechoTot + '</b><small>de ' + tot + '</small></div></div><div class="wsub" style="text-align:center">acciones del día</div></div>' +
+    '<div class="hy-tl">' + lineaDiaHTML(D.ev) + '</div></div>';
+  html += '<div class="hy-steps">' + pasos.map(p => { const T = p.pend + p.hecho, ok = !p.pend; return '<button class="hy-step' + (S.hPaso === p.k ? ' on' : '') + (ok ? ' ok' : '') + '" data-paso="' + p.k + '"><span class="num">' + (ok ? icon('check') : p.n) + '</span><span class="tx"><b>' + p.t + '</b><small>' + (ok ? (p.hecho ? p.hecho + ' hechas ✓' : p.sub) : p.pend + ' ' + p.sub) + '</small></span><span class="pb"><i style="width:' + (T ? p.hecho / T * 100 : ok ? 100 : 0) + '%"></i></span></button>'; }).join('') + '</div>';
   let izq = '';
-  if (venc.length) izq += '<div class="sec" id="sv"><div class="sh" style="color:var(--bad-ink)">Vencidas <span class="n">' + venc.length + '</span><span class="r"><button class="btn sm sec" id="vH">Mover a hoy</button><button class="btn sm sec" id="vM">A mañana</button></span></div>' + venc.map(t => taskHTML(t, { play: true })).join('') + '</div>';
-  izq += '<div class="sec" id="sh"><div class="sh">Para hoy <span class="n">' + hoyL.length + '</span></div>' + (hoyL.length ? hoyL.map(t => taskHTML(t, { play: true })).join('') : '<div class="empty">Nada con fecha de hoy. Toca + para agregar algo.</div>') + '</div>';
-  if (curso.length) izq += '<div class="sec"><div class="sh">En curso <span class="n">' + curso.length + '</span></div>' + curso.map(t => taskHTML(t, { play: true })).join('') + '</div>';
-  if (hechas.length) izq += '<details class="sec"><summary class="sh" style="cursor:pointer;list-style:none">Hechas hoy <span class="n">' + hechas.length + '</span></summary>' + hechas.map(t => taskHTML(t)).join('') + '</details>';
-  const ahora = new Date().toTimeString().slice(0, 5);
-  let der = '<div class="sec"><div class="sh">' + icon('cal') + ' Agenda de hoy<span class="r"><button class="btn sm sec" id="bloqH">＋ Evento</button></span></div>' + (ev.length ? '<div class="tl2">' + ev.map(e => '<div class="ev2 ' + (!e.todoElDia && e.inicio <= ahora && e.fin > ahora ? 'now' : '') + '"><b>' + esc(e.titulo) + '</b><small>' + (e.todoElDia ? 'Todo el día' : esc(e.inicio) + '–' + esc(e.fin)) + (e.lugar ? ' · ' + esc(e.lugar) : '') + '</small></div>').join('') + '</div>' : '<div class="wsub" style="padding:4px 0 8px">Sin eventos en el calendario.</div>') + '</div>';
-  der += '<div class="sec"><div class="sh">Próximos 7 días <span class="n">' + prox.length + '</span></div>' + (prox.length ? prox.slice(0, 8).map(t => taskHTML(t)).join('') : '<div class="wsub" style="padding:4px 0 8px">Nada programado.</div>') + '</div>';
+  if (S.hPaso === 'resp'){
+    izq = '<div class="sec"><div class="sh">' + icon('note') + ' Clientes que esperan respuesta <span class="n">' + D.resp.length + '</span></div><div class="wsub" style="padding:0 0 8px">El agente leyó sus chats y te dejó una idea de respuesta. Revísala, envíala desde WhatsApp y marca «Listo».</div>' +
+      (D.resp.length ? D.resp.map(respHTML).join('') : '<div class="empty">Nadie espera respuesta ✓' + (S.base ? '' : '<br><small>Cargando chats…</small>') + '<br><small>Los lunes importa los chats nuevos para que el agente los lea.</small></div>') + '</div>';
+  } else if (S.hPaso === 'hacer'){
+    const enTop = new Set(D.top), resto = D.venc.filter(t => !enTop.has(t)), restoH = D.hoyL.filter(t => !enTop.has(t));
+    izq = '<div class="sec"><div class="sh">' + icon('target') + ' Tus 3 prioridades</div><div class="wsub" style="padding:0 0 6px">Si haces solo esto, el día valió la pena. Toca ▶ para trabajar en una con temporizador.</div>' +
+      (D.top.length ? '<div class="hy-top">' + D.top.map((t, i) => '<div class="hy-tn"><span class="k">' + (i + 1) + '</span>' + taskHTML(t, { play: true }) + '</div>').join('') + '</div>' : '<div class="empty">No tienes tareas para hoy. Toca ＋ para agregar una.</div>') + '</div>';
+    if (resto.length) izq += '<details class="sec"' + (resto.length <= 3 ? ' open' : '') + '><summary class="sh" style="cursor:pointer;list-style:none;color:var(--bad-ink)">Otras atrasadas <span class="n">' + resto.length + '</span><span class="r"><button class="btn sm sec" id="vH">Todas a hoy</button><button class="btn sm sec" id="vM">A mañana</button></span></summary>' + resto.map(t => taskHTML(t, { play: true })).join('') + '</details>';
+    if (restoH.length) izq += '<div class="sec"><div class="sh">También para hoy <span class="n">' + restoH.length + '</span></div>' + restoH.map(t => taskHTML(t, { play: true })).join('') + '</div>';
+    if (D.curso.length) izq += '<div class="sec"><div class="sh">En curso <span class="n">' + D.curso.length + '</span></div>' + D.curso.map(t => taskHTML(t, { play: true })).join('') + '</div>';
+    if (D.hechas.length) izq += '<details class="sec"><summary class="sh" style="cursor:pointer;list-style:none">Hechas hoy <span class="n">' + D.hechas.length + '</span></summary>' + D.hechas.map(t => taskHTML(t)).join('') + '</details>';
+  } else {
+    izq = '<div class="sec"><div class="sh">' + icon('deal') + ' Negociaciones que necesitan un empujón <span class="n">' + D.negs.length + '</span></div><div class="wsub" style="padding:0 0 8px">Ordenadas por monto. Contacta al cliente y registra qué pasó: así no se enfría ninguna venta.</div>' + (D.negs.length ? '<button class="btn" id="hRonda" style="width:100%;margin:2px 0 8px">' + icon('arrow') + ' Empezar ronda de seguimiento (' + D.negs.length + ')</button>' : '') +
+      (D.negs.length ? D.negs.map(negHoyHTML).join('') : '<div class="empty">' + (S.neg ? 'Todas tus negociaciones están al día ✓' : '<span class="spin"></span>Cargando negociaciones…') + '</div>') + '</div>';
+  }
+  const ahora = new Date().toTimeString().slice(0, 5), man = addDays(h, 1);
+  const evM = S.google && S.google.eventos ? S.google.eventos.filter(e => e.fecha === man) : [], tM = pendientes().filter(t => t.limite === man);
+  const sug = typeof sugerenciasTareas === 'function' ? sugerenciasTareas().length : 0;
+  let der = '<div class="sec"><div class="sh">' + icon('cal') + ' Agenda de hoy<span class="r"><button class="btn sm sec" id="bloqH">＋ Evento</button></span></div>' + (D.ev.length ? '<div class="tl2">' + D.ev.map(e => '<div class="ev2 ' + (!e.todoElDia && e.inicio <= ahora && e.fin > ahora ? 'now' : '') + '"><b>' + esc(e.titulo) + '</b><small>' + (e.todoElDia ? 'Todo el día' : esc(e.inicio) + '–' + esc(e.fin)) + (e.lugar ? ' · ' + esc(e.lugar) : '') + '</small></div>').join('') + '</div>' : '<div class="wsub" style="padding:4px 0 8px">Sin eventos en el calendario.</div>') + '</div>';
+  der += '<div class="sec hy-agent"><div class="sh">' + icon('spark') + ' Asistente</div>' +
+    '<button class="hy-link" id="hSug"><b>' + sug + '</b><span>' + (sug === 1 ? 'tarea sugerida' : 'tareas sugeridas') + ' por revisar</span>' + icon('arrow') + '</button>' +
+    (D.cont.length ? D.cont.map(x => '<button class="hy-link" data-hct="' + esc(x.id) + '">' + icon('camera') + '<span>Hoy publicas: ' + esc(x.formato + ' · ' + x.tema) + '</span>' + icon('arrow') + '</button>').join('') : '') +
+    '<button class="hy-link" id="hMan">' + icon('clock') + '<span>Mañana: ' + tM.length + (tM.length === 1 ? ' tarea' : ' tareas') + (evM.length ? ' · ' + evM.length + (evM.length === 1 ? ' evento' : ' eventos') : '') + '</span>' + icon('arrow') + '</button>' +
+    '<div class="wsub" style="padding:6px 0 4px">«Planificar con IA» arma tu día con horarios mirando tareas, negociaciones, chats y agenda.</div></div>';
   html += '<div class="cols2"><div>' + izq + '</div><div>' + der + '</div></div>';
   $('#view').innerHTML = html; bindTasks($('#view'));
   $('#qa').onclick = () => openAdd({ limite: h });
   $('#aiDia').onclick = planificarDia;
+  $('#hFoco').onclick = () => modoEnfoque();
   $('#bloqH').onclick = openBloqueo;
-  $$('[data-jump]').forEach(b => b.onclick = () => { const x = $('#' + b.dataset.jump); if (x) x.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
-  if (venc.length){ $('#vH').onclick = e => reprogramar(venc, h, e.target); $('#vM').onclick = e => reprogramar(venc, addDays(h, 1), e.target); }
+  $('#hSug').onclick = () => { S.tv = 'revisar'; go('tareas'); };
+  $('#hMan').onclick = () => { S.tv = 'prox'; go('tareas'); };
+  $$('[data-hct]').forEach(b => b.onclick = () => openIdea((S.cont || []).find(x => x.id === b.dataset.hct)));
+  $$('[data-paso]').forEach(b => b.onclick = () => { S.hPaso = b.dataset.paso; viewHoy(); });
+  if ($('#vH')){ const r = D.venc.filter(t => D.top.indexOf(t) < 0); $('#vH').onclick = e => { e.preventDefault(); reprogramar(r, h, e.target); }; $('#vM').onclick = e => { e.preventDefault(); reprogramar(r, addDays(h, 1), e.target); }; }
+  $$('[data-rok]').forEach(b => b.onclick = async () => { b.disabled = true; await marcarRespondido(D.resp[+b.dataset.rok]); toast('✅ Respondido'); viewHoy(); });
+  $$('[data-rwa]').forEach(b => b.addEventListener('click', () => { const x = D.resp[+b.dataset.rwa]; setTimeout(() => { if (S.tab === 'hoy') { const ok = $('[data-rok="' + b.dataset.rwa + '"]'); if (ok){ ok.classList.remove('sec'); ok.innerHTML = icon('check') + ' Marcar como respondido'; } } }, 400); }));
+  $$('[data-rcp]').forEach(b => b.onclick = () => { const x = D.resp[+b.dataset.rcp]; try { navigator.clipboard.writeText(x.g.idea.detalle); toast('Idea copiada'); } catch(e){} });
+  $$('[data-rfi]').forEach(b => b.onclick = () => openCto(D.resp[+b.dataset.rfi].c, { tab: 'actividad' }));
+  $$('[data-nab]').forEach(b => b.onclick = () => openDeal(D.negs[+b.dataset.nab].n, { tab: 'actividad' }));
+  $$('[data-nop]').forEach(b => b.onclick = () => openDeal(D.negs[+b.dataset.nop].n));
+  if ($('#hRonda')) $('#hRonda').onclick = () => rondaSeguimiento(null, { todas: true });
+}
+/* ---------- Ronda de seguimiento: las negociaciones que hay que seguir, una ventana tras otra ---------- */
+const RE_SEG = /seguimiento|seguir|follow|recontactar|cotizaciones pendientes/i;
+function esTareaSeguimiento(t){ return !!t && RE_SEG.test(t.tarea || '') && /client|cotiz|venta|negoci|lead|institucional|ebike|bici|levo|vado|turbo|kenevo|🤝/i.test((t.tarea || '') + ' ' + (t.categoria || '') + ' ' + (t.notas || '')); }
+const SIN_SEG = { ebike: ['turbo', 'levo', 'vado', 'kenevo', 'creo', 'ebike', 'e-bike', 'electric'], ebikes: ['turbo', 'levo', 'vado', 'kenevo', 'creo', 'ebike', 'e-bike', 'electric'], electrica: ['turbo', 'levo', 'vado', 'kenevo', 'creo', 'ebike'], institucionales: ['institucional', 'club', 'empresa', 'municipal', 'colegio', 'carabineros', 'ejercito', 'flota'], institucional: ['institucional', 'club', 'empresa', 'municipal', 'colegio', 'flota'] };
+const NO_FILTRO = new Set(['seguimiento', 'seguir', 'clientes', 'cliente', 'ventas', 'venta', 'llamar', 'contactar', 'todos', 'todas', 'pendientes', 'pendiente', 'negociaciones', 'negociacion', 'leads', 'cotizaciones', 'cotizacion', 'recontactar', 'follow']);
+// Negociaciones abiertas que piden seguimiento hoy, filtradas por lo que dice la tarea (un cliente, un producto, un segmento).
+function negsParaSeguir(t){
+  const h = hoy(), todas = abiertos().map(n => ({ n, a: analizar(n) })).filter(x => requiereAtencion(x.a) || (x.n.fechaProx && x.n.fechaProx <= h) || x.a.dAct >= 3).sort((a, b) => b.a.prioridad - a.a.prioridad);
+  if (!t) return { lista: todas, filtro: '' };
+  const id = (/\((N-[^)]+)\)/.exec(t.notas || '') || [])[1];
+  if (id){ const n = abiertos().find(x => x.id === id); if (n) return { lista: [{ n, a: analizar(n) }], filtro: n.titulo }; }
+  const pal = tokens(t.tarea).filter(w => !NO_FILTRO.has(w));
+  if (!pal.length) return { lista: todas, filtro: '' };
+  const corpus = x => norm([x.n.titulo, x.n.producto, x.n.notas, x.a.c && x.a.c.nombre, x.a.c && x.a.c.etiquetas, x.a.c && x.a.c.empresa].join(' '));
+  const hit = x => { const c = corpus(x); return pal.some(w => c.includes(w) || (SIN_SEG[w] || []).some(s => c.includes(s))); };
+  const f = todas.filter(hit);
+  if (f.length) return { lista: f, filtro: pal.join(' ') };
+  // ¿nombra a un cliente con una negociación al día? igual se la muestro
+  const g = abiertos().map(n => ({ n, a: analizar(n) })).filter(hit);
+  return g.length ? { lista: g, filtro: pal.join(' ') } : { lista: todas, filtro: '', sinCoincidencias: pal.join(' ') };
+}
+function rondaSeguimiento(t, opt){
+  opt = opt || {};
+  if (!S.neg || !S.base){ toast('Cargando negociaciones…'); Promise.all([loadNeg(false), loadBase(false)]).then(() => rondaSeguimiento(t, opt)); return; }
+  const h = hoy(), R0 = negsParaSeguir(opt.todas ? null : t);
+  let st = lsGet('ronda', null); if (!st || st.dia !== h || st.row !== (t ? t.row : 0)) st = { dia: h, row: t ? t.row : 0, hechos: [], saltados: [] };
+  const Q = R0.lista;
+  if (!Q.length){ toast('No hay negociaciones que necesiten seguimiento hoy 🙌'); if (t) openFocusTimer(t); return; }
+  let i = 0; while (i < Q.length && st.hechos.indexOf(Q[i].n.id) >= 0) i++;
+  const m = modal(icon('deal') + ' Ronda de seguimiento', '<div id="rs"></div>', { wide: true }), box = m.el.querySelector('#rs');
+  m.el.classList.add('ronda');
+  const guardar = () => lsSet('ronda', st);
+  const fin = () => {
+    const n = st.hechos.length;
+    box.innerHTML = '<div class="hy-fin">' + ringSVG(Q.length ? n / Q.length : 1, 84) + '<h3>' + (n >= Q.length ? '¡Ronda completa!' : 'Ronda terminada') + '</h3><p>Registraste ' + n + ' de ' + Q.length + ' seguimientos.' + (n < Q.length ? ' Las que saltaste quedan para la próxima ronda.' : '') + '</p>' +
+      '<div class="btns" style="justify-content:center">' + (t && !t.hecho ? '<button class="btn" id="rsT">' + icon('check') + ' Marcar «' + esc(t.tarea.length > 34 ? t.tarea.slice(0, 32) + '…' : t.tarea) + '» como hecha</button>' : '') + '<button class="btn sec" id="rsX">Cerrar</button></div></div>';
+    box.querySelector('#rsX').onclick = () => { m.cerrar(); render(); };
+    const bt = box.querySelector('#rsT'); if (bt) bt.onclick = async () => { bt.disabled = true; LS.removeItem('focus'); m.cerrar(); await toggle(t); };
+  };
+  const pintar = () => {
+    if (i >= Q.length) return fin();
+    const x = Q[i], n = x.n, a = analizar(n), c = a.c, tel = telWA(c), e = a.e, idx = etapaIdx(n.etapa);
+    const rec = recomendaciones(n, a)[0], idea = c ? agenteDe(c.id) : {};
+    const av = historialDe(n).map(y => ({ f: y.f, tipo: (ETAPAS.find(z => z.k === y.e) || ETAPA_FIN[y.e] || {}).ic || '➡️', d: 'Pasó a ' + y.e }))
+      .concat(a.I.filter(y => !/Idea de respuesta|🧠 Agente|🤝 Negociación/.test(y.tipo)).map(y => ({ f: String(y.fecha).slice(0, 10), tipo: String(y.tipo).split(' ')[0], d: y.detalle })))
+      .sort((p, q) => String(q.f).localeCompare(String(p.f))).slice(0, 6);
+    const sd = addDays(h, e.sd || 2);
+    box.innerHTML = '<div class="hy-fprog"><span>' + (R0.filtro ? 'Filtro: ' + esc(R0.filtro) : 'Todas las que necesitan seguimiento') + '</span><span>' + (i + 1) + ' de ' + Q.length + '</span></div><div class="pb"><i style="width:' + (i / Q.length * 100) + '%"></i></div>' +
+      (R0.sinCoincidencias ? '<div class="hint">No encontré negociaciones con «' + esc(R0.sinCoincidencias) + '», así que te muestro todas.</div>' : '') +
+      '<div class="rs-head"><div><h3>' + esc(n.titulo) + '</h3><div class="rs-chips"><span class="tag" style="background:' + (e.c || 'var(--soft)') + '22">' + (e.ic || '') + ' ' + esc(n.etapa) + '</span>' + (n.valor ? '<span class="tag">' + clpCorto(n.valor) + '</span>' : '') + '<span class="tag">' + Math.round(a.prob * 100) + '% prob.</span><span class="tag ' + (a.salud >= 70 ? 'ok' : a.salud >= 40 ? 'warn' : 'bad') + '">salud ' + a.salud + '</span></div>' +
+      (c ? '<div class="ctx">' + esc(c.nombre || c.email) + (c.telefono ? ' · ' + esc(c.telefono) : '') + '</div>' : '') + '</div>' +
+      '<div class="acts">' + (tel ? '<a class="btn sm sec" target="_blank" href="https://wa.me/' + esc(tel) + (idea.idea ? '?text=' + encodeURIComponent(idea.idea.detalle) : '') + '">' + icon('note') + ' WhatsApp</a><a class="btn sm sec" href="tel:' + esc(tel) + '">' + icon('phone') + ' Llamar</a>' : '') + (c && c.email ? '<a class="btn sm sec" href="mailto:' + esc(c.email) + '">✉️</a>' : '') + '</div></div>' +
+      '<div class="rs-grid"><div>' +
+        '<div class="rs-box todo"><small>Qué hacer ahora</small><b>' + esc(rec ? rec.t : (n.proxima || e.sig || 'Contactar al cliente')) + '</b>' + (rec && rec.d ? '<span>' + esc(rec.d) + '</span>' : e.tip ? '<span>' + esc(e.tip) + '</span>' : '') + '</div>' +
+        (idea.idea ? '<div class="idea"><small>Idea de respuesta del agente</small>' + esc(idea.idea.detalle) + '</div>' : '') +
+        (idea.r ? '<div class="ctx" style="margin-top:8px"><b>Lo que entendió el agente:</b> ' + esc(idea.r.detalle) + '</div>' : n.notas ? '<div class="ctx" style="margin-top:8px"><b>Notas:</b> ' + esc(n.notas) + '</div>' : '') +
+      '</div><div><div class="lab2">Avances</div>' + (av.length ? '<div class="tl2">' + av.map(y => '<div class="ev2"><b>' + esc(y.tipo) + ' ' + esc(String(y.d).length > 110 ? String(y.d).slice(0, 108) + '…' : y.d) + '</b><small>' + esc(fmtRel(y.f)) + '</small></div>').join('') + '</div>' : '<div class="wsub">Sin registros todavía.</div>') + '</div></div>' +
+      '<div class="rs-form"><div class="lab2">¿Qué hiciste?</div><div class="rs-acts">' + ACTIVIDADES.map((y, k) => '<button type="button" class="pill" data-ra="' + k + '">' + esc(y[0]) + '</button>').join('') + '</div>' +
+        '<input type="text" id="rsN" placeholder="Detalle (opcional): qué dijo, qué quedó pendiente…">' +
+        '<div class="rs-row"><div><div class="lab2">Próximo paso</div><input type="text" id="rsP" value="' + esc(n.proxima && !a.proxVencida ? n.proxima : (ETAPAS[Math.max(0, idx)] || {}).sig || '') + '"></div>' +
+        '<div><div class="lab2">¿Cuándo?</div><div class="rs-acts">' + [['Mañana', 1], ['En 3 días', 3], ['1 semana', 7]].map(y => '<button type="button" class="pill" data-rf="' + y[1] + '">' + y[0] + '</button>').join('') + '<input type="date" id="rsF" value="' + (n.fechaProx && n.fechaProx > h ? n.fechaProx : sd) + '"></div></div></div>' +
+        '<div class="lab2">Etapa</div><div class="rs-acts" id="rsE">' + ETAPAS.map(y => '<button type="button" class="pill' + (y.k === n.etapa ? ' on' : '') + '" data-re="' + esc(y.k) + '">' + y.ic + ' ' + esc(y.corto) + '</button>').join('') + '<button type="button" class="pill" data-re="Ganada">🏆 Ganada</button><button type="button" class="pill" data-re="Perdida">❌ Perdida</button></div>' +
+      '</div>' +
+      '<div class="hy-facts"><button class="btn" id="rsOk">Guardar y siguiente →</button><button class="btn sec" id="rsAb">Abrir completa</button><button class="btn bad" id="rsSk">Saltar</button></div>';
+    const $b = s => box.querySelector(s); let act = -1, etapa = n.etapa;
+    box.querySelectorAll('[data-ra]').forEach(b => b.onclick = () => { act = act === +b.dataset.ra ? -1 : +b.dataset.ra; box.querySelectorAll('[data-ra]').forEach(z => z.classList.toggle('on', +z.dataset.ra === act));
+      const sug = act >= 0 ? ACTIVIDADES[act][2] : null; if (sug && etapaIdx(sug) > etapaIdx(etapa)){ etapa = sug; box.querySelectorAll('[data-re]').forEach(z => z.classList.toggle('on', z.dataset.re === etapa)); const ns = ETAPAS[etapaIdx(sug)]; if (ns){ $b('#rsP').value = ns.sig; $b('#rsF').value = addDays(h, ns.sd || 2); } } });
+    box.querySelectorAll('[data-rf]').forEach(b => b.onclick = () => { $b('#rsF').value = addDays(h, +b.dataset.rf); box.querySelectorAll('[data-rf]').forEach(z => z.classList.toggle('on', z === b)); });
+    box.querySelectorAll('[data-re]').forEach(b => b.onclick = () => { etapa = b.dataset.re; box.querySelectorAll('[data-re]').forEach(z => z.classList.toggle('on', z === b)); });
+    $b('#rsSk').onclick = () => { if (st.saltados.indexOf(n.id) < 0) st.saltados.push(n.id); guardar(); i++; pintar(); };
+    $b('#rsAb').onclick = () => { m.cerrar(); openDeal(n, { tab: 'actividad' }); };
+    $b('#rsOk').onclick = async () => {
+      const det = $b('#rsN').value.trim(), px = $b('#rsP').value.trim(), pf = $b('#rsF').value;
+      if (act < 0 && !det && etapa === n.etapa && px === (n.proxima || '') && pf === (n.fechaProx || '')){ toast('Marca qué hiciste o escribe una línea'); return; }
+      if (etapa === 'Perdida'){ m.cerrar(); openPerdida(n); return; }
+      const bt = $b('#rsOk'); bt.disabled = true; bt.textContent = 'Guardando…';
+      try {
+        const txt = (act >= 0 ? ACTIVIDADES[act][0].replace(/^\S+\s/, '') : 'Seguimiento') + (det ? ': ' + det : '');
+        await apiX('negocioNota', { id: n.id, texto: txt, tipo: act >= 0 ? ACTIVIDADES[act][1] : '📝 Seguimiento' });
+        const cambios = { id: n.id }; let hay = false;
+        if (etapa !== n.etapa){ cambios.etapa = etapa; hay = true; }
+        if (etapa !== 'Ganada' && (px !== (n.proxima || '') || pf !== (n.fechaProx || ''))){ cambios.proxima = px; cambios.fechaProx = pf; hay = true; }
+        if (hay) await apiX('negocio', { negocio: cambios });
+        Object.assign(n, cambios, { actividad: h }); if (etapa === 'Ganada') n.estado = 'Ganada';
+        st.hechos.push(n.id); guardar();
+        toast(etapa === 'Ganada' ? '🏆 ¡Venta ganada!' : '✓ Guardado' + (hay && cambios.fechaProx ? ' · próximo paso ' + fmtRel(pf) : ''));
+        i++; pintar();
+        loadNeg(true).catch(() => {}); loadBase(true).catch(() => {});
+      } catch(err){ bt.disabled = false; bt.textContent = 'Guardar y siguiente →'; toast('No se pudo guardar: ' + err.message); }
+    };
+  };
+  pintar();
+}
+/* ---------- Modo enfoque: una acción a la vez (responder → hacer → avanzar) ---------- */
+function modoEnfoque(){
+  const D = datosHoy(), Q = [].concat(D.resp.map(x => ({ k: 'r', x })), D.hacer.map(t => ({ k: 't', t })), D.negs.map(x => ({ k: 'n', x })));
+  if (!Q.length){ toast('No tienes nada pendiente hoy 🙌'); return; }
+  let i = 0, hechas = 0;
+  const m = modal(icon('arrow') + ' Tu día, paso a paso', '<div id="mf"></div>', { wide: true }), box = m.el.querySelector('#mf');
+  const sig = ok => { if (ok) hechas++; i++; pintar(); };
+  const pintar = () => {
+    if (i >= Q.length){ box.innerHTML = '<div class="hy-fin">' + ringSVG(1, 84) + '<h3>¡Listo por ahora!</h3><p>Completaste ' + hechas + ' de ' + Q.length + ' acciones. ' + (hechas < Q.length ? 'Las que saltaste siguen en la pestaña Hoy.' : 'Día al día 💪') + '</p><button class="btn" id="mfX">Cerrar</button></div>'; box.querySelector('#mfX').onclick = () => { m.cerrar(); render(); }; return; }
+    const q = Q[i], etapa = q.k === 'r' ? '1 · Responder' : q.k === 't' ? '2 · Hacer' : '3 · Avanzar';
+    let cuerpo = '', acts = '';
+    if (q.k === 'r'){
+      const c = q.x.c, tel = telWA(c);
+      cuerpo = '<h3>Responder a ' + esc(c.nombre || c.email) + '</h3>' + (q.x.g.r ? '<p class="ctx">' + esc(String(q.x.g.r.detalle).split(' · ')[0]) + '</p>' : '') + '<div class="idea"><small>Idea de respuesta (puedes editarla)</small><textarea id="mfT" rows="4">' + esc(q.x.g.idea.detalle) + '</textarea></div>';
+      acts = (tel ? '<button class="btn" id="mfWA">' + icon('note') + ' Enviar por WhatsApp</button>' : '<button class="btn" id="mfCp">Copiar</button>') + '<button class="btn sec" id="mfOk">' + icon('check') + ' Ya respondí</button>';
+    } else if (q.k === 't'){
+      const t = q.t, p = puntaje(t);
+      cuerpo = '<h3>' + esc(t.tarea) + '</h3><p class="ctx">' + (t.limite && t.limite < D.h ? '<span style="color:var(--bad-ink);font-weight:700">' + esc(p.why) + '</span>' : esc(p.why || '')) + (t.categoria ? ' · ' + esc(t.categoria) : '') + '</p>' + (t.notas ? '<p class="ctx">' + esc(String(t.notas).slice(0, 220)) + '</p>' : '');
+      acts = '<button class="btn" id="mfOk">' + icon('check') + ' Hecha</button><button class="btn sec" id="mfMan">Pasar a mañana</button><button class="btn sec" id="mfPlay">▶ Temporizador</button>';
+    } else {
+      const n = q.x.n, c = n.contacto ? contactoPorId(n.contacto) : null, tel = telWA(c);
+      cuerpo = '<h3>' + esc(n.titulo) + '</h3><p class="ctx">' + (n.valor ? '<b>' + clpCorto(n.valor) + '</b> · ' : '') + esc(n.etapa) + ' · <span style="color:var(--warn-ink)">' + esc(motivoAlerta(n, q.x.a)) + '</span></p>' + (n.proxima ? '<p class="ctx">Próximo paso: <b>' + esc(n.proxima) + '</b></p>' : '') +
+        (tel ? '<div class="acts" style="margin:6px 0 10px"><a class="btn sm sec" target="_blank" href="https://wa.me/' + esc(tel) + '">' + icon('note') + ' WhatsApp</a><a class="btn sm sec" href="tel:' + esc(tel) + '">' + icon('phone') + ' Llamar</a></div>' : '') +
+        '<input type="text" id="mfN" placeholder="¿Qué pasó? (ej.: le mandé la cotización, responde el viernes)">';
+      acts = '<button class="btn" id="mfOk">Registrar y seguir</button><button class="btn sec" id="mfAb">Abrir negociación</button>';
+    }
+    box.innerHTML = '<div class="hy-fprog"><span>' + etapa + '</span><span>' + (i + 1) + ' de ' + Q.length + '</span></div><div class="pb"><i style="width:' + (i / Q.length * 100) + '%"></i></div><div class="hy-fcard">' + cuerpo + '</div><div class="hy-facts">' + acts + '<button class="btn bad" id="mfSk">Saltar</button></div>';
+    const $b = s => box.querySelector(s);
+    $b('#mfSk').onclick = () => sig(false);
+    if (q.k === 'r'){
+      const enviar = () => window.open('https://wa.me/' + telWA(q.x.c) + '?text=' + encodeURIComponent($b('#mfT').value), '_blank');
+      if ($b('#mfWA')) $b('#mfWA').onclick = () => { enviar(); $b('#mfOk').classList.remove('sec'); };
+      if ($b('#mfCp')) $b('#mfCp').onclick = () => { try { navigator.clipboard.writeText($b('#mfT').value); toast('Copiado'); } catch(e){} };
+      $b('#mfOk').onclick = async () => { $b('#mfOk').disabled = true; await marcarRespondido(q.x); sig(true); };
+    } else if (q.k === 't'){
+      $b('#mfOk').onclick = async () => { $b('#mfOk').disabled = true; try { await toggle(q.t); } catch(e){} sig(true); };
+      $b('#mfMan').onclick = async () => { $b('#mfMan').disabled = true; try { await updateTask(q.t, { limite: addDays(D.h, 1) }); q.t.limite = addDays(D.h, 1); } catch(e){ toast('No se pudo mover: ' + e.message); } sig(false); };
+      $b('#mfPlay').onclick = () => { m.cerrar(); openFocus(q.t); };
+    } else {
+      $b('#mfOk').onclick = async () => { const tx = $b('#mfN').value.trim(); if (!tx){ $b('#mfN').focus(); toast('Escribe en una línea qué pasó'); return; } $b('#mfOk').disabled = true; await negRegistrar(q.x.n, '📝 Nota', tx); sig(true); };
+      $b('#mfAb').onclick = () => { m.cerrar(); openDeal(q.x.n, { tab: 'actividad' }); };
+    }
+  };
+  pintar();
 }
 /* ---------- asistente de IA: planificar el día / revisar la semana ---------- */
 function iaDisponible(){ return extNivel() >= 10 && agenteActivo(); }
@@ -2445,7 +2784,7 @@ function contextoDia(){
   const h = hoy(), P = pendientes().map(t => ({ t, p: puntaje(t) })).sort((a, b) => b.p.s - a.p.s).slice(0, 40);
   const ev = S.google && S.google.eventos ? S.google.eventos.filter(e => e.fecha === h) : [];
   const an = S.neg ? metricasNeg().an.filter(x => requiereAtencion(x.a)) : [];
-  const esperan = S.base ? contactos().filter(c => agenteDe(c.id).idea).map(c => c.nombre || c.email) : [];
+  const esperan = esperanRespuesta().map(x => x.c.nombre || x.c.email);
   return ['Hoy es ' + fmtLong(h) + ', son las ' + new Date().toTimeString().slice(0, 5) + '. Meta diaria: ' + metaDiaria() + ' tareas. Ya hizo hoy: ' + hechasEl(h).length + '.',
     ocupados()[h] ? 'DÍA OCUPADO: ' + ocupados()[h].titulo : '',
     '', 'AGENDA DE HOY:', ev.length ? ev.map(e => '- ' + (e.todoElDia ? 'todo el día' : e.inicio + '-' + e.fin) + ' ' + e.titulo).join('\n') : '(sin eventos)',
@@ -2487,7 +2826,7 @@ function sugerenciasTareas(){
   const h = hoy(), out = [], desc = new Set(descartadas());
   const add = x => { if (!desc.has(x.k) && !yaExisteTarea(x.tarea, x.clave) && !out.some(y => similitud(y.tarea, x.tarea) >= 0.6)) out.push(x); };
   if (S.neg) abiertos().forEach(n => { if (n.proxima) add({ k: 'n:' + n.id + ':' + n.proxima, tarea: '🤝 ' + n.proxima + ' – ' + n.titulo, fecha: n.fechaProx && n.fechaProx > h ? n.fechaProx : h, fuente: 'Negociación', motivo: 'Próximo paso de la negociación sin tarea en tu lista', clave: n.id, notas: negTag(n) }); });
-  if (S.base) contactos().filter(c => agenteDe(c.id).idea).forEach(c => add({ k: 'r:' + c.id + ':' + (agenteDe(c.id).idea.fecha || ''), tarea: 'Responder a ' + (c.nombre || c.email), fecha: h, fuente: 'Chat', motivo: 'Te escribió y espera respuesta (el agente dejó una idea en su ficha)', clave: c.id, notas: c.telefono ? '📞 ' + c.telefono : '' }));
+  esperanRespuesta().map(x => x.c).forEach(c => add({ k: 'r:' + c.id + ':' + (agenteDe(c.id).idea.fecha || ''), tarea: 'Responder a ' + (c.nombre || c.email), fecha: h, fuente: 'Chat', motivo: 'Te escribió y espera respuesta (el agente dejó una idea en su ficha)', clave: c.id, notas: c.telefono ? '📞 ' + c.telefono : '' }));
   const ev = S.google && S.google.eventos ? S.google.eventos.filter(e => e.fecha > h && e.fecha <= addDays(h, 3) && !e.todoElDia && /client|reuni|visita|entrega|test|salida|capacit|proveedor|evento/i.test(e.titulo)) : [];
   ev.forEach(e => add({ k: 'e:' + e.id, tarea: 'Preparar: ' + e.titulo, fecha: addDays(e.fecha, -1), fuente: 'Agenda', motivo: 'Evento del ' + fmt(e.fecha) + (e.inicio ? ' a las ' + e.inicio : ''), notas: '📅 ' + e.titulo }));
   (S.data.proyectos || []).forEach(p => { if (!S.data.tareas.some(t => t.proyecto === p.nombre && !t.hecho)) add({ k: 'p:' + p.nombre, tarea: 'Definir la próxima tarea del proyecto ' + p.nombre, fecha: addDays(h, 1), fuente: 'Proyecto', motivo: 'El proyecto no tiene tareas pendientes', proyecto: p.nombre }); });
@@ -3208,6 +3547,15 @@ let focusTick = null;
 function focusState(){ return lsGet('focus', null); }
 function openFocus(t){
   if (!t) return;
+  if (extNivel() >= 5 && esTareaSeguimiento(t)){
+    let f = focusState(); if (!f || f.row !== t.row) f = { row: t.row, tarea: t.tarea, dur: 25, fin: 0, resta: 25 * 60000 };
+    if (!f.fin) f.fin = Date.now() + f.resta; lsSet('focus', f);
+    return rondaSeguimiento(t);
+  }
+  openFocusTimer(t);
+}
+function openFocusTimer(t){
+  if (!t) return;
   let f = focusState();
   if (!f || f.row !== t.row) f = { row: t.row, tarea: t.tarea, dur: 25, fin: 0, resta: 25 * 60000 };
   lsSet('focus', f);
@@ -3254,7 +3602,7 @@ function focusPill(){
   const resta = f.fin ? f.fin - Date.now() : f.resta;
   if (f.fin && resta <= 0){ b.hidden = true; return focusFin(); }
   b.hidden = false; b.textContent = (f.fin ? '⏱ ' : '⏸ ') + Math.ceil(resta / 60000) + ' min · ' + f.tarea;
-  b.onclick = focusSheet;
+  b.onclick = () => { const t = S.data && S.data.tareas.find(x => x.row === f.row && !x.hecho); if (t && extNivel() >= 5 && esTareaSeguimiento(t)) rondaSeguimiento(t); else focusSheet(); };
 }
 setInterval(() => { if (!$('#layer').innerHTML) focusPill(); }, 15000);
 
