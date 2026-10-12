@@ -15,7 +15,7 @@
  * Para actualizar este archivo más adelante: reemplaza todo su contenido y repite los dos pasos anteriores.
  */
 
-const EX_VERSION = '2026-11-02';
+const EX_VERSION = '2026-11-03';
 const EX_NIVEL = 16;      // la app lo usa para saber qué funciones tiene este script
 const EX_HOJA = 'Tareas';
 const EX_PRIMERA = 4;
@@ -2688,14 +2688,16 @@ function ex_contextoGlobal_(p) {
 // Ejecútala una vez después de pegar esta versión: crea las hojas y carpetas nuevas, pide los permisos
 // (Drive y otras planillas) y hace la primera lectura de Specialized y de las noticias.
 function autorizarCerebro() {
-  ex_carpetaFuentes_(true);
-  try { ex_carpetaBanco_(); } catch (e) {}
+  // Si falta el permiso de Drive, sigue con lo demás y avisa (solo la carpeta "Fuentes" necesita Drive).
+  let drive = true;
+  try { ex_carpetaFuentes_(true); try { ex_carpetaBanco_(); } catch (e) {} }
+  catch (e) { drive = false; console.log('⚠️ Falta el permiso de Google Drive: vuelve a ejecutar y, en la pantalla de Google, marca «Seleccionar todo» (incluida la casilla de Google Drive). Lo demás sigue funcionando.'); }
   ex_hojaCab_(EX_HOJA_AVISOS, EX_CAB_AVISOS);
-  SpreadsheetApp.openById(SpreadsheetApp.getActive().getId());
+  try { SpreadsheetApp.openById(SpreadsheetApp.getActive().getId()); } catch (e) { console.log('⚠️ Falta el permiso para leer otras planillas (sirve para conectar tus planillas como fuentes).'); }
   try { const r = ex_spzSinc_(); console.log('Specialized: ' + r.productos + ' productos' + (r.errores.length ? ' · avisos: ' + r.errores.join(', ') : '')); const s = ex_spzRondaStock_(12); console.log('Stock por talla revisado en ' + s.revisados + ' bicis.'); } catch (e) { console.log('Specialized: ' + e.message); }
   try { const n = ex_noticias_(true); console.log('Noticias: ' + n.items.length + ' destacadas de ' + n.total); } catch (e) { console.log('Noticias: ' + e.message); }
   try { console.log('Clima: ' + ex_climaTexto_(ex_clima_()).split('\n')[0]); } catch (e) { console.log('Clima: ' + e.message); }
-  console.log('Carpeta de fuentes: ' + ex_carpetaFuentes_(false).getUrl());
+  if (drive) { try { console.log('Carpeta de fuentes: ' + ex_carpetaFuentes_(false).getUrl()); } catch (e) {} }
   ex_instalarTriggers_();
   console.log('Listo. Ahora: Implementar → Administrar implementaciones → ✏️ → Nueva versión.');
 }
