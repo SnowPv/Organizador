@@ -158,3 +158,31 @@ Nada se crea hasta que tocas **✓ Crear todo**. Antes puedes corregir cualquier
   - crear tareas.
 
 Si escribes una orden de este tipo en ＋, la app te ofrece mandarla al Copiloto.
+
+## Postventa automática
+
+Cuando una negociación pasa a **Ganada** (desde la app, el pipeline o el Copiloto), el script agenda el seguimiento que fideliza al cliente:
+
+| Cuándo | Tarea |
+|---|---|
+| El día de la venta | Entrega y ajuste a medida |
+| Día 2 | Registrar la garantía en Specialized y la bici en la bitácora |
+| Día 7 | Llamar al cliente: cómo le va y dudas de uso |
+| Día 30 | Invitarlo a la revisión gratuita (reapriete y ajuste) |
+| Día 45 | Pedirle una foto o reseña para Redes, con su permiso |
+
+- Si registras una venta antigua (con su fecha real), solo crea los pasos que aún no pasaron.
+- Las tareas quedan a las 10:00 y aparecen en Hoy y en el Calendario.
+- Se crean una sola vez por negociación.
+- Se desactiva con la propiedad `POSTVENTA` = `no`.
+
+## Campañas 1 a 1
+
+En **Contactos → 📣 Campañas** eliges un objetivo:
+- mantención de temporada;
+- reactivar clientes;
+- seguimiento de interesados;
+- invitación a salida o test ride;
+- foto o reseña.
+
+La app arma la lista con tus perfiles y negocios, y un mensaje personal para cada cliente (con su nombre, su bici o su interés). Lo revisas, lo envías por WhatsApp con un toque y queda registrado en la ficha. La barra muestra el avance. Los mensajes siguen la política de la marca: asesoría y experiencia, nunca descuentos.

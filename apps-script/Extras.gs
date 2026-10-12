@@ -15,8 +15,8 @@
  * Para actualizar este archivo más adelante: reemplaza todo su contenido y repite los dos pasos anteriores.
  */
 
-const EX_VERSION = '2026-11-13';
-const EX_NIVEL = 20;      // la app lo usa para saber qué funciones tiene este script
+const EX_VERSION = '2026-11-14';
+const EX_NIVEL = 21;      // la app lo usa para saber qué funciones tiene este script
 const EX_HOJA = 'Tareas';
 const EX_PRIMERA = 4;
 const EX_ULTIMA = 400;
@@ -604,6 +604,7 @@ function ex_guardarNegocio_(n) {
   r[14] = new Date();
   if (i >= 0) sh.getRange(i + 2, 1, 1, EX_CAB_NEG.length).setValues([r]);
   else sh.appendRow(r);
+  if (etapa === 'Ganada' && antes !== 'Ganada') { try { ex_postventa_(r, n.fechaEtapa); } catch (e) { console.log('postventa: ' + e.message); } }
   if (r[2] && (i < 0 || etapa !== antes)) {
     const b = ex_baseHojas_();
     const det = i < 0 ? 'Nueva negociación: ' + r[1] : r[1] + ': ' + antes + ' → ' + etapa + (etapa === 'Perdida' && r[11] ? ' (' + r[11] + ')' : '');
@@ -611,6 +612,30 @@ function ex_guardarNegocio_(n) {
     ex_recalcular_(b.cs, b.is);
   }
   return { ok: true, id: String(r[0]) };
+}
+
+// Postventa automática: al ganar una venta se agenda el seguimiento que fideliza al cliente.
+// Solo crea los pasos cuya fecha aún no pasó, una sola vez por negociación. Se desactiva con la propiedad POSTVENTA = no.
+function ex_postventa_(r, fechaVenta) {
+  const props = PropertiesService.getScriptProperties();
+  if (props.getProperty('POSTVENTA') === 'no' || typeof app_agregar_ !== 'function') return;
+  const id = String(r[0]), hechas = JSON.parse(props.getProperty('EX_POSTVENTA') || '[]');
+  if (hechas.indexOf(id) >= 0) return;
+  const tz = ex_tz_(), hoy = ex_hoyYmd_(tz), base = /^\d{4}-\d{2}-\d{2}$/.test(String(fechaVenta || '')) ? fechaVenta : hoy;
+  const mas = function (d) { return ex_ymd_(new Date(ex_aFecha_(base, tz).getTime() + d * 86400000 + 43200000), tz); };
+  let nombre = 'cliente «' + String(r[1] || '').slice(0, 50) + '»';
+  try { const c = ex_filasContactos_(ex_baseHojas_().cs).find(function (x) { return String(x[0]) === String(r[2]); }); if (c && c[2]) nombre = String(c[2]); } catch (e) {}
+  const prod = String(r[5] || r[1] || 'su compra').slice(0, 60), ref = ' · 🏆 Postventa · ' + nombre + (r[2] ? ' [' + r[2] + ']' : '') + ' (' + id + ')';
+  [[0, 'Entrega y ajuste a medida: ' + prod + ' – ' + nombre, 'Sí'],
+   [2, 'Registrar la garantía en Specialized y la bici en la bitácora – ' + nombre, 'No'],
+   [7, 'Llamar a ' + nombre + ': ¿cómo le va con ' + prod + '? Resolver dudas de uso', 'No'],
+   [30, 'Invitar a ' + nombre + ' a la revisión gratuita de los 30 días (reapriete y ajuste)', 'No'],
+   [45, 'Pedirle a ' + nombre + ' una foto o reseña de su experiencia (contenido para Redes, con permiso)', 'No']
+  ].forEach(function (x) {
+    const f = mas(x[0]); if (f < hoy) return;
+    app_agregar_({ tarea: { tarea: x[1], area: 'Trabajo', categoria: 'Ventas', proyecto: '', limite: f, urgente: x[2], importante: 'Sí', tamano: 'Pequeña', notas: '⏰ 10:00' + ref, estado: 'Pendiente' } });
+  });
+  hechas.push(id); props.setProperty('EX_POSTVENTA', JSON.stringify(hechas.slice(-500)));
 }
 
 // Registra una actividad (llamada, visita, nota…) en la negociación y en el historial del contacto.
