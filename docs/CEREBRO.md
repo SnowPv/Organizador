@@ -142,3 +142,19 @@ Nada se crea hasta que tocas **✓ Crear todo**. Antes puedes corregir cualquier
 **Configuración (opcional, en las Propiedades del script):**
 - `TAREAS_MODELO`: el modelo que usa el agente. Por defecto `claude-opus-5-5`, el más inteligente, a unos centavos de dólar por tarea. Con `claude-haiku-5-5` cuesta mucho menos, pero piensa menos.
 - `TAREAS_WEB` = `no`: desactiva la búsqueda en internet. Si la búsqueda web no está habilitada en tu cuenta de Anthropic, el agente sigue sin ella.
+
+## ¿Botón + o Copiloto?
+
+- **＋ (Nueva tarea):** algo que hay que hacer. El agente de tareas la piensa y la arma completa.
+- **✨ Copiloto:** preguntas («¿cuántas Levo quedan en L?») y órdenes para cambiar datos:
+  - «corrige la negociación de X»;
+  - «esa venta ya terminó hace semanas, sácala del pipeline»;
+  - «registra una garantía de Y».
+
+  El Copiloto busca el registro y te muestra cada cambio (antes → después) para que lo apruebes con un toque. Puede:
+  - cambiar la etapa de una negociación, con la fecha real del cierre;
+  - ajustar el valor o la próxima acción;
+  - agregar notas a la negociación o a la ficha del cliente;
+  - crear tareas.
+
+Si escribes una orden de este tipo en ＋, la app te ofrece mandarla al Copiloto.

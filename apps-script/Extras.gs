@@ -15,8 +15,8 @@
  * Para actualizar este archivo más adelante: reemplaza todo su contenido y repite los dos pasos anteriores.
  */
 
-const EX_VERSION = '2026-11-12';
-const EX_NIVEL = 19;      // la app lo usa para saber qué funciones tiene este script
+const EX_VERSION = '2026-11-13';
+const EX_NIVEL = 20;      // la app lo usa para saber qué funciones tiene este script
 const EX_HOJA = 'Tareas';
 const EX_PRIMERA = 4;
 const EX_ULTIMA = 400;
@@ -598,7 +598,7 @@ function ex_guardarNegocio_(n) {
   const etapa = n.etapa || r[3] || 'Nuevo';
   if (i < 0 || etapa !== antes) {
     r[3] = etapa;
-    r[13] = (r[13] ? r[13] + '|' : '') + hoy + ':' + etapa;
+    r[13] = (r[13] ? r[13] + '|' : '') + (/^\d{4}-\d{2}-\d{2}$/.test(String(n.fechaEtapa || '')) ? n.fechaEtapa : hoy) + ':' + etapa;
     r[10] = etapa === 'Ganada' ? 'Ganada' : etapa === 'Perdida' ? 'Perdida' : 'Abierta';
   }
   r[14] = new Date();
@@ -2740,6 +2740,7 @@ const EX_COP_SISTEMA = [
   'Eres el Copiloto de Blackline Puerto Varas, tienda Specialized en Puerto Varas, Chile (lluvioso; temporada alta de primavera a verano; muchos turistas argentinos en verano). Su fuerte son las e-bikes (Turbo Levo, Levo SL, Kenevo, Vado, Como, Creo) y también venden MTB, ruta, gravel, urbano, niños, ropa, accesorios y taller. Han vendido S-Works en todas las disciplinas. Hablas con Gustavo, el encargado: psicólogo laboral, vendedor experto, muy analítico. Tutéalo, en español de Chile, directo y concreto.',
   'Tu trabajo: responder rápido y bien usando las herramientas. Consulta los datos antes de afirmar algo (stock, precios, clientes, negociaciones, clima). Cruza fuentes: por ejemplo, si preguntan por un producto mira la web de Specialized (precio, oferta, stock por talla en Chile), el stock de la tienda (Bsale) y qué clientes lo quieren. Si una herramienta no tiene datos (por ejemplo Bsale aún no conectado), dilo en una frase y sigue con lo que sí hay.',
   'Specialized: los modelos sin «Alloy» en el nombre son de carbono (ej.: «Turbo Levo 4 Comp» es la Comp Carbon). Para stock por color y talla usa buscar_producto y, si vas a prometer algo, confírmalo con ficha_specialized_en_vivo; responde con una lista por color y talla. Reglas: nunca inventes precios, stock ni datos de clientes. El stock de Specialized es el de su bodega en Chile según la web (sirve para saber si se puede pedir); el de Bsale es el de la tienda. No puedes comprar, pedir, enviar mensajes ni modificar nada por tu cuenta: cuando convenga actuar, usa proponer_accion (tareas, avisos, abrir chat de WhatsApp con un borrador, crear negociación, diseñar una pieza, idea de contenido, abrir ficha de producto) y Gustavo decide con un toque.',
+  'Correcciones y registros: Gustavo también te pide cambiar datos («corrige la negociación de X», «esa venta ya terminó», «registra una garantía»). Busca primero el registro (ver_negociaciones con filtro todas, buscar_clientes) y propone los cambios con proponer_cambio_negocio, proponer_nota_contacto y proponer_accion (crear_tarea con fecha y detalle de los pasos). Propón todas las acciones que el caso necesita, en una sola respuesta, y explica en una frase qué cambiará cada una. Si la app muestra algo mal pero el dato está bien guardado, dilo.',
   'Compras: tienes los catálogos públicos de los proveedores (Sportvibes: Fox suspensiones, Deity, HT; Outside: Hope, BikeYoke, Schwalbe, SunRace; MKR: RockShox y SRAM; Andes: Shimano y Continental; Specialized; Garmin y Tacx; Trail: ropa Fox) con precio público, precio de oferta y el costo de Blackline con su descuento de distribuidor (Garmin ~20 %, el resto ~30 %). Úsalos para responder qué se puede conseguir, a qué costo y cuándo conviene comprar (comprar en la oferta del proveedor y vender a precio normal). Eso es información interna: no se comunica como descuento.',
   EX_POLITICA,
   'Formato de la respuesta: breve y escaneable. Empieza con la respuesta directa en 1–2 frases. Luego, si sirve, viñetas cortas con datos concretos (precio, tallas, stock, fechas). Usa **negrita** solo para lo clave. Sin títulos grandes ni tablas. Para borradores de mensajes a clientes, escríbelos listos para copiar, cálidos y cortos, con emojis moderados.'
@@ -2751,7 +2752,7 @@ const EX_COP_TOOLS = [
   { name: 'buscar_clientes', description: 'Busca clientes o contactos por nombre, teléfono, email, producto de interés o característica (ej. "Juan", "levo talla L", "gravel principiante"). Devuelve perfil (ciclo, probabilidad, intereses, talla, presupuesto) y últimas interacciones.', input_schema: { type: 'object', properties: { consulta: { type: 'string' } }, required: ['consulta'] } },
   { name: 'clientes_interesados', description: 'Lista los clientes que han mostrado interés en un producto o familia (ej. "Kenevo SL", "Vado"). Útil para avisar llegadas, ofertas o poco stock.', input_schema: { type: 'object', properties: { producto: { type: 'string' } }, required: ['producto'] } },
   { name: 'whatsapp_esperando', description: 'Clientes que escribieron por WhatsApp y esperan respuesta (últimos días), con el último mensaje.', input_schema: { type: 'object', properties: {} } },
-  { name: 'ver_negociaciones', description: 'Negociaciones de venta abiertas (o todas) con etapa, valor, próxima acción y última actividad. Filtro opcional por texto.', input_schema: { type: 'object', properties: { filtro: { type: 'string', enum: ['abiertas', 'estancadas', 'ganadas_30d', 'perdidas_30d'] }, consulta: { type: 'string' } } } },
+  { name: 'ver_negociaciones', description: 'Negociaciones de venta abiertas (o todas) con etapa, valor, próxima acción y última actividad. Filtro opcional por texto.', input_schema: { type: 'object', properties: { filtro: { type: 'string', enum: ['abiertas', 'estancadas', 'ganadas_30d', 'perdidas_30d', 'ganadas', 'todas'] }, consulta: { type: 'string' } } } },
   { name: 'ver_tareas', description: 'Tareas pendientes del organizador. Filtro: hoy, vencidas, semana o todas; texto opcional.', input_schema: { type: 'object', properties: { filtro: { type: 'string', enum: ['hoy', 'vencidas', 'semana', 'todas'] }, consulta: { type: 'string' } } } },
   { name: 'ver_agenda', description: 'Eventos de Google Calendar de los próximos días (reuniones, salidas, test rides, capacitaciones).', input_schema: { type: 'object', properties: { dias: { type: 'integer' } } } },
   { name: 'ver_clima', description: 'Pronóstico de Puerto Varas: ahora y los próximos 7 días (lluvia, temperatura, viento). Útil para salidas, test rides, eventos y contenido.', input_schema: { type: 'object', properties: {} } },
@@ -2763,6 +2764,12 @@ const EX_COP_TOOLS = [
   { name: 'buscar_en_proveedores', description: 'Busca un producto en los catálogos públicos de los proveedores (y Specialized): precio público, precio de oferta, disponibilidad y costo para Blackline con su descuento. Útil cuando un cliente pide algo que no está en la tienda (ej. "fox 36 grip x2", "hope tech 4", "garmin edge 1050", "schwalbe magic mary 29").', input_schema: { type: 'object', properties: { consulta: { type: 'string' } }, required: ['consulta'] } },
   { name: 'oportunidades_compra', description: 'Productos en oferta en la web de los proveedores que conviene comprar ahora para vender a precio normal: margen extra, si la tienda los vende, si los piden clientes y cuántos días lleva la oferta.', input_schema: { type: 'object', properties: {} } },
   { name: 'correos_proveedores', description: 'Correos recientes de los proveedores (promociones, lanzamientos, llegadas, listas de precios).', input_schema: { type: 'object', properties: {} } },
+  { name: 'proponer_cambio_negocio', description: 'Propone corregir o actualizar una negociación existente (etapa, valor, próxima acción, motivo de pérdida) y/o agregarle una nota. Gustavo la aprueba con un toque. Busca antes el id con ver_negociaciones (filtro "todas" si no está abierta). Para sacar del pipeline una venta que ya terminó, usa etapa "Ganada" (o "Perdida") con la fecha real en fecha_etapa.', input_schema: { type: 'object', properties: {
+    id: { type: 'string', description: 'ID de la negociación (N-...)' }, titulo: { type: 'string', description: 'Texto del botón, ej. «Marcar como ganada (29/09)»' },
+    etapa: { type: 'string', enum: ['Nuevo', 'Contactado', 'Prueba / visita', 'Cotización', 'Negociación', 'Ganada', 'Perdida'] }, fecha_etapa: { type: 'string', description: 'yyyy-MM-dd en que ocurrió el cambio de etapa, si no fue hoy' },
+    valor: { type: 'integer' }, proxima: { type: 'string', description: 'Próxima acción (vacío para quitarla)' }, fecha_proxima: { type: 'string' }, motivo: { type: 'string', description: 'Motivo de pérdida' },
+    nota: { type: 'string', description: 'Nota que queda en el historial de la negociación y del cliente' } }, required: ['id', 'titulo'] } },
+  { name: 'proponer_nota_contacto', description: 'Propone registrar una nota en la ficha de un cliente o contacto (reclamos, garantías, acuerdos, datos nuevos). Gustavo la aprueba con un toque.', input_schema: { type: 'object', properties: { id: { type: 'string' }, titulo: { type: 'string' }, texto: { type: 'string' } }, required: ['id', 'titulo', 'texto'] } },
   { name: 'proponer_accion', description: 'Propone una acción para que Gustavo la apruebe con un toque. No ejecuta nada por sí sola. Úsala cuando haya un siguiente paso claro.', input_schema: { type: 'object', properties: {
     tipo: { type: 'string', enum: ['crear_tarea', 'crear_aviso', 'whatsapp', 'crear_negocio', 'disenar_pieza', 'idea_contenido', 'abrir_producto', 'abrir_contacto'] },
     titulo: { type: 'string', description: 'Texto del botón o título de la tarea, aviso, negociación o idea' },
@@ -2791,8 +2798,9 @@ function ex_copHerramienta_(nombre, inp, estado) {
       if (f === 'estancadas') L = L.filter(function (n) { return n.estado === 'Abierta' && d(n.actividad) > 7; });
       if (f === 'ganadas_30d') L = L.filter(function (n) { return n.estado === 'Ganada' && d(n.actividad) <= 30; });
       if (f === 'perdidas_30d') L = L.filter(function (n) { return n.estado === 'Perdida' && d(n.actividad) <= 30; });
+      if (f === 'ganadas') L = L.filter(function (n) { return n.estado === 'Ganada'; });
       if (inp.consulta) { const q = ex_norm_(inp.consulta); L = L.filter(function (n) { return ex_norm_(n.titulo + ' ' + n.producto + ' ' + n.notas + ' ' + n.contacto).indexOf(q) >= 0; }); }
-      return ex_json_(L.slice(0, 25).map(function (n) { return { id: n.id, titulo: n.titulo, contacto: n.contacto, etapa: n.etapa, valor: n.valor, producto: n.producto, proxima: n.proxima, fechaProx: n.fechaProx, actividad: n.actividad, notas: String(n.notas || '').slice(0, 160) }; }));
+      return ex_json_(L.slice(0, 25).map(function (n) { return { id: n.id, titulo: n.titulo, contacto: n.contacto, etapa: n.etapa, estado: n.estado, historial: n.historial, valor: n.valor, producto: n.producto, proxima: n.proxima, fechaProx: n.fechaProx, actividad: n.actividad, notas: String(n.notas || '').slice(0, 160) }; }));
     }
     case 'ver_tareas': {
       let L = ex_tareasAbiertas_(); const f = inp.filtro || 'hoy', fin = ex_ymd_(new Date(Date.now() + 7 * 86400000), tz);
@@ -2817,6 +2825,14 @@ function ex_copHerramienta_(nombre, inp, estado) {
     case 'buscar_en_proveedores': return ex_json_(ex_provBuscar_(inp.consulta, 12).map(function (x) { return { proveedor: x.proveedor, producto: x.nombre, marca: x.marca, sku: x.sku, precio_web: x.precio, precio_normal: x.normal, iva: x.iva, disponible: x.disp, costo_blackline: x.costo, desc: x.desc + '%', url: x.url }; }), 9000);
     case 'oportunidades_compra': return ex_json_(ex_provOportunidades_(15).map(function (o) { return { proveedor: o.proveedor, producto: o.nombre, precio_normal: o.normal, precio_oferta: o.precio, costo_en_oferta: o.costo, margen_vendiendo_a_precio_normal: o.margenOferta + '%', margen_habitual: o.desc + '%', dias_en_oferta: o.diasOferta, la_vende_la_tienda: o.vende, la_piden_clientes: o.piden, nuevo: o.nuevo, url: o.url }; }), 9000);
     case 'correos_proveedores': return ex_json_((ex_provCorreos_(false).items || []).slice(0, 20));
+    case 'proponer_cambio_negocio': {
+      const cambios = {}; ['etapa', 'valor', 'proxima', 'motivo'].forEach(function (k) { if (inp[k] !== undefined && inp[k] !== null) cambios[k] = inp[k]; });
+      if (inp.fecha_etapa) cambios.fechaEtapa = inp.fecha_etapa; if (inp.fecha_proxima !== undefined) cambios.fechaProx = inp.fecha_proxima;
+      if (cambios.etapa === 'Ganada' || cambios.etapa === 'Perdida') { if (cambios.proxima === undefined) cambios.proxima = ''; if (cambios.fechaProx === undefined) cambios.fechaProx = ''; }
+      estado.acciones.push({ tipo: 'editar_negocio', titulo: String(inp.titulo || 'Actualizar negociación').slice(0, 160), ref: String(inp.id || ''), cambios: cambios, detalle: String(inp.nota || '').slice(0, 1500) });
+      return 'Cambio propuesto. Gustavo lo verá como botón para aprobar.';
+    }
+    case 'proponer_nota_contacto': estado.acciones.push({ tipo: 'nota_contacto', titulo: String(inp.titulo || 'Guardar nota').slice(0, 160), ref: String(inp.id || ''), detalle: String(inp.texto || '').slice(0, 1500) }); return 'Nota propuesta. Gustavo la verá como botón.';
     case 'proponer_accion': estado.acciones.push({ tipo: inp.tipo, titulo: String(inp.titulo || '').slice(0, 160), detalle: String(inp.detalle || '').slice(0, 1500), fecha: inp.fecha || '', ref: inp.ref || '' }); return 'Acción propuesta. Gustavo la verá como botón.';
   }
   throw new Error('herramienta desconocida: ' + nombre);
