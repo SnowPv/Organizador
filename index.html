@@ -4410,7 +4410,7 @@ function recomendaciones(n, a){
   return R.slice(0, 6);
 }
 function plantilla(tipo, n, a){
-  const nom = a.c && a.c.nombre ? ' ' + String(a.c.nombre).split(' ')[0] : '', prod = n.producto || 'la bici', yo = params()['Tu nombre (para el saludo)'] || 'Gonzalo';
+  const nom = a.c && a.c.nombre ? ' ' + String(a.c.nombre).split(' ')[0] : '', prod = n.producto || 'la bici', yo = params()['Tu nombre (para el saludo)'] || 'Gustavo';
   return ({
     primer: 'Hola' + nom + ' 👋 Soy ' + yo + ' de Blackline Puerto Varas. Vi tu interés en ' + prod + '. ¿Te acomoda pasar a verla o agendamos un test ride?',
     responder: 'Hola' + nom + ', gracias por escribirnos 🙌 Te respondo por aquí para ayudarte más rápido con ' + prod + '.',
