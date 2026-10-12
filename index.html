@@ -1012,7 +1012,7 @@ body:has(.selbar) .fab,body:has(.selbar) .fab2{display:none}
 .wx-hoy span{display:inline-flex;align-items:center;gap:3px;font-size:12.5px;font-weight:700;color:var(--muted)}
 .wx-hoy span .ico,.wd em .ico{width:12px;height:12px;color:#3B82F6}
 .wx-hoy span.mojado{color:#1D4ED8}
-.wx-hrs{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(26px,1fr);gap:3px;margin:14px 0 6px;height:84px;align-items:end}
+.wx-hrs{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);overflow:hidden;gap:3px;margin:14px 0 6px;height:84px;align-items:end}
 .wh1{position:relative;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center}
 .wh1 .tp{position:absolute;top:calc((1 - var(--y)) * 22px);font-size:10.5px;font-weight:700;color:var(--ink)}
 .wh1 i{display:block;width:70%;height:calc(var(--p) * .36px + 2px);background:linear-gradient(180deg,#60A5FA,#2563EB);border-radius:4px 4px 2px 2px;opacity:calc(.25 + var(--p) / 140)}
@@ -1209,7 +1209,123 @@ body:has(.selbar) .fab,body:has(.selbar) .fab2{display:none}
   .wx-days small{font-size:10px}
   .ihead #prodBtn,.ihead #fzBtn{display:none}
 }
+/* Inicio: franja del plan, KPIs y zona complementaria */
+.pstrip{display:flex;align-items:center;gap:12px;background:linear-gradient(120deg,#16213A,#22365F);color:#fff;border-radius:14px;padding:9px 10px 9px 14px;margin:0 0 12px;min-width:0}
+.ps-main{all:unset;box-sizing:border-box;cursor:pointer;display:flex;flex-direction:column;min-width:0;flex:1 1 260px}
+.ps-k{display:flex;align-items:center;gap:5px;font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#9CC3FF}
+.ps-k .ico{width:13px;height:13px}
+.ps-main b{font-size:14.5px;font-weight:700;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ps-foco{display:flex;gap:6px;flex:2 1 0;min-width:0}
+.ps-f{all:unset;box-sizing:border-box;cursor:pointer;flex:1 1 0;min-width:0;display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:6px 9px;font-size:12.5px;font-weight:600}
+.ps-f:hover{background:rgba(255,255,255,.15)}
+.ps-f span{flex:none;width:18px;height:18px;border-radius:50%;background:#5B9BFF;display:flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:800}
+.ps-f span .ico{width:11px;height:11px}
+.ps-f em{font-style:normal;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ps-f.ok{opacity:.55}.ps-f.ok span{background:var(--ok)}.ps-f.ok em{text-decoration:line-through}
+.ps-wx{all:unset;box-sizing:border-box;cursor:pointer;flex:none;display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.95);color:var(--ink);border-radius:10px;padding:4px 10px 4px 6px}
+.ps-wx b{font-size:16px}.ps-wx span{font-size:12px;font-weight:700;color:#1D4ED8;display:flex;align-items:center;gap:2px}
+.ps-wx span .ico{width:11px;height:11px}
+.pstrip .btn{flex:none;background:#fff;color:#16213A}
+.kpis2{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;margin:0 0 14px}
+.kp{all:unset;box-sizing:border-box;cursor:pointer;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 13px 10px;display:flex;flex-direction:column;gap:2px;min-width:0;transition:border-color .15s,box-shadow .15s}
+.kp:hover{border-color:var(--s2);box-shadow:var(--shadow-sm)}
+.kp-t{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--muted)}
+.kp-t .ico{width:14px;height:14px;color:var(--accent)}
+.kp-v{font-size:24px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1.15;margin-top:2px;white-space:nowrap}
+.kp-v small{font-size:13px;color:var(--muted);font-weight:700}
+.kp-s{min-height:18px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dl{font-size:11.5px;font-weight:700;color:var(--muted)}
+.dl.up{color:var(--ok-ink)}.dl.down{color:var(--bad-ink)}
+.kp-viz{display:block;height:34px;margin-top:4px}
+.spk{display:block;width:100%;height:34px}
+.kp-stack{display:flex;height:12px;border-radius:6px;overflow:hidden;margin-top:12px;background:var(--soft)}
+.kp-bar{height:10px;border-radius:6px;background:var(--soft);overflow:hidden;margin-top:12px}.kp-bar i{display:block;height:100%;background:var(--ok);border-radius:6px}
+.kp-p{font-size:10.5px;color:var(--muted);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.extz{margin-top:22px;background:repeating-linear-gradient(135deg,#EEF1F6 0 14px,#F2F4F8 14px 28px);border:1px dashed #C9D1DE;border-radius:18px;padding:14px}
+.extz .w{background:rgba(255,255,255,.88)}
+.extz .wx-card{background:linear-gradient(180deg,#EEF5FF 0%,rgba(255,255,255,.9) 46%)}
+.extz-h{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 2px 12px}
+.extz-k{display:flex;align-items:center;gap:6px;font-weight:800;font-size:13px;color:#5B6478;text-transform:uppercase;letter-spacing:.06em}
+.extz-k .ico{width:15px;height:15px}
+.extz-h small{color:var(--muted);font-size:12.5px;flex:1;min-width:180px}
+.extz.off{padding:10px 14px}.extz.off .extz-h{margin:0}
+.sec.ext{background:#F4F6FA;border:1px dashed #CDD5E1}
+/* Calendario: mes y año */
+.per-v{grid-template-columns:repeat(3,1fr);margin:4px 0 12px;max-width:420px}
+.per-h{display:flex;align-items:center;gap:10px;margin:0 0 12px;flex-wrap:wrap}
+.per-h h3{margin:0;font-size:22px;letter-spacing:-.02em;min-width:170px;text-align:center}
+.per-vs{margin-left:auto;font-size:12.5px;color:var(--muted);font-weight:600}
+.kcmp{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-bottom:14px}
+.kc{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:11px 13px;min-width:0}
+.kc small{display:block;font-size:12px;color:var(--muted);font-weight:700}
+.kc b{display:block;font-size:22px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums;margin:2px 0}
+.kc-s{display:block;font-size:11.5px;color:var(--muted);margin-top:2px;line-height:1.35}
+.mcal{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px;margin-bottom:14px}
+.mcal-w{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:4px}
+.mcal-w span{font-size:11px;font-weight:800;color:var(--muted);text-align:center;text-transform:uppercase;letter-spacing:.04em}
+.mcal-g{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.mc{all:unset;box-sizing:border-box;cursor:pointer;min-height:96px;border-radius:10px;padding:5px 6px;display:flex;flex-direction:column;gap:2px;min-width:0;border:1px solid var(--line);background:color-mix(in srgb, var(--ok) calc(var(--hx,0) * 22%), var(--card))}
+.mc:hover{border-color:var(--accent)}
+.mc.vac{border:0;background:none;cursor:default}
+.mc.hoy{border:2px solid var(--accent)}
+.mc-n{display:flex;align-items:center;justify-content:space-between;font-size:13px;font-weight:800}
+.mc.pas .mc-n{color:var(--muted)}
+.mc-n em{display:flex}
+.mc-e{font-size:10.5px;font-weight:600;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-left:3px solid var(--c);padding-left:4px;background:rgba(42,120,214,.06);border-radius:0 4px 4px 0}
+.mc-m{font-size:10px;color:var(--muted);font-weight:700}
+.mc-d{display:flex;flex-wrap:wrap;gap:3px;margin-top:auto}
+.mc-d i,.mcal-l i{font-style:normal;display:inline-flex;align-items:center;gap:2px;font-size:10px;font-weight:800;border-radius:5px;padding:1px 4px;background:var(--soft);color:var(--muted)}
+.mc-d i .ico{width:10px;height:10px}
+.mc-d i.ok,.mcal-l i.ok{background:rgba(18,160,107,.15);color:var(--ok-ink)}
+.mc-d i.bad{background:rgba(217,45,32,.12);color:var(--bad-ink)}
+.mc-d i.gan,.mcal-l i.gan{background:#0B7A51;color:#fff}
+.mc-d i.ig,.mcal-l i.ig{background:rgba(193,53,132,.12);color:#A0216B}
+.mc-d i.av{background:rgba(229,160,0,.18);color:var(--warn-ink)}
+.mcal-l{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:11.5px;color:var(--muted)}
+.mcal-l span{display:flex;align-items:center;gap:5px}
+.mcal-l i{width:12px;height:12px;padding:0}
+.mcal-l i.tk{background:var(--soft);border:1px solid var(--line)}.mcal-l i.ev{background:rgba(42,120,214,.25)}
+.cch{display:flex;align-items:flex-end;gap:4px;height:calc(var(--h) + 34px);padding-top:4px}
+.cc{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%}
+.cc i{display:block;width:72%;max-width:34px;min-height:2px;background:var(--s3);border-radius:5px 5px 2px 2px;max-height:var(--h)}
+.cc.on i{background:var(--accent)}
+.cc .cv{font-size:10px;font-weight:700;color:var(--muted);white-space:nowrap;margin-bottom:2px}
+.cc small{font-size:10.5px;color:var(--muted);font-weight:600;margin-top:4px;text-transform:capitalize}
+.cc.on small{color:var(--accent-ink);font-weight:800}
+.cch.denso{gap:2px}.cch.denso .cc small{font-size:9px}.cch.denso .cc i{width:80%}
+.stk{display:flex;flex-direction:column;width:72%;max-width:34px;min-height:2px;border-radius:5px 5px 2px 2px;overflow:hidden;max-height:var(--h)}
+.stk i{width:100%!important;max-width:none!important;border-radius:0!important;min-height:0!important}
+.fun2{display:flex;flex-direction:column;gap:8px}
+.fun2 div{display:grid;grid-template-columns:70px 1fr 30px;gap:8px;align-items:center;font-size:13px}
+.fun2 i{display:block;height:12px;border-radius:6px;min-width:3px}
+.fun2 b{text-align:right;font-variant-numeric:tabular-nums}
+.yh{display:grid;grid-template-rows:repeat(7,1fr);grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:3px;overflow-x:auto}
+.yh i{aspect-ratio:1;border-radius:3px;background:color-mix(in srgb, var(--ok) calc(var(--hx) * 100%), #EBEEF2);cursor:pointer;min-width:7px}
+.yh i.vac{background:none;cursor:default}.yh i.fut{opacity:.4}.yh i.hoy{outline:2px solid var(--accent)}
+.yh-m{display:grid;grid-template-columns:repeat(12,1fr);margin-top:6px;font-size:10.5px;color:var(--muted);font-weight:700;text-transform:capitalize}
+.ym{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px}
+.ymc{all:unset;box-sizing:border-box;cursor:pointer;border:1px solid var(--line);border-radius:12px;padding:9px 11px}
+.ymc:hover{border-color:var(--accent)}.ymc.on{border-color:var(--accent);background:var(--accent-soft)}.ymc.fut{opacity:.5}
+.ymc b{display:block;font-size:13.5px}.ymc span{font-size:12px;color:var(--muted)}
+@media (max-width:1200px){.kpis2{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:760px){
+  .pstrip{flex-wrap:wrap;gap:8px;padding:10px 12px}
+  .ps-main{flex:1 1 0}
+  .ps-foco{display:none}
+  .ps-main b{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+  .kpis2{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .kp{padding:10px 11px 8px}
+  .kp-v{font-size:20px}
+  .mc{min-height:58px;padding:3px 4px}
+  .mc-e,.mc-m{display:none}
+  .mc-n{font-size:12px}.mc-n em{display:none}
+  .mc-d i{font-size:9px;padding:0 3px}
+  .per-h h3{font-size:18px;min-width:0}
+  .per-vs{flex-basis:100%;margin:0}
+  .extz{margin-left:-6px;margin-right:-6px;padding:10px}
+}
 </style>
+
 
 </head>
 <body>
@@ -1231,7 +1347,7 @@ body:has(.selbar) .fab,body:has(.selbar) .fab2{display:none}
   <button data-tab="inicio"><span data-ic="home"></span>Inicio</button>
   <button data-tab="hoy"><span data-ic="sun"></span>Hoy</button>
   <button data-tab="tareas"><span data-ic="check"></span>Tareas</button>
-  <button data-tab="semana"><span data-ic="cal"></span>Semana</button>
+  <button data-tab="semana"><span data-ic="cal"></span>Calendario</button>
   <button data-tab="negocios"><span data-ic="deal"></span>Negocios</button>
   <button data-tab="proy"><span data-ic="flag"></span>Proyectos</button>
   <button data-tab="base"><span data-ic="users"></span>Contactos</button>
@@ -1373,7 +1489,7 @@ async function updateTask(t, cambios){
 }
 
 /* ---------- cabecera y navegación ---------- */
-const TITLES = { inicio: 'Inicio', hoy: 'Hoy', tareas: 'Tareas', habitos: 'Hábitos', semana: 'Semana', proy: 'Proyectos', base: 'Contactos', redes: 'Redes sociales', negocios: 'Negociaciones' };
+const TITLES = { inicio: 'Inicio', hoy: 'Hoy', tareas: 'Tareas', habitos: 'Hábitos', semana: 'Calendario', proy: 'Proyectos', base: 'Contactos', redes: 'Redes sociales', negocios: 'Negociaciones' };
 function head(){
   $('#hTitle').innerHTML = (S.tab === 'inicio' && S.data ? saludoTxt() : TITLES[S.tab]) + (S.offline ? '<span class="chip-off">sin conexión</span>' : '');
   $('#hSub').innerHTML = S.busy ? '<span class="spin"></span>Actualizando…' : fmtLong(hoy());
@@ -1392,7 +1508,7 @@ function render(){
   head();
   const cf = $('#copFab'); if (cf && !cf.innerHTML) cf.innerHTML = icon('spark') + '<span>Copiloto</span>';
   if (!S.data){ $('#view').innerHTML = '<div class="empty"><span class="spin"></span>Cargando…</div>'; return; }
-  ({ inicio: viewInicio, hoy: viewHoy, tareas: viewTareas, habitos: () => S.subH === 'semana' ? viewSemana() : viewHabitos(), semana: viewSemana, proy: viewProy, base: viewBase, negocios: viewNegocios, redes: viewRedes })[S.tab]();
+  ({ inicio: viewInicio, hoy: viewHoy, tareas: viewTareas, habitos: () => S.subH === 'semana' ? viewSemana() : viewHabitos(), semana: () => S.per && S.per !== 'semana' ? viewPeriodo() : viewSemana(), proy: viewProy, base: viewBase, negocios: viewNegocios, redes: viewRedes })[S.tab]();
   focusPill(); imxPill();
 }
 
@@ -1567,9 +1683,9 @@ function viewInicio(){
   let html = '<div class="ihead"><button class="quick" id="qa"><b>+</b>Agregar tarea… <span style="margin-left:auto">🎤</span></button>' +
     '<button class="btn sec" id="prodBtn">' + icon('box') + ' Producto</button><button class="btn sec" id="fzBtn">' + icon('chart') + ' Fuentes</button><button class="btn sec" id="planBtn">' + icon('spark') + ' Plan de la semana</button></div>';
   if (necesitaActualizar()) html += '<div class="w" style="margin-bottom:14px;display:flex;gap:12px;align-items:center"><div class="grow"><b>Nueva versión del script</b><div class="wsub">' + (extNivel() >= 14 ? 'El Cerebro: plan del día automático, Copiloto que consulta todo, Specialized Chile (ventas, ofertas y stock por talla), clima, noticias y avisos para el equipo.' : extNivel() >= 10 ? 'Instagram: métricas diarias y calendario de contenido con IA. También filtra los correos automáticos de bancos y pagos.' : extNivel() >= 8 ? 'Asistente de IA para planificar tu día y tu semana, Instagram y conexión con Bsale.' : 'Importar chats de WhatsApp y agente de IA.') + '</div></div><button class="btn sm" id="updBtn">Actualizar</button></div>';
-  html += cmdHTML();
+  if (extNivel() >= 13 && !S.leadsCanal && !S._leadsPend){ S._leadsPend = 1; loadLeads().then(() => { S._leadsPend = 0; if (S.tab === 'inicio' && !$('.pop-bg')) render(); }); }
+  html += planStrip() + kpiRow();
   const rad = senales();
-  if (rad.length) html += '<div class="rd-sec"><div class="rd-t">' + icon('bolt') + ' Radar <small>cruces entre tus fuentes: clientes, stock, Specialized, clima y agenda</small></div>' + radarHTML(rad.slice(0, 6)) + '</div>';
   html += '<div class="wgrid">';
   // 1. Tareas de hoy (anillo: avance del día contra lo planificado)
   html += '<div class="w" data-w="hoy"><div class="wh">' + icon('check') + 'Tareas de hoy<button class="go" data-go="hoy">Ver</button></div><div class="wring"><div class="rg">' + ringSVG(totalHoy ? hechas.length / totalHoy : 0, 86) + '<b>' + hechas.length + '/' + totalHoy + '<small>hechas</small></b></div>' +
@@ -1613,12 +1729,13 @@ function viewInicio(){
       '<div class="bars" style="height:50px">' + D.map(d => '<i style="height:' + ((+d.alcance || 0) / mx * 100) + '%" data-t="' + esc(fmt(d.fecha)) + ': ' + (+d.alcance || 0) + '"></i>').join('') + '</div><div class="wsub">Alcance diario · 14 días</div>' +
       '<div class="wl" style="margin-top:8px"><div class="it" data-go="redes"><span class="dot" style="background:var(--accent)"></span><div class="tx">' + (sig ? esc(sig.tema) + '<small>' + esc(fmt(sig.fecha)) + ' · ' + esc(sig.formato) + '</small>' : 'Sin contenido planificado<small>Genera tu calendario con el asistente</small>') + '</div></div></div></div>';
   }
-  html += spzW() + noticiasW(4) + avisosW();
   // 9. Progreso (meta semanal, racha, nivel)
   const ind = S.data.indicadores || {}, semana = +ind['Hechas esta semana'] || 0, metaSem = meta * 5;
-  html += '<div class="w"><div class="wh">' + icon('trophy') + 'Tu semana</div><div class="wring"><div class="rg">' + ringSVG(semana / metaSem, 86, 'var(--ok)') + '<b>' + semana + '<small>de ' + metaSem + '</small></b></div>' +
+  void metaSem;
     '<div class="leg"><div data-info="racha"><i style="background:var(--warn)"></i>Racha<b>' + (indicador('Racha') || 0) + ' d</b></div><div data-info="puntos"><i style="background:var(--accent)"></i>Puntos<b>' + (ind['Puntos totales'] || 0) + '</b></div><div data-info="nivel"><i style="background:var(--ok)"></i>Nivel<b>' + esc(ind['Nombre del nivel'] || '–') + '</b></div></div></div></div>';
   html += '</div>';
+  if (rad.length) html += '<div class="rd-sec"><div class="rd-t">' + icon('bolt') + ' Radar <small>cruces entre tus fuentes: clientes, stock, Specialized, clima y agenda</small></div>' + radarHTML(rad.slice(0, 6)) + '</div>';
+  html += zonaExterna();
   $('#view').innerHTML = html;
   bindTasks($('#view'));
   $$('[data-go]').forEach(b => b.onclick = e => { e.stopPropagation(); go(b.dataset.go); });
@@ -1633,6 +1750,9 @@ function viewInicio(){
   const bl = $('#bloqBtn2'); if (bl) bl.onclick = openBloqueo;
   bindAsistente();
   bindCmd($('#view')); bindRadar($('#view'), rad); bindExterno($('#view'));
+  $$('[data-kgo]').forEach(b => b.onclick = () => { if (b.dataset.kgo === 'semana'){ S.per = 'mes'; S.perOff = 0; } go(b.dataset.kgo); });
+  if ($('#psWx')) $('#psWx').onclick = abrirClima;
+  if ($('#extTg')) $('#extTg').onclick = () => { LS.extOff = LS.extOff === '1' ? '0' : '1'; render(); };
   $('#prodBtn').onclick = () => abrirProducto();
   $('#fzBtn').onclick = abrirFuentes;
   // Cada lunes, la primera vez que abres la app, aparece el plan de la semana.
@@ -3853,6 +3973,212 @@ function contextoExterno(){
   return L.join('\n');
 }
 
+/* ---------- Inicio: franja del plan, KPIs con gráficos y zona complementaria ---------- */
+function sparkSVG(v, w, h, color){
+  v = (v || []).map(x => +x || 0); if (v.length < 2) return '';
+  const mx = Math.max(...v), mn = Math.min(...v, 0), r = mx - mn || 1, c = color || 'var(--accent)';
+  const pts = v.map((x, i) => (i / (v.length - 1) * w).toFixed(1) + ' ' + (h - 2 - (x - mn) / r * (h - 4)).toFixed(1));
+  return '<svg class="spk" viewBox="0 0 ' + w + ' ' + h + '" preserveAspectRatio="none" aria-hidden="true"><path d="M' + pts.join(' L') + ' L' + w + ' ' + h + ' L0 ' + h + 'Z" fill="' + c + '" opacity=".12"/><path d="M' + pts.join(' L') + '" fill="none" stroke="' + c + '" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg>';
+}
+function deltaTag(a, b, inverso, sufijo){
+  if (b == null || !isFinite(b)) return '';
+  if (!b) return a ? '<span class="dl up">nuevo</span>' : '';
+  const p = (a - b) / Math.abs(b); if (Math.abs(p) < 0.02) return '<span class="dl">= ' + (sufijo || '') + '</span>';
+  return '<span class="dl ' + ((inverso ? p < 0 : p > 0) ? 'up' : 'down') + '">' + (p > 0 ? '▲' : '▼') + ' ' + Math.round(Math.abs(p) * 100) + '%' + (sufijo ? ' ' + sufijo : '') + '</span>';
+}
+function planStrip(){
+  const pl = cerebroPlan(), c = climaDatos(), d = diaClima(hoy()), cur = c && c.current;
+  const wx = cur && d ? '<button class="ps-wx" id="psWx" title="Clima en Puerto Varas">' + wxIcon(cur.weather_code, 28) + '<b>' + Math.round(cur.temperature_2m) + '°</b><span>' + icon('drop') + d.prob + '%</span></button>' : '';
+  let txt;
+  if (pl){ const H = focoHechos(); txt = '<button class="ps-main" id="plAbrir"><span class="ps-k">' + icon('spark') + 'Plan del agente</span><b>' + esc(pl.titular) + '</b></button><div class="ps-foco">' + (pl.foco || []).slice(0, 3).map((f, i) => '<button class="ps-f' + (H.includes(i) ? ' ok' : '') + '" data-pf="' + i + '" title="' + esc(f) + '"><span>' + (H.includes(i) ? icon('check') : i + 1) + '</span><em>' + esc(f) + '</em></button>').join('') + '</div>'; }
+  else txt = '<div class="ps-main"><span class="ps-k">' + icon('spark') + 'Plan del agente</span><b>' + (extNivel() >= 16 ? (iaDisponible() ? 'Tu plan de hoy aún no está listo' : 'Falta la clave de Claude') : 'Actualiza el script para activarlo') + '</b></div>' + (extNivel() >= 16 && iaDisponible() ? '<button class="btn sm" id="plGen">' + icon('spark') + ' Generar</button>' : extNivel() < 16 ? '<button class="btn sm" id="updBtn2">Actualizar</button>' : '');
+  return '<div class="pstrip">' + txt + wx + '</div>';
+}
+function kpiRow(){
+  const h = hoy(), T = [], hechas = hechasEl(h).length, tot = paraHoy().length + hechas, venc = vencidas().length;
+  T.push({ go: 'hoy', ic: 'check', t: 'Tareas de hoy', v: hechas + '<small>/' + tot + '</small>', sub: venc ? '<span class="dl down">' + venc + ' vencidas</span>' : '<span class="dl up">al día</span>', viz: sparkSVG((S.data.dias || []).slice(-14).map(d => d.completadas), 120, 34, 'var(--ok)'), pie: 'hechas · 14 días' });
+  if (S.neg){
+    const m = metricasNeg(), A = abiertos(), aten = m.an.filter(x => requiereAtencion(x.a)).length, mv = m.meses.map(x => x.v), prev = mv.length > 1 ? mv[mv.length - 2] : null;
+    const et = ETAPAS.map((e, i) => ({ v: A.filter(n => n.etapa === e.k).reduce((s, n) => s + (n.valor || 0), 0), c: SEQ[i] })), tv = et.reduce((s, x) => s + x.v, 0) || 1;
+    T.push({ go: 'negocios', ic: 'chart', t: 'Pipeline abierto', v: clpCorto(m.abiertoV), sub: '<span class="dl">' + A.length + ' abiertas · ' + aten + ' piden atención</span>', viz: '<div class="kp-stack">' + et.map(x => '<i style="flex:' + x.v / tv + ';background:' + x.c + '"></i>').join('') + '</div>', pie: 'por etapa · pronóstico ' + clpCorto(m.ponderado) });
+    T.push({ go: 'negocios', ic: 'trophy', t: 'Ventas del mes', v: clpCorto(m.gMesV), sub: deltaTag(m.gMesV, prev, false, 'vs mes ant.') || '<span class="dl">' + m.gMes.length + ' cerradas</span>', viz: sparkSVG(mv, 120, 34, 'var(--s5)'), pie: 'últimos 6 meses' + (m.tasa != null ? ' · cierre ' + Math.round(m.tasa * 100) + '%' : '') });
+  }
+  if (S.base){
+    const esp = esperanRespuesta().length, st = S.leadsCanal && S.leadsCanal.stats, sem = st && st.nuevas ? Object.keys(st.nuevas).sort().slice(-10) : [];
+    const rk = st && st.respuesta ? Object.keys(st.respuesta).sort() : [], r = rk.length ? st.respuesta[rk[rk.length - 1]] : null;
+    T.push({ go: 'base', ic: 'users', t: 'Clientes', v: esp + '<small> esperan</small>', sub: r ? '<span class="dl ' + (r.mediana <= 60 ? 'up' : 'down') + '">respuesta típica ' + (r.mediana < 60 ? r.mediana + ' min' : Math.round(r.mediana / 60) + ' h') + '</span>' : '<span class="dl">' + contactos().length + ' en la base</span>', viz: sparkSVG(sem.map(k => st.nuevas[k]), 120, 34, 'var(--s4)'), pie: sem.length ? 'conversaciones nuevas por semana' : 'importa tus chats para ver la tendencia' });
+  }
+  if (igActivo() && S.ig){
+    const m = igMetricas(), D = m.D.slice(-14);
+    T.push({ go: 'redes', ic: 'camera', t: 'Instagram', v: m.seg != null ? m.seg.toLocaleString('es-CL') : '–', sub: m.dSeg != null ? '<span class="dl ' + (m.dSeg >= 0 ? 'up' : 'down') + '">' + (m.dSeg >= 0 ? '+' : '') + m.dSeg + ' en 28 días</span>' : '', viz: sparkSVG(D.map(d => d.alcance), 120, 34, '#C13584'), pie: 'alcance diario · 14 días' });
+  }
+  const ind = S.data.indicadores || {}, sem2 = +ind['Hechas esta semana'] || 0, meta = metaDiaria() * 5;
+  T.push({ go: 'semana', ic: 'cal', t: 'Tu semana', v: sem2 + '<small>/' + meta + '</small>', sub: '<span class="dl">racha ' + (indicador('Racha') || 0) + ' d · nivel ' + esc(ind['Nombre del nivel'] || '–') + '</span>', viz: '<div class="kp-bar"><i style="width:' + Math.min(100, sem2 / (meta || 1) * 100) + '%"></i></div>', pie: 'meta semanal' });
+  return '<div class="kpis2">' + T.map(k => '<button class="kp" data-kgo="' + k.go + '"><span class="kp-t">' + icon(k.ic) + k.t + '</span><b class="kp-v">' + k.v + '</b><span class="kp-s">' + (k.sub || '') + '</span><span class="kp-viz">' + (k.viz || '') + '</span><small class="kp-p">' + (k.pie || '') + '</small></button>').join('') + '</div>';
+}
+function zonaExterna(){
+  const off = LS.extOff === '1';
+  return '<div class="extz' + (off ? ' off' : '') + '"><div class="extz-h"><span class="extz-k">' + icon('note') + ' Complementario</span><small>Clima, Specialized, noticias y avisos: información de contexto, no de foco.</small><button class="btn sm sec" id="extTg">' + (off ? 'Mostrar' : 'Ocultar') + '</button></div>' +
+    (off ? '' : '<div class="wgrid">' + climaW().replace('w wx-card', 'w wx-card span2') + spzW() + noticiasW(4) + avisosW() + '</div>') + '</div>';
+}
+
+/* ---------- Calendario: mes y año, con estadísticas de todas las áreas ---------- */
+const MESES_C = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+function rangoPeriodo(tipo, off){
+  const d = new Date(); d.setDate(1);
+  if (tipo === 'anio'){ const y = d.getFullYear() + off; return { ini: y + '-01-01', fin: y + '-12-31', nombre: String(y), y }; }
+  d.setMonth(d.getMonth() + off); const y = d.getFullYear(), m = d.getMonth(), ult = new Date(y, m + 1, 0).getDate();
+  return { ini: iso(new Date(y, m, 1)), fin: iso(new Date(y, m, ult)), nombre: MESES_C[m] + ' ' + y, y, m };
+}
+function porDiaHechas(ini, fin){
+  const out = {}, en = f => f && f >= ini && f <= fin;
+  S.data.tareas.forEach(t => { const f = String(t.cierre || '').slice(0, 10); if (t.hecho && en(f)) out[f] = (out[f] || 0) + 1; });
+  (S.data.dias || []).forEach(d => { if (en(d.fecha)) out[d.fecha] = Math.max(out[d.fecha] || 0, +d.completadas || 0); });
+  return out;
+}
+function statsPeriodo(ini, fin){
+  const en = f => { f = String(f || '').slice(0, 10); return f >= ini && f <= fin; }, sum = (L, f) => L.reduce((s, x) => s + (+f(x) || 0), 0);
+  const pd0 = porDiaHechas(ini, fin), o = { tareas: sum(Object.values(pd0), x => x), porDia: pd0 };
+  if (S.base){
+    const C = contactos(), I = S.base.interacciones || [];
+    o.clientesNuevos = C.filter(c => en(c.creado) && /Cliente|Por clasificar/.test(c.tipo)).length;
+    const rec = I.filter(i => en(i.fecha) && /WhatsApp recibido|Correo recibido/.test(i.tipo)), env = I.filter(i => en(i.fecha) && /WhatsApp enviado|Correo enviado/.test(i.tipo));
+    o.conversaciones = new Set(rec.map(i => i.id)).size; o.recibidos = rec.length; o.enviados = env.length;
+  }
+  const st = S.leadsCanal && S.leadsCanal.stats;
+  if (st){
+    const ks = k => k >= addDays(ini, -6) && k <= fin;
+    o.convNuevas = sum(Object.keys(st.nuevas || {}).filter(ks), k => st.nuevas[k]);
+    const R = Object.keys(st.respuesta || {}).filter(ks).map(k => st.respuesta[k]).filter(r => r && r.n);
+    if (R.length){ const n = sum(R, r => r.n); o.respMin = Math.round(sum(R, r => r.mediana * r.n) / n); o.resp1h = Math.round(sum(R, r => r.en1h * r.n) / n); }
+    o.leadsIG = ((S.leadsCanal.leads) || []).filter(l => l.canal === 'instagram' && en(l.fecha)).length;
+  }
+  if (S.neg){
+    const N = negocios(), gan = N.filter(n => n.estado === 'Ganada' && en(fechaCierre(n))), per = N.filter(n => n.estado === 'Perdida' && en(fechaCierre(n)));
+    o.negNuevas = N.filter(n => en(n.creada)).length; o.ganadas = gan.length; o.perdidas = per.length; o.ventas = sum(gan, n => n.valor);
+    o.tasa = gan.length + per.length ? gan.length / (gan.length + per.length) : null; o.ticket = gan.length ? o.ventas / gan.length : null;
+    const cic = gan.map(n => diffDays(n.creada || fechaCierre(n), fechaCierre(n))).filter(x => x >= 0); o.ciclo = cic.length ? Math.round(sum(cic, x => x) / cic.length) : null;
+    o.gan = gan; o.per = per; o.motivos = {}; per.forEach(n => { const m = String(n.motivo || 'Sin motivo').split(' · ')[0]; o.motivos[m] = (o.motivos[m] || 0) + 1; });
+  }
+  if (S.ig && S.ig.dias){
+    const D = S.ig.dias.filter(d => en(d.fecha)), seg = D.filter(d => d.seguidores !== '' && d.seguidores != null);
+    if (D.length){ o.alcance = sum(D, d => d.alcance); o.igDias = D; if (seg.length > 1) o.segDelta = +seg[seg.length - 1].seguidores - +seg[0].seguidores; }
+    const P = (S.ig.posts || []).filter(p => p.formato !== 'STORY' && en(p.fecha)); o.posts = P.length; o.postsInter = sum(P, p => p.interacciones);
+  }
+  o.publicado = (S.cont || []).filter(x => x.estado === 'Publicado' && en(x.fecha)).length;
+  return o;
+}
+function colChart(items, opt){
+  opt = opt || {}; const mx = Math.max(1, ...items.map(x => +x.v || 0)), f = opt.fmt || (x => x);
+  return '<div class="cch' + (opt.denso ? ' denso' : '') + '" style="--h:' + (opt.h || 120) + 'px">' + items.map(x => '<div class="cc' + (x.on ? ' on' : '') + '" title="' + esc(x.t || x.l) + ': ' + esc(String(f(+x.v || 0))) + '"><span class="cv">' + (opt.valores && +x.v ? f(+x.v) : '') + '</span><i style="height:' + ((+x.v || 0) / mx * 100) + '%;' + (x.c ? 'background:' + x.c : '') + '"></i><small>' + esc(x.l) + '</small></div>').join('') + '</div>';
+}
+async function cargarEventosRango(ini, fin){
+  const k = ini + '_' + fin; S.evR = S.evR || {};
+  if (S.evR[k] || extNivel() < 17 || S['_evp' + k]) return;
+  S['_evp' + k] = 1;
+  try { S.evR[k] = (await apiX('eventos', { desde: ini, hasta: fin })).eventos || []; } catch(e){ S.evR[k] = []; }
+  S['_evp' + k] = 0; if (S.tab === 'semana') render();
+}
+function eventosEn(ini, fin){ const k = ini + '_' + fin; return (S.evR && S.evR[k]) || ((S.google && S.google.eventos) || []).filter(e => e.fecha >= ini && e.fecha <= fin); }
+function perTabs(){ return '<div class="views per-v">' + [['semana', 'Semana'], ['mes', 'Mes'], ['anio', 'Año']].map(v => '<button class="' + ((S.per || 'semana') === v[0] ? 'on' : '') + '" data-per="' + v[0] + '">' + v[1] + '</button>').join('') + '</div>'; }
+function bindPer(){ $$('[data-per]').forEach(b => b.onclick = () => { S.per = b.dataset.per; S.perOff = 0; render(); window.scrollTo(0, 0); }); }
+function kpiCmp(L){ return '<div class="kcmp">' + L.filter(Boolean).map(k => '<div class="kc"><small>' + k.t + '</small><b>' + k.v + '</b>' + (k.d || '') + (k.s ? '<span class="kc-s">' + k.s + '</span>' : '') + '</div>').join('') + '</div>'; }
+function viewPeriodo(){
+  if (!S.perCarga){ S.perCarga = 1; const p = []; if (!S.neg) p.push(loadNeg(false)); if (!S.base) p.push(loadBase(false)); if (extNivel() >= 11 && !S.cont) p.push(loadIG(false)); if (extNivel() >= 13 && !S.leadsCanal) p.push(loadLeads(false)); if (p.length) Promise.all(p.map(x => x && x.catch ? x.catch(() => {}) : x)).then(() => { if (S.tab === 'semana') render(); }); }
+  const tipo = S.per, off = S.perOff || 0, R = rangoPeriodo(tipo, off), P = rangoPeriodo(tipo, off - 1), A = statsPeriodo(R.ini, R.fin), B = statsPeriodo(P.ini, P.fin);
+  cargarEventosRango(R.ini, R.fin);
+  const vs = tipo === 'anio' ? 'vs ' + P.nombre : 'vs ' + MESES_C[P.m].toLowerCase();
+  const minT = m => m == null ? '–' : m < 60 ? m + ' min' : (Math.round(m / 6) / 10) + ' h';
+  let html = perTabs() + '<div class="per-h"><button class="icon-btn" data-off="-1" aria-label="Anterior">‹</button><h3>' + esc(R.nombre) + '</h3><button class="icon-btn" data-off="1" aria-label="Siguiente">›</button>' + (off ? '<button class="btn sm sec" data-off="0">Hoy</button>' : '') + '<span class="per-vs">Comparado ' + esc(vs) + '</span></div>';
+  html += kpiCmp([
+    { t: 'Tareas hechas', v: A.tareas, d: deltaTag(A.tareas, B.tareas) },
+    S.neg && { t: 'Ventas', v: clpCorto(A.ventas), d: deltaTag(A.ventas, B.ventas), s: A.ganadas + ' cerradas' + (A.ticket ? ' · ticket ' + clpCorto(A.ticket) : '') },
+    S.neg && { t: 'Tasa de cierre', v: A.tasa == null ? '–' : Math.round(A.tasa * 100) + '%', d: A.tasa != null && B.tasa != null ? deltaTag(A.tasa, B.tasa) : '', s: A.ganadas + ' ganadas · ' + A.perdidas + ' perdidas' },
+    S.neg && { t: 'Negociaciones nuevas', v: A.negNuevas, d: deltaTag(A.negNuevas, B.negNuevas), s: A.ciclo != null ? 'ciclo de venta ' + A.ciclo + ' d' : '' },
+    S.base && { t: 'Clientes nuevos', v: A.clientesNuevos, d: deltaTag(A.clientesNuevos, B.clientesNuevos) },
+    S.base && { t: 'Conversaciones', v: A.conversaciones, d: deltaTag(A.conversaciones, B.conversaciones), s: A.recibidos + ' mensajes recibidos · ' + A.enviados + ' enviados' },
+    A.respMin != null && { t: 'Respuesta típica', v: minT(A.respMin), d: B.respMin != null ? deltaTag(A.respMin, B.respMin, true) : '', s: A.resp1h + '% respondidas en menos de 1 h' },
+    A.alcance != null && { t: 'Instagram', v: A.segDelta != null ? (A.segDelta >= 0 ? '+' : '') + A.segDelta : (A.alcance || 0).toLocaleString('es-CL'), d: deltaTag(A.alcance, B.alcance, false, 'alcance'), s: A.segDelta != null ? 'seguidores · alcance ' + (A.alcance || 0).toLocaleString('es-CL') : 'alcance' },
+    (A.posts != null || A.publicado) && { t: 'Publicaciones', v: A.posts != null ? A.posts : A.publicado, d: deltaTag(A.posts != null ? A.posts : A.publicado, B.posts != null ? B.posts : B.publicado), s: (A.leadsIG ? A.leadsIG + ' clientes desde Instagram' : '') }
+  ]);
+  if (tipo === 'mes') html += mesHTML(R, A); else html += anioHTML(R, A);
+  $('#view').innerHTML = html; bindPer(); bindTasks($('#view'));
+  $$('[data-off]').forEach(b => b.onclick = () => { S.perOff = +b.dataset.off === 0 ? 0 : (S.perOff || 0) + +b.dataset.off; render(); });
+  $$('[data-dia]').forEach(b => b.onclick = () => abrirDia(b.dataset.dia));
+  $$('[data-mesir]').forEach(b => b.onclick = () => { const [y, m] = b.dataset.mesir.split('-').map(Number), d = new Date(); S.per = 'mes'; S.perOff = (y - d.getFullYear()) * 12 + (m - 1 - d.getMonth()); render(); window.scrollTo(0, 0); });
+}
+function marcasDia(f){
+  const ev = eventosEn(f.slice(0, 8) + '01', f.slice(0, 8) + '31').filter(e => e.fecha <= f && (e.fechaFin || e.fecha) >= f);
+  const vence = S.data.tareas.filter(t => !t.hecho && t.limite === f), hechas = S.data.tareas.filter(t => t.hecho && String(t.cierre || '').slice(0, 10) === f);
+  const gan = S.neg ? negocios().filter(n => n.estado === 'Ganada' && fechaCierre(n) === f) : [], posts = (S.cont || []).filter(x => x.fecha === f && x.estado !== 'Descartado');
+  const av = avisos().filter(a => a.fecha === f), wx = diaClima(f);
+  return { ev, vence, hechas, gan, posts, av, wx };
+}
+function mesHTML(R, A){
+  const h = hoy(), d0 = pd(R.ini), pad = (d0.getDay() + 6) % 7, nd = +R.fin.slice(8, 10), mx = Math.max(1, ...Object.values(A.porDia));
+  let cal = '<div class="mcal"><div class="mcal-w">' + ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'].map(x => '<span>' + x + '</span>').join('') + '</div><div class="mcal-g">';
+  for (let i = 0; i < pad; i++) cal += '<span class="mc vac"></span>';
+  for (let i = 1; i <= nd; i++){
+    const f = R.ini.slice(0, 8) + String(i).padStart(2, '0'), M = marcasDia(f), n = A.porDia[f] || 0, ven = f < h && M.vence.length;
+    cal += '<button class="mc' + (f === h ? ' hoy' : '') + (f < h ? ' pas' : '') + '" data-dia="' + f + '" style="--hx:' + (n / mx).toFixed(2) + '"><span class="mc-n">' + i + (M.wx ? '<em>' + wxIcon(M.wx.code, 16) + '</em>' : '') + '</span>' +
+      M.ev.slice(0, 2).map(e => '<span class="mc-e" style="--c:' + esc(e.color || 'var(--s4)') + '">' + esc((e.inicio ? e.inicio + ' ' : '') + e.titulo) + '</span>').join('') + (M.ev.length > 2 ? '<span class="mc-m">+' + (M.ev.length - 2) + ' eventos</span>' : '') +
+      '<span class="mc-d">' + (M.vence.length ? '<i class="' + (ven ? 'bad' : 'tk') + '" title="Tareas con fecha">' + icon('check') + M.vence.length + '</i>' : '') + (n ? '<i class="ok" title="Tareas hechas">' + n + '✓</i>' : '') + (M.gan.length ? '<i class="gan" title="Ventas">$' + M.gan.length + '</i>' : '') + (M.posts.length ? '<i class="ig" title="Publicaciones">' + icon('camera') + M.posts.length + '</i>' : '') + (M.av.length ? '<i class="av" title="Avisos">' + icon('flag') + '</i>' : '') + '</span></button>';
+  }
+  cal += '</div><div class="mcal-l"><span><i class="ok"></i>Tareas hechas (más oscuro = más)</span><span><i class="tk"></i>Tareas con fecha</span><span><i class="gan"></i>Ventas</span><span><i class="ig"></i>Publicaciones</span><span><i class="ev"></i>Eventos</span>' + (extNivel() < 17 ? '<span class="wsub" style="margin:0">Los eventos pasados del calendario aparecen con la versión nueva del script.</span>' : '') + '</div></div>';
+  const dias = []; for (let i = 1; i <= nd; i++){ const f = R.ini.slice(0, 8) + String(i).padStart(2, '0'); dias.push({ l: String(i), v: A.porDia[f] || 0, on: f === h, t: fmt(f) }); }
+  let g = '<div class="wgrid per-g"><div class="w span2"><div class="wh">' + icon('check') + 'Tareas completadas por día</div>' + colChart(dias, { h: 110, denso: true }) + '</div>';
+  if (S.neg){
+    const sem = {}; (A.gan || []).forEach(n => { const k = Math.ceil(+fechaCierre(n).slice(8, 10) / 7); sem[k] = (sem[k] || 0) + (n.valor || 0); });
+    const mot = Object.entries(A.motivos || {}).sort((a, b) => b[1] - a[1]);
+    g += '<div class="w"><div class="wh">' + icon('trophy') + 'Ventas del mes</div><div class="wbig">' + clpCorto(A.ventas || 0) + '</div><div class="wsub">' + (A.ganadas || 0) + ' cerradas' + (A.ticket ? ' · ticket ' + clpCorto(A.ticket) : '') + '</div>' + colChart([1, 2, 3, 4, 5].map(k => ({ l: 'S' + k, v: sem[k] || 0, t: 'Semana ' + k })), { h: 80, fmt: clpCorto, valores: true }) +
+      ((A.gan || []).length ? '<div class="wl" style="margin-top:6px">' + A.gan.slice(0, 4).map(n => '<div class="it"><span class="dot" style="background:var(--ok)"></span><div class="tx">' + esc(n.titulo) + '<small>' + esc(fmt(fechaCierre(n))) + '</small></div><span class="rt">' + clpCorto(n.valor || 0) + '</span></div>').join('') + '</div>' : '') + '</div>';
+    g += '<div class="w"><div class="wh">' + icon('deal') + 'Negociaciones</div><div class="fun2">' + [['Nuevas', A.negNuevas, 'var(--s3)'], ['Ganadas', A.ganadas, 'var(--ok)'], ['Perdidas', A.perdidas, 'var(--bad)']].map(x => '<div><span>' + x[0] + '</span><i style="width:' + (x[1] / Math.max(1, A.negNuevas, A.ganadas, A.perdidas) * 100) + '%;background:' + x[2] + '"></i><b>' + (x[1] || 0) + '</b></div>').join('') + '</div>' +
+      (mot.length ? '<div class="lab2" style="margin-top:12px">Por qué se perdieron</div>' + mot.slice(0, 4).map(m => '<div class="wsub" style="margin:2px 0">' + esc(m[0]) + ' · <b>' + m[1] + '</b></div>').join('') : '') + (A.ciclo != null ? '<div class="wsub" style="margin-top:10px">Ciclo de venta promedio: <b>' + A.ciclo + ' días</b></div>' : '') + '</div>';
+  }
+  if (S.base){
+    const I = (S.base.interacciones || []).filter(i => String(i.fecha).slice(0, 10) >= R.ini && String(i.fecha).slice(0, 10) <= R.fin && /WhatsApp recibido|Correo recibido/.test(i.tipo)), sem = {};
+    I.forEach(i => { const k = Math.ceil(+String(i.fecha).slice(8, 10) / 7); (sem[k] = sem[k] || new Set()).add(i.id); });
+    g += '<div class="w"><div class="wh">' + icon('users') + 'Clientes</div><div class="wbig">' + (A.conversaciones || 0) + ' <span style="font-size:13px;color:var(--muted);font-weight:600">conversaciones</span></div><div class="wsub">' + (A.clientesNuevos || 0) + ' clientes nuevos' + (A.respMin != null ? ' · respuesta típica ' + (A.respMin < 60 ? A.respMin + ' min' : Math.round(A.respMin / 60) + ' h') : '') + '</div>' + colChart([1, 2, 3, 4, 5].map(k => ({ l: 'S' + k, v: sem[k] ? sem[k].size : 0, t: 'Semana ' + k })), { h: 80, valores: true }) + '</div>';
+  }
+  if (A.igDias && A.igDias.length) g += '<div class="w span2"><div class="wh">' + icon('camera') + 'Instagram · alcance diario</div>' + colChart(A.igDias.map(d => ({ l: String(+d.fecha.slice(8, 10)), v: +d.alcance || 0, t: fmt(d.fecha), c: '#C13584' })), { h: 100, denso: true, fmt: x => x.toLocaleString('es-CL') }) + '<div class="wsub">' + (A.posts || 0) + ' publicaciones' + (A.segDelta != null ? ' · ' + (A.segDelta >= 0 ? '+' : '') + A.segDelta + ' seguidores' : '') + (A.leadsIG ? ' · ' + A.leadsIG + ' clientes desde Instagram' : '') + '</div></div>';
+  return cal + g + '</div>';
+}
+function anioHTML(R, A){
+  const h = hoy(), meses = MESES.map((n, i) => { const ini = R.y + '-' + String(i + 1).padStart(2, '0') + '-01', fin = iso(new Date(R.y, i + 1, 0)); return { n, i, ini, fin, s: ini <= h ? statsPeriodo(ini, fin) : null, on: h.slice(0, 7) === ini.slice(0, 7) }; });
+  const ch = (t, ic, f, opt) => '<div class="w' + (opt && opt.ancho ? ' span2' : '') + '"><div class="wh">' + icon(ic) + t + '</div>' + colChart(meses.map(m => ({ l: m.n, v: m.s ? f(m.s) || 0 : 0, on: m.on, t: MESES_C[m.i], c: opt && opt.c })), Object.assign({ h: 110, valores: true }, opt || {})) + '</div>';
+  let g = '<div class="wgrid per-g">';
+  // Mapa de calor del año: tareas hechas por día
+  const pdA = A.porDia, mx = Math.max(1, ...Object.values(pdA)), ini = pd(R.ini), off0 = (ini.getDay() + 6) % 7;
+  let heat = '<div class="yh">'; for (let i = 0; i < off0; i++) heat += '<i class="vac"></i>';
+  for (let d = new Date(ini); d.getFullYear() === R.y; d.setDate(d.getDate() + 1)){ const f = iso(d), n = pdA[f] || 0; heat += '<i data-dia="' + f + '" class="' + (f > h ? 'fut' : '') + (f === h ? ' hoy' : '') + '" style="--hx:' + (n ? (0.25 + 0.75 * n / mx).toFixed(2) : 0) + '" title="' + esc(fmt(f)) + ': ' + n + ' tareas"></i>'; }
+  heat += '</div><div class="yh-m">' + MESES.map(m => '<span>' + m + '</span>').join('') + '</div>';
+  g += '<div class="w span2 yh-w"><div class="wh">' + icon('check') + 'Tareas hechas · ' + R.y + '<span class="r wsub" style="margin:0">' + A.tareas + ' en el año</span></div>' + heat + '</div>';
+  if (S.neg) g += ch('Ventas por mes', 'trophy', s => s.ventas, { fmt: clpCorto, c: 'var(--s5)' });
+  if (S.neg) g += '<div class="w"><div class="wh">' + icon('deal') + 'Negociaciones ganadas y perdidas</div><div class="cch" style="--h:110px">' + meses.map(m => { const s = m.s || {}, mx2 = Math.max(1, ...meses.map(x => x.s ? (x.s.ganadas || 0) + (x.s.perdidas || 0) : 0)); return '<div class="cc' + (m.on ? ' on' : '') + '" title="' + MESES_C[m.i] + ': ' + (s.ganadas || 0) + ' ganadas, ' + (s.perdidas || 0) + ' perdidas"><span class="cv">' + ((s.ganadas || 0) + (s.perdidas || 0) || '') + '</span><span class="stk" style="height:' + ((s.ganadas || 0) + (s.perdidas || 0)) / mx2 * 100 + '%"><i style="flex:' + (s.perdidas || 0) + ';background:var(--bad)"></i><i style="flex:' + (s.ganadas || 0) + ';background:var(--ok)"></i></span><small>' + m.n + '</small></div>'; }).join('') + '</div><div class="wsub">Verde ganadas, rojo perdidas · tasa de cierre del año ' + (A.tasa != null ? Math.round(A.tasa * 100) + '%' : '–') + '</div></div>';
+  if (S.base) g += ch('Clientes nuevos', 'users', s => s.clientesNuevos, { c: 'var(--s3)' }) + ch('Conversaciones de clientes', 'note', s => s.conversaciones, { c: 'var(--s4)' });
+  if (A.respMin != null) g += ch('Respuesta típica (minutos)', 'clock', s => s.respMin, { c: 'var(--warn)' });
+  if (S.ig) g += ch('Instagram · alcance', 'camera', s => s.alcance, { fmt: x => x >= 1000 ? Math.round(x / 100) / 10 + ' k' : x, c: '#C13584' }) + ch('Publicaciones', 'camera', s => s.posts != null ? s.posts : s.publicado, { c: '#E1306C' });
+  g += '<div class="w span2"><div class="wh">' + icon('cal') + 'Meses</div><div class="ym">' + meses.map(m => '<button class="ymc' + (m.on ? ' on' : '') + (m.s ? '' : ' fut') + '" data-mesir="' + R.y + '-' + (m.i + 1) + '"><b>' + MESES_C[m.i] + '</b>' + (m.s ? '<span>' + (m.s.tareas || 0) + ' tareas' + (S.neg ? ' · ' + clpCorto(m.s.ventas || 0) : '') + '</span>' : '<span>—</span>') + '</button>').join('') + '</div></div>';
+  return g + '</div>';
+}
+function abrirDia(f){
+  const M = marcasDia(f), sec = (t, L) => L ? '<div class="lab2" style="margin-top:12px">' + t + '</div>' + L : '';
+  let html = (M.wx ? '<div class="wx-tip" style="margin-top:0">' + wxIcon(M.wx.code, 22) + '<span>' + esc(WX_TXT[M.wx.code] || '') + ' · ' + Math.round(M.wx.min) + '–' + Math.round(M.wx.max) + '° · lluvia ' + M.wx.prob + '%</span></div>' : '') +
+    sec('Eventos', M.ev.length ? '<div class="wl">' + M.ev.map(e => '<div class="it"><span class="dot" style="background:' + esc(e.color || 'var(--s4)') + '"></span><div class="tx">' + esc(e.titulo) + '<small>' + (e.todoElDia ? 'Todo el día' : esc(e.inicio + '–' + e.fin)) + (e.lugar ? ' · ' + esc(e.lugar) : '') + '</small></div></div>').join('') + '</div>' : '') +
+    sec('Avisos', M.av.length ? '<div class="av-list sm">' + M.av.map(avisoHTML).join('') + '</div>' : '') +
+    sec('Tareas con esta fecha', M.vence.length ? M.vence.map(t => taskHTML(t, { compact: true })).join('') : '') +
+    sec('Tareas hechas', M.hechas.length ? M.hechas.map(t => taskHTML(t, { compact: true })).join('') : '') +
+    sec('Ventas cerradas', M.gan.length ? '<div class="wl">' + M.gan.map(n => '<div class="it" data-neg="' + esc(n.id) + '"><span class="dot" style="background:var(--ok)"></span><div class="tx">' + esc(n.titulo) + '</div><span class="rt">' + clpCorto(n.valor || 0) + '</span></div>').join('') + '</div>' : '') +
+    sec('Contenido', M.posts.length ? '<div class="wl">' + M.posts.map(x => '<div class="it" data-ct="' + esc(x.id) + '"><span class="dot" style="background:#C13584"></span><div class="tx">' + esc(x.formato + ' · ' + x.tema) + '<small>' + esc(x.estado) + '</small></div></div>').join('') + '</div>' : '');
+  if (!html) html = '<div class="empty">Nada registrado este día.</div>';
+  html += '<div class="btns"><button class="btn sec" id="dTk">' + icon('plus') + ' Tarea para este día</button></div>';
+  const md = modal(icon('cal') + ' ' + esc(fmtLong(f)), html, { wide: true });
+  bindTasks(md.el);
+  md.el.querySelector('#dTk').onclick = () => { md.cerrar(); openAdd({ limite: f }); };
+  md.el.querySelectorAll('[data-neg]').forEach(b => b.onclick = () => { md.cerrar(); openDeal(negocios().find(n => n.id === b.dataset.neg)); });
+  md.el.querySelectorAll('[data-ct]').forEach(b => b.onclick = () => { md.cerrar(); openIdea((S.cont || []).find(x => x.id === b.dataset.ct)); });
+}
+
 /* ---------- vista: Negocios (pipeline de ventas estilo CRM) ---------- */
 // Etapas del embudo: probabilidad base de cierre y días normales sin movimiento antes de considerarla estancada.
 const ETAPAS = [
@@ -4924,14 +5250,14 @@ function viewHoy(){
   const sug = typeof sugerenciasTareas === 'function' ? sugerenciasTareas().length : 0;
   const radH = senales().slice(0, 4), avH = avisos().filter(a => !a.fecha || a.fecha <= addDays(h, 7)).slice(0, 3);
   let der = (radH.length ? '<div class="sec"><div class="sh">' + icon('bolt') + ' Radar<span class="r"><button class="btn sm sec" id="hRad">Ver todo</button></span></div>' + radarHTML(radH, true) + '</div>' : '') +
-    (avH.length ? '<div class="sec"><div class="sh">' + icon('flag') + ' Avisos de la tienda<span class="r"><button class="btn sm sec" id="avNew">＋</button></span></div><div class="av-list sm">' + avH.map(avisoHTML).join('') + '</div></div>' : '');
+    (avH.length ? '<div class="sec ext"><div class="sh">' + icon('flag') + ' Avisos de la tienda<span class="r"><button class="btn sm sec" id="avNew">＋</button></span></div><div class="av-list sm">' + avH.map(avisoHTML).join('') + '</div></div>' : '');
   der += '<div class="sec"><div class="sh">' + icon('cal') + ' Agenda de hoy<span class="r"><button class="btn sm sec" id="bloqH">＋ Evento</button></span></div>' + (D.ev.length ? '<div class="tl2">' + D.ev.map(e => '<div class="ev2 ' + (!e.todoElDia && e.inicio <= ahora && e.fin > ahora ? 'now' : '') + '"><b>' + esc(e.titulo) + '</b><small>' + (e.todoElDia ? 'Todo el día' : esc(e.inicio) + '–' + esc(e.fin)) + (e.lugar ? ' · ' + esc(e.lugar) : '') + '</small></div>').join('') + '</div>' : '<div class="wsub" style="padding:4px 0 8px">Sin eventos en el calendario.</div>') + '</div>';
   der += '<div class="sec hy-agent"><div class="sh">' + icon('spark') + ' Asistente</div>' +
     '<button class="hy-link" id="hSug"><b>' + sug + '</b><span>' + (sug === 1 ? 'tarea sugerida' : 'tareas sugeridas') + ' por revisar</span>' + icon('arrow') + '</button>' +
     (D.cont.length ? D.cont.map(x => '<button class="hy-link" data-hct="' + esc(x.id) + '">' + icon('camera') + '<span>Hoy publicas: ' + esc(x.formato + ' · ' + x.tema) + '</span>' + icon('arrow') + '</button>').join('') : '') +
     '<button class="hy-link" id="hMan">' + icon('clock') + '<span>Mañana: ' + tM.length + (tM.length === 1 ? ' tarea' : ' tareas') + (evM.length ? ' · ' + evM.length + (evM.length === 1 ? ' evento' : ' eventos') : '') + '</span>' + icon('arrow') + '</button>' +
     '<div class="wsub" style="padding:6px 0 4px">«Planificar con IA» arma tu día con horarios mirando tareas, negociaciones, chats y agenda.</div></div>';
-  der += noticias().length ? '<div class="sec nt-w"><div class="sh">' + icon('note') + ' Noticias<span class="r"><button class="btn sm sec" id="ntAll">Más</button></span></div>' + noticias().slice(0, 3).map(noticiaHTML).join('') + '</div>' : '';
+  der += noticias().length ? '<div class="sec nt-w ext"><div class="sh">' + icon('note') + ' Noticias<span class="r"><button class="btn sm sec" id="ntAll">Más</button></span></div>' + noticias().slice(0, 3).map(noticiaHTML).join('') + '</div>' : '';
   html += '<div class="cols2"><div>' + izq + '</div><div>' + der + '</div></div>';
   $('#view').innerHTML = html; bindTasks($('#view'));
   bindPlanHero($('#view')); bindRadar($('#view'), radH); bindExterno($('#view'));
@@ -5404,7 +5730,7 @@ function viewSemana(){
   const ganadas = S.neg ? negocios().filter(n => n.estado === 'Ganada' && fechaCierre(n) >= s.semanaDel) : [];
   const dias = (S.data.dias || []).filter(d => d.fecha >= s.semanaDel).slice(0, 7), meta = metaDiaria(), maxD = Math.max(meta, 1, ...dias.map(d => d.completadas || 0));
   const paso = S.sPaso || 1;
-  let html = '<div class="kstrip"><div class="ks1"><div><b>' + s.hechas + '</b><small>tareas hechas</small></div></div><div class="ks1"><div><b>' + s.puntos + '</b><small>puntos</small></div></div>' +
+  let html = (S.tab === 'semana' ? perTabs() : '') + '<div class="kstrip"><div class="ks1"><div><b>' + s.hechas + '</b><small>tareas hechas</small></div></div><div class="ks1"><div><b>' + s.puntos + '</b><small>puntos</small></div></div>' +
     '<div class="ks1"><div><b>' + (ganadas.length ? clpCorto(ganadas.reduce((x, n) => x + (n.valor || 0), 0)) : '0') + '</b><small>ventas ganadas (' + ganadas.length + ')</small></div></div><div class="ks1"><div><b style="color:' + (vencidas().length ? 'var(--bad-ink)' : 'inherit') + '">' + vencidas().length + '</b><small>tareas vencidas</small></div></div></div>';
   html += '<div class="ihead"><div class="views" style="margin:0;display:flex;flex:1 1 300px">' + [[1, '1 · Revisa'], [2, '2 · Pon al día'], [3, '3 · Planifica']].map(x => '<button class="' + (paso === x[0] ? 'on' : '') + '" data-paso="' + x[0] + '" style="flex:1">' + x[1] + '</button>').join('') + '</div><button class="btn" id="aiSem">' + icon('spark') + ' Revisión con IA</button></div>';
   let cuerpo = '';
@@ -5424,7 +5750,7 @@ function viewSemana(){
     cuerpo += '<div class="sec"><div class="sh">Prioridades de la próxima semana</div><div class="hint" style="margin-top:0">Escribe 3 objetivos concretos (ej.: cerrar la venta de Juan, publicar el reel de la Levo). Usa «Revisión con IA» si quieres sugerencias.</div><textarea class="note" id="sm_prio" style="min-height:110px">' + esc(actual ? actual.prioridades : '') + '</textarea><div class="btns"><button class="btn sec" data-paso="2">← Atrás</button><button class="btn" id="sm_ok3">Guardar y terminar</button></div></div>';
   }
   html += cuerpo;
-  $('#view').innerHTML = html; bindTasks($('#view'));
+  $('#view').innerHTML = html; bindTasks($('#view')); bindPer();
   $$('[data-paso]').forEach(b => b.onclick = async () => { await guardarSemana(actual, true); S.sPaso = +b.dataset.paso; viewSemana(); window.scrollTo(0, 0); });
   $('#aiSem').onclick = () => revisionIA(actual);
   $$('#view [data-neg]').forEach(b => b.onclick = () => { const n = negocios().find(x => x.id === b.dataset.neg); if (n) openProximo(n); });

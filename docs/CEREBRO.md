@@ -66,3 +66,18 @@ En Inicio → **Fuentes**, pega el link de cualquier Google Sheet tuyo: metas, p
 - El Copiloto usa el mismo modelo que el agente (`AGENTE_MODELO`, por defecto el económico).
 - Si quieres un Copiloto más fino, agrega la propiedad `COPILOTO_MODELO` con otro modelo, por ejemplo `claude-sonnet-5-5`.
 - Con el modelo económico, cada pregunta y cada plan diario cuesta una fracción de centavo de dólar.
+
+## Inicio y Calendario
+
+- **Inicio**, de arriba hacia abajo:
+  1. Una franja corta con el plan del agente y el clima.
+  2. Los KPI con minigráficos: tareas, pipeline, ventas del mes, clientes, Instagram y semana.
+  3. Los paneles de cada área.
+  4. El Radar.
+  5. Al final, la zona **Complementario** (clima, Specialized, noticias y avisos), con otro fondo. Se oculta con un toque cuando quieres foco.
+- **Calendario** (antes "Semana") tiene tres vistas:
+  - **Semana**: la revisión semanal de siempre.
+  - **Mes**: calendario con eventos, tareas, ventas, publicaciones y clima. Toca un día para ver el detalle.
+  - **Año**: mapa de calor de tareas y gráficos por mes.
+
+  Mes y Año comparan con el período anterior: tareas, ventas, tasa de cierre, negociaciones, clientes nuevos, conversaciones, tiempo de respuesta, Instagram y publicaciones.

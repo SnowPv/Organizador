@@ -15,8 +15,8 @@
  * Para actualizar este archivo más adelante: reemplaza todo su contenido y repite los dos pasos anteriores.
  */
 
-const EX_VERSION = '2026-11-03';
-const EX_NIVEL = 16;      // la app lo usa para saber qué funciones tiene este script
+const EX_VERSION = '2026-11-04';
+const EX_NIVEL = 17;      // la app lo usa para saber qué funciones tiene este script
 const EX_HOJA = 'Tareas';
 const EX_PRIMERA = 4;
 const EX_ULTIMA = 400;
@@ -143,6 +143,7 @@ function app_extra_(p) {
     case 'copiloto':   return ex_copiloto_(p);
     case 'cerebro':    return ex_cerebro_(p);
     case 'global':     return ex_contextoGlobal_(p);
+    case 'eventos':    return { ok: true, eventos: int_eventosRango_(ex_tz_(), String(p.desde || ''), String(p.hasta || '')) };
     default:           return { ok: false, error: 'op desconocida: ' + p.op };
   }
 }
@@ -2850,6 +2851,24 @@ function int_eventos_(tz) {
   });
   eventos.sort(function (a, b) { return (a.fecha + (a.inicio || '00:00')).localeCompare(b.fecha + (b.inicio || '00:00')); });
   return eventos.slice(0, 80);
+}
+
+// Eventos entre dos fechas (yyyy-MM-dd), para el calendario del mes y del año. Máximo 400 días.
+function int_eventosRango_(tz, desde, hasta) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(desde) || !/^\d{4}-\d{2}-\d{2}$/.test(hasta)) throw new Error('fechas inválidas');
+  const ini = ex_aFecha_(desde, tz), fin = new Date(Math.min(ex_aFecha_(hasta, tz).getTime() + 86400000, ini.getTime() + 400 * 86400000));
+  const propio = PropertiesService.getScriptProperties().getProperty('EX_CAL_ID'), out = [];
+  CalendarApp.getAllCalendars().forEach(function (cal) {
+    const id = cal.getId();
+    if (id === propio || cal.isHidden() || /#holiday@|#contacts@|addressbook#/.test(id)) return;
+    cal.getEvents(ini, fin).forEach(function (e) {
+      try { if (e.getMyStatus() === CalendarApp.GuestStatus.NO) return; } catch (x) {}
+      const td = e.isAllDayEvent(), a = e.getStartTime(), b = e.getEndTime();
+      out.push({ titulo: e.getTitle() || '(sin título)', fecha: Utilities.formatDate(a, tz, 'yyyy-MM-dd'), fechaFin: Utilities.formatDate(new Date(b.getTime() - (td ? 1 : 0)), tz, 'yyyy-MM-dd'), inicio: td ? '' : Utilities.formatDate(a, tz, 'HH:mm'), fin: td ? '' : Utilities.formatDate(b, tz, 'HH:mm'), todoElDia: td, lugar: e.getLocation() || '', calendario: cal.getName(), color: cal.getColor() || '' });
+    });
+  });
+  out.sort(function (x, y) { return (x.fecha + (x.inicio || '00:00')).localeCompare(y.fecha + (y.inicio || '00:00')); });
+  return out.slice(0, 1500);
 }
 
 function int_correos_(tz) {
