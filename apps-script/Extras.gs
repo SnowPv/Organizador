@@ -2229,14 +2229,19 @@ function ex_spzBuscar_(q, max) {
   }
   const tk = qq.replace(/\b\d{5}-\d{2,6}\b/, '').split(/[^a-z0-9]+/).filter(function (w) { return w.length >= 2; });
   // Cada palabra pesa según qué tan rara es en el catálogo: "kenevo" pesa mucho más que "comp" o "sl".
-  const textos = C.map(function (x) { return ' ' + ex_norm_(x.nombre + ' ' + x.familia + ' ' + x.disciplina + ' ' + x.categoria + ' ' + x.tallas).replace(/[^a-z0-9]+/g, ' ') + ' '; });
+  // Specialized no escribe "Carbon" en los modelos de carbono (solo "Alloy" en los de aluminio): se agrega para poder buscarlo.
+  const textos = C.map(function (x) { const t = ex_norm_(x.nombre + ' ' + x.familia + ' ' + x.disciplina + ' ' + x.categoria + ' ' + x.anio + ' ' + x.tallas); return ' ' + (t + (/alloy|aluminio/.test(t) ? ' aluminio' : ' carbon carbono')).replace(/[^a-z0-9]+/g, ' ') + ' '; });
   const peso = {}; tk.forEach(function (w) { const df = textos.filter(function (t) { return t.indexOf(' ' + w) >= 0; }).length; peso[w] = df ? Math.log(1 + C.length / df) : 0; });
   const total = tk.reduce(function (s, w) { return s + peso[w]; }, 0);
-  return C.map(function (x, i) {
+  const puntaje = function (min) { return C.map(function (x, i) {
     if (ids && ids.indexOf(x.id) >= 0) return { x: x, p: 100 };
     const p = tk.reduce(function (s, w) { return s + (textos[i].indexOf(' ' + w) >= 0 ? peso[w] : 0); }, 0);
-    return { x: x, p: total && p >= total * 0.7 ? p + (x.disciplina === 'E-bikes' ? 0.3 : 0) - x.nombre.length / 1000 : 0 };
-  }).filter(function (o) { return o.p > 0; }).sort(function (a, b) { return b.p - a.p; }).slice(0, max || 10).map(function (o) { return o.x; });
+    // Palabras del modelo que no pediste (ej. "EVO", "SL", "Alloy") bajan el puntaje: así gana el modelo exacto.
+    const extra = ex_norm_(x.nombre).split(/[^a-z0-9]+/).filter(function (w) { return w.length >= 2 && tk.indexOf(w) < 0 && !/^(turbo|specialized|carbon)$/.test(w) && !/^\d+$/.test(w); }).length;
+    return { x: x, p: total && p >= total * min ? p + (x.disciplina === 'E-bikes' ? 0.3 : 0) - extra * 0.4 - x.nombre.length / 1000 : 0 };
+  }).filter(function (o) { return o.p > 0; }); };
+  let res = puntaje(0.7); if (!res.length) res = puntaje(0.5);
+  return res.sort(function (a, b) { return b.p - a.p; }).slice(0, max || 10).map(function (o) { return o.x; });
 }
 function ex_spzTallas_(id) {
   const sh = SpreadsheetApp.getActive().getSheetByName(EX_HOJA_SPZS); if (!sh || sh.getLastRow() < 2) return [];
@@ -2488,7 +2493,7 @@ function ex_interesados_(texto, max) {
 const EX_COP_SISTEMA = [
   'Eres el Copiloto de Blackline Puerto Varas, tienda Specialized en Puerto Varas, Chile (lluvioso; temporada alta de primavera a verano; muchos turistas argentinos en verano). Su fuerte son las e-bikes (Turbo Levo, Levo SL, Kenevo, Vado, Como, Creo) y también venden MTB, ruta, gravel, urbano, niños, ropa, accesorios y taller. Han vendido S-Works en todas las disciplinas. Hablas con Gonzalo, el encargado: psicólogo laboral, vendedor experto, muy analítico. Tutéalo, en español de Chile, directo y concreto.',
   'Tu trabajo: responder rápido y bien usando las herramientas. Consulta los datos antes de afirmar algo (stock, precios, clientes, negociaciones, clima). Cruza fuentes: por ejemplo, si preguntan por un producto mira la web de Specialized (precio, oferta, stock por talla en Chile), el stock de la tienda (Bsale) y qué clientes lo quieren. Si una herramienta no tiene datos (por ejemplo Bsale aún no conectado), dilo en una frase y sigue con lo que sí hay.',
-  'Reglas: nunca inventes precios, stock ni datos de clientes. El stock de Specialized es el de su bodega en Chile según la web (sirve para saber si se puede pedir); el de Bsale es el de la tienda. No puedes comprar, pedir, enviar mensajes ni modificar nada por tu cuenta: cuando convenga actuar, usa proponer_accion (tareas, avisos, abrir chat de WhatsApp con un borrador, crear negociación, diseñar una pieza, idea de contenido, abrir ficha de producto) y Gonzalo decide con un toque.',
+  'Specialized: los modelos sin «Alloy» en el nombre son de carbono (ej.: «Turbo Levo 4 Comp» es la Comp Carbon). Para stock por color y talla usa buscar_producto y, si vas a prometer algo, confírmalo con ficha_specialized_en_vivo; responde con una lista por color y talla. Reglas: nunca inventes precios, stock ni datos de clientes. El stock de Specialized es el de su bodega en Chile según la web (sirve para saber si se puede pedir); el de Bsale es el de la tienda. No puedes comprar, pedir, enviar mensajes ni modificar nada por tu cuenta: cuando convenga actuar, usa proponer_accion (tareas, avisos, abrir chat de WhatsApp con un borrador, crear negociación, diseñar una pieza, idea de contenido, abrir ficha de producto) y Gonzalo decide con un toque.',
   'Formato de la respuesta: breve y escaneable. Empieza con la respuesta directa en 1–2 frases. Luego, si sirve, viñetas cortas con datos concretos (precio, tallas, stock, fechas). Usa **negrita** solo para lo clave. Sin títulos grandes ni tablas. Para borradores de mensajes a clientes, escríbelos listos para copiar, cálidos y cortos, con emojis moderados.'
 ].join('\n\n');
 const EX_COP_TOOLS = [
