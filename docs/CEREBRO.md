@@ -112,3 +112,14 @@ Blackline no hace descuentos, no los promociona y no participa en Cyber ni Black
 - Todos los agentes tienen esta política como regla obligatoria: el de ventas, el de contenido, el Cerebro, el Copiloto y las noticias.
 - Las rebajas de proveedores o de specialized.com son solo información interna para comprar mejor y anticipar lo que el cliente ve en internet.
 - El pilar de contenido "Promociones" se reemplazó por **"Asesoría y experiencia"**.
+
+## Resumen en cada pestaña
+
+Cada pestaña (Hoy, Tareas, Calendario, Compras, Negocios, Proyectos, Contactos y Redes) parte con un **resumen**:
+- una frase con lo más importante ahora;
+- 4 tarjetas con gráficos (tortas, anillos y barras); cada una explica qué significa el número;
+- las tarjetas con › abren la parte de la pestaña que corresponde.
+
+El botón **Ocultar** lo deja en una línea, y la app recuerda la elección por pestaña. En el celular las tarjetas se deslizan hacia el lado.
+
+**Tareas** muestra las tareas como tarjetas: borde azul para Trabajo, violeta para Personal, la fecha en color y 🔥 en las urgentes. En el escritorio, las vencidas van a la izquierda; lo de hoy y los próximos 3 días, a la derecha. En **Inicio**, el Pipeline volvió a ser una torta por etapa.

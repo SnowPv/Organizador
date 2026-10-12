@@ -1383,6 +1383,70 @@ body:has(.selbar) .fab,body:has(.selbar) .fab2{display:none}
 .cp-mail-b small{display:block;font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .cp-mail:hover .cp-mail-b span{color:var(--accent-ink)}
 @media (max-width:760px){.cp-grid{grid-template-columns:1fr}.cp-nums{grid-template-columns:repeat(2,minmax(0,1fr))}.cp-k{grid-template-columns:1fr 1fr}}
+/* Resumen de cada pestaña */
+.dsh{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin:0 0 16px;background-image:linear-gradient(180deg,var(--accent-soft),transparent 120px)}
+.dsh.off{background-image:none;padding:12px 16px}
+.dsh-h{display:flex;align-items:center;gap:12px}
+.dsh-h b{display:block;font-size:16px;letter-spacing:-.01em}
+.dsh-h small{display:block;color:var(--muted);font-size:13px;line-height:1.4;margin-top:2px}
+.dsh-ic{flex:none;width:38px;height:38px;border-radius:12px;background:var(--card);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;color:var(--accent)}
+.dsh-ic svg{width:19px;height:19px}
+.dsh.off .dsh-h small{display:none}
+.dsh-now{display:flex;gap:10px;align-items:flex-start;margin-top:12px;padding:10px 12px;border-radius:12px;background:var(--card);border:1px solid var(--line);font-size:14px;line-height:1.45}
+.dsh-now i{flex:none;width:9px;height:9px;border-radius:50%;background:var(--accent);margin-top:6px}
+.dsh-now.bad i{background:var(--bad)}.dsh-now.warn i{background:var(--warn)}.dsh-now.ok i{background:var(--ok)}
+.dsh.off .dsh-now{margin-top:10px}
+.dsh-g{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin-top:12px}
+.dt{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;min-width:0;display:flex;flex-direction:column;gap:8px}
+.dt.go{cursor:pointer;transition:border-color .15s,box-shadow .15s}
+.dt.go:hover{border-color:var(--s3);box-shadow:var(--shadow-md)}
+.dt.go:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.dt-l{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;display:flex;align-items:center}
+.dt-ar{margin-left:auto;font-size:18px;line-height:1;color:var(--s3)}
+.dt-q{font-size:12.5px;color:var(--muted);line-height:1.45;margin-top:auto;padding-top:8px;border-top:1px dashed var(--line)}
+.dt-big{font-size:28px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1.1}
+.dt-big small{font-size:13px;font-weight:600;color:var(--muted);letter-spacing:0}
+.dt-big.bad{color:var(--bad-ink)}.dt-big.ok{color:var(--ok-ink)}.dt-big.warn{color:var(--warn-ink)}
+.dt-li{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--ink)}
+.dt-li div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dt-li div::before{content:"";display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--s3);margin:0 7px 2px 0}
+.dt-dn{display:flex;align-items:center;gap:14px;min-width:0}
+.dt-dn .leg{flex:1;min-width:0}
+.leg .lt{overflow:hidden;text-overflow:ellipsis}
+.leg b small{font-weight:600;color:var(--muted);font-size:11px}
+.dn{position:relative;flex:none}
+.dn svg{display:block}
+.dn-c{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;pointer-events:none}
+.dn-c b{font-size:19px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.05;letter-spacing:-.02em}
+.dn-c small{font-size:10.5px;color:var(--muted);font-weight:600;margin-top:2px;max-width:70px;line-height:1.2}
+.bars.dsb{height:64px}
+.dt .hbar{margin-top:2px}
+.dt .meter{margin-top:2px}
+@media (max-width:560px){.dsh{padding:14px}.dsh-g{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:84%;overflow-x:auto;scroll-snap-type:x mandatory;margin:12px -14px 0;padding:0 14px 4px;scrollbar-width:none}.dsh-g::-webkit-scrollbar{display:none}.dt{scroll-snap-align:center}.dt-big{font-size:25px}}
+.dsh:not(.off) ~ .nkpis,.dsh:not(.off) ~ .cp-k,.dsh:not(.off) ~ .hy-hero .hy-ring{display:none}
+/* Pipeline en torta (Inicio) */
+.pipe-dn{display:flex;align-items:center;gap:14px;margin-top:10px}
+.pipe-dn .leg{flex:1;min-width:0;font-size:12.5px}
+@media (max-width:560px){.pipe-dn{flex-direction:column;align-items:stretch}.pipe-dn .dn{margin:0 auto}}
+/* Tareas: tarjetas */
+.tk2 div.sec{background:transparent;border:0;padding:0;margin-bottom:20px}
+.tk2 div.sec > .sh{padding:0 2px 10px;font-size:15px}
+.tk2 div.sec > .sh .n{display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:22px;padding:0 7px;border-radius:99px;background:var(--soft);color:var(--ink);font-weight:700;font-size:12px}
+.tk2 div.sec.vk > .sh .n{background:rgba(217,45,32,.12);color:var(--bad-ink)}
+.tk2 div.sec.hk > .sh .n{background:rgba(229,160,0,.16);color:var(--warn-ink)}
+.tlist{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:10px}
+.task.tc{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--cc,var(--s3));border-radius:14px;padding:13px 12px 12px 14px;margin:0;transition:box-shadow .15s,transform .15s;min-width:0}
+.task.tc:hover{box-shadow:var(--shadow-md)}
+.task.tc .t{font-size:15px}
+.task.tc .tm{gap:5px;margin-top:8px}
+.task.tc .tm span{background:var(--soft);padding:2px 9px;border-radius:99px;font-size:12px;font-weight:600}
+.task.tc .tm .d.bad{background:rgba(217,45,32,.1)}.task.tc .tm .d.warn{background:rgba(229,160,0,.15)}.task.tc .tm .d.ok{background:rgba(18,160,107,.12)}
+.task.tc .tm .q1{background:rgba(217,45,32,.1);color:var(--bad-ink)}
+.task.tc.done{opacity:.7}
+.tk2 .dayh{margin:14px 2px 8px}
+.tk2 .tlist + .dayh{margin-top:18px}
+.tk2 .empty{background:var(--card);border:1px dashed var(--line);border-radius:14px}
+@media (min-width:1000px){.tk2 .cols2{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}.tk2 .cols2 .tlist{grid-template-columns:1fr}}
 </style>
 
 
@@ -1648,11 +1712,12 @@ function taskHTML(t, opt){
   opt = opt || {};
   const idx = S.data.tareas.indexOf(t), q = quadOf(t), f = fechaTxt(t), L = t.subtareas || [];
   const meta = [t.categoria, t.proyecto, L.length ? '☑ ' + L.filter(x => x.ok).length + '/' + L.length : '', t.repetir ? '↻ ' + t.repetir : '', t.estado && t.estado !== 'Pendiente' && !t.hecho ? t.estado : ''].filter(Boolean);
-  return '<div class="task ' + (t.hecho ? 'done' : '') + '">' +
+  if (opt.card && q === 1 && !t.hecho) meta.unshift('🔥 Urgente');
+  return '<div class="task ' + (t.hecho ? 'done' : '') + (opt.card ? ' tc" style="--cc:' + (t.area === 'Personal' ? 'var(--personal)' : 'var(--trabajo)') : '') + '">' +
     '<button class="chk ' + (t.hecho ? 'on' : '') + '" style="--q:' + (q === 1 ? 'var(--bad)' : '#C5CBD5') + '" data-tog="' + idx + '" aria-label="Marcar como hecha">' + (t.hecho ? '✓' : '') + '</button>' +
     '<div class="grow" data-open="' + idx + '"><div class="t">' + esc(t.tarea) + '</div>' +
     (opt.why ? '<div class="why">' + esc(opt.why) + '</div>' : '') +
-    (opt.compact ? '' : (f[1] || meta.length ? '<div class="tm">' + (f[1] ? '<span class="d ' + f[0] + '">' + f[1] + '</span>' : '') + meta.map(m => '<span>' + esc(m) + '</span>').join('') + '</div>' : '')) +
+    (opt.compact ? '' : (f[1] || meta.length ? '<div class="tm">' + (f[1] ? '<span class="d ' + f[0] + '">' + f[1] + '</span>' : '') + meta.map(m => '<span' + (m === '🔥 Urgente' ? ' class="q1"' : '') + '>' + esc(m) + '</span>').join('') + '</div>' : '')) +
     '</div>' + (!t.hecho && opt.play ? '<button class="play" data-focus="' + idx + '" aria-label="Enfocarme en esta tarea">▶</button>' : '') + '</div>';
 }
 function subTag(t){
@@ -1756,7 +1821,8 @@ function viewInicio(){
   if (hayNeg){
     const m = metricasNeg(), A = abiertos(), maxV = Math.max(1, ...ETAPAS.map(e => A.filter(n => n.etapa === e.k).reduce((s, n) => s + (n.valor || 0), 0)));
     html += '<div class="w half" data-w="pipe"><div class="wh">' + icon('chart') + 'Pipeline' + ib('pipeline') + '<button class="go" data-go="negocios">Ver</button></div><div class="wbig">' + clpCorto(m.abiertoV) + '</div><div class="wsub" data-info="ponderado">Pronóstico ' + clpCorto(m.ponderado) + ib('ponderado') + '</div>' +
-      '<div class="hbar">' + ETAPAS.map((e, i) => { const v = A.filter(n => n.etapa === e.k).reduce((s, n) => s + (n.valor || 0), 0); return '<span>' + e.corto + '</span><div class="tr"><i style="width:' + Math.max(v ? 4 : 0, v / maxV * 100) + '%;background:' + SEQ[i] + '"></i></div><b>' + (v ? clpCorto(v) : '–') + '</b>'; }).join('') + '</div></div>';
+      (() => { const seg = ETAPAS.map((e, i) => { const v = A.filter(n => n.etapa === e.k).reduce((s, n) => s + (n.valor || 0), 0); return { l: e.corto, v, t: v ? clpCorto(v) : '–', c: SEQ[i] }; }); void maxV;
+        return '<div class="pipe-dn">' + donutSVG(seg, 104, A.length, A.length === 1 ? 'abierto' : 'abiertos') + legHTML(seg) + '</div>'; })() + '</div>';
     // 3. Negocios que requieren atención
     const an = m.an, aten = an.filter(x => requiereAtencion(x.a)).sort((x, y) => y.a.prioridad - x.a.prioridad);
     atenH = '<div class="w" data-w="aten"><div class="wh">' + icon('bolt') + 'Requieren atención' + ib('atencion') + '<button class="go" data-gonf="atencion">Ver</button></div><div class="wbig">' + aten.length + ' <span style="font-size:14px;color:var(--muted);font-weight:600">de ' + an.length + ' abiertos</span></div>' +
@@ -5639,13 +5705,16 @@ function viewTareas(){
   let html = '<div class="qadd"><input type="text" id="tq_add" placeholder="Nueva tarea… (ej.: llamar a Pedro viernes 10:00)" autocomplete="off"><button class="btn sm" id="tq_ok" title="Agregar">' + icon('plus') + '<span class="bt">Agregar</span></button><button class="btn sm sec" id="tSel" title="Seleccionar varias">' + (S.sel ? '<span>Listo</span>' : icon('check') + '<span class="bt">Seleccionar</span>') + '</button></div>' +
     '<div class="tviews">' + vistas.map(v => '<button class="' + (S.tv === v[0] ? 'on ' : '') + v[3] + '" data-tv="' + v[0] + '">' + v[1] + ' <b>' + v[2] + '</b></button>').join('') + '</div>';
   let cuerpo = '';
-  const lista = (L, opt) => L.map(t => taskHTML(t, Object.assign({ play: !t.hecho }, opt || {}))).join('');
+  const lista = (L, opt) => '<div class="tlist">' + L.map(t => taskHTML(t, Object.assign({ play: !t.hecho, card: true }, opt || {}))).join('') + '</div>';
   if (S.tv === 'hoy'){
+    const izq = [], der = [], pronto = prox.filter(t => t.limite <= addDays(h, 3));
     if (venc.length){ const ver = S.vencTodas ? venc : venc.slice(0, 5);
-      cuerpo += '<div class="sec"><div class="sh" style="color:var(--bad-ink)">Vencidas <span class="n">' + venc.length + '</span><span class="r"><button class="btn sm sec" data-bulk="hoy">Todas a hoy</button><button class="btn sm sec" data-bulk="man">A mañana</button></span></div>' + lista(ver) + (venc.length > 5 ? '<button class="more" id="vMas">' + (S.vencTodas ? 'Ver menos' : 'Ver las ' + (venc.length - 5) + ' restantes') + '</button>' : '') + '</div>'; }
+      izq.push('<div class="sec vk"><div class="sh" style="color:var(--bad-ink)">Vencidas <span class="n">' + venc.length + '</span><span class="r"><button class="btn sm sec" data-bulk="hoy">Todas a hoy</button><button class="btn sm sec" data-bulk="man">A mañana</button></span></div>' + lista(ver) + (venc.length > 5 ? '<button class="more" id="vMas">' + (S.vencTodas ? 'Ver menos' : 'Ver las ' + (venc.length - 5) + ' restantes') + '</button>' : '') + '</div>'); }
     const carga = venc.length + hoyL.length;
     if (carga > metaDiaria() + 2) cuerpo += '<div class="nextc" style="margin-bottom:14px"><div class="tx"><small>Día cargado</small><b style="font-weight:600">Tienes ' + carga + ' tareas para hoy y tu meta es ' + metaDiaria() + '.</b><span style="color:var(--muted)">Pídele al asistente que ordene tu día o mueve lo no urgente.</span></div><button class="btn sm" id="tPlan">Planificar</button></div>';
-    cuerpo += '<div class="sec"><div class="sh">Para hoy <span class="n">' + hoyL.length + '</span></div>' + (hoyL.length ? lista(hoyL) : '<div class="wsub" style="padding:4px 0 10px">Nada con fecha de hoy.' + (prox.length ? ' Lo próximo: «' + esc(prox[0].tarea) + '» (' + fmt(prox[0].limite) + ').' : '') + '</div>') + '</div>';
+    (venc.length ? der : izq).push('<div class="sec hk"><div class="sh">Para hoy <span class="n">' + hoyL.length + '</span></div>' + (hoyL.length ? lista(hoyL) : '<div class="empty">Nada con fecha de hoy ☀️' + (prox.length ? '<br>Lo próximo: «' + esc(prox[0].tarea) + '» (' + fmt(prox[0].limite) + ').' : '') + '</div>') + '</div>');
+    if (pronto.length) der.push('<div class="sec"><div class="sh">Próximos 3 días <span class="n">' + pronto.length + '</span><span class="r"><button class="btn sm sec" data-tv="prox">Ver todas</button></span></div>' + lista(pronto.slice(0, 6)) + '</div>');
+    cuerpo += '<div class="cols2"><div>' + izq.join('') + '</div><div>' + der.join('') + '</div></div>';
     if (nRev) cuerpo += '<div class="sec" style="border-color:#D7E4F7"><div class="sh" style="color:var(--accent-ink)">' + icon('spark') + ' ' + nRev + ' por revisar<span class="r"><button class="btn sm sec" data-tv="revisar">Revisar</button></span></div><div class="wsub" style="padding:0 0 10px">Sugerencias de tareas, tareas que creó el agente desde los chats y posibles duplicadas.</div></div>';
   } else if (S.tv === 'prox'){
     const dias = {}; prox.forEach(t => { (dias[t.limite] = dias[t.limite] || []).push(t); });
@@ -5672,7 +5741,7 @@ function viewTareas(){
     cuerpo += '<div class="tbar"><input type="text" id="q" placeholder="🔎 Buscar" value="' + esc(S.q) + '"><select id="tf">' + opciones.map(o => '<option value="' + esc(o[0]) + '"' + (S.filtro === o[0] ? ' selected' : '') + '>' + esc(o[1]) + '</option>').join('') + '</select><div class="views">' + [['lista', 'Lista'], ['tablero', 'Tablero'], ['matriz', 'Matriz']].map(v => '<button class="' + (S.vista === v[0] ? 'on' : '') + '" data-v="' + v[0] + '">' + v[1] + '</button>').join('') + '</div></div>';
     cuerpo += S.vista === 'tablero' ? tableroHTML(L) : S.vista === 'matriz' ? matrizHTML(L) : '<div class="sec">' + (L.length ? lista(L) : '<div class="empty">Nada con este filtro 🔍</div>') + '</div>';
   }
-  html += '<div id="tbody" class="' + (S.sel ? 'selmode' : '') + '">' + cuerpo + '</div>';
+  html += '<div id="tbody" class="tk2' + (S.sel ? ' selmode' : '') + '">' + cuerpo + '</div>';
   if (S.sel) html += '<div class="selbar"><span id="selN">' + S.sel.size + ' seleccionadas</span><button data-sb="hecha">✓ Hechas</button><button data-sb="hoy">Hoy</button><button data-sb="man">Mañana</button><button data-sb="sem">Próx. semana</button><button data-sb="del">Eliminar</button></div>';
   $('#view').innerHTML = html;
   if (S.sel){
@@ -6486,6 +6555,188 @@ S.base = lsGet('baseCache', null);
 { const c = lsGet('igCache', null); if (c){ S.ig = c.ig; S.cont = c.cont; } }
 S.neg = lsGet('negCache', null);
 if (!LS.url || !LS.token) { render(); showSetup(); } else { render(); load(); revisarCompartido(); }
+
+/* ---------- Resumen de cada pestaña: qué hay aquí, explicado con gráficos ---------- */
+// Colores por categoría (orden fijo, validados para daltonismo). «Otras» siempre en gris.
+const CATC = ['#2a78d6', '#eb6834', '#1baf7a', '#eda100', '#6250d6'], OTRAC = '#98A2B3';
+// Torta (dona) en SVG: cada tramo con un espacio de 2 px y su detalle al pasar el mouse.
+function donutSVG(seg, size, centro, sub){
+  size = size || 108; const r = size / 2 - 9, w = 15, c = 2 * Math.PI * r, m = size / 2, L = seg.filter(x => x.v > 0), tot = L.reduce((s, x) => s + x.v, 0);
+  const gap = L.length > 1 ? 2 : 0; let off = 0, arcs = '';
+  L.forEach(x => { const len = x.v / tot * c, d = Math.max(.8, len - gap);
+    arcs += '<circle cx="' + m + '" cy="' + m + '" r="' + r + '" fill="none" stroke="' + x.c + '" stroke-width="' + w + '" stroke-dasharray="' + d.toFixed(1) + ' ' + (c - d).toFixed(1) + '" stroke-dashoffset="' + (-off).toFixed(1) + '" transform="rotate(-90 ' + m + ' ' + m + ')"><title>' + esc(x.l) + ': ' + esc(String(x.t != null ? x.t : x.v)) + ' (' + Math.round(x.v / tot * 100) + '%)</title></circle>';
+    off += len; });
+  return '<div class="dn" style="width:' + size + 'px;height:' + size + 'px"><svg width="' + size + '" height="' + size + '" viewBox="0 0 ' + size + ' ' + size + '" role="img"><circle cx="' + m + '" cy="' + m + '" r="' + r + '" fill="none" stroke="var(--soft)" stroke-width="' + w + '"/>' + arcs + '</svg>' +
+    (centro != null ? '<div class="dn-c"><b>' + centro + '</b>' + (sub ? '<small>' + sub + '</small>' : '') + '</div>' : '') + '</div>';
+}
+function legHTML(seg){
+  const tot = seg.reduce((s, x) => s + (x.v || 0), 0);
+  return '<div class="leg">' + seg.map(x => '<div><i style="background:' + x.c + '"></i><span class="lt">' + esc(x.l) + '</span><b>' + esc(String(x.t != null ? x.t : x.v)) + (x.pc && tot && x.v ? ' <small>' + Math.round(x.v / tot * 100) + '%</small>' : '') + '</b></div>').join('') + '</div>';
+}
+function ringDn(p, centro, sub, color){
+  return '<div class="dn" style="width:100px;height:100px">' + ringSVG(p, 100, color) + '<div class="dn-c"><b>' + centro + '</b>' + (sub ? '<small>' + sub + '</small>' : '') + '</div></div>';
+}
+function miniBars(L, meta){
+  const mx = Math.max(1, meta || 0, ...L.map(x => x.v || 0));
+  return '<div class="bars dsb">' + (meta ? '<u style="bottom:' + (meta / mx * 100) + '%"></u>' : '') + L.map(x => '<i class="' + (x.hi ? 'hit' : '') + '" style="height:' + ((x.v || 0) / mx * 100) + '%' + (x.c ? ';background:' + x.c : '') + '" data-t="' + esc(x.tip || String(x.v)) + '"></i>').join('') + '</div>' +
+    '<div class="bx"><span>' + esc(L[0] ? L[0].lab : '') + '</span>' + (meta ? '<span>meta ' + meta + '</span>' : '') + '<span>' + esc(L.length ? L[L.length - 1].lab : '') + '</span></div>';
+}
+function hbarsHTML(L){
+  const mx = Math.max(1, ...L.map(x => x.v || 0));
+  return '<div class="hbar">' + L.map(x => '<span title="' + esc(x.l) + '">' + esc(x.l) + '</span><div class="tr"><i style="width:' + Math.max(x.v ? 4 : 0, (x.v || 0) / mx * 100) + '%;background:' + (x.c || 'var(--s4)') + '"></i></div><b>' + esc(String(x.t != null ? x.t : x.v)) + '</b>').join('') + '</div>';
+}
+// Una tarjeta del resumen: título, gráfico, el número y «qué significa».
+function tileHTML(x, i){
+  let viz = '';
+  if (x.k === 'donut') viz = '<div class="dt-dn">' + donutSVG(x.seg, 100, x.centro, x.sub) + legHTML(x.seg) + '</div>';
+  else if (x.k === 'ring') viz = '<div class="dt-dn">' + ringDn(x.p, x.centro, x.sub, x.color) + (x.leg ? legHTML(x.leg) : '') + '</div>';
+  else if (x.k === 'bars') viz = '<div class="dt-big">' + x.v + (x.sub ? '<small>' + x.sub + '</small>' : '') + '</div>' + miniBars(x.vals, x.meta);
+  else if (x.k === 'hbars') viz = '<div class="dt-big">' + x.v + (x.sub ? '<small>' + x.sub + '</small>' : '') + '</div>' + hbarsHTML(x.vals);
+  else viz = '<div class="dt-big' + (x.tono ? ' ' + x.tono : '') + '">' + x.v + (x.sub ? '<small>' + x.sub + '</small>' : '') + '</div>' + (x.meter != null ? '<div class="meter"><i style="width:' + Math.round(Math.min(1, x.meter) * 100) + '%;background:' + (x.mc || 'var(--accent)') + '"></i><i style="flex:1;background:var(--soft)"></i></div>' : '') + (x.list ? '<div class="dt-li">' + x.list.map(l => '<div>' + l + '</div>').join('') + '</div>' : '');
+  return '<div class="dt' + (x.go ? ' go' : '') + '"' + (x.go ? ' data-dgo="' + i + '" role="button" tabindex="0"' : '') + '><div class="dt-l">' + esc(x.l) + (x.go ? '<span class="dt-ar">›</span>' : '') + '</div>' + viz + (x.q ? '<div class="dt-q">' + x.q + '</div>' : '') + '</div>';
+}
+function dashHTML(tab, d){
+  const off = LS['dsh_' + tab] === '0', tiles = d.tiles.filter(Boolean);
+  return '<section class="dsh' + (off ? ' off' : '') + '"><div class="dsh-h"><span class="dsh-ic">' + icon(d.ic) + '</span><div class="grow"><b>' + esc(d.t) + '</b><small>' + esc(d.intro) + '</small></div><button class="btn sm sec" data-dshtg>' + (off ? 'Ver resumen' : 'Ocultar') + '</button></div>' +
+    (d.head ? '<div class="dsh-now ' + (d.head.tono || '') + '"><i></i><span>' + d.head.tx + '</span></div>' : '') +
+    (off ? '' : '<div class="dsh-g">' + tiles.map(tileHTML).join('') + '</div>') + '</section>';
+}
+const DASH = {
+  hoy: dashHoy, tareas: dashTareas, semana: dashCal, compras: dashCompras, negocios: dashNeg, proy: dashProy, base: dashBase, redes: dashRedes
+};
+function ponerDash(tab){
+  const v = $('#view'); if (!v || !DASH[tab] || v.querySelector(':scope > .dsh')) return;
+  const f = v.firstElementChild; if (!f || (f.classList.contains('empty') && v.children.length === 1)) return;
+  const d = DASH[tab](); if (!d) return;
+  v.insertAdjacentHTML('afterbegin', dashHTML(tab, d));
+  const el = v.firstElementChild, tiles = d.tiles.filter(Boolean);
+  el.querySelector('[data-dshtg]').onclick = () => { LS['dsh_' + tab] = LS['dsh_' + tab] === '0' ? '1' : '0'; el.remove(); ponerDash(tab); };
+  el.querySelectorAll('[data-dgo]').forEach(b => { const fn = tiles[+b.dataset.dgo].go; b.onclick = () => fn(); b.onkeydown = e => { if (e.key === 'Enter') fn(); }; });
+}
+function conDash(fn, tab){ return function(){ const r = fn.apply(this, arguments); try { if (S.tab === tab) ponerDash(tab); } catch(e){ console.warn('resumen', e); } return r; }; }
+viewHoy = conDash(viewHoy, 'hoy'); viewTareas = conDash(viewTareas, 'tareas'); viewSemana = conDash(viewSemana, 'semana'); viewPeriodo = conDash(viewPeriodo, 'semana');
+viewCompras = conDash(viewCompras, 'compras'); viewNegocios = conDash(viewNegocios, 'negocios'); viewProy = conDash(viewProy, 'proy'); viewBase = conDash(viewBase, 'base'); viewRedes = conDash(viewRedes, 'redes');
+
+const plural = (n, s, p) => n + ' ' + (n === 1 ? s : (p || s + 's'));
+function dashTareas(){
+  const h = hoy(), P = pendientes(), venc = vencidas(), hoyL = P.filter(t => t.limite === h), prox = P.filter(t => t.limite > h), sinF = P.filter(t => !t.limite);
+  const hechas = hechasEl(h).length, plan = hechas + venc.length + hoyL.length, meta = metaDiaria();
+  const top = venc.concat(hoyL).sort((a, b) => puntaje(b).s - puntaje(a).s)[0];
+  const dias = [0, 1, 2, 3, 4, 5, 6].map(i => { const f = addDays(h, i), n = P.filter(t => t.limite === f).length + (i === 0 ? venc.length : 0); return { v: n, lab: i === 0 ? 'hoy' : DIAS[pd(f).getDay()], tip: (i === 0 ? 'Hoy (con atrasadas)' : fmt(f)) + ': ' + n, c: n > meta ? 'var(--bad)' : '' }; });
+  const cats = {}; P.forEach(t => { const k = t.categoria || t.area || 'Sin categoría'; cats[k] = (cats[k] || 0) + 1; });
+  const cs = Object.entries(cats).sort((a, b) => b[1] - a[1]), seg = cs.slice(0, 4).map((x, i) => ({ l: x[0], v: x[1], c: CATC[i] })), resto = cs.slice(4).reduce((s, x) => s + x[1], 0);
+  if (resto) seg.push({ l: 'Otras', v: resto, c: OTRAC });
+  const sem = (S.data.dias || []).slice(-7).reduce((s, d) => s + (d.completadas || 0), 0), cargado = dias.filter(d => d.v > meta).length;
+  return { ic: 'check', t: 'Resumen de tus tareas', intro: 'Lo pendiente, lo atrasado y cómo viene tu semana, de un vistazo.',
+    head: venc.length ? { tono: 'bad', tx: 'Tienes <b>' + plural(venc.length, 'tarea vencida', 'tareas vencidas') + '</b>. Empieza por «' + esc(top.tarea) + '».' }
+      : hoyL.length ? { tono: 'warn', tx: '<b>' + plural(hoyL.length, 'tarea') + ' para hoy</b>. La más importante: «' + esc(top.tarea) + '».' }
+      : { tono: 'ok', tx: '<b>Estás al día.</b> ' + (prox.length ? 'Lo próximo: «' + esc(prox.sort((a, b) => a.limite.localeCompare(b.limite))[0].tarea) + '».' : 'Buen momento para planificar.') },
+    tiles: [
+      { k: 'ring', l: 'Avance de hoy', p: plan ? hechas / plan : 0, centro: hechas + '/' + plan, sub: 'hechas', color: 'var(--ok)', leg: [{ l: 'Hechas hoy', v: hechas, c: 'var(--ok)' }, { l: 'Faltan', v: plan - hechas, c: 'var(--line)' }, { l: 'Semana', v: sem, t: sem + '/' + (meta * 5), c: 'var(--s4)' }], q: 'Tareas que cerraste hoy de las que tenías para hoy (incluye las atrasadas). «Semana»: hechas en 7 días contra tu meta. Racha: ' + (indicador('Racha') || 0) + ' días.', go: () => { S.tv = 'hoy'; viewTareas(); } },
+      { k: 'donut', l: 'Pendientes por fecha', centro: P.length, sub: 'pendientes', seg: [{ l: 'Vencidas', v: venc.length, c: 'var(--bad)' }, { l: 'Para hoy', v: hoyL.length, c: 'var(--warn)' }, { l: 'Próximas', v: prox.length, c: 'var(--s4)' }, { l: 'Sin fecha', v: sinF.length, c: 'var(--s1)' }], q: 'Lo rojo está atrasado: atiéndelo primero. Las «sin fecha» son las que más se olvidan.' },
+      { k: 'bars', l: 'Carga de los próximos 7 días', v: plural(dias.reduce((s, d) => s + d.v, 0), 'tarea'), sub: cargado ? ' · ' + plural(cargado, 'día cargado', 'días cargados') : ' · semana liviana', vals: dias, meta, q: 'Cada barra es un día. Sobre la línea (tu meta de ' + meta + ' por día) el día está cargado: mueve lo que no sea urgente.', go: () => { S.tv = 'prox'; viewTareas(); } },
+      seg.length && { k: 'donut', l: 'En qué está tu trabajo', centro: cs.length, sub: cs.length === 1 ? 'categoría' : 'categorías', seg, q: 'Pendientes por categoría. Sirve para ver si una sola área se está llevando todo.' },
+    ] };
+}
+function dashHoy(){
+  const D = datosHoy(), tot = D.resp.length + D.rh + D.hacer.length + D.hechas.length + D.negs.length + D.nh, hecho = D.rh + D.hechas.length + D.nh;
+  const ahora = new Date().toTimeString().slice(0, 5), sig = D.ev.filter(e => !e.todoElDia && e.inicio >= ahora)[0];
+  const pend = [{ l: 'Responder', v: D.resp.length, c: CATC[0] }, { l: 'Hacer', v: D.hacer.length, c: CATC[1] }, { l: 'Avanzar', v: D.negs.length + D.ops.length, c: CATC[2] }];
+  const npend = pend.reduce((s, x) => s + x.v, 0);
+  return { ic: 'sun', t: 'Resumen de tu día', intro: 'Hoy se trabaja en 3 pasos: responder a quien espera, hacer tus tareas y avanzar ventas.',
+    head: npend ? { tono: D.resp.length ? 'bad' : 'warn', tx: 'Te quedan <b>' + plural(npend, 'acción', 'acciones') + '</b>' + (D.resp.length ? ': empieza por responder a ' + plural(D.resp.length, 'cliente') + '.' : '.') } : { tono: 'ok', tx: '<b>Día completo.</b> Todo lo de hoy está hecho.' },
+    tiles: [
+      { k: 'ring', l: 'Acciones del día', p: tot ? hecho / tot : 0, centro: hecho + '/' + tot, sub: 'hechas', color: 'var(--ok)', q: 'Respuestas, tareas y negocios que ya movilizaste hoy, contra todo lo del día.' },
+      { k: 'donut', l: 'Lo que falta, por paso', centro: npend, sub: 'pendientes', seg: pend, q: 'Responder primero: un cliente que espera se enfría rápido.' },
+      { k: 'num', l: 'Agenda', v: D.ev.length, sub: D.ev.length === 1 ? ' evento hoy' : ' eventos hoy', list: sig ? ['Próximo: <b>' + esc(sig.inicio) + '</b> ' + esc(sig.titulo)] : D.ev.length ? ['Ya no quedan eventos con hora'] : ['Día libre de reuniones'], q: 'Lo que tienes en Google Calendar hoy.' },
+      { k: 'num', l: 'Atrasadas', v: D.venc.length, tono: D.venc.length ? 'bad' : 'ok', sub: D.venc.length === 1 ? ' tarea' : ' tareas', meter: D.hacer.length ? D.venc.length / D.hacer.length : 0, mc: 'var(--bad)', q: 'Tareas con fecha pasada. Muévelas a hoy o a mañana: dejarlas vencidas te quita foco.', go: () => { S.tv = 'hoy'; go('tareas'); } }
+    ] };
+}
+function dashCal(){
+  const h = hoy(), meta = metaDiaria(), s = S.data.semana, D = (S.data.dias || []).slice(-14);
+  const ev = S.google && S.google.eventos ? S.google.eventos.filter(e => e.fecha >= h && e.fecha <= addDays(h, 6)) : [];
+  const hechasSem = s ? s.hechas : D.slice(-7).reduce((x, d) => x + (d.completadas || 0), 0), metaSem = meta * 5;
+  const m = S.neg ? metricasNeg() : null;
+  return { ic: 'cal', t: 'Resumen del calendario', intro: 'Cómo vienes esta semana y lo que se viene. Abajo cambias entre Semana, Mes y Año.',
+    head: { tono: hechasSem >= metaSem ? 'ok' : 'warn', tx: 'Esta semana llevas <b>' + plural(hechasSem, 'tarea hecha', 'tareas hechas') + '</b> de una meta de ' + metaSem + (ev.length ? ', y tienes ' + plural(ev.length, 'evento') + ' en los próximos 7 días.' : '.') },
+    tiles: [
+      { k: 'ring', l: 'Meta de la semana', p: hechasSem / metaSem, centro: Math.round(hechasSem / metaSem * 100) + '%', sub: hechasSem + ' de ' + metaSem, color: 'var(--accent)', q: 'Tareas hechas desde el lunes contra tu meta semanal (' + meta + ' por día hábil).' },
+      { k: 'bars', l: 'Tareas hechas · 14 días', v: D.reduce((x, d) => x + (d.completadas || 0), 0), sub: ' en total', vals: D.map(d => ({ v: d.completadas || 0, lab: fmt(d.fecha), tip: fmt(d.fecha) + ': ' + (d.completadas || 0), hi: (d.completadas || 0) >= meta })), meta, q: 'Las barras oscuras son los días en que cumpliste tu meta.' },
+      { k: 'num', l: 'Próximos 7 días', v: ev.length, sub: ev.length === 1 ? ' evento' : ' eventos', list: ev.slice(0, 3).map(e => '<b>' + esc(fmt(e.fecha)) + '</b> ' + esc(e.titulo)), q: 'Reuniones, salidas y capacitaciones de tu calendario.' },
+      m && { k: 'bars', l: 'Ventas cerradas · 6 meses', v: clpCorto(m.gMesV), sub: ' este mes', vals: m.meses.map((x, i) => ({ v: x.v, lab: x.nom, tip: x.nom + ': ' + clpCorto(x.v), hi: i === m.meses.length - 1 })), q: 'Negocios ganados por mes, en pesos. La barra oscura es el mes actual.' }
+    ] };
+}
+function dashCompras(){
+  const C = S.compras; if (!C || !C.proveedores) return null;
+  const P = C.proveedores, O = C.oportunidades || [], M = (C.correos && C.correos.items) || [], promos = M.filter(c => c.promo), mov = C.movimientos || [], h = hoy();
+  const ps = P.filter(p => p.productos).sort((a, b) => b.productos - a.productos), seg = ps.slice(0, 4).map((p, i) => ({ l: p.nombre, v: p.productos, t: p.productos.toLocaleString('es-CL'), c: CATC[i] })), resto = ps.slice(4).reduce((s, p) => s + p.productos, 0);
+  if (resto) seg.push({ l: 'Otros', v: resto, t: resto.toLocaleString('es-CL'), c: OTRAC });
+  const porProv = P.map(p => ({ l: p.nombre, v: O.filter(o => o.prov === p.id).length })).filter(x => x.v).sort((a, b) => b.v - a.v).slice(0, 5);
+  const mov7 = mov.filter(x => x.fecha >= addDays(h, -7)), best = O[0];
+  return { ic: 'box', t: 'Resumen de compras', intro: 'Lo que tienen tus proveedores, qué conviene comprar y qué cambió de precio. Uso interno: no se comunica a clientes.',
+    head: best ? { tono: 'ok', tx: 'Mejor oportunidad: <b>' + esc(best.nombre) + '</b> en ' + esc(best.proveedor) + ', con margen de ' + best.margenOferta + '% vendiéndolo a precio normal.' } : { tono: '', tx: 'Sin oportunidades de compra destacadas por ahora.' },
+    tiles: [
+      seg.length && { k: 'donut', l: 'Catálogo por proveedor', centro: clpCorto((C.total || 0)).replace('$', ''), sub: 'productos', seg, q: 'Cuántos productos leyó la app en la web de cada proveedor.', go: () => { S.cpTab = 'prov'; viewCompras(); } },
+      { k: 'hbars', l: 'Oportunidades de compra', v: O.length, sub: ' productos', vals: porProv.length ? porProv : [{ l: 'Ninguna', v: 0 }], q: 'Productos en promoción que conviene comprar para vender a precio normal cuando la promo termine.', go: () => { S.cpTab = 'oport'; viewCompras(); } },
+      { k: 'num', l: 'Correos con promociones', v: promos.length, sub: ' de ' + M.length + ' correos', list: promos.slice(0, 2).map(c => esc(c.asunto || '')), q: 'Correos de tus proveedores de los últimos 30 días que anuncian promociones o novedades.', go: () => { S.cpTab = 'mail'; viewCompras(); } },
+      { k: 'num', l: 'Cambios de precio · 7 días', v: mov7.length, sub: ' cambios', list: [plural(mov7.filter(x => x.tipo === 'oferta').length, 'promoción nueva', 'promociones nuevas'), plural(mov7.filter(x => x.tipo === 'nuevo').length, 'producto nuevo', 'productos nuevos')], q: 'Promociones que empiezan o terminan, precios que cambian y productos nuevos.', go: () => { S.cpTab = 'mov'; viewCompras(); } }
+    ] };
+}
+function dashNeg(){
+  if (!S.neg) return null;
+  const m = metricasNeg(), A = abiertos(), aten = m.an.filter(x => requiereAtencion(x.a)).sort((x, y) => y.a.prioridad - x.a.prioridad);
+  const seg = ETAPAS.map((e, i) => { const v = A.filter(n => n.etapa === e.k).reduce((s, n) => s + (n.valor || 0), 0); return { l: e.corto, v, t: v ? clpCorto(v) : '–', c: SEQ[i] }; });
+  return { ic: 'deal', t: 'Resumen de ventas', intro: 'Cuánto hay en juego, en qué etapa está cada venta y cuáles necesitan un empujón.',
+    head: aten.length ? { tono: 'bad', tx: '<b>' + plural(aten.length, 'negocio pide', 'negocios piden') + ' atención.</b> El más urgente: ' + esc(aten[0].a.c ? (aten[0].a.c.nombre || aten[0].n.titulo) : aten[0].n.titulo) + ' (' + esc(motivoAlerta(aten[0].n, aten[0].a)) + ').' } : { tono: 'ok', tx: '<b>Todos los negocios al día.</b> Buen momento para buscar clientes nuevos.' },
+    tiles: [
+      { k: 'donut', l: 'Pipeline por etapa', centro: clpCorto(m.abiertoV), sub: plural(A.length, 'abierto', 'abiertos'), seg, q: 'Valor de los negocios abiertos en cada etapa. Mientras más oscuro, más cerca del cierre.' },
+      { k: 'ring', l: 'Tasa de cierre', p: m.tasa || 0, centro: m.tasa == null ? '–' : Math.round(m.tasa * 100) + '%', sub: '90 días', color: 'var(--ok)', leg: [{ l: 'Ganadas', v: m.g90, c: 'var(--ok)' }, { l: 'Perdidas', v: m.p90, c: 'var(--bad)' }], q: 'De cada 10 negocios que terminan, cuántos ganas.' },
+      { k: 'bars', l: 'Ganado por mes', v: clpCorto(m.gMesV), sub: ' este mes', vals: m.meses.map((x, i) => ({ v: x.v, lab: x.nom, tip: x.nom + ': ' + clpCorto(x.v), hi: i === m.meses.length - 1 })), q: 'Ventas cerradas en los últimos 6 meses. Pronóstico de lo abierto: ' + clpCorto(m.ponderado) + '.' },
+      { k: 'num', l: 'Requieren atención', v: aten.length, tono: aten.length ? 'bad' : 'ok', sub: ' de ' + A.length, meter: A.length ? aten.length / A.length : 0, mc: 'var(--bad)', list: aten.slice(0, 2).map(x => esc(x.n.titulo)), q: 'Clientes sin respuesta, pasos vencidos o negocios quietos hace días.', go: () => { S.nf = 'atencion'; S.nv = 'lista'; viewNegocios(); } }
+    ] };
+}
+function dashProy(){
+  const P = S.data.proyectos || []; if (!P.length) return null;
+  const atr = P.filter(p => /atras/i.test(p.ritmo || '')), ok = P.filter(p => /ritmo|adelant/i.test(p.ritmo || '') && !/atras/i.test(p.ritmo || '')), otros = P.length - atr.length - ok.length;
+  const prom = P.reduce((s, p) => s + Math.min(1, p.avance || 0), 0) / P.length, T = P.flatMap(tareasProyecto), pend = T.filter(t => !t.hecho).length;
+  return { ic: 'flag', t: 'Resumen de proyectos', intro: 'Tus iniciativas largas: si van en ritmo, cuánto avanzaron y qué tareas tienen.',
+    head: atr.length ? { tono: 'bad', tx: '<b>' + plural(atr.length, 'proyecto va atrasado', 'proyectos van atrasados') + '</b>: ' + esc(atr.map(p => p.nombre).join(', ')) + '.' } : { tono: 'ok', tx: '<b>Todos los proyectos en ritmo.</b>' },
+    tiles: [
+      { k: 'donut', l: 'Ritmo', centro: P.length, sub: 'proyectos', seg: [{ l: 'En ritmo', v: ok.length, c: 'var(--ok)' }, { l: 'Atrasados', v: atr.length, c: 'var(--bad)' }, { l: 'Sin datos', v: otros, c: OTRAC }], q: 'Atrasado: pasó más tiempo del que avanzó.' },
+      { k: 'ring', l: 'Avance promedio', p: prom, centro: pct(prom) + '%', sub: 'avance', q: 'Promedio de avance de todos tus proyectos.' },
+      { k: 'hbars', l: 'Avance por proyecto', v: P.length, sub: ' activos', vals: P.slice(0, 5).map(p => ({ l: p.nombre, v: pct(Math.min(1, p.avance || 0)), t: pct(Math.min(1, p.avance || 0)) + '%', c: /atras/i.test(p.ritmo || '') ? 'var(--bad)' : 'var(--s4)' })), q: 'En rojo, los que van atrasados.' },
+      { k: 'num', l: 'Tareas de proyectos', v: pend, sub: ' pendientes de ' + T.length, meter: T.length ? (T.length - pend) / T.length : 0, mc: 'var(--ok)', q: P.some(p => !tareasProyecto(p).length) ? 'Hay proyectos sin tareas: divídelos en pasos chicos para que avancen.' : 'Un proyecto avanza cuando sus tareas se hacen.' }
+    ] };
+}
+function dashBase(){
+  if (!S.base) return null;
+  const C = contactos(), h = hoy(), cli = C.filter(c => c.tipo === 'Cliente'), frios = contactosFrios(), esp = esperanRespuesta();
+  const sem = [7, 6, 5, 4, 3, 2, 1, 0].map(i => { const ini = addDays(h, -7 * i - 6), fin = addDays(h, -7 * i), n = C.filter(c => c.creado && c.creado.slice(0, 10) >= ini && c.creado.slice(0, 10) <= fin).length; return { v: n, lab: i ? fmt(ini) : 'esta sem.', tip: 'Semana del ' + fmt(ini) + ': ' + n, hi: !i }; });
+  return { ic: 'users', t: 'Resumen de contactos', intro: 'Tu base de clientes y proveedores: quién espera respuesta y a quién conviene volver a escribir.',
+    head: esp.length ? { tono: 'bad', tx: '<b>' + plural(esp.length, 'cliente espera', 'clientes esperan') + ' tu respuesta</b>' + (esp[0] ? ', partiendo por ' + esc(esp[0].c.nombre || esp[0].c.email || '') : '') + '.' } : frios.length ? { tono: 'warn', tx: '<b>' + plural(frios.length, 'cliente lleva', 'clientes llevan') + ' más de 30 días sin contacto.</b> Un saludo o una invitación a una salida mantiene la relación.' } : { tono: 'ok', tx: '<b>Base al día.</b>' },
+    tiles: [
+      { k: 'donut', l: 'Tu base', centro: C.length, sub: 'contactos', seg: [{ l: 'Clientes', v: cli.length, c: CATC[0] }, { l: 'Proveedores', v: C.filter(c => c.tipo === 'Proveedor').length, c: CATC[1] }, { l: 'Por clasificar', v: C.filter(c => c.tipo === 'Por clasificar').length, c: OTRAC }], q: 'Clasifica los «por clasificar» para que el agente sepa cómo tratarlos.' },
+      { k: 'num', l: 'Esperan respuesta', v: esp.length, tono: esp.length ? 'bad' : 'ok', sub: esp.length === 1 ? ' cliente' : ' clientes', list: esp.slice(0, 3).map(x => esc(x.c.nombre || x.c.email || '')), q: 'Te escribieron y el agente ya te dejó una idea de respuesta en su ficha.', go: () => go('hoy') },
+      { k: 'num', l: 'Clientes fríos', v: frios.length, tono: frios.length ? 'warn' : 'ok', sub: ' de ' + cli.length + ' clientes', meter: cli.length ? frios.length / cli.length : 0, mc: 'var(--warn)', q: 'Más de 30 días sin hablar con ellos.', go: () => { S.bv = 'ops'; viewBase(); } },
+      { k: 'bars', l: 'Contactos nuevos · 8 semanas', v: sem.reduce((s, x) => s + x.v, 0), sub: ' nuevos', vals: sem, q: 'Cuántas personas nuevas entraron a tu base cada semana (correo, WhatsApp y chats importados).' }
+    ] };
+}
+function dashRedes(){
+  if (!S.cont) return null;
+  const h = hoy(), K = S.cont, est = ['Idea', 'Planificado', 'Grabado', 'Publicado'], sig = K.filter(x => x.fecha >= h && x.estado !== 'Publicado').sort((a, b) => a.fecha.localeCompare(b.fecha))[0];
+  const ig = igActivo() && S.ig ? igMetricas() : null, D = ig ? ig.D.slice(-14) : [];
+  const fr = S.igEst && S.igEst.estrategia && S.igEst.estrategia.frecuencia, metaSem = fr ? (+fr.reels_semana || 0) + (+fr.carruseles_semana || 0) + (+fr.posts_semana || 0) : 4;
+  const pub28 = ig ? ig.P.filter(x => x.formato !== 'STORY' && x.fecha.slice(0, 10) >= addDays(h, -28)).length : K.filter(x => x.estado === 'Publicado' && x.fecha >= addDays(h, -28)).length;
+  const leads = S.leadsCanal ? (S.leadsCanal.leads || []).filter(l => l.canal === 'instagram' && l.fecha >= addDays(h, -28)).length : null;
+  return { ic: 'camera', t: 'Resumen de redes', intro: 'Cómo crece Instagram, qué contenido viene y cuántos clientes llegan desde ahí.',
+    head: sig ? { tono: '', tx: 'Lo próximo: <b>' + esc(sig.tema) + '</b> · ' + esc(fmtRel(sig.fecha)) + ' (' + esc(sig.estado.toLowerCase()) + ').' } : { tono: 'warn', tx: '<b>No hay contenido planificado.</b> Usa «Planificar contenido» para armar la semana.' },
+    tiles: [
+      ig && { k: 'bars', l: 'Seguidores y alcance', v: ig.seg != null ? ig.seg.toLocaleString('es-CL') : '–', sub: ig.dSeg != null ? ' · ' + (ig.dSeg >= 0 ? '+' : '') + ig.dSeg + ' en 28 días' : '', vals: D.map(d => ({ v: +d.alcance || 0, lab: fmt(d.fecha), tip: fmt(d.fecha) + ': ' + (+d.alcance || 0) + ' de alcance' })), q: 'Las barras son las personas alcanzadas cada día (14 días).' },
+      { k: 'donut', l: 'Contenido por estado', centro: K.length, sub: 'piezas', seg: est.map((e, i) => ({ l: e, v: K.filter(x => x.estado === e).length, c: [OTRAC, CATC[0], CATC[3], CATC[2]][i] })), q: 'De la idea a publicado. Si se acumulan ideas, agenda una sesión de grabación.', go: () => { S.rtab = 'contenido'; viewRedes(); } },
+      { k: 'ring', l: 'Constancia · 4 semanas', p: pub28 / (metaSem * 4), centro: pub28, sub: 'de ' + (metaSem * 4), q: 'Publicaciones del último mes contra tu meta (' + metaSem + ' por semana).' },
+      leads != null && { k: 'num', l: 'Clientes desde Instagram', v: leads, sub: ' en 28 días', q: 'Personas que escribieron por WhatsApp desde un link o código de Instagram.', go: () => { S.rtab = 'leads'; viewRedes(); } }
+    ] };
+}
 </script>
 </body>
 </html>
