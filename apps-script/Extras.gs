@@ -15,8 +15,8 @@
  * Para actualizar este archivo más adelante: reemplaza todo su contenido y repite los dos pasos anteriores.
  */
 
-const EX_VERSION = '2026-11-04';
-const EX_NIVEL = 17;      // la app lo usa para saber qué funciones tiene este script
+const EX_VERSION = '2026-11-05';
+const EX_NIVEL = 18;      // la app lo usa para saber qué funciones tiene este script
 const EX_HOJA = 'Tareas';
 const EX_PRIMERA = 4;
 const EX_ULTIMA = 400;
@@ -143,6 +143,7 @@ function app_extra_(p) {
     case 'copiloto':   return ex_copiloto_(p);
     case 'cerebro':    return ex_cerebro_(p);
     case 'global':     return ex_contextoGlobal_(p);
+    case 'proveedores': return ex_proveedores_(p);
     case 'eventos':    return { ok: true, eventos: int_eventosRango_(ex_tz_(), String(p.desde || ''), String(p.hasta || '')) };
     default:           return { ok: false, error: 'op desconocida: ' + p.op };
   }
@@ -1336,7 +1337,7 @@ const EX_AS_SISTEMA = {
     '- diagnostico: 4 a 6 puntos (fortaleza, debilidad u oportunidad), cada uno con datos concretos de la cuenta;',
     '- frecuencia: reels, carruseles y posts por semana e historias al día, realista para una persona con poco tiempo (como referencia, 3 a 5 publicaciones semanales suelen duplicar el crecimiento frente a 1 o 2, y las historias diarias mantienen el canal directo), y el motivo;',
     '- horarios: 3 a 5 franjas (día y hora) basadas primero en los datos de la cuenta y, si hay pocos, en lo habitual para Chile (tarde-noche de miércoles a viernes, mañana del fin de semana);',
-    '- pilares: mezcla de temas en porcentajes que sumen 100, usando estos pilares: Producto y stock, Taller y consejos, Comunidad y salidas, Clientes y entregas, Promociones, Lugar y estilo de vida; cada uno con su motivo;',
+    '- pilares: mezcla de temas en porcentajes que sumen 100, usando estos pilares: Producto y stock, Taller y consejos, Comunidad y salidas, Clientes y entregas, Asesoría y experiencia, Lugar y estilo de vida; cada uno con su motivo;',
     '- acciones_leads: 4 a 6 acciones concretas para que Instagram genere conversaciones de WhatsApp y visitas a la web (botón de WhatsApp en el perfil, link con código en la bio y en las historias, llamados a la acción, respuestas automáticas por palabra clave, historias destacadas con preguntas frecuentes, contenido que responda lo que preguntan en los chats);',
     '- metas a 30 días con kpi (usa estos nombres: seguidores, alcance_28d, interaccion, publicaciones_semana, toques_links_28d, leads_instagram_28d), nombre legible, valor actual y meta realista.',
     'Lo que hoy más pesa en Instagram: tiempo de visualización, me gusta por alcance y envíos por alcance (que la gente lo comparta por mensaje). Usa los datos de la cuenta antes que reglas generales y no inventes cifras. Español de Chile, directo. Responde solo con el JSON pedido.'
@@ -1391,11 +1392,11 @@ const EX_AS_ESQUEMA = {
   contenido: { type: 'object', additionalProperties: false, required: ['resumen', 'ideas'], properties: {
     resumen: { type: 'string' },
     ideas: { type: 'array', items: { type: 'object', additionalProperties: false, required: ['fecha', 'formato', 'tema', 'idea', 'guion', 'relacionado', 'texto', 'hashtags', 'objetivo', 'por_que'], properties: {
-      fecha: { type: 'string' }, hora: { type: 'string' }, formato: { type: 'string', enum: ['Reel', 'Carrusel', 'Historia', 'Post'] }, pilar: { type: 'string', enum: ['Producto y stock', 'Taller y consejos', 'Comunidad y salidas', 'Clientes y entregas', 'Promociones', 'Lugar y estilo de vida'] }, tema: { type: 'string' }, idea: { type: 'string' }, guion: { type: 'string' }, relacionado: { type: 'string' }, texto: { type: 'string' }, hashtags: { type: 'string' },
+      fecha: { type: 'string' }, hora: { type: 'string' }, formato: { type: 'string', enum: ['Reel', 'Carrusel', 'Historia', 'Post'] }, pilar: { type: 'string', enum: ['Producto y stock', 'Taller y consejos', 'Comunidad y salidas', 'Clientes y entregas', 'Asesoría y experiencia', 'Lugar y estilo de vida'] }, tema: { type: 'string' }, idea: { type: 'string' }, guion: { type: 'string' }, relacionado: { type: 'string' }, texto: { type: 'string' }, hashtags: { type: 'string' },
       cta: { type: 'string', enum: ['WhatsApp', 'Web', 'Visita', 'Guardar', 'Compartir'] }, objetivo: { type: 'string', enum: ['Ventas', 'Comunidad', 'Alcance', 'Educación', 'Postventa'] }, por_que: { type: 'string' } } } } } },
   pieza: { type: 'object', additionalProperties: false, required: ['titulo', 'tipo', 'pilar', 'objetivo', 'por_que', 'slides', 'caption', 'hashtags', 'cta', 'alt'], properties: {
     titulo: { type: 'string' }, tipo: { type: 'string', enum: ['carrusel', 'historias'] },
-    pilar: { type: 'string', enum: ['Producto y stock', 'Taller y consejos', 'Comunidad y salidas', 'Clientes y entregas', 'Promociones', 'Lugar y estilo de vida'] },
+    pilar: { type: 'string', enum: ['Producto y stock', 'Taller y consejos', 'Comunidad y salidas', 'Clientes y entregas', 'Asesoría y experiencia', 'Lugar y estilo de vida'] },
     objetivo: { type: 'string', enum: ['Ventas', 'Comunidad', 'Alcance', 'Educación', 'Postventa'] }, por_que: { type: 'string' },
     slides: { type: 'array', items: { type: 'object', additionalProperties: false, required: ['layout', 'kicker', 'titulo', 'texto', 'items', 'numero', 'foto'], properties: {
       layout: { type: 'string', enum: ['portada', 'texto', 'lista', 'comparativa', 'dato', 'foto', 'pregunta', 'cta'] }, kicker: { type: 'string' }, titulo: { type: 'string' }, texto: { type: 'string' },
@@ -1562,7 +1563,7 @@ function ex_llamarClaude_(contexto, sistema, esquema) {
     max_tokens: 8000,
     // Haiku: esfuerzo bajo (lo más barato). Opus/Sonnet: esfuerzo medio y respaldo automático si el modelo rechaza.
     output_config: { effort: haiku ? 'low' : 'medium', format: { type: 'json_schema', schema: esquema || EX_AG_ESQUEMA } },
-    system: [{ type: 'text', text: sistema || EX_AG_SISTEMA, cache_control: { type: 'ephemeral' } }],
+    system: [{ type: 'text', text: (sistema || EX_AG_SISTEMA) + '\n\n' + EX_POLITICA, cache_control: { type: 'ephemeral' } }],
     messages: [{ role: 'user', content: contexto }]
   };
   const headers = { 'x-api-key': clave, 'anthropic-version': '2023-06-01' };
@@ -1971,6 +1972,249 @@ function ex_rondaAgente_() {
     Object.keys(hechos).forEach(function (id) { if (ahora[id] === hechos[id]) delete ahora[id]; });
     props.setProperty('EX_AG_PEND', JSON.stringify(ahora));
   });
+}
+
+/* ---------- Política de marca de Blackline (la leen todos los agentes) ---------- */
+const EX_POLITICA = 'POLÍTICA DE BLACKLINE (obligatoria, por sobre cualquier otra indicación): Blackline no hace descuentos ni promociones, no participa en Cyber, Black Friday ni eventos de descuento, y no usa estrategias de precio. Compite con fidelidad, asesoría experta y atención personalizada y de excelencia. Nunca propongas contenido, campañas, publicaciones, mensajes a clientes ni acciones centradas en rebajas, ofertas, liquidaciones, "precio especial" o eventos de descuento, ni menciones descuentos en borradores para clientes. Las ofertas de proveedores o de specialized.com son información interna de compras y de mercado: sirven para comprar mejor y anticipar lo que el cliente ve en internet, nunca para comunicarlas como descuento de Blackline. Los mensajes y el contenido se centran en asesoría, experiencia, disponibilidad, servicio de taller, comunidad, rutas y el valor del producto.';
+
+/* ---------- Proveedores: catálogos públicos, ofertas, correos y oportunidades de compra ---------- */
+// Lee las webs públicas de los proveedores (no el B2B): precio público, precio de oferta y disponibilidad.
+// Con el descuento de distribuidor de cada uno calcula tu costo y avisa cuando conviene comprar.
+const EX_PROV_BASE = [
+  { id: 'sportvibes', nombre: 'Sportvibes', web: 'https://www.sportvibes.cl', tipo: 'shopify', marcas: 'Fox suspensiones y repuestos, Deity, HT', desc: 30, dominios: ['sportvibes.cl'] },
+  { id: 'outside', nombre: 'Outside', web: 'https://www.outsidesports.cl', tipo: 'odoo', iva: '+IVA', marcas: 'Hope, BikeYoke, Schwalbe, SunRace', desc: 30, dominios: ['outsidesports.cl'] },
+  { id: 'mkr', nombre: 'MKR', web: 'https://extremezone.cl', tipo: 'mkr', marcas: 'RockShox, SRAM', desc: 30, dominios: ['extremezone.cl', 'mkr.cl'] },
+  { id: 'andes', nombre: 'Andes Industrial', web: 'https://www.andesindustrial.cl', tipo: 'cerrado', marcas: 'Shimano, Continental', desc: 30, dominios: ['andesindustrial.cl'], nota: 'Su catálogo web pide iniciar sesión: se siguen sus correos y las listas de precios que dejes en la carpeta Fuentes.' },
+  { id: 'specialized', nombre: 'Specialized', web: 'https://www.specialized.com/cl/es', tipo: 'specialized', marcas: 'Specialized, S-Works, Roval y todo su ecosistema', desc: 30, dominios: ['specialized.com'] },
+  { id: 'garmin', nombre: 'Garmin', web: 'https://garminstore.cl', tipo: 'shopify', marcas: 'Garmin, Tacx', desc: 20, dominios: ['garmin.com', 'garminstore.cl'], nota: 'Margen bajo (~20 %): conviene comprar productos nuevos o vigentes cuando estén en promoción y venderlos a precio normal cuando termine.' },
+  { id: 'trail', nombre: 'Trail', web: 'https://trailstore.cl', tipo: 'shopify', marcas: 'Fox ropa e indumentaria', desc: 30, dominios: ['trailsports.cl', 'trailstore.cl'], vendor: 'fox', excluir: 'moto|motocross|\\bmx\\b|atv|enduro moto|off ?road' }
+];
+const EX_MKR_TERMINOS = ['sram', 'rockshox', 'eagle', 'transmission', 'gx', 'x0', 'xx', 'nx', 'sx', 'apex', 'rival', 'force', 'red axs', 'cassette', 'cadena', 'plato', 'desviador', 'shifter', 'pod', 'maven', 'code', 'level', 'db8', 'motive', 'pastillas', 'rotor', 'centerline', 'pike', 'lyrik', 'zeb', 'sid', 'psylo', 'domain', 'judy', 'recon', 'boxxer', 'deluxe', 'super deluxe', 'vivid', 'reverb', 'service kit', 'dub', 'roam', 'kit mantencion', 'powermeter', 'quarq'];
+const EX_HOJA_PROVC = 'Proveedores catálogo', EX_HOJA_PROVM = 'Proveedores movimientos';
+const EX_CAB_PROVC = ['Proveedor', 'ID', 'SKU', 'Producto', 'Marca', 'Categoría', 'Precio web', 'Precio normal', 'IVA', 'URL', 'Imagen', 'Disponible', 'Visto desde', 'Visto', 'En oferta desde', 'Revisado'];
+const EX_CAB_PROVM = ['Fecha', 'Proveedor', 'ID', 'Producto', 'Tipo', 'Antes', 'Después'];
+let _exProvCat = null;
+function ex_proveedoresConf_() {
+  const g = JSON.parse(PropertiesService.getScriptProperties().getProperty('PROVEEDORES') || '{}');
+  return EX_PROV_BASE.map(function (p) { return Object.assign({}, p, g[p.id] || {}); });
+}
+function ex_get_(url) { return UrlFetchApp.fetch(url, { muteHttpExceptions: true, followRedirects: true, headers: { 'Accept-Language': 'es-CL,es;q=0.9' } }); }
+// Shopify publica el catálogo en /products.json: precio, precio comparado (= normal cuando hay oferta), SKU y disponibilidad.
+function ex_provShopify_(p) {
+  const out = [], ex = p.excluir ? new RegExp(p.excluir, 'i') : null;
+  for (let pg = 1; pg <= 30; pg++) {
+    const r = ex_get_(p.web + '/products.json?limit=250&page=' + pg);
+    if (r.getResponseCode() !== 200) { if (pg === 1) throw new Error('respondió ' + r.getResponseCode()); break; }
+    const L = (JSON.parse(r.getContentText()).products) || []; if (!L.length) break;
+    L.forEach(function (x) {
+      if (p.vendor && String(x.vendor || '').toLowerCase().indexOf(p.vendor) < 0) return;
+      if (ex && ex.test([x.title, x.product_type, (x.tags || []).join(' ')].join(' '))) return;
+      const V = x.variants || [], disp = V.filter(function (v) { return v.available; });
+      const pr = V.map(function (v) { return +v.price || 0; }).filter(Boolean), min = pr.length ? Math.min.apply(null, pr) : 0;
+      const vmin = V.filter(function (v) { return +v.price === min; })[0] || V[0] || {}, cmp = +vmin.compare_at_price || 0;
+      out.push({ id: String(x.id), sku: String(vmin.sku || ''), nombre: String(x.title || ''), marca: String(x.vendor || ''), cat: String(x.product_type || ''), precio: min, normal: cmp > min ? cmp : min, iva: 'incluido', url: p.web + '/products/' + x.handle, img: x.images && x.images[0] ? x.images[0].src : '', disp: disp.length ? 'Sí (' + disp.length + '/' + V.length + ')' : 'No', creado: String(x.created_at || '').slice(0, 10) });
+    });
+    if (L.length < 250) break;
+  }
+  return out;
+}
+// Odoo (Outside): páginas de la tienda con 200 productos; los precios se muestran + IVA.
+function ex_provOdoo_(p) {
+  const out = [], vistos = {};
+  for (let pg = 1; pg <= 20; pg++) {
+    const r = ex_get_(p.web + (pg === 1 ? '/shop?ppg=200' : '/shop/page/' + pg + '?ppg=200'));
+    if (r.getResponseCode() !== 200) { if (pg === 1) throw new Error('respondió ' + r.getResponseCode()); break; }
+    const partes = r.getContentText().split('class="oe_product_cart').slice(1); let nuevos = 0;
+    partes.forEach(function (c) {
+      const href = /href="(\/shop\/[^"#?]+)/.exec(c), nom = /itemprop="name"[^>]*content="([^"]*)"/.exec(c) || /itemprop="name"[^>]*>([^<]+)</.exec(c);
+      if (!href || vistos[href[1]]) return; vistos[href[1]] = 1; nuevos++;
+      const precio = +((/itemprop="price"[^>]*>([\d.]+)</.exec(c) || [])[1] || 0);
+      const base = /(?:base_price|list_price)[^>]*>[^<]*<span class="oe_currency_value">([\d.,]+)</.exec(c), normal = base ? +base[1].replace(/\./g, '').replace(',', '.') : 0;
+      const alt = /alt="\[([^\]]+)\]/.exec(c), img = /<img src="([^"]+)"/.exec(c);
+      const n = String(nom ? nom[1] : '').replace(/&amp;/g, '&').replace(/&#39;/g, "'").replace(/&#34;|&quot;/g, '"').trim();
+      out.push({ id: href[1].split('-').pop(), sku: alt ? alt[1] : '', nombre: n, marca: n.split(/\s+/)[0] || '', cat: '', precio: precio, normal: normal > precio ? normal : precio, iva: '+IVA', url: p.web + href[1], img: img ? p.web + img[1].replace(/&amp;/g, '&') : '', disp: /a-submit|Carro de compras/.test(c) ? 'Sí' : 'Consultar', creado: '' });
+    });
+    if (partes.length < 200 || !nuevos) break;
+  }
+  return out;
+}
+// MKR (Extremezone): su buscador entrega los productos; el detalle (precio normal, oferta y stock) se revisa por turnos.
+function ex_provMkr_(p) {
+  const api = 'https://api.extremezone.cl/api/search/', vistos = {}, out = [];
+  const rs = [];
+  for (let i = 0; i < EX_MKR_TERMINOS.length; i += 8) Array.prototype.push.apply(rs, UrlFetchApp.fetchAll(EX_MKR_TERMINOS.slice(i, i + 8).map(function (t) { return { url: api + encodeURIComponent(t), muteHttpExceptions: true }; })));
+  rs.forEach(function (r) {
+    if (r.getResponseCode() !== 200) return;
+    let L = []; try { L = JSON.parse(r.getContentText()).products || []; } catch (e) {}
+    L.forEach(function (x) {
+      if (vistos[x.id] || !/sram|rockshox|quarq|zipp|time/i.test(String(x.brand || ''))) return; vistos[x.id] = 1;
+      const sku = String(x.mkr_skus || '').split(',')[0], precio = +String(x.price_range || '').replace(/[^\d]/g, '') || 0;
+      out.push({ id: String(x.ficha_code || x.id), sku: sku, nombre: String(x.model || ''), marca: String(x.brand || ''), cat: '', precio: precio, normal: precio, iva: 'incluido', url: 'https://extremezone.cl' + String(x.url || ''), img: x.photo ? 'https://api.extremezone.cl' + x.photo : '', disp: '', creado: '', mkr: true });
+    });
+  });
+  if (!out.length) throw new Error('el buscador de MKR no entregó productos');
+  return out;
+}
+function ex_provDetalleMkr_(max) {
+  const sh = SpreadsheetApp.getActive().getSheetByName(EX_HOJA_PROVC); if (!sh || sh.getLastRow() < 2) return 0;
+  const n = sh.getLastRow() - 1, F = sh.getRange(2, 1, n, EX_CAB_PROVC.length).getValues(), ahora = Date.now();
+  const toca = F.map(function (r, i) { return { r: r, i: i }; }).filter(function (x) { return x.r[0] === 'mkr' && x.r[2] && !(x.r[15] instanceof Date && ahora - x.r[15].getTime() < 24 * 3600000); }).slice(0, max || 60);
+  if (!toca.length) return 0;
+  const mov = [];
+  for (let k = 0; k < toca.length; k += 10) {
+    const g = toca.slice(k, k + 10), rs = UrlFetchApp.fetchAll(g.map(function (x) { return { url: 'https://api.extremezone.cl/api/detail_payment/' + encodeURIComponent(x.r[2]), muteHttpExceptions: true }; }));
+    rs.forEach(function (resp, j) {
+      const x = g[j], r = x.r; r[15] = new Date();
+      let d = null; try { d = JSON.parse(resp.getContentText()).product; } catch (e) {}
+      if (!d) return;
+      const normal = +d.precio2 || +r[7], oferta = d.precio_oferta ? +d.precio_oferta : (+d.descto ? Math.round(normal * (1 - d.descto / 100)) : normal), stock = (+d.stock || 0) + (+d.stock_vitacura || 0) + (+d.stock_laserena || 0) + (+d.stock_valdivia || 0) + (+d.stock_mallsport || 0) + (+d.stock_auxiliar || 0);
+      const antes = +r[6] < +r[7];
+      r[6] = oferta; r[7] = normal; r[11] = stock ? 'Sí (' + stock + ')' : 'No';
+      if (oferta < normal && !antes) { r[14] = new Date(); mov.push([new Date(), 'mkr', r[1], r[3], 'oferta', normal, oferta]); }
+      if (oferta >= normal && antes) { r[14] = ''; mov.push([new Date(), 'mkr', r[1], r[3], 'fin oferta', '', normal]); }
+    });
+  }
+  toca.forEach(function (x) { F[x.i] = x.r; });
+  sh.getRange(2, 1, n, EX_CAB_PROVC.length).setValues(F); _exProvCat = null;
+  ex_provGuardarMov_(mov);
+  return toca.length;
+}
+function ex_provGuardarMov_(filas) {
+  if (!filas.length) return;
+  const sh = ex_hojaCab_(EX_HOJA_PROVM, EX_CAB_PROVM);
+  sh.getRange(sh.getLastRow() + 1, 1, filas.length, EX_CAB_PROVM.length).setValues(filas);
+  if (sh.getLastRow() > 8000) sh.deleteRows(2, sh.getLastRow() - 7000);
+}
+function ex_provSinc_(id) {
+  const p = ex_proveedoresConf_().filter(function (x) { return x.id === id; })[0]; if (!p) throw new Error('proveedor desconocido');
+  const pr = PropertiesService.getScriptProperties(), est = JSON.parse(pr.getProperty('PROV_SINC') || '{}');
+  if (p.tipo === 'cerrado' || p.tipo === 'specialized') { est[id] = { fecha: new Date().toISOString(), productos: 0, nota: p.tipo === 'specialized' ? 'Se lee en el módulo Specialized' : 'Catálogo con inicio de sesión' }; pr.setProperty('PROV_SINC', JSON.stringify(est)); return est[id]; }
+  let items;
+  try { items = p.tipo === 'shopify' ? ex_provShopify_(p) : p.tipo === 'odoo' ? ex_provOdoo_(p) : ex_provMkr_(p); }
+  catch (e) { est[id] = Object.assign({}, est[id] || {}, { error: e.message, intento: new Date().toISOString() }); pr.setProperty('PROV_SINC', JSON.stringify(est)); throw e; }
+  const sh = ex_hojaCab_(EX_HOJA_PROVC, EX_CAB_PROVC), n = sh.getLastRow() - 1, todas = n > 0 ? sh.getRange(2, 1, n, EX_CAB_PROVC.length).getValues() : [];
+  const otras = todas.filter(function (r) { return r[0] !== id; }), prev = {}; todas.forEach(function (r) { if (r[0] === id) prev[String(r[1])] = r; });
+  const primera = !Object.keys(prev).length, ahora = new Date(), hoy = ex_hoyYmd_(), mov = [], filas = [];
+  items.forEach(function (x) {
+    const a = prev[x.id], enOf = x.precio && x.precio < x.normal;
+    const fila = [id, x.id, x.sku, x.nombre, x.marca, x.cat, x.precio, x.normal, x.iva, x.url, x.img, x.disp, x.creado || hoy, hoy, enOf ? ahora : '', a ? a[15] : ''];
+    if (a) {
+      fila[12] = a[12] instanceof Date ? ex_ymd_(a[12]) : (a[12] || fila[12]);
+      if (x.mkr) { fila[6] = a[6] || x.precio; fila[7] = a[7] || x.normal; fila[11] = a[11]; fila[14] = a[14]; }
+      else {
+        const antes = +a[6] < +a[7];
+        if (enOf && antes) fila[14] = a[14] || ahora;
+        if (enOf && !antes) mov.push([ahora, id, x.id, x.nombre, 'oferta', x.normal, x.precio]);
+        if (!enOf && antes) mov.push([ahora, id, x.id, x.nombre, 'fin oferta', a[6], x.precio]);
+        if (+a[7] && +x.normal !== +a[7]) mov.push([ahora, id, x.id, x.nombre, 'precio', a[7], x.normal]);
+      }
+    } else if (!primera) mov.push([ahora, id, x.id, x.nombre, 'nuevo', '', x.precio]);
+    filas.push(fila);
+  });
+  const todo = otras.concat(filas);
+  if (n > 0) sh.getRange(2, 1, n, EX_CAB_PROVC.length).clearContent();
+  if (todo.length) sh.getRange(2, 1, todo.length, EX_CAB_PROVC.length).setValues(todo);
+  _exProvCat = null; ex_provGuardarMov_(mov);
+  est[id] = { fecha: ahora.toISOString(), productos: items.length, ofertas: items.filter(function (x) { return x.precio < x.normal; }).length, cambios: mov.length };
+  pr.setProperty('PROV_SINC', JSON.stringify(est));
+  return est[id];
+}
+// Cada hora: actualiza el proveedor con la lectura más antigua (uno por vez) y revisa precios de MKR por turnos.
+function ex_rondaProveedores_() {
+  const est = JSON.parse(PropertiesService.getScriptProperties().getProperty('PROV_SINC') || '{}');
+  const due = ex_proveedoresConf_().filter(function (p) { return /shopify|odoo|mkr/.test(p.tipo); })
+    .map(function (p) { const e = est[p.id] || {}; return { p: p, t: Date.parse(e.fecha || e.intento || 0) || 0 }; })
+    .filter(function (x) { return Date.now() - x.t > 20 * 3600000; }).sort(function (a, b) { return a.t - b.t; })[0];
+  if (due) { try { ex_provSinc_(due.p.id); } catch (e) { console.log('Proveedor ' + due.p.id + ': ' + e.message); } }
+  else ex_provDetalleMkr_(60);
+}
+function ex_provCatalogo_() {
+  if (_exProvCat) return _exProvCat;
+  const sh = SpreadsheetApp.getActive().getSheetByName(EX_HOJA_PROVC); if (!sh || sh.getLastRow() < 2) return (_exProvCat = []);
+  const tz = ex_tz_(), f = function (d) { return d instanceof Date ? ex_ymd_(d, tz) : String(d || ''); };
+  return (_exProvCat = sh.getRange(2, 1, sh.getLastRow() - 1, EX_CAB_PROVC.length).getValues().filter(function (r) { return r[0]; }).map(function (r) {
+    return { prov: String(r[0]), id: String(r[1]), sku: String(r[2]), nombre: String(r[3]), marca: String(r[4]), cat: String(r[5]), precio: +r[6] || 0, normal: +r[7] || 0, iva: String(r[8]), url: String(r[9]), img: String(r[10]), disp: String(r[11]), desde: f(r[12]), visto: f(r[13]), ofertaDesde: f(r[14]) };
+  }));
+}
+function ex_provBuscar_(q, max) {
+  const C = ex_provCatalogo_(), tk = ex_norm_(q).split(/[^a-z0-9.-]+/).filter(function (w) { return w.length >= 2; }); if (!tk.length) return [];
+  const conf = {}; ex_proveedoresConf_().forEach(function (p) { conf[p.id] = p; });
+  const res = C.map(function (x) {
+    const t = ' ' + ex_norm_(x.nombre + ' ' + x.marca + ' ' + x.cat + ' ' + x.sku).replace(/[^a-z0-9.-]+/g, ' ') + ' ';
+    const p = tk.filter(function (w) { return t.indexOf(' ' + w) >= 0 || (w.length > 4 && t.indexOf(w) >= 0); }).length;
+    return { x: x, p: p };
+  }).filter(function (o) { return o.p >= (tk.length <= 3 ? tk.length : Math.ceil(tk.length * 0.75)); }).sort(function (a, b) { return b.p - a.p || (/^(horquilla|amortiguador|freno|rueda|bicicleta|cartucho)/i.test(b.x.nombre) - /^(horquilla|amortiguador|freno|rueda|bicicleta|cartucho)/i.test(a.x.nombre)) || a.x.nombre.length - b.x.nombre.length; }).slice(0, max || 20).map(function (o) { return ex_provCosto_(o.x, conf[o.x.prov]); });
+  // Specialized se busca en su propio catálogo
+  try { ex_spzBuscar_(q, 5).forEach(function (s) { res.push(ex_provCosto_({ prov: 'specialized', id: s.id, sku: '', nombre: s.nombre, marca: 'Specialized', cat: s.disciplina, precio: s.oferta || s.precio, normal: s.precio, iva: 'incluido', url: s.url, img: s.img, disp: s.stock == null ? '' : s.stock ? 'Sí (' + s.stock + ' en Chile)' : 'No', desde: s.desde, ofertaDesde: '' }, conf.specialized)); }); } catch (e) {}
+  return res;
+}
+// Costo con el descuento de distribuidor. Si hay oferta, el descuento se aplica sobre el precio de oferta.
+function ex_provCosto_(x, p) {
+  const d = ((p && +p.desc) || 30) / 100, costo = Math.round(x.precio * (1 - d)), costoNormal = Math.round(x.normal * (1 - d));
+  return Object.assign({}, x, { proveedor: p ? p.nombre : x.prov, desc: Math.round(d * 100), costo: costo, costoNormal: costoNormal, margenOferta: x.normal ? Math.round((1 - costo / x.normal) * 100) : null, ahorro: costoNormal - costo });
+}
+// Oportunidades de compra: productos en oferta en la web del proveedor que convienen para vender a precio normal.
+function ex_provOportunidades_(max) {
+  const C = ex_provCatalogo_(), conf = {}, hoy = ex_hoyYmd_(); ex_proveedoresConf_().forEach(function (p) { conf[p.id] = p; });
+  let bsale = ''; try { if (ex_bsaleToken_()) bsale = ' ' + ex_bsaleCatalogo_().map(function (v) { return ex_norm_(v.producto); }).join(' ') + ' '; } catch (e) {}
+  let ints = ''; try { ints = ex_perfilesLista_().map(function (pf) { return ex_norm_(((pf.p && pf.p.intereses) || []).join(' ')); }).join(' | '); } catch (e) {}
+  const dias = function (s) { return s ? Math.round((Date.parse(hoy) - Date.parse(s.slice(0, 10))) / 86400000) : 999; };
+  // Fuera precios de prueba ($1.000) o rebajas de más de 70 %, que suelen ser errores o repuestos sueltos.
+  const L = C.filter(function (x) { return x.precio >= 5000 && x.normal > x.precio * 1.03 && x.precio >= x.normal * 0.3; }).map(function (x) {
+    const o = ex_provCosto_(x, conf[x.prov]), ws = ex_norm_(x.nombre).split(/[^a-z0-9]+/).filter(function (w) { return w.length >= 4 && !/^(negro|black|blanco|white|talla|unisex|hombre|mujer|bicicleta)$/.test(w); }).slice(0, 4);
+    const vende = bsale && ws.length && ws.filter(function (w) { return bsale.indexOf(' ' + w) >= 0; }).length >= Math.min(2, ws.length);
+    const piden = ints && ws.some(function (w) { return ints.indexOf(w) >= 0; });
+    const nuevo = dias(x.desde) <= 150, extra = o.margenOferta - o.desc;
+    o.vende = !!vende; o.piden = !!piden; o.nuevo = nuevo; o.diasOferta = x.ofertaDesde ? dias(x.ofertaDesde) : null; o.extra = extra;
+    o.puntaje = extra * (1 + (vende ? 1 : 0) + (piden ? 0.8 : 0) + (nuevo ? 0.6 : 0) + (x.prov === 'garmin' ? 0.5 : 0)) + Math.min(10, o.ahorro / 20000) - (/No/.test(x.disp) ? 30 : 0);
+    return o;
+  }).filter(function (o) { return o.extra >= 5; }).sort(function (a, b) { return b.puntaje - a.puntaje; });
+  return L.slice(0, max || 60);
+}
+const EX_RE_PROMO = /promo|oferta|descuento|dcto|liquidaci|precio especial|black ?friday|cyber|sale\b|rebaja|outlet|lanzamiento|nuevo|novedad|preventa|llegada|arribo|stock|disponib|lista de precio/i;
+function ex_provCorreos_(forzar) {
+  const cache = CacheService.getScriptCache(), c = !forzar && cache.get('provCorreos');
+  if (c) return JSON.parse(c);
+  const P = ex_proveedoresConf_(), tz = ex_tz_(), out = [];
+  const dom = {}; P.forEach(function (p) { (p.dominios || []).forEach(function (d) { dom[d] = p; }); });
+  const q = 'from:(' + Object.keys(dom).join(' OR ') + ') newer_than:30d';
+  try {
+    GmailApp.search(q, 0, 60).forEach(function (th) {
+      const m = th.getMessages().pop(), de = String(m.getFrom()), d = (/@([a-z0-9.-]+)/i.exec(de) || [])[1] || '';
+      const p = dom[Object.keys(dom).filter(function (k) { return d.toLowerCase().indexOf(k) >= 0; })[0]];
+      const asunto = th.getFirstMessageSubject() || '', cuerpo = String(m.getPlainBody() || '').replace(/\s+/g, ' ');
+      out.push({ proveedor: p ? p.nombre : d, id: p ? p.id : '', asunto: asunto, fecha: Utilities.formatDate(m.getDate(), tz, 'yyyy-MM-dd'), resumen: cuerpo.slice(0, 220), promo: EX_RE_PROMO.test(asunto + ' ' + cuerpo.slice(0, 600)), link: 'https://mail.google.com/mail/u/0/#all/' + th.getId() });
+    });
+  } catch (e) { return { error: e.message, items: [] }; }
+  const r = { items: out, fecha: new Date().toISOString() };
+  try { cache.put('provCorreos', JSON.stringify(r).slice(0, 95000), 6 * 3600); } catch (e) {}
+  return r;
+}
+function ex_provMovimientos_(dias) {
+  const sh = SpreadsheetApp.getActive().getSheetByName(EX_HOJA_PROVM); if (!sh || sh.getLastRow() < 2) return [];
+  const desde = Date.now() - (dias || 14) * 86400000, tz = ex_tz_(), n = Math.min(2000, sh.getLastRow() - 1);
+  return sh.getRange(sh.getLastRow() - n + 1, 1, n, EX_CAB_PROVM.length).getValues().filter(function (r) { return r[0] instanceof Date && r[0].getTime() >= desde; })
+    .map(function (r) { return { fecha: Utilities.formatDate(r[0], tz, 'yyyy-MM-dd'), prov: String(r[1]), id: String(r[2]), producto: String(r[3]), tipo: String(r[4]), antes: +r[5] || 0, despues: +r[6] || 0 }; }).reverse();
+}
+function ex_proveedores_(p) {
+  const a = p.accion || 'resumen', pr = PropertiesService.getScriptProperties();
+  if (a === 'guardar') {
+    const g = JSON.parse(pr.getProperty('PROVEEDORES') || '{}'), x = p.proveedor || {};
+    if (!EX_PROV_BASE.some(function (b) { return b.id === x.id; })) throw new Error('proveedor desconocido');
+    g[x.id] = Object.assign(g[x.id] || {}, { desc: Math.max(0, Math.min(70, +x.desc || 0)), marcas: String(x.marcas || '').slice(0, 200), notas: String(x.notas || '').slice(0, 500), dominios: String(x.dominios || '').split(/[\s,;]+/).filter(String).slice(0, 6) });
+    pr.setProperty('PROVEEDORES', JSON.stringify(g));
+  }
+  if (a === 'sinc') { const r = ex_provSinc_(String(p.id)); if (p.id === 'mkr') ex_provDetalleMkr_(80); return Object.assign({ ok: true }, r); }
+  if (a === 'buscar') return { ok: true, items: ex_provBuscar_(String(p.q || ''), 25) };
+  const est = JSON.parse(pr.getProperty('PROV_SINC') || '{}'), C = ex_provCatalogo_(), por = {};
+  C.forEach(function (x) { const s = por[x.prov] = por[x.prov] || { productos: 0, ofertas: 0 }; s.productos++; if (x.normal > x.precio) s.ofertas++; });
+  let contactos = []; try { contactos = (ex_leerBase_().contactos || []).filter(function (c) { return c.tipo === 'Proveedor'; }); } catch (e) {}
+  const lista = ex_proveedoresConf_().map(function (x) {
+    const s = por[x.id] || { productos: 0, ofertas: 0 };
+    if (x.tipo === 'specialized') { try { const z = ex_spzResumen_(); s.productos = z.productos || 0; s.ofertas = (z.ofertas || []).length; } catch (e) {} }
+    return Object.assign({}, x, s, { sinc: est[x.id] || null, contactos: contactos.filter(function (c) { return (x.dominios || []).some(function (d) { return String(c.email || '').toLowerCase().indexOf(d) >= 0; }); }).map(function (c) { return { id: c.id, nombre: c.nombre, email: c.email }; }) });
+  });
+  return { ok: true, proveedores: lista, oportunidades: ex_provOportunidades_(60), correos: ex_provCorreos_(!!p.forzar), movimientos: ex_provMovimientos_(14).slice(0, 80), total: C.length };
 }
 
 /* ---------- Specialized Chile (web pública): catálogo, stock por talla, lanzamientos, productos calientes ---------- */
@@ -2494,6 +2738,8 @@ const EX_COP_SISTEMA = [
   'Eres el Copiloto de Blackline Puerto Varas, tienda Specialized en Puerto Varas, Chile (lluvioso; temporada alta de primavera a verano; muchos turistas argentinos en verano). Su fuerte son las e-bikes (Turbo Levo, Levo SL, Kenevo, Vado, Como, Creo) y también venden MTB, ruta, gravel, urbano, niños, ropa, accesorios y taller. Han vendido S-Works en todas las disciplinas. Hablas con Gonzalo, el encargado: psicólogo laboral, vendedor experto, muy analítico. Tutéalo, en español de Chile, directo y concreto.',
   'Tu trabajo: responder rápido y bien usando las herramientas. Consulta los datos antes de afirmar algo (stock, precios, clientes, negociaciones, clima). Cruza fuentes: por ejemplo, si preguntan por un producto mira la web de Specialized (precio, oferta, stock por talla en Chile), el stock de la tienda (Bsale) y qué clientes lo quieren. Si una herramienta no tiene datos (por ejemplo Bsale aún no conectado), dilo en una frase y sigue con lo que sí hay.',
   'Specialized: los modelos sin «Alloy» en el nombre son de carbono (ej.: «Turbo Levo 4 Comp» es la Comp Carbon). Para stock por color y talla usa buscar_producto y, si vas a prometer algo, confírmalo con ficha_specialized_en_vivo; responde con una lista por color y talla. Reglas: nunca inventes precios, stock ni datos de clientes. El stock de Specialized es el de su bodega en Chile según la web (sirve para saber si se puede pedir); el de Bsale es el de la tienda. No puedes comprar, pedir, enviar mensajes ni modificar nada por tu cuenta: cuando convenga actuar, usa proponer_accion (tareas, avisos, abrir chat de WhatsApp con un borrador, crear negociación, diseñar una pieza, idea de contenido, abrir ficha de producto) y Gonzalo decide con un toque.',
+  'Compras: tienes los catálogos públicos de los proveedores (Sportvibes: Fox suspensiones, Deity, HT; Outside: Hope, BikeYoke, Schwalbe, SunRace; MKR: RockShox y SRAM; Andes: Shimano y Continental; Specialized; Garmin y Tacx; Trail: ropa Fox) con precio público, precio de oferta y el costo de Blackline con su descuento de distribuidor (Garmin ~20 %, el resto ~30 %). Úsalos para responder qué se puede conseguir, a qué costo y cuándo conviene comprar (comprar en la oferta del proveedor y vender a precio normal). Eso es información interna: no se comunica como descuento.',
+  EX_POLITICA,
   'Formato de la respuesta: breve y escaneable. Empieza con la respuesta directa en 1–2 frases. Luego, si sirve, viñetas cortas con datos concretos (precio, tallas, stock, fechas). Usa **negrita** solo para lo clave. Sin títulos grandes ni tablas. Para borradores de mensajes a clientes, escríbelos listos para copiar, cálidos y cortos, con emojis moderados.'
 ].join('\n\n');
 const EX_COP_TOOLS = [
@@ -2512,6 +2758,9 @@ const EX_COP_TOOLS = [
   { name: 'buscar_en_planillas', description: 'Busca en las planillas y archivos que Gonzalo conectó como fuentes (listas de precios, exportaciones del B2B, metas, proveedores, etc.).', input_schema: { type: 'object', properties: { consulta: { type: 'string' } }, required: ['consulta'] } },
   { name: 'ver_instagram', description: 'Resumen de Instagram: alcance y seguidores recientes, últimas publicaciones y su rendimiento, contenido planificado y piezas del estudio.', input_schema: { type: 'object', properties: {} } },
   { name: 'ver_avisos', description: 'Avisos internos activos de la tienda (lo que viene, cosas importantes).', input_schema: { type: 'object', properties: {} } },
+  { name: 'buscar_en_proveedores', description: 'Busca un producto en los catálogos públicos de los proveedores (y Specialized): precio público, precio de oferta, disponibilidad y costo para Blackline con su descuento. Útil cuando un cliente pide algo que no está en la tienda (ej. "fox 36 grip x2", "hope tech 4", "garmin edge 1050", "schwalbe magic mary 29").', input_schema: { type: 'object', properties: { consulta: { type: 'string' } }, required: ['consulta'] } },
+  { name: 'oportunidades_compra', description: 'Productos en oferta en la web de los proveedores que conviene comprar ahora para vender a precio normal: margen extra, si la tienda los vende, si los piden clientes y cuántos días lleva la oferta.', input_schema: { type: 'object', properties: {} } },
+  { name: 'correos_proveedores', description: 'Correos recientes de los proveedores (promociones, lanzamientos, llegadas, listas de precios).', input_schema: { type: 'object', properties: {} } },
   { name: 'proponer_accion', description: 'Propone una acción para que Gonzalo la apruebe con un toque. No ejecuta nada por sí sola. Úsala cuando haya un siguiente paso claro.', input_schema: { type: 'object', properties: {
     tipo: { type: 'string', enum: ['crear_tarea', 'crear_aviso', 'whatsapp', 'crear_negocio', 'disenar_pieza', 'idea_contenido', 'abrir_producto', 'abrir_contacto'] },
     titulo: { type: 'string', description: 'Texto del botón o título de la tarea, aviso, negociación o idea' },
@@ -2563,6 +2812,9 @@ function ex_copHerramienta_(nombre, inp, estado) {
       return ex_json_(o, 7000);
     }
     case 'ver_avisos': return ex_json_(ex_avisos_({}).items.map(function (a) { return { titulo: a.titulo, detalle: a.detalle, fecha: a.fecha, importancia: a.importancia }; }));
+    case 'buscar_en_proveedores': return ex_json_(ex_provBuscar_(inp.consulta, 12).map(function (x) { return { proveedor: x.proveedor, producto: x.nombre, marca: x.marca, sku: x.sku, precio_web: x.precio, precio_normal: x.normal, iva: x.iva, disponible: x.disp, costo_blackline: x.costo, desc: x.desc + '%', url: x.url }; }), 9000);
+    case 'oportunidades_compra': return ex_json_(ex_provOportunidades_(15).map(function (o) { return { proveedor: o.proveedor, producto: o.nombre, precio_normal: o.normal, precio_oferta: o.precio, costo_en_oferta: o.costo, margen_vendiendo_a_precio_normal: o.margenOferta + '%', margen_habitual: o.desc + '%', dias_en_oferta: o.diasOferta, la_vende_la_tienda: o.vende, la_piden_clientes: o.piden, nuevo: o.nuevo, url: o.url }; }), 9000);
+    case 'correos_proveedores': return ex_json_((ex_provCorreos_(false).items || []).slice(0, 20));
     case 'proponer_accion': estado.acciones.push({ tipo: inp.tipo, titulo: String(inp.titulo || '').slice(0, 160), detalle: String(inp.detalle || '').slice(0, 1500), fecha: inp.fecha || '', ref: inp.ref || '' }); return 'Acción propuesta. Gonzalo la verá como botón.';
   }
   throw new Error('herramienta desconocida: ' + nombre);
@@ -2610,7 +2862,7 @@ const EX_HOJA_CEREBRO = 'Cerebro';
 const EX_CER_SISTEMA = [
   'Eres el jefe de operaciones virtual de Blackline Puerto Varas (tienda Specialized en Puerto Varas, Chile). Cada mañana lees TODAS las fuentes (tareas, agenda, negociaciones, clientes y WhatsApp, stock de la tienda, web de Specialized Chile, Instagram y contenido, clima, noticias, avisos internos y planillas) y le armas a Gonzalo, el encargado, el plan del día: lo que él organizaría en su cabeza, pero hecho por ti, para que solo ejecute.',
   'Contexto del negocio: el fuerte son las e-bikes (Turbo Levo, Levo SL, Kenevo, Vado, Como, Creo) y también MTB, ruta, gravel, urbano, niños, ropa, accesorios y taller; han vendido S-Works en todas las disciplinas. Puerto Varas es muy lluvioso: en invierno se vende menos y desde primavera la demanda sube fuerte; en verano llegan turistas, muchos argentinos. El equipo: Gonzalo, 2 vendedores (uno apoya marketing, otro organización física y stock) y 2 mecánicos.',
-  'Lo más valioso son los CRUCES entre fuentes, concretos y accionables. Ejemplos: un cliente quiere un producto que en la web de Specialized tiene poco stock o entró en oferta → escribirle hoy; llueve el día de una salida o test ride → moverlo o confirmar; un producto se está vendiendo rápido en Chile y lo tenemos → contenido y empuje; una negociación sin actividad hace días y su próxima acción venció → retomarla; un lanzamiento de Specialized que los clientes van a preguntar → prepararse y publicar; un día soleado de fin de semana → salida con clientes o contenido en ruta.',
+  'Lo más valioso son los CRUCES entre fuentes, concretos y accionables. Ejemplos: un cliente quiere un producto que en la web de Specialized tiene poco stock → escribirle hoy por disponibilidad (nunca por precio); un proveedor tiene en oferta un producto vigente que la tienda vende → comprarlo ahora para venderlo a precio normal; llueve el día de una salida o test ride → moverlo o confirmar; un producto se está vendiendo rápido en Chile y lo tenemos → contenido y empuje; una negociación sin actividad hace días y su próxima acción venció → retomarla; un lanzamiento de Specialized que los clientes van a preguntar → prepararse y publicar; un día soleado de fin de semana → salida con clientes o contenido en ruta.',
   'Reglas: usa solo datos que estén en el contexto, no inventes. Prioriza por impacto en ventas y urgencia. Sé específico: nombres, productos, tallas, fechas, montos. Máximo 6 prioridades, 6 cruces y 4 alertas. Si una fuente no tiene datos, ignórala sin mencionarla. Español de Chile, directo, frases cortas. Propón avisos internos solo para cosas que el equipo deba saber (eventos, llegadas, cambios de horario, campañas), no para tareas personales.'
 ].join('\n\n');
 const EX_CER_ACCION = { type: 'object', additionalProperties: false, required: ['tipo', 'ref', 'texto'], properties: {
@@ -2652,6 +2904,8 @@ function ex_cerebroContexto_(extra) {
     r.ofertas.slice(0, 10).concat(r.pocoStock.slice(0, 10)).forEach(function (x) { const I = ex_interesados_(x.familia || x.nombre, 5); if (I.length) out.push(x.nombre + ' → ' + I.map(function (i) { return i.nombre + ' (' + i.id + (i.talla ? ', talla ' + i.talla : '') + ')'; }).join(', ')); });
     return out.join('\n');
   });
+  sec('Compras: oportunidades en proveedores (interno, no se comunica a clientes)', function () { return ex_provOportunidades_(8).map(function (o) { return o.proveedor + ' · ' + o.nombre + ': oferta $' + o.precio + ' (normal $' + o.normal + ') → margen ' + o.margenOferta + '% vs ' + o.desc + '% habitual' + (o.vende ? ' · la tienda lo vende' : '') + (o.piden ? ' · lo piden clientes' : '') + (o.diasOferta != null ? ' · lleva ' + o.diasOferta + ' días' : ''); }).join('\n'); });
+  sec('Correos de proveedores (14 días)', function () { const h = ex_ymd_(new Date(Date.now() - 14 * 86400000)); return (ex_provCorreos_(false).items || []).filter(function (c) { return c.fecha >= h; }).slice(0, 10).map(function (c) { return c.fecha + ' · ' + c.proveedor + ': ' + c.asunto; }).join('\n'); });
   sec('Instagram y contenido', function () { return ex_copHerramienta_('ver_instagram', {}, { acciones: [] }); });
   sec('Noticias', function () { return ex_noticias_(false).items.map(function (x) { return '[' + x.fuente + '] ' + x.titulo + (x.por_que ? ' — ' + x.por_que : ''); }).join('\n'); });
   sec('Avisos internos activos', function () { return ex_avisos_({}).items.map(function (a) { return (a.fecha || a.desde) + ' · ' + a.titulo + ': ' + a.detalle.slice(0, 160); }).join('\n'); });
@@ -2686,6 +2940,7 @@ function ex_contextoGlobal_(p) {
   try { out.specialized = ex_spzResumen_(); } catch (e) { out.specializedError = e.message; }
   try { out.noticias = ex_noticias_(false); } catch (e) { out.noticiasError = e.message; }
   try { out.avisos = ex_avisos_({}).items; } catch (e) { out.avisos = []; }
+  try { out.compras = { oportunidades: ex_provOportunidades_(10), correosPromo: (ex_provCorreos_(false).items || []).filter(function (c) { return c.promo; }).slice(0, 6) }; } catch (e) {}
   try { out.fuentes = ex_fuentesLista_().map(function (f) { return { id: f.id, nombre: f.nombre, tipo: f.tipo, carpeta: !!f.carpeta, descripcion: f.descripcion || '' }; }); } catch (e) { out.fuentes = []; }
   try { const c = ex_cerebro_({}); out.cerebro = c.plan ? c : null; } catch (e) { out.cerebroError = e.message; }
   return out;
@@ -2701,6 +2956,7 @@ function autorizarCerebro() {
   ex_hojaCab_(EX_HOJA_AVISOS, EX_CAB_AVISOS);
   try { SpreadsheetApp.openById(SpreadsheetApp.getActive().getId()); } catch (e) { console.log('⚠️ Falta el permiso para leer otras planillas (sirve para conectar tus planillas como fuentes).'); }
   try { const r = ex_spzSinc_(); console.log('Specialized: ' + r.productos + ' productos' + (r.errores.length ? ' · avisos: ' + r.errores.join(', ') : '')); const s = ex_spzRondaStock_(12); console.log('Stock por talla revisado en ' + s.revisados + ' bicis.'); } catch (e) { console.log('Specialized: ' + e.message); }
+  ['garmin', 'sportvibes'].forEach(function (id) { try { const r = ex_provSinc_(id); console.log('Proveedor ' + id + ': ' + r.productos + ' productos, ' + r.ofertas + ' en oferta'); } catch (e) { console.log('Proveedor ' + id + ': ' + e.message); } });
   try { const n = ex_noticias_(true); console.log('Noticias: ' + n.items.length + ' destacadas de ' + n.total); } catch (e) { console.log('Noticias: ' + e.message); }
   try { console.log('Clima: ' + ex_climaTexto_(ex_clima_()).split('\n')[0]); } catch (e) { console.log('Clima: ' + e.message); }
   if (drive) { try { console.log('Carpeta de fuentes: ' + ex_carpetaFuentes_(false).getUrl()); } catch (e) {} }
@@ -2727,6 +2983,7 @@ function ex_tareaHoraria() {
   ex_conLock_(ex_sincCalendario_);
   try { ex_rondaPublicar_(); } catch (e) { console.log('Publicar: ' + e.message); }
   try { ex_spzRonda_(); } catch (e) { console.log('Specialized: ' + e.message); }
+  try { ex_rondaProveedores_(); } catch (e) { console.log('Proveedores: ' + e.message); }
   try { ex_rondaCerebro_(); } catch (e) { console.log('Cerebro: ' + e.message); }
 }
 function ex_tareaBase() {

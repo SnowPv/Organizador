@@ -1324,7 +1324,67 @@ body:has(.selbar) .fab,body:has(.selbar) .fab2{display:none}
   .per-vs{flex-basis:100%;margin:0}
   .extz{margin-left:-6px;margin-right:-6px;padding:10px}
 }
+/* Compras y proveedores */
+.cp-pol{display:flex;gap:9px;align-items:flex-start;background:var(--soft);border-radius:12px;padding:9px 12px;margin:0 0 12px;font-size:13px;line-height:1.45;color:var(--muted)}
+.cp-pol .ico{flex:none;width:15px;height:15px;color:var(--accent);margin-top:2px}
+.cp-pol b{color:var(--ink)}
+.cp-bus{display:flex;gap:8px;margin:0 0 10px}
+.cp-bus input{flex:1;min-width:0}
+#cpRes{margin-bottom:14px}
+.cp-tb{overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:12px}
+.cp-tb table{width:100%;border-collapse:collapse;font-size:13px}
+.cp-tb th{background:var(--soft);font-size:11.5px;color:var(--muted);text-align:left;padding:8px 10px;white-space:nowrap}
+.cp-tb td{padding:8px 10px;border-top:1px solid var(--line);vertical-align:top}
+.cp-tb td small{display:block;color:var(--muted);font-size:11px}
+.cp-tb td a{color:var(--ink);font-weight:600;text-decoration:none}.cp-tb td a:hover{color:var(--accent-ink)}
+.cp-tb s{color:var(--muted)}
+.cp-fil{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 8px}
+.cp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:12px}
+.cp-op{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.cp-op-h{display:flex;gap:10px;align-items:flex-start}
+.cp-op-h img,.cp-ph{flex:none;width:58px;height:58px;border-radius:10px;object-fit:contain;background:#F3F4F6;display:flex;align-items:center;justify-content:center;color:var(--muted)}
+.cp-op-t{flex:1;min-width:0}
+.cp-prov{font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--accent-ink)}
+.cp-op-t b{display:block;font-size:14px;line-height:1.3;margin-top:1px}
+.cp-bad{display:flex;gap:4px;flex-wrap:wrap;margin-top:5px}
+.cp-bad em{font-style:normal;font-size:10.5px;font-weight:700;border-radius:6px;padding:1px 6px;background:var(--soft);color:var(--muted)}
+.cp-bad em.ok{background:rgba(18,160,107,.14);color:var(--ok-ink)}.cp-bad em.in{background:var(--accent-soft);color:var(--accent-ink)}.cp-bad em.t{background:rgba(229,160,0,.16);color:var(--warn-ink)}
+.cp-mg{flex:none;text-align:right;line-height:1.1}
+.cp-mg b{display:block;font-size:22px;font-weight:800;color:var(--ok-ink);font-variant-numeric:tabular-nums}
+.cp-mg{font-size:11px;color:var(--muted);font-weight:600}
+.cp-mg small{display:block;font-size:10.5px}
+.cp-nums{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;background:var(--soft);border-radius:10px;padding:8px}
+.cp-nums small{display:block;font-size:10.5px;color:var(--muted);font-weight:600}
+.cp-nums b{font-size:13px;font-variant-numeric:tabular-nums}
+.cp-nums b.ok{color:var(--ok-ink)}
+.cp-op .acts{display:flex;gap:6px;flex-wrap:nowrap}.cp-op .acts .btn{padding:8px 10px;font-size:12.5px;white-space:nowrap}
+.cp-pvs{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.cp-pv{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:8px}
+.cp-pv-h{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.cp-pv-h b{font-size:16px}.cp-pv-h a{font-size:12px;color:var(--accent-ink);text-decoration:none}
+.cp-pv-m{font-size:13px;color:var(--muted)}
+.cp-pv-k{display:flex;gap:8px}
+.cp-pv-k span{flex:1;background:var(--soft);border-radius:10px;padding:6px 8px;font-size:11px;color:var(--muted);font-weight:600}
+.cp-pv-k b{display:block;font-size:16px;color:var(--ink)}
+.cp-pv-k .cp-desc b{color:var(--accent-ink)}
+.cp-pv-s{display:flex;gap:7px;align-items:center;font-size:12px;color:var(--muted)}
+.cp-pv-n{font-size:12.5px;line-height:1.45;background:rgba(229,160,0,.1);border-radius:8px;padding:6px 8px}
+.cp-pv-c{display:flex;gap:6px;flex-wrap:wrap}
+.cp-pv-c .chip{cursor:pointer;font-size:12px}
+.cp-pv-c .chip .ico{width:13px;height:13px}
+.cp-pv .acts{display:flex;gap:6px;margin-top:auto}
+.cp-mail{display:flex;gap:12px;padding:10px 0;border-top:1px solid var(--line);text-decoration:none;color:inherit}
+.cp-mail:first-child{border-top:0}
+.cp-mail-d{flex:none;width:64px;font-size:12px;color:var(--muted);font-weight:700}
+.cp-mail-b{flex:1;min-width:0}
+.cp-mail-b b{display:block;font-size:13.5px}
+.cp-mail-b b em{font-style:normal;font-size:10.5px;background:rgba(229,160,0,.18);color:var(--warn-ink);border-radius:6px;padding:1px 6px;margin-left:4px}
+.cp-mail-b span{display:block;font-size:13.5px}
+.cp-mail-b small{display:block;font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cp-mail:hover .cp-mail-b span{color:var(--accent-ink)}
+@media (max-width:760px){.cp-grid{grid-template-columns:1fr}.cp-nums{grid-template-columns:repeat(2,minmax(0,1fr))}.cp-k{grid-template-columns:1fr 1fr}}
 </style>
+
 
 
 </head>
@@ -1348,6 +1408,7 @@ body:has(.selbar) .fab,body:has(.selbar) .fab2{display:none}
   <button data-tab="hoy"><span data-ic="sun"></span>Hoy</button>
   <button data-tab="tareas"><span data-ic="check"></span>Tareas</button>
   <button data-tab="semana"><span data-ic="cal"></span>Calendario</button>
+  <button data-tab="compras"><span data-ic="box"></span>Compras</button>
   <button data-tab="negocios"><span data-ic="deal"></span>Negocios</button>
   <button data-tab="proy"><span data-ic="flag"></span>Proyectos</button>
   <button data-tab="base"><span data-ic="users"></span>Contactos</button>
@@ -1360,7 +1421,7 @@ body:has(.selbar) .fab,body:has(.selbar) .fab2{display:none}
 const $ = s => document.querySelector(s);
 const $$ = s => document.querySelectorAll(s);
 const LS = window.localStorage;
-let S = { data: null, tab: (/[?&]tab=(hoy|tareas|negocios|base|redes|semana|proy)\b/.exec(location.search) || [])[1] || 'inicio', filtro: 'todas', q: '', verHechas: false, vista: LS.vista || 'lista', offline: false, busy: false, google: null, googleBusy: false, googleAt: 0, ext: null, extInactivo: false, base: null, baseAt: 0, bf: 'todos', bq: '', mutado: false, subH: 'habitos', neg: null, negAt: 0, nv: LS.nv2 || '', nf: 'abiertas', nq: '' };
+let S = { data: null, tab: (/[?&]tab=(hoy|tareas|negocios|base|redes|semana|proy|compras)\b/.exec(location.search) || [])[1] || 'inicio', filtro: 'todas', q: '', verHechas: false, vista: LS.vista || 'lista', offline: false, busy: false, google: null, googleBusy: false, googleAt: 0, ext: null, extInactivo: false, base: null, baseAt: 0, bf: 'todos', bq: '', mutado: false, subH: 'habitos', neg: null, negAt: 0, nv: LS.nv2 || '', nf: 'abiertas', nq: '' };
 let deferredInstall = null;
 
 /* ---------- utilidades ---------- */
@@ -1489,7 +1550,7 @@ async function updateTask(t, cambios){
 }
 
 /* ---------- cabecera y navegación ---------- */
-const TITLES = { inicio: 'Inicio', hoy: 'Hoy', tareas: 'Tareas', habitos: 'Hábitos', semana: 'Calendario', proy: 'Proyectos', base: 'Contactos', redes: 'Redes sociales', negocios: 'Negociaciones' };
+const TITLES = { inicio: 'Inicio', hoy: 'Hoy', tareas: 'Tareas', habitos: 'Hábitos', semana: 'Calendario', proy: 'Proyectos', base: 'Contactos', redes: 'Redes sociales', negocios: 'Negociaciones', compras: 'Compras y proveedores' };
 function head(){
   $('#hTitle').innerHTML = (S.tab === 'inicio' && S.data ? saludoTxt() : TITLES[S.tab]) + (S.offline ? '<span class="chip-off">sin conexión</span>' : '');
   $('#hSub').innerHTML = S.busy ? '<span class="spin"></span>Actualizando…' : fmtLong(hoy());
@@ -1508,7 +1569,7 @@ function render(){
   head();
   const cf = $('#copFab'); if (cf && !cf.innerHTML) cf.innerHTML = icon('spark') + '<span>Copiloto</span>';
   if (!S.data){ $('#view').innerHTML = '<div class="empty"><span class="spin"></span>Cargando…</div>'; return; }
-  ({ inicio: viewInicio, hoy: viewHoy, tareas: viewTareas, habitos: () => S.subH === 'semana' ? viewSemana() : viewHabitos(), semana: () => S.per && S.per !== 'semana' ? viewPeriodo() : viewSemana(), proy: viewProy, base: viewBase, negocios: viewNegocios, redes: viewRedes })[S.tab]();
+  ({ inicio: viewInicio, hoy: viewHoy, tareas: viewTareas, habitos: () => S.subH === 'semana' ? viewSemana() : viewHabitos(), semana: () => S.per && S.per !== 'semana' ? viewPeriodo() : viewSemana(), proy: viewProy, base: viewBase, negocios: viewNegocios, redes: viewRedes, compras: viewCompras })[S.tab]();
   focusPill(); imxPill();
 }
 
@@ -2524,7 +2585,7 @@ const PILARES = [
   { k: 'Taller y consejos', re: /\b(taller|mantenci|servicio|tip|consejo|como (cuidar|revisar|limpiar|elegir)|presion|cadena|suspension|bateria|frenos|ajuste|revision|mecanic)/ },
   { k: 'Comunidad y salidas', re: /\b(salida|rodada|ruta|sendero|grupo|evento|carrera|pichijuan|comunidad|nos vemos|te esperamos|clinica|test ride)/ },
   { k: 'Clientes y entregas', re: /\b(entrega|felicidades|felicitamos|nuevo dueno|nueva duena|gracias a|disfrutala|cliente)/ },
-  { k: 'Promociones', re: /\b(oferta|descuento|cuotas|promo|precio|liquidacion|black ?friday|cyber|%)/ },
+  { k: 'Asesoría y experiencia', re: /\b(asesor|bike ?fit|fitting|a tu medida|personaliz|como elegir|cual elegir|garantia|financiamiento|cuotas|experiencia|atencion|prueba(la)?)/ },
   { k: 'Lugar y estilo de vida', re: /\b(lago|volcan|osorno|llanquihue|puerto varas|paisaje|atardecer|invierno|verano|lluvia|nieve)/ }
 ];
 // Modelo principal nombrado en un texto («Turbo Levo Comp» → levo; «Stumpy» → stumpjumper).
@@ -3105,7 +3166,7 @@ const MARCA_BASE = {
   colores: { fondo: '#111214', texto: '#FFFFFF', acento: '#E1251B', claro: '#F3F2EE', tinta: '#111214' },
   fuenteTitulo: 'Barlow Condensed', pesoTitulo: 800, fuenteTexto: 'Barlow', mayusculas: true, alternar: true, logoData: '',
   tono: 'Cercano, experto y directo. Español de Chile. Sin exageraciones.',
-  contexto: 'Somos expertos en e-bikes: son nuestro fuerte y principal motor de ventas (Turbo Levo, Levo SL, Kenevo, Turbo Vado, Turbo Como). Igual vendemos todo el catálogo Specialized (MTB, ruta, gravel, urbano, niños, ropa y accesorios) y tenemos taller. Hemos vendido S-Works en todas las disciplinas. En Puerto Varas llueve mucho: en invierno cuesta mover las ventas y desde primavera la demanda sube fuerte. En verano llegan turistas, muchos de Argentina.',
+  contexto: 'Blackline no hace descuentos ni promociones, no participa en Cyber ni Black Friday: buscamos la fidelidad con atención personalizada y de excelencia. Somos expertos en e-bikes: son nuestro fuerte y principal motor de ventas (Turbo Levo, Levo SL, Kenevo, Turbo Vado, Turbo Como). Igual vendemos todo el catálogo Specialized (MTB, ruta, gravel, urbano, niños, ropa y accesorios) y tenemos taller. Hemos vendido S-Works en todas las disciplinas. En Puerto Varas llueve mucho: en invierno cuesta mover las ventas y desde primavera la demanda sube fuerte. En verano llegan turistas, muchos de Argentina.',
   focoEbike: 50
 };
 function marca(){ const m = (S.marcaSrv && S.marcaSrv.marca) || {}; return Object.assign({}, MARCA_BASE, m, { colores: Object.assign({}, MARCA_BASE.colores, m.colores || {}) }); }
@@ -3698,7 +3759,7 @@ function senales(){
   const porFam = {}; (s.ofertas || []).slice(0, 20).forEach(x => { const k = palabrasModelo(x.familia || x.nombre).slice(0, 2).join(' ') || x.id; (porFam[k] = porFam[k] || []).push(x); });
   Object.values(porFam).forEach(G2 => { const x = G2[0], I = interesadosEn(x); if (!I.length) return;
     const fam = G2.length > 1 ? (x.familia || x.nombre) + ' (' + G2.length + ' modelos)' : x.nombre, desde = Math.min(...G2.map(y => y.oferta));
-    add({ ic: 'bolt', t: I.length + (I.length === 1 ? ' cliente quiere ' : ' clientes quieren ') + fam + ' y está en oferta', d: (G2.length > 1 ? 'Ofertas en la web desde ' + clpCorto(desde) + ': ' + G2.slice(0, 3).map(y => y.nombre.replace(x.familia || '', '').trim() || y.nombre).join(', ') + '. ' : 'En la web: ' + clpCorto(x.precio) + ' → ' + clpCorto(x.oferta) + '. ') + I.slice(0, 3).map(y => primerNombre(y.c)).join(', ') + (I.length > 3 ? ' y ' + (I.length - 3) + ' más' : '') + '.', f: ['specialized', 'clientes'], acc: { tipo: 'abrir_producto', ref: x.id, label: 'Ver y escribirles' }, pr: 88, img: x.img }); });
+    add({ ic: 'bolt', t: 'Precio público de ' + fam + ' bajó en specialized.com', d: 'Dato interno: ' + (I.length === 1 ? 'tu cliente ' : 'tus ' + I.length + ' clientes ') + I.slice(0, 3).map(y => primerNombre(y.c)).join(', ') + (I.length > 3 ? ' y otros' : '') + (I.length === 1 ? ' lo puede ver' : ' lo pueden ver') + ' en la web (desde ' + clpCorto(desde) + '). Buen momento para retomar el contacto con asesoría y disponibilidad, sin hablar de precio.', f: ['specialized', 'clientes'], acc: { tipo: 'abrir_producto', ref: x.id, label: 'Ver ficha' }, pr: 80, img: x.img }); });
   (s.pocoStock || []).slice(0, 12).forEach(x => { const I = interesadosEn(x); if (I.length) add({ ic: 'flag', t: 'Quedan pocas ' + x.nombre + ' en Chile', d: (x.tallas || x.stock + ' unidades') + '. Le interesa a ' + I.slice(0, 3).map(y => primerNombre(y.c) + (y.pf.p && y.pf.p.talla ? ' (' + y.pf.p.talla + ')' : '')).join(', ') + '.', f: ['specialized', 'clientes'], acc: { tipo: 'abrir_producto', ref: x.id, label: 'Ver stock y avisar' }, pr: 86, img: x.img }); });
   (s.nuevos || []).slice(0, 10).forEach(x => { const I = interesadosEn(x); if (I.length >= 2) add({ ic: 'spark', t: 'Novedad: ' + x.nombre, d: 'Nuevo en specialized.com/cl' + (x.colorNuevo ? ' (desde ' + fmt(x.colorNuevo) + ')' : '') + '. ' + I.length + ' clientes preguntaron por esta familia.', f: ['specialized', 'clientes'], acc: { tipo: 'abrir_producto', ref: x.id, label: 'Ver interesados' }, pr: 70, img: x.img }); });
   // Specialized (lo que se vende en Chile) × stock de la tienda
@@ -3706,7 +3767,11 @@ function senales(){
   // negociaciones × stock u oferta en Specialized
   if (S.neg) abiertos().forEach(n => { const txt = norm((n.producto || '') + ' ' + n.titulo), ws = palabrasModelo(n.producto || n.titulo).slice(0, 2); if (!ws.length) return;
     const m = (s.pocoStock || []).concat(s.ofertas || []).find(x => ws.every(w => norm(x.nombre + ' ' + x.familia).includes(w)));
-    if (m) add({ ic: 'deal', t: (m.oferta ? 'Oferta' : 'Poco stock') + ' para cerrar: ' + n.titulo, d: m.nombre + (m.oferta ? ' bajó a ' + clpCorto(m.oferta) + ' en la web de Specialized.' : ': quedan ' + (m.tallas || m.stock) + ' en Chile.') + ' Úsalo para cerrar.', f: ['negocios', 'specialized'], acc: { tipo: 'abrir_negocio', ref: n.id, label: 'Abrir negociación' }, pr: 84 }); });
+    if (m) add({ ic: 'deal', t: (m.oferta ? 'Precio público cambió' : 'Poco stock') + ': ' + n.titulo, d: m.oferta ? 'Dato interno: el precio de ' + m.nombre + ' en specialized.com bajó a ' + clpCorto(m.oferta) + ' y el cliente lo puede ver. Refuerza tu propuesta de valor: asesoría, ajuste y taller.' : m.nombre + ': quedan ' + (m.tallas || m.stock) + ' en Chile. Buen argumento para decidir pronto.', f: ['negocios', 'specialized'], acc: { tipo: 'abrir_negocio', ref: n.id, label: 'Abrir negociación' }, pr: 84 }); });
+  // Compras: promociones de proveedores que conviene aprovechar (interno)
+  const cp = G().compras || {};
+  (cp.oportunidades || []).filter(o => o.vende || o.piden || o.prov === 'garmin').slice(0, 2).forEach(o => add({ ic: 'box', t: 'Comprar ahora: ' + o.nombre, d: o.proveedor + ' lo tiene en promoción: tu costo ' + clpCorto(o.costo) + ', margen ' + o.margenOferta + '% vendiéndolo a precio normal (habitual ' + o.desc + '%).' + (o.vende ? ' Lo vendes en la tienda.' : '') + (o.piden ? ' Lo piden clientes.' : ''), f: ['bsale', 'clientes'].filter((x, i) => i === 0 ? o.vende : o.piden).concat(['planillas']), acc: { tipo: 'abrir_pestana', ref: 'compras', label: 'Ver en Compras' }, pr: 78, img: o.img }));
+  (cp.correosPromo || []).slice(0, 1).forEach(c => add({ ic: 'note', t: 'Correo de ' + c.proveedor + ': ' + c.asunto, d: c.resumen, f: ['planillas'], acc: { tipo: 'link', ref: c.link, label: 'Abrir correo' }, pr: 62 }));
   // noticias de seguridad o lanzamientos de la marca
   noticias().filter(x => x.tipo === 'seguridad' || (x.tipo === 'lanzamiento' && x.relevancia >= 3)).slice(0, 2).forEach(x => add({ ic: 'note', t: x.titulo, d: x.por_que || x.fuente, f: ['noticias'], acc: { tipo: 'link', ref: x.link, label: 'Leer' }, pr: x.tipo === 'seguridad' ? 90 : 60 }));
   return out.sort((a, b) => b.pr - a.pr).slice(0, 9);
@@ -3818,10 +3883,10 @@ function abrirProducto(q){
     try { const r = await apiX('specialized', { accion: 'ficha', id: x.id }); if (r.tallas && r.tallas.length) T = r.tallas; if (r.producto) x = Object.assign({}, x, r.producto); } catch(e){}
     let tienda = null; if (S.ext && S.ext.bsale && S.ext.bsale.activo){ try { tienda = (await apiX('bsale', { q: x.familia + ' ' + x.nombre.replace(/s-works/i, ''), max: 10 })).items || []; } catch(e){} }
     const colores = [...new Set(T.map(t => t.color || '—'))], tallas = [...new Set(T.map(t => t.talla))].sort((a, b) => String(a).localeCompare(String(b), 'es', { numeric: true }));
-    const I = interesadosEn(x), oferta = x.oferta ? ' en oferta a ' + clp(x.oferta) : '';
+    const I = interesadosEn(x);
     const agotada = x.stock === 0, talla = it => it.pf.p && it.pf.p.talla ? ' (' + it.pf.p.talla + ')' : '';
     const msgI = it => 'Hola ' + primerNombre(it.c) + '! Te escribo de Blackline 🙌 ' + (agotada ? 'La ' + x.nombre + ' que te interesaba está agotada por ahora en Chile, pero te aviso apenas entre stock en tu talla' + talla(it) + '. ¿Te parece si te muestro alternativas mientras?' :
-      (x.oferta ? 'La ' + x.nombre + ' que te interesaba está' + oferta + ' (antes ' + clp(x.precio) + ').' : 'Te cuento que la ' + x.nombre + ' que te interesaba ' + (x.stock && x.stock <= 3 ? 'tiene pocas unidades en Chile' : 'está disponible') + '.') + (talla(it) ? ' ¿Te reviso tu talla' + talla(it) + '?' : ' ¿Te la reservo?'));
+      ('Te cuento que la ' + x.nombre + ' que te interesaba ' + (x.stock && x.stock <= 3 ? 'tiene pocas unidades en Chile' : 'está disponible') + '. Te la puedo dejar ajustada a tu medida.') + (talla(it) ? ' ¿Te reviso tu talla' + talla(it) + '?' : ' ¿Te la reservo?'));
     box.innerHTML = '<div class="pd-h">' + (x.img ? '<img src="' + esc(x.img) + '" alt="">' : '') + '<div><div class="pd-cat">' + esc(x.disciplina || '') + (x.anio ? ' · ' + esc(x.anio) : '') + (x.etiqueta ? ' · ' + esc(x.etiqueta.replace('new', 'nuevo').replace('bestseller', 'más vendido').replace('awardwinning', 'galardonado')) : '') + '</div><h3>' + esc(x.nombre) + '</h3><div class="pd-p">' + precioSpz(x) + (x.oferta ? ' <span class="tag ok">−' + Math.round((1 - x.oferta / x.precio) * 100) + '%</span>' : '') + '</div>' +
       '<div class="pd-k"><span><b>' + (x.stock != null ? x.stock : '–') + '</b>en Chile</span><span><b>' + (x.bajas14 || 0) + '</b>vendidas 14 d</span><span><b>' + I.length + '</b>interesados</span>' + (tienda ? '<span><b>' + tienda.reduce((s, v) => s + (+v.total || 0), 0) + '</b>en tienda</span>' : '') + '</div>' +
       '<div class="pd-acts"><a class="btn sm sec" href="' + esc(x.url) + '" target="_blank">Ver en specialized.com</a><button class="btn sm sec" id="pdPz">' + icon('spark') + ' Diseñar pieza</button><button class="btn sm sec" id="pdCop">Preguntar</button></div></div></div>' +
@@ -3831,7 +3896,7 @@ function abrirProducto(q){
     box.querySelectorAll('[data-piw]').forEach(b => b.onclick = () => { const it = I[+b.dataset.piw]; window.open('https://wa.me/' + telWA(it.c) + '?text=' + encodeURIComponent(box.querySelector('[data-pim="' + b.dataset.piw + '"]').value), '_blank'); });
     box.querySelectorAll('[data-pif]').forEach(b => b.onclick = () => { md.cerrar(); openCto(I[+b.dataset.pif].c, { tab: 'perfil' }); });
     box.querySelectorAll('.st[title]').forEach(s => s.onclick = () => toast(s.title));
-    box.querySelector('#pdPz').onclick = () => { md.cerrar(); ejecutarAccion({ tipo: 'disenar_pieza', texto: x.nombre + (x.oferta ? ' en oferta' : '') + ': para quién es y por qué elegirla' }); };
+    box.querySelector('#pdPz').onclick = () => { md.cerrar(); ejecutarAccion({ tipo: 'disenar_pieza', texto: x.nombre + ': para quién es y por qué elegirla' }); };
     box.querySelector('#pdCop').onclick = () => { md.cerrar(); copiloto('¿Qué me conviene hacer con la ' + x.nombre + '? Cruza stock, clientes interesados y contenido.'); };
   };
   const buscar = async () => {
@@ -3856,6 +3921,7 @@ const COP_SUG = {
   base: ['¿Quién está buscando una Levo?', '¿Qué clientes tienen una bici para upgrade?', '¿A quién le aviso de las ofertas de Specialized?'],
   redes: ['¿Qué publico esta semana según lo que se vende?', 'Ideas de contenido para días de lluvia', '¿Qué lanzamiento de Specialized aprovecho?'],
   tareas: ['¿Qué tareas puedo delegar al equipo?', '¿Qué está atrasado y qué hago?'],
+  compras: ['¿Qué me conviene comprar esta semana?', '¿Quién tiene una Fox 36 Grip X2 y a qué costo?', '¿Qué promociones mandaron los proveedores?'],
   def: ['¿Hay Levo SL en talla S4?', '¿Qué hay en oferta en Specialized?', '¿Cómo viene el clima esta semana?']
 };
 function copHist(){ return S.copHist || (S.copHist = lsGet('copHist', [])); }
@@ -3962,11 +4028,12 @@ function bindExterno(root){
 // Texto con lo externo para los prompts de los otros agentes (contenido, estrategia, plan del día).
 function contextoExterno(){
   const L = [], s = spz(), t = temporadaPV(), n = noticias();
+  L.push('POLÍTICA DE MARCA: Blackline no hace descuentos ni promociones, no participa en Cyber ni Black Friday. El contenido y los mensajes se centran en asesoría, experiencia, servicio, comunidad y el valor del producto; nunca en rebajas.');
   L.push('TEMPORADA: ' + t.t);
   const c = climaTxtIA(); if (c) L.push(c);
   if (s.activo){
     const f = x => x.nombre + (x.oferta ? ' (oferta ' + clpCorto(x.oferta) + ', antes ' + clpCorto(x.precio) + ')' : '') + (x.bajas14 ? ' · ' + x.bajas14 + ' vendidas 14 d' : '');
-    L.push('SPECIALIZED CHILE (web oficial): lo que más se vende en Chile: ' + ((s.calientes || []).length ? s.calientes : s.masVendidos || []).slice(0, 6).map(f).join('; ') + '. Ofertas: ' + (s.ofertas || []).slice(0, 6).map(f).join('; ') + '. Novedades: ' + (s.nuevos || []).slice(0, 5).map(x => x.nombre).join(', ') + '. Campañas y lanzamientos en la portada: ' + (s.lanzamientos || []).slice(0, 8).join(', ') + '.');
+    L.push('SPECIALIZED CHILE (web oficial): lo que más se vende en Chile: ' + ((s.calientes || []).length ? s.calientes : s.masVendidos || []).slice(0, 6).map(f).join('; ') + '. Precios públicos rebajados en la web de Specialized (dato interno de mercado: NO se comunica ni se usa en contenido, Blackline no hace descuentos): ' + (s.ofertas || []).slice(0, 6).map(x => x.nombre).join('; ') + '. Novedades: ' + (s.nuevos || []).slice(0, 5).map(x => x.nombre).join(', ') + '. Campañas y lanzamientos en la portada: ' + (s.lanzamientos || []).slice(0, 8).join(', ') + '.');
   }
   if (n.length) L.push('NOTICIAS DEL MUNDO BIKE: ' + n.slice(0, 5).map(x => x.titulo + (x.por_que ? ' (' + x.por_que + ')' : '')).join('; ') + '.');
   const av = avisos().slice(0, 5); if (av.length) L.push('AVISOS INTERNOS: ' + av.map(a => (a.fecha ? a.fecha + ' ' : '') + a.titulo).join('; ') + '.');
@@ -4179,6 +4246,87 @@ function abrirDia(f){
   md.el.querySelectorAll('[data-ct]').forEach(b => b.onclick = () => { md.cerrar(); openIdea((S.cont || []).find(x => x.id === b.dataset.ct)); });
 }
 
+/* ---------- vista: Compras (proveedores, oportunidades de compra, buscador y correos) ---------- */
+async function loadCompras(forzar){
+  if (extNivel() < 18 || (S.compras && !forzar) || S._comprasPend) return;
+  S._comprasPend = 1;
+  try { S.compras = await apiX('proveedores', { forzar: !!forzar }); lsSet('comprasCache', S.compras); } catch(e){ if (!S.compras) S.compras = lsGet('comprasCache', null) || { error: e.message }; }
+  S._comprasPend = 0; if (S.tab === 'compras') render();
+}
+const PROV_TIPO = { shopify: 'Catálogo completo cada día', odoo: 'Catálogo completo cada día (precios + IVA)', mkr: 'Catálogo y precios por turnos', specialized: 'Módulo Specialized (cada hora)', cerrado: 'Solo correos y listas en Fuentes' };
+function margenTag(o){ return '<span class="cp-mg"><b>' + o.margenOferta + '%</b> de margen<small>vs ' + o.desc + '% habitual</small></span>'; }
+function oportCompraHTML(o, i){
+  const sufIva = o.iva === '+IVA' ? ' + IVA' : '';
+  return '<div class="cp-op"><div class="cp-op-h">' + (o.img ? '<img src="' + esc(o.img) + '" alt="" loading="lazy">' : '<span class="cp-ph">' + icon('box') + '</span>') + '<div class="cp-op-t"><span class="cp-prov">' + esc(o.proveedor) + '</span><b>' + esc(o.nombre) + '</b><div class="cp-bad">' + (o.vende ? '<em class="ok">La vendes</em>' : '') + (o.piden ? '<em class="in">La piden clientes</em>' : '') + (o.nuevo ? '<em>Vigente</em>' : '') + (o.diasOferta != null ? '<em class="t">' + (o.diasOferta ? o.diasOferta + ' d en promo' : 'Promo detectada hoy') + '</em>' : '') + '</div></div>' + margenTag(o) + '</div>' +
+    '<div class="cp-nums"><div><small>Precio normal</small><b>' + clp(o.normal) + sufIva + '</b></div><div><small>En promo (web)</small><b>' + clp(o.precio) + sufIva + '</b></div><div><small>Tu costo en promo</small><b class="ok">' + clp(o.costo) + '</b></div><div><small>Ahorras por unidad</small><b>' + clp(o.ahorro) + '</b></div></div>' +
+    '<div class="acts"><a class="btn sm sec" href="' + esc(o.url) + '" target="_blank" rel="noopener">Ver en la web</a><button class="btn sm" data-cpt="' + i + '">' + icon('plus') + ' Tarea de compra</button><button class="btn sm sec" data-cpq="' + i + '">Preguntar</button></div></div>';
+}
+function provCardHTML(p){
+  const s = p.sinc || {}, err = s.error && (!s.fecha || s.intento > s.fecha);
+  return '<div class="cp-pv"><div class="cp-pv-h"><b>' + esc(p.nombre) + '</b><a href="' + esc(p.web) + '" target="_blank" rel="noopener">' + esc(p.web.replace(/^https?:\/\/(www\.)?/, '')) + '</a></div><span class="cp-pv-m">' + esc(p.marcas) + '</span>' +
+    '<div class="cp-pv-k"><span><b>' + (p.productos || 0).toLocaleString('es-CL') + '</b>productos</span><span><b>' + (p.ofertas || 0) + '</b>en promo</span><span class="cp-desc"><b>' + p.desc + '%</b>tu descuento</span></div>' +
+    '<div class="cp-pv-s"><i class="fz ' + (err ? 'no' : s.fecha || p.tipo === 'cerrado' ? 'ok' : 'no') + '"></i>' + esc(err ? 'Error: ' + s.error : PROV_TIPO[p.tipo] + (s.fecha ? ' · ' + fmtRel(s.fecha.slice(0, 10)) : ' · pendiente')) + '</div>' +
+    (p.nota ? '<div class="cp-pv-n">' + esc(p.nota) + '</div>' : '') + (p.contactos && p.contactos.length ? '<div class="cp-pv-c">' + p.contactos.slice(0, 2).map(c => '<button class="chip" data-cto="' + esc(c.id) + '">' + icon('users') + esc(c.nombre || c.email) + '</button>').join('') + '</div>' : '') +
+    '<div class="acts"><button class="btn sm sec" data-pve="' + esc(p.id) + '">Configurar</button>' + (/shopify|odoo|mkr/.test(p.tipo) ? '<button class="btn sm sec" data-pvs="' + esc(p.id) + '">Actualizar ahora</button>' : '') + '</div></div>';
+}
+function viewCompras(){
+  if (extNivel() < 18){ $('#view').innerHTML = '<div class="sec" style="padding:20px"><div class="wh">' + icon('box') + 'Compras y proveedores</div><p style="margin:0 0 12px;line-height:1.5">Con la versión nueva del script la app lee las webs de tus proveedores (Sportvibes, Outside, MKR, Specialized, Garmin, Trail), calcula tu costo con el descuento de cada uno y te avisa cuándo conviene comprar.</p><button class="btn" id="cpUpd">Actualizar el script</button></div>'; $('#cpUpd').onclick = showExtrasUpdate; return; }
+  if (!S.compras){ $('#view').innerHTML = '<div class="empty"><span class="spin"></span>Leyendo proveedores…</div>'; loadCompras(); return; }
+  const C = S.compras; if (C.error && !C.proveedores){ $('#view').innerHTML = '<div class="empty">No se pudo cargar: ' + esc(C.error) + '</div>'; return; }
+  const P = C.proveedores || [], O = C.oportunidades || [], M = C.correos && C.correos.items || [], promos = M.filter(c => c.promo), mov = C.movimientos || [];
+  const t = S.cpTab || 'oport';
+  let html = '<div class="kstrip cp-k"><div class="ks1"><div><b>' + P.length + '</b><small>proveedores</small></div></div><div class="ks1"><div><b>' + (C.total || 0).toLocaleString('es-CL') + '</b><small>productos catalogados</small></div></div><div class="ks1"><div><b>' + O.length + '</b><small>oportunidades de compra</small></div></div><div class="ks1"><div><b>' + promos.length + '</b><small>correos con promos (30 d)</small></div></div></div>';
+  html += '<div class="cp-pol">' + icon('flag') + '<span><b>Uso interno.</b> Las promociones de proveedores sirven para comprar mejor y vender a precio normal. Blackline no hace descuentos ni los comunica.</span></div>';
+  html += '<div class="cp-bus"><input type="search" id="cpQ" placeholder="Buscar en todos los proveedores: «fox 36 grip x2», «hope tech 4», «edge 1050», «magic mary 29»…" value="' + esc(S.cpQ || '') + '"><button class="btn" id="cpGo">Buscar</button></div><div id="cpRes"></div>';
+  html += '<div class="btabs"><div class="tabs">' + [['oport', 'Oportunidades de compra (' + O.length + ')'], ['prov', 'Proveedores'], ['mail', 'Correos (' + M.length + ')'], ['mov', 'Cambios de precio (' + mov.length + ')']].map(x => '<button class="' + (x[0] === t ? 'on' : '') + '" data-cpt2="' + x[0] + '">' + x[1] + '</button>').join('') + '</div><button class="btn sm sec" id="cpRef">↻ Actualizar</button></div>';
+  if (t === 'oport'){
+    const f = S.cpF || 'todas', L = O.filter(o => f === 'todas' || (f === 'vende' && o.vende) || (f === 'piden' && o.piden) || o.prov === f);
+    html += '<div class="cp-fil">' + [['todas', 'Todas'], ['vende', 'Las que vendes'], ['piden', 'Las que piden clientes']].concat(P.filter(p => O.some(o => o.prov === p.id)).map(p => [p.id, p.nombre])).map(x => '<button class="pill' + (x[0] === f ? ' on' : '') + '" data-cpf="' + esc(x[0]) + '">' + esc(x[1]) + '</button>').join('') + '</div>';
+    html += '<div class="wsub" style="margin:0 2px 10px">Productos en promoción en la web del proveedor. El costo aplica tu descuento sobre el precio de promoción; el margen se calcula vendiendo a precio normal cuando la promo termine.</div>';
+    const nV = S.cpN || 18;
+    html += L.length ? '<div class="cp-grid">' + L.slice(0, nV).map((o, i) => oportCompraHTML(o, O.indexOf(o))).join('') + '</div>' + (L.length > nV ? '<button class="btn sec" id="cpMas" style="width:100%;margin-top:12px">Ver ' + Math.min(18, L.length - nV) + ' más</button>' : '') : '<div class="empty">Sin oportunidades con este filtro. Los catálogos se revisan solos cada día.</div>';
+  } else if (t === 'prov'){
+    html += '<div class="cp-pvs">' + P.map(provCardHTML).join('') + '</div>';
+  } else if (t === 'mail'){
+    html += M.length ? '<div class="sec">' + M.map(c => '<a class="cp-mail' + (c.promo ? ' promo' : '') + '" href="' + esc(c.link) + '" target="_blank" rel="noopener"><span class="cp-mail-d">' + esc(fmtRel(c.fecha)) + '</span><span class="cp-mail-b"><b>' + esc(c.proveedor) + (c.promo ? ' <em>promo / novedad</em>' : '') + '</b><span>' + esc(c.asunto) + '</span><small>' + esc(c.resumen) + '</small></span></a>').join('') + '</div>' : '<div class="empty">' + (C.correos && C.correos.error ? 'No se pudo leer Gmail: ' + esc(C.correos.error) : 'Sin correos de proveedores en los últimos 30 días. Revisa los dominios en «Configurar» de cada proveedor.') + '</div>';
+  } else {
+    const TT = { oferta: ['ok', 'Empezó promo'], 'fin oferta': ['bad', 'Terminó promo'], precio: ['', 'Cambió precio'], nuevo: ['in', 'Nuevo producto'] };
+    html += mov.length ? '<div class="sec"><div class="wl">' + mov.map(m => { const pv = P.find(p => p.id === m.prov) || {}, tt = TT[m.tipo] || ['', m.tipo]; return '<div class="it"><span class="tag ' + tt[0] + '">' + tt[1] + '</span><div class="tx">' + esc(m.producto) + '<small>' + esc(pv.nombre || m.prov) + ' · ' + esc(fmtRel(m.fecha)) + '</small></div><span class="rt">' + (m.antes ? '<s>' + clpCorto(m.antes) + '</s> ' : '') + clpCorto(m.despues) + '</span></div>'; }).join('') + '</div></div>' : '<div class="empty">Los cambios aparecen desde la segunda lectura de cada catálogo.</div>';
+  }
+  $('#view').innerHTML = html;
+  $$('[data-cpt2]').forEach(b => b.onclick = () => { S.cpTab = b.dataset.cpt2; render(); });
+  $$('[data-cpf]').forEach(b => b.onclick = () => { S.cpF = b.dataset.cpf; S.cpN = 18; render(); });
+  if ($('#cpMas')) $('#cpMas').onclick = () => { S.cpN = (S.cpN || 18) + 18; render(); };
+  $('#cpRef').onclick = () => { S.compras = null; loadCompras(true); render(); };
+  $$('[data-cpt]').forEach(b => b.onclick = () => { const o = O[+b.dataset.cpt]; openAdd({ texto: 'Comprar ' + o.nombre + ' a ' + o.proveedor + ' (promo)', notas: 'Promo en la web: ' + clp(o.precio) + ' (normal ' + clp(o.normal) + '). Costo con descuento: ' + clp(o.costo) + ' → margen ' + o.margenOferta + '% vendiendo a precio normal.\n' + o.url, limite: hoy() }); });
+  $$('[data-cpq]').forEach(b => b.onclick = () => { const o = O[+b.dataset.cpq]; copiloto('¿Me conviene comprar ' + o.nombre + ' de ' + o.proveedor + ' ahora que está en promoción? ¿Cuántas unidades, considerando lo que vendo y lo que piden mis clientes?'); });
+  $$('[data-pve]').forEach(b => b.onclick = () => provForm(P.find(p => p.id === b.dataset.pve)));
+  $$('[data-pvs]').forEach(b => b.onclick = async () => { b.disabled = true; b.innerHTML = '<span class="spin"></span>Leyendo catálogo…'; try { const r = await apiX('proveedores', { accion: 'sinc', id: b.dataset.pvs }); toast('✓ ' + (r.productos || 0) + ' productos · ' + (r.ofertas || 0) + ' en promo'); S.compras = null; loadCompras(true); } catch(e){ b.disabled = false; b.textContent = 'Actualizar ahora'; toast('No se pudo: ' + e.message); } });
+  $$('#view [data-cto]').forEach(b => b.onclick = () => { const c = contactoPorId(b.dataset.cto); if (c) openCto(c); });
+  const buscar = async () => {
+    const q = $('#cpQ').value.trim(); S.cpQ = q; if (!q) return;
+    const box = $('#cpRes'); box.innerHTML = '<div class="empty"><span class="spin"></span>Buscando en los catálogos…</div>';
+    try {
+      const L = (await apiX('proveedores', { accion: 'buscar', q })).items || [];
+      box.innerHTML = L.length ? '<div class="cp-tb"><table><thead><tr><th>Producto</th><th>Proveedor</th><th>Precio web</th><th>Tu costo</th><th>Disponible</th></tr></thead><tbody>' + L.map(x => '<tr><td><a href="' + esc(x.url) + '" target="_blank" rel="noopener">' + esc(x.nombre) + '</a>' + (x.sku ? '<small>' + esc(x.sku) + '</small>' : '') + '</td><td>' + esc(x.proveedor) + '</td><td>' + (x.normal > x.precio ? '<s>' + clpCorto(x.normal) + '</s> ' : '') + clp(x.precio) + (x.iva === '+IVA' ? '<small>+ IVA</small>' : '') + '</td><td><b>' + clp(x.costo) + '</b><small>' + x.desc + '% dcto. distribuidor</small></td><td>' + esc(x.disp || '—') + '</td></tr>').join('') + '</tbody></table></div><div class="wsub">Precios públicos de cada web. «Tu costo» aplica tu descuento de distribuidor; confírmalo en el B2B antes de comprar.</div>' : '<div class="empty">Sin resultados en los catálogos de proveedores.</div>';
+    } catch(e){ box.innerHTML = '<div class="empty">No se pudo buscar: ' + esc(e.message) + '</div>'; }
+  };
+  $('#cpGo').onclick = buscar; $('#cpQ').onkeydown = e => { if (e.key === 'Enter') buscar(); };
+  if (S.cpQ && !$('#cpRes').innerHTML) buscar();
+}
+function provForm(p){
+  const md = modal(icon('box') + ' ' + esc(p.nombre), '<label class="l" style="margin-top:0">Tu descuento de distribuidor (%)</label><input type="number" id="pv_d" min="0" max="70" value="' + esc(p.desc) + '">' +
+    '<label class="l">Marcas y lo que les compras</label><input type="text" id="pv_m" value="' + esc(p.marcas) + '">' +
+    '<label class="l">Dominios de correo (para detectar sus promociones en Gmail)</label><input type="text" id="pv_c" value="' + esc((p.dominios || []).join(', ')) + '">' +
+    '<label class="l">Notas (el agente las tiene en cuenta)</label><textarea class="note" id="pv_n" rows="3" placeholder="Ej.: pedidos los martes, mínimo de compra, ejecutivo de cuenta…">' + esc(p.notas || '') + '</textarea>' +
+    '<div class="btns"><button class="btn" id="pv_ok">Guardar</button></div>');
+  md.el.querySelector('#pv_ok').onclick = async () => {
+    const b = md.el.querySelector('#pv_ok'); b.disabled = true;
+    try { await apiX('proveedores', { accion: 'guardar', proveedor: { id: p.id, desc: md.el.querySelector('#pv_d').value, marcas: md.el.querySelector('#pv_m').value, dominios: md.el.querySelector('#pv_c').value, notas: md.el.querySelector('#pv_n').value } }); md.cerrar(); toast('Guardado ✓'); S.compras = null; loadCompras(true); }
+    catch(e){ b.disabled = false; toast('No se pudo: ' + e.message); }
+  };
+}
+
 /* ---------- vista: Negocios (pipeline de ventas estilo CRM) ---------- */
 // Etapas del embudo: probabilidad base de cierre y días normales sin movimiento antes de considerarla estancada.
 const ETAPAS = [
@@ -4186,7 +4334,7 @@ const ETAPAS = [
   { k: 'Contactado', corto: 'Contacto', ic: '💬', p: .20, max: 5, c: '#79A6E3', sig: 'Agendar test ride o visita', sd: 2, tip: 'Descubre su necesidad: uso (enduro, trail, ruta), presupuesto, talla y para cuándo la quiere. Luego invítalo a probar.', acc: [['🚵 Agendar test ride', 'testride']] },
   { k: 'Prueba / visita', corto: 'Prueba', ic: '🚵', p: .35, max: 7, c: '#4F8DDC', sig: 'Enviar la cotización', sd: 1, tip: 'Después de la prueba, envía la cotización en menos de 24 horas, mientras la emoción sigue alta.', acc: [['📄 Tarea: enviar cotización', 'tarea:cotizacion']] },
   { k: 'Cotización', corto: 'Cotiz.', ic: '📄', p: .55, max: 5, c: '#2A78D6', sig: 'Hacer seguimiento a la cotización', sd: 3, tip: 'Haz seguimiento a los 2–3 días: pregunta si tiene dudas y ofrece las opciones de pago.', acc: [['💬 Seguimiento', 'wa:seguimiento']] },
-  { k: 'Negociación', corto: 'Negoc.', ic: '🤝', p: .75, max: 7, c: '#1B57A6', sig: 'Acordar la fecha de cierre', sd: 2, tip: 'Acuerda una fecha de cierre y ofrece un incentivo con plazo (accesorio o primera mantención sin costo).', acc: [['💬 Oferta de cierre', 'wa:oferta']] }
+  { k: 'Negociación', corto: 'Negoc.', ic: '🤝', p: .75, max: 7, c: '#1B57A6', sig: 'Acordar la fecha de cierre', sd: 2, tip: 'Acuerda una fecha de cierre y la entrega. Refuerza el valor de comprar en Blackline: ajuste a medida, asesoría y seguimiento del taller (sin descuentos).', acc: [['💬 Oferta de cierre', 'wa:oferta']] }
 ];
 const ETAPA_FIN = { 'Ganada': { k: 'Ganada', corto: 'Ganada', ic: '🏆', c: '#12A06B', p: 1 }, 'Perdida': { k: 'Perdida', corto: 'Perdida', ic: '❌', c: '#D92D20', p: 0 } };
 const MOTIVOS = ['Precio', 'Compró en otro lado', 'No respondió', 'Postergó la compra', 'Sin stock', 'Otro'];
@@ -4269,7 +4417,7 @@ function plantilla(tipo, n, a){
     seguimiento: 'Hola' + nom + ', ¿alcanzaste a revisar la cotización de ' + prod + '? Si quieres te cuento las opciones de pago o resolvemos cualquier duda 😊',
     reactivar: 'Hola' + nom + '! Me acordé de ti: ' + prod + ' sigue disponible y esta semana hay salida en Pichijuán. ¿Sigues interesado?',
     cierre: 'Hola' + nom + ', no quiero molestarte 🙂 ¿Prefieres que lo dejemos para más adelante? Si sigues interesado en ' + prod + ', te reservo una unidad.',
-    oferta: 'Hola' + nom + ', si cerramos esta semana ' + prod + ' te incluyo la primera mantención sin costo. ¿Coordinamos la entrega?'
+    oferta: 'Hola' + nom + ', te cuento que con ' + prod + ' te la entregamos ajustada a tu medida y con seguimiento de nuestro taller. ¿Coordinamos la entrega?'
   })[tipo] || '';
 }
 async function negAccion(acc, n, btn){
@@ -4901,7 +5049,7 @@ function oportunidades(){
     const base = { c, pf, pot: pf.potencial || 0 };
     ints.forEach(q => { const ws = palabrasModelo(q).slice(0, 2); if (!ws.length) return; const hit = L => (L || []).find(x => ws.every(w => norm(x.nombre + ' ' + x.familia).includes(w)));
       const of = hit(sz.ofertas), po = hit(sz.pocoStock);
-      if (of) add(Object.assign({ k: 'spzof:' + c.id + ':' + of.id + ':' + of.oferta, tipo: 'oferta_web', ic: 'bolt', titulo: of.nombre + ' en oferta', porque: 'Le interesa «' + q + '» · ' + clpCorto(of.precio) + ' → ' + clpCorto(of.oferta) + ' en specialized.com', msg: 'Hola ' + n + '! Te escribo de Blackline 🙌 La ' + of.nombre + ' está en oferta a ' + clp(of.oferta) + ' (antes ' + clp(of.precio) + '). ¿Te la reservo' + (p.talla ? ' en tu talla (' + p.talla + ')' : '') + '?', pr: 90 }, base));
+      if (of) add(Object.assign({ k: 'spzof:' + c.id + ':' + of.id + ':' + of.oferta, tipo: 'oferta_web', ic: 'bolt', titulo: 'Retomar: ' + of.nombre, porque: 'Le interesa «' + q + '» · dato interno: el precio público bajó en specialized.com y lo puede estar mirando', msg: 'Hola ' + n + '! ¿Cómo vas con la decisión de la ' + of.nombre + '? Si quieres, te preparo una prueba y el ajuste a tu medida' + (p.talla ? ' (talla ' + p.talla + ')' : '') + ', y resolvemos juntos las dudas 🙌', pr: 85 }, base));
       else if (po) add(Object.assign({ k: 'spzpo:' + c.id + ':' + po.id + ':' + h.slice(0, 7), tipo: 'stock_web', ic: 'flag', titulo: 'Quedan pocas ' + po.nombre + ' en Chile', porque: 'Le interesa «' + q + '» · ' + (po.tallas || po.stock + ' unidades'), msg: 'Hola ' + n + '! Te aviso que de la ' + po.nombre + ' van quedando pocas unidades en Chile. Si la quieres, te la consigo antes de que se acabe 😉', pr: 82 }, base)); });
   });
   // Una sola por cliente (la más importante), ordenadas por importancia y potencial.
@@ -4909,7 +5057,7 @@ function oportunidades(){
   return Object.values(mejor).sort((a, b) => (b.pr + b.pot / 5) - (a.pr + a.pot / 5));
 }
 function fmtMes(s){ const M = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic']; return /^\d{4}-\d{2}/.test(s || '') ? M[+s.slice(5, 7) - 1] + ' ' + s.slice(0, 4) : s; }
-const OP_TIPO = { oferta_web: 'Oferta Specialized', stock_web: 'Poco stock en Chile', arribo: 'Llegó stock', critico: 'Stock crítico', mantencion: 'Mantención', bateria: 'Batería', upgrade: 'Upgrade', reactivar: 'Reactivar', retomar: 'Retomar interés', postventa: 'Post-venta', temporada: 'Temporada', seguimiento: 'Seguimiento', invitacion: 'Invitación', otro: 'Sugerencia' };
+const OP_TIPO = { oferta_web: 'Retomar contacto', stock_web: 'Poco stock en Chile', arribo: 'Llegó stock', critico: 'Stock crítico', mantencion: 'Mantención', bateria: 'Batería', upgrade: 'Upgrade', reactivar: 'Reactivar', retomar: 'Retomar interés', postventa: 'Post-venta', temporada: 'Temporada', seguimiento: 'Seguimiento', invitacion: 'Invitación', otro: 'Sugerencia' };
 function opCardHTML(o, i){
   const tel = telWA(o.c);
   return '<div class="op" data-opi="' + i + '"><div class="op-h"><span class="op-ic">' + icon(o.ic) + '</span><span class="op-t">' + esc(OP_TIPO[o.tipo] || 'Sugerencia') + '</span>' + (o.pf.clase && o.pf.clase !== '–' ? '<span class="op-cl">' + esc(o.pf.clase) + '</span>' : '') + '</div>' +

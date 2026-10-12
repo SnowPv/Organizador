@@ -81,3 +81,34 @@ En Inicio → **Fuentes**, pega el link de cualquier Google Sheet tuyo: metas, p
   - **Año**: mapa de calor de tareas y gráficos por mes.
 
   Mes y Año comparan con el período anterior: tareas, ventas, tasa de cierre, negociaciones, clientes nuevos, conversaciones, tiempo de respuesta, Instagram y publicaciones.
+
+## Compras y proveedores
+
+La pestaña **Compras** lee las webs públicas de los proveedores (no el B2B) y calcula tu costo con el descuento de distribuidor de cada uno.
+
+| Proveedor | Web | Qué se lee |
+|---|---|---|
+| Sportvibes (Fox suspensiones, Deity, HT) | sportvibes.cl | Catálogo completo con precio normal y de promoción |
+| Outside (Hope, BikeYoke, Schwalbe, SunRace) | outsidesports.cl | Catálogo completo (precios + IVA) |
+| MKR (RockShox, SRAM) | extremezone.cl | Productos, precio normal, oferta y stock por sucursal, por turnos |
+| Andes (Shimano, Continental) | andesindustrial.cl | Su catálogo pide iniciar sesión: correos y listas de precios en la carpeta Fuentes |
+| Specialized | specialized.com/cl | Módulo Specialized (stock por talla) |
+| Garmin (Garmin, Tacx) | garminstore.cl | Catálogo completo con promociones |
+| Trail (ropa Fox) | trailstore.cl | Catálogo Fox de ciclismo (sin moto) |
+
+- **Lectura:** un proveedor por hora, cada uno una vez al día.
+- **Cambios de precio:** se registran cuando empieza o termina una promoción, cuando cambia un precio y cuando aparece un producto nuevo.
+- **Oportunidades de compra:** productos en promoción que conviene comprar para vender a precio normal.
+  - El costo aplica tu descuento sobre el precio de promoción.
+  - Se priorizan los productos que vendes, los que piden tus clientes y los vigentes. Garmin tiene prioridad extra porque su margen es bajo.
+- **Correos de proveedores:** Gmail filtrado por los dominios de cada uno, con las promociones y novedades marcadas.
+- **Configurar:** en cada proveedor puedes editar tu descuento (por defecto Garmin 20 % y el resto 30 %), las marcas, los dominios de correo y notas.
+- **Copiloto:** busca en todos los catálogos ("¿quién tiene una Fox 36 Grip X2 y a qué costo?").
+- **Plan del día:** recibe las mejores oportunidades y los correos de promociones.
+
+## Política de marca
+
+Blackline no hace descuentos, no los promociona y no participa en Cyber ni Black Friday: compite con fidelidad y atención personalizada.
+- Todos los agentes tienen esta política como regla obligatoria: el de ventas, el de contenido, el Cerebro, el Copiloto y las noticias.
+- Las rebajas de proveedores o de specialized.com son solo información interna para comprar mejor y anticipar lo que el cliente ve en internet.
+- El pilar de contenido "Promociones" se reemplazó por **"Asesoría y experiencia"**.
