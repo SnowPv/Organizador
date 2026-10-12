@@ -15,8 +15,8 @@
  * Para actualizar este archivo más adelante: reemplaza todo su contenido y repite los dos pasos anteriores.
  */
 
-const EX_VERSION = '2026-11-05';
-const EX_NIVEL = 18;      // la app lo usa para saber qué funciones tiene este script
+const EX_VERSION = '2026-11-12';
+const EX_NIVEL = 19;      // la app lo usa para saber qué funciones tiene este script
 const EX_HOJA = 'Tareas';
 const EX_PRIMERA = 4;
 const EX_ULTIMA = 400;
@@ -144,6 +144,8 @@ function app_extra_(p) {
     case 'cerebro':    return ex_cerebro_(p);
     case 'global':     return ex_contextoGlobal_(p);
     case 'proveedores': return ex_proveedores_(p);
+    case 'tareaIA':    return ex_tareaIA_(p);
+    case 'eventoCrear': return ex_eventoCrear_(p);
     case 'eventos':    return { ok: true, eventos: int_eventosRango_(ex_tz_(), String(p.desde || ''), String(p.hasta || '')) };
     default:           return { ok: false, error: 'op desconocida: ' + p.op };
   }
@@ -2855,6 +2857,137 @@ function ex_copiloto_(p) {
     messages.push({ role: 'user', content: res });
   }
   return { ok: true, texto: texto || 'No encontré una respuesta. Prueba preguntando de otra forma.', acciones: estado.acciones.slice(0, 6), fuentes: Object.keys(estado.usadas) };
+}
+
+/* ---------- Agente de tareas: piensa la tarea antes de guardarla ---------- */
+// Recibe lo que Gustavo dictó o escribió y lo convierte en una tarea completa, como él la habría pensado:
+// fecha y hora, pasos, proveedor (lo busca o deja la ficha lista), cantidades según el stock, mejores opciones y mensaje para pedir.
+// Nunca crea nada por su cuenta: devuelve una propuesta y la app la muestra para aprobar o corregir.
+const EX_TAR_MODELO = 'claude-opus-5-5';   // se cambia con la propiedad TAREAS_MODELO
+const EX_TAR_SISTEMA = [
+  'Eres el asistente de operaciones de Blackline Puerto Varas, tienda Specialized en Puerto Varas, Chile (lluvioso; temporada alta de primavera a verano, con muchos turistas en verano). Venden bicicletas (fuerte en e-bikes), ropa, accesorios, repuestos, lubricantes y servicio de taller. Gustavo es el encargado: tiene 2 vendedores (uno apoya marketing, otro el orden físico y el stock) y 2 mecánicos.',
+  'Tu trabajo: Gustavo te dicta o escribe una tarea en bruto (a veces con errores del dictado por voz). Antes de guardarla, piénsala como la habría pensado él al ponerse a hacerla, y déjale todo listo para solo aprobar:',
+  '1) Entiende qué quiere de verdad y corrige lo que el dictado escribió mal. Las marcas y nombres dictados suelen venir deformados: busca la marca real del rubro bike (ej.: «Makov», «Mak of» o «Muk off» = Muc-Off; «Fino» = Finish Line; «Rocsoks» = RockShox). Si corriges algo, anótalo en correcciones.',
+  '2) Título claro y accionable (verbo + qué + con quién), fecha límite realista y hora si conviene, área, categoría y prioridad (urgente/importante). Si el pedido depende de la temporada (ej.: verano = más uso de lubricantes secos y de cerámica, más mantenciones), dilo.',
+  '3) Pasos concretos (subtareas) en el orden en que se hacen.',
+  '4) Si hay un proveedor o persona involucrada, búscalo: primero con buscar_proveedor (contactos y proveedores configurados) y luego con buscar_correos (Gmail: facturas, cotizaciones, pedidos anteriores, firmas con teléfono). Si lo encuentras, devuelve su id. Si no, deja la ficha lista para crearlo con lo que sepas (nombre, empresa, qué marcas trae, teléfono o correo si aparecen) y marca qué falta.',
+  '5) Si es un pedido o compra: revisa el stock de la tienda (stock_tienda; si Bsale no está conectado, dilo), pedidos y correos anteriores, y los catálogos de proveedores (buscar_en_proveedores). Sugiere qué productos y cuántas unidades pedir, con el motivo (stock actual, temporada, rotación). Si no hay datos de ventas, estima con criterio de tienda y dilo. Incluye la línea de productos adecuada (tipos, formatos y tamaños) y, si sirve, busca en internet (web_search) la línea vigente de la marca, formatos y distribuidor en Chile. No inventes precios: si no los encuentras, deja el campo vacío.',
+  '6) Deja listo el mensaje para el proveedor (WhatsApp o correo): cordial, corto y concreto, con el detalle del pedido. Si falta un dato clave para pedir (ej.: cuenta aún no abierta), propón el paso para resolverlo como subtarea.',
+  '7) Si conviene un bloque en el calendario (llamada, visita, reunión, retiro), propón el evento.',
+  'Reglas: usa las herramientas antes de afirmar algo (máximo unas 8 consultas en total; no repitas búsquedas iguales). No inventes contactos, teléfonos, stock ni precios. Español de Chile, directo. Si no es una compra (ej.: «llamar a Pedro»), no fuerces pedido ni opciones: deja esos campos vacíos. Cuando termines, llama SIEMPRE a entregar_plan con todo; es tu única forma de responder.',
+  EX_POLITICA
+].join('\n\n');
+const EX_TAR_PLAN = { type: 'object', additionalProperties: false, required: ['resumen', 'correcciones', 'tarea', 'evento', 'proveedor', 'pedido', 'opciones', 'preguntas'], properties: {
+  resumen: { type: 'string', description: 'Cómo lo pensaste, en 2 a 4 frases para Gustavo' },
+  correcciones: { type: 'array', items: { type: 'string' }, description: 'Lo que corregiste del dictado (ej.: «Makov» → Muc-Off)' },
+  tarea: { type: 'object', additionalProperties: false, required: ['titulo', 'notas', 'limite', 'hora', 'area', 'categoria', 'urgente', 'importante', 'tamano', 'subtareas'], properties: {
+    titulo: { type: 'string' }, notas: { type: 'string', description: 'Contexto útil en 1 a 3 líneas (no repitas el pedido ni las opciones)' },
+    limite: { type: 'string', description: 'yyyy-MM-dd o vacío' }, hora: { type: 'string', description: 'HH:mm o vacío' },
+    area: { type: 'string' }, categoria: { type: 'string' }, urgente: { type: 'boolean' }, importante: { type: 'boolean' },
+    tamano: { type: 'string', enum: ['Pequeña', 'Mediana', 'Grande'] }, subtareas: { type: 'array', items: { type: 'string' } } } },
+  evento: { type: 'object', additionalProperties: false, required: ['crear', 'titulo', 'fecha', 'inicio', 'fin', 'motivo'], properties: {
+    crear: { type: 'boolean' }, titulo: { type: 'string' }, fecha: { type: 'string', description: 'yyyy-MM-dd' }, inicio: { type: 'string', description: 'HH:mm' }, fin: { type: 'string', description: 'HH:mm' }, motivo: { type: 'string' } } },
+  proveedor: { type: 'object', additionalProperties: false, required: ['estado', 'id', 'nombre', 'empresa', 'telefono', 'email', 'marcas', 'notas', 'falta'], properties: {
+    estado: { type: 'string', enum: ['encontrado', 'nuevo', 'no_aplica'] }, id: { type: 'string', description: 'id del contacto si se encontró' },
+    nombre: { type: 'string' }, empresa: { type: 'string' }, telefono: { type: 'string' }, email: { type: 'string' }, marcas: { type: 'string' },
+    notas: { type: 'string', description: 'Qué se sabe: condiciones, cuenta, cómo se le pide' }, falta: { type: 'string', description: 'Datos que faltan para la ficha o para poder pedir' } } },
+  pedido: { type: 'object', additionalProperties: false, required: ['aplica', 'items', 'criterio', 'mensaje'], properties: {
+    aplica: { type: 'boolean' },
+    items: { type: 'array', items: { type: 'object', additionalProperties: false, required: ['producto', 'formato', 'cantidad', 'stock_tienda', 'precio_ref', 'motivo'], properties: {
+      producto: { type: 'string' }, formato: { type: 'string', description: 'Tamaño o presentación (ej.: 120 ml)' }, cantidad: { type: 'integer' },
+      stock_tienda: { type: 'string', description: 'Stock actual en la tienda o «sin dato»' }, precio_ref: { type: 'string', description: 'Precio o costo de referencia con su fuente, o vacío' }, motivo: { type: 'string' } } } },
+    criterio: { type: 'string', description: 'Cómo calculaste las cantidades' },
+    mensaje: { type: 'string', description: 'Borrador para enviar al proveedor' } } },
+  opciones: { type: 'array', items: { type: 'object', additionalProperties: false, required: ['nombre', 'detalle', 'fuente', 'url'], properties: {
+    nombre: { type: 'string' }, detalle: { type: 'string', description: 'Para qué sirve y por qué conviene' }, fuente: { type: 'string' }, url: { type: 'string' } } } },
+  preguntas: { type: 'array', items: { type: 'string' }, description: 'Lo que Gustavo debe confirmar (máx. 3)' }
+} };
+const EX_TAR_TOOLS_PROPIAS = [
+  { name: 'buscar_proveedor', description: 'Busca un proveedor o contacto por nombre, empresa o marca que trae (ej. "Bianchi", "Muc-Off"). Revisa los contactos guardados y los proveedores configurados en Compras.', input_schema: { type: 'object', properties: { consulta: { type: 'string' } }, required: ['consulta'] } },
+  { name: 'buscar_correos', description: 'Busca en el Gmail de la tienda (últimos 2 años): pedidos, facturas, cotizaciones y firmas con teléfono. Usa palabras simples (ej. "bianchi", "muc-off pedido", "lubricante factura").', input_schema: { type: 'object', properties: { consulta: { type: 'string' } }, required: ['consulta'] } },
+  { name: 'entregar_plan', description: 'Entrega el plan final de la tarea. Llámala una sola vez, al final.', strict: true, input_schema: EX_TAR_PLAN }
+];
+const EX_TAR_DE_COP = ['stock_tienda', 'buscar_en_proveedores', 'buscar_en_planillas', 'ver_agenda', 'ver_tareas', 'correos_proveedores', 'buscar_producto', 'ver_clima', 'ver_negociaciones', 'buscar_clientes'];
+function ex_tarHerramienta_(nombre, inp, estado) {
+  if (nombre === 'buscar_proveedor') {
+    const q = ex_norm_(inp.consulta), tk = q.split(/[^a-z0-9]+/).filter(function (w) { return w.length >= 3; });
+    const conf = ex_proveedoresConf_().filter(function (p) { const s = ex_norm_(p.nombre + ' ' + p.marcas + ' ' + (p.dominios || []).join(' ')); return tk.some(function (w) { return s.indexOf(w) >= 0; }); })
+      .map(function (p) { return { proveedor_configurado: p.nombre, web: p.web, marcas: p.marcas, descuento: p.desc + '%', dominios: p.dominios, notas: p.nota || '' }; });
+    const ctos = ex_contactosRapidos_(inp.consulta, 6).map(function (c) { return { id: c.id, nombre: c.nombre, tipo: c.tipo, telefono: c.telefono, email: c.email, etiquetas: c.intereses, ultima: c.ultima, ultimas: c.ultimas }; });
+    return ex_json_({ contactos: ctos.length ? ctos : 'ningún contacto coincide', proveedores_configurados: conf.length ? conf : 'ninguno coincide' }, 6000);
+  }
+  if (nombre === 'buscar_correos') {
+    const tz = ex_tz_();
+    const hilos = GmailApp.search(String(inp.consulta || '') + ' newer_than:2y', 0, 8);
+    if (!hilos.length) return 'Sin correos que coincidan.';
+    return ex_json_(hilos.map(function (th) {
+      const ms = th.getMessages(), m = ms[ms.length - 1];
+      return { fecha: Utilities.formatDate(m.getDate(), tz, 'yyyy-MM-dd'), de: m.getFrom(), para: m.getTo(), asunto: th.getFirstMessageSubject(), texto: String(m.getPlainBody() || '').replace(/\s+/g, ' ').slice(0, 700) };
+    }), 8000);
+  }
+  return ex_copHerramienta_(nombre, inp, estado);
+}
+function ex_tareaIA_(p) {
+  const pr = PropertiesService.getScriptProperties(), tz = ex_tz_(), modelo = pr.getProperty('TAREAS_MODELO') || EX_TAR_MODELO, haiku = /haiku/.test(modelo);
+  const texto = String(p.texto || '').trim(); if (!texto) throw new Error('falta el texto de la tarea');
+  const ahora = Utilities.formatDate(new Date(), tz, "EEEE d 'de' MMMM yyyy, HH:mm");
+  const cfg = p.config || {};
+  const pedido = 'Hoy es ' + ahora + ' (' + ex_hoyYmd_(tz) + ').\n' +
+    'Áreas válidas: ' + (cfg.areas || ['Trabajo', 'Personal']).join(', ') + '.\n' +
+    'Categorías válidas (área): ' + (cfg.categorias || []).map(function (c) { return c.nombre + ' (' + c.area + ')'; }).join(', ') + '.\n' +
+    (p.notas ? 'Notas que ya tenía la tarea: ' + String(p.notas).slice(0, 800) + '\n' : '') +
+    'Lo que dictó o escribió Gustavo:\n«' + texto.slice(0, 2000) + '»';
+  const propias = EX_TAR_TOOLS_PROPIAS, deCop = EX_COP_TOOLS.filter(function (t) { return EX_TAR_DE_COP.indexOf(t.name) >= 0; });
+  let tools = deCop.concat(propias.slice(0, 2)).concat([Object.assign({}, propias[2], { cache_control: { type: 'ephemeral' } })]);
+  const web = { type: haiku ? 'web_search_20250305' : 'web_search_20260209', name: 'web_search', max_uses: 3, user_location: { type: 'approximate', country: 'CL', city: 'Puerto Varas', timezone: 'America/Santiago' } };
+  let conWeb = pr.getProperty('TAREAS_WEB') !== 'no';
+  const messages = [{ role: 'user', content: pedido }], estado = { acciones: [], usadas: {} };
+  const clave = pr.getProperty('ANTHROPIC_API_KEY'); if (!clave) throw new Error('falta ANTHROPIC_API_KEY en las propiedades del script');
+  const llamar = function () {
+    const cuerpo = { model: modelo, max_tokens: 16000, output_config: { effort: 'medium' }, system: [{ type: 'text', text: EX_TAR_SISTEMA, cache_control: { type: 'ephemeral' } }], tools: conWeb ? [web].concat(tools) : tools, messages: messages };
+    const headers = { 'x-api-key': clave, 'anthropic-version': '2023-06-01' };
+    if (!haiku) { cuerpo.fallbacks = 'default'; headers['anthropic-beta'] = 'server-side-fallback-2026-07-01'; }
+    const r = UrlFetchApp.fetch('https://api.anthropic.com/v1/messages', { method: 'post', contentType: 'application/json', muteHttpExceptions: true, payload: JSON.stringify(cuerpo), headers: headers });
+    const j = JSON.parse(r.getContentText() || '{}');
+    if (r.getResponseCode() !== 200) {
+      const msg = (j.error && j.error.message) || '';
+      // Si la búsqueda web no está habilitada en la organización, se sigue sin ella.
+      if (conWeb && /web_search|web search/i.test(msg)) { conWeb = false; return llamar(); }
+      throw new Error('Claude respondió ' + r.getResponseCode() + ': ' + msg.slice(0, 200));
+    }
+    return j;
+  };
+  let plan = null, fuentes = {};
+  for (let paso = 0; paso < 10 && !plan; paso++) {
+    const j = llamar();
+    if (j.stop_reason === 'refusal') throw new Error('el modelo no pudo procesar esta tarea');
+    messages.push({ role: 'assistant', content: j.content });
+    (j.content || []).forEach(function (c) { if (c.type === 'server_tool_use') fuentes.web_search = 1; });
+    if (j.stop_reason === 'pause_turn') continue;
+    const usos = (j.content || []).filter(function (c) { return c.type === 'tool_use'; });
+    if (!usos.length) { messages.push({ role: 'user', content: 'Entrega ahora el plan llamando a entregar_plan.' }); continue; }
+    const res = usos.map(function (tu) {
+      if (tu.name === 'entregar_plan') { plan = tu.input; return { type: 'tool_result', tool_use_id: tu.id, content: 'Recibido.' }; }
+      fuentes[tu.name] = 1;
+      try { return { type: 'tool_result', tool_use_id: tu.id, content: String(ex_tarHerramienta_(tu.name, tu.input || {}, estado)) }; }
+      catch (e) { return { type: 'tool_result', tool_use_id: tu.id, content: 'Error: ' + e.message, is_error: true }; }
+    });
+    if (!plan) messages.push({ role: 'user', content: paso >= 7 ? res.concat([{ type: 'text', text: 'Ya tienes suficiente: entrega el plan con entregar_plan.' }]) : res });
+  }
+  if (!plan) throw new Error('el agente no alcanzó a terminar; inténtalo de nuevo');
+  return { ok: true, plan: plan, fuentes: Object.keys(fuentes), modelo: modelo };
+}
+// Crea un evento en el calendario principal (lo usa el agente de tareas cuando Gustavo lo aprueba).
+function ex_eventoCrear_(p) {
+  const tz = ex_tz_(), e = p.evento || {};
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(e.fecha || '')) throw new Error('fecha inválida');
+  const cal = CalendarApp.getDefaultCalendar(), titulo = String(e.titulo || 'Evento').slice(0, 200), desc = String(e.detalle || 'Creado desde el Organizador BlackLine').slice(0, 4000);
+  let ev;
+  if (/^\d{2}:\d{2}$/.test(e.inicio || '')) {
+    const ini = ex_aFecha_(e.fecha, tz, e.inicio), fin = /^\d{2}:\d{2}$/.test(e.fin || '') && e.fin > e.inicio ? ex_aFecha_(e.fecha, tz, e.fin) : new Date(ini.getTime() + 30 * 60000);
+    ev = cal.createEvent(titulo, ini, fin, { description: desc });
+  } else ev = cal.createAllDayEvent(titulo, ex_aFecha_(e.fecha, tz), { description: desc });
+  return { ok: true, id: ev.getId() };
 }
 
 /* ---------- Cerebro: cada mañana cruza todas las fuentes y arma el plan del día ---------- */

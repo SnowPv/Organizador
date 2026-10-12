@@ -1447,6 +1447,30 @@ body:has(.selbar) .fab,body:has(.selbar) .fab2{display:none}
 .tk2 .tlist + .dayh{margin-top:18px}
 .tk2 .empty{background:var(--card);border:1px dashed var(--line);border-radius:14px}
 @media (min-width:1000px){.tk2 .cols2{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}.tk2 .cols2 .tlist{grid-template-columns:1fr}}
+/* Agente de tareas */
+.ta-q{background:var(--soft);border-radius:12px;padding:10px 12px;font-size:14px;margin:8px 0 12px;font-style:italic}
+.ta-steps{display:flex;flex-direction:column;gap:9px;margin:4px 0 12px}
+.ta-steps div{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--muted);opacity:.45}
+.ta-steps div.on{opacity:1;color:var(--ink);font-weight:600}
+.ta-steps div .spin{visibility:hidden}.ta-steps div.on .spin{visibility:visible}
+.ta-steps div.ok{opacity:.8;color:var(--ok-ink);font-weight:500}.ta-steps div.ok .spin{display:none}.ta-steps div.ok::before{content:"✓";font-weight:800;width:16px;text-align:center}
+.ta-res{background:var(--accent-soft);border-radius:14px;padding:12px 14px;font-size:14px;line-height:1.5;margin-top:8px}
+.ta-src{font-size:12px;color:var(--accent-ink);margin-top:6px;font-weight:600}
+.ta-fix{font-size:13px;margin-top:8px;color:var(--muted)}
+.ta-ask{border:1px solid var(--warn);background:rgba(229,160,0,.08);border-radius:12px;padding:10px 12px;margin-top:10px;font-size:13.5px;line-height:1.5}
+.ta-ask b{display:block;margin-bottom:2px}
+.ta-sec{border:1px solid var(--line);border-radius:14px;padding:12px;margin-top:12px}
+.ta-h{font-weight:700;font-size:14.5px;margin-bottom:10px}
+.ta-pri{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;margin-top:10px;font-size:14px}
+.ta-pri label,.ta-ck{display:flex;align-items:center;gap:7px;font-size:14px}.ta-ck{margin-bottom:8px;font-weight:600}
+.ta-pri select{width:auto;flex:1;min-width:120px}
+.ta-card{display:flex;flex-direction:column;gap:3px;font-size:14px}.ta-card span{color:var(--muted);font-size:13px}.ta-card small{font-size:12.5px;color:var(--muted)}.ta-card .btn{align-self:flex-start;margin-top:6px}
+.ta-ped{display:flex;flex-direction:column;gap:8px}
+.ta-it{display:flex;gap:10px;align-items:center;border-bottom:1px solid var(--line);padding-bottom:8px}
+.ta-it b{display:block;font-size:14px}.ta-it b span{font-weight:500;color:var(--muted)}.ta-it small{display:block;font-size:12px;color:var(--muted);line-height:1.4;margin-top:2px}
+.ta-it input{width:70px;flex:none;text-align:center;padding:9px 6px}
+.ta-op{display:flex;flex-direction:column;gap:2px;padding:8px 0;border-top:1px solid var(--line);font-size:14px}.ta-op:first-of-type{border-top:0;padding-top:0}.ta-op span{color:var(--ink);font-size:13px;line-height:1.4}.ta-op small{color:var(--muted);font-size:12px}
+.btn.ia{background:linear-gradient(135deg,#2A78D6,#6250d6)}
 </style>
 
 
@@ -1540,7 +1564,7 @@ async function api(action, extra){
 function apiX(op, extra){ return api('extra', Object.assign({ op }, extra || {})); }
 // Nivel 2 del script Extras: recordatorios y base de contactos. Nivel 3: la base solo usa contacto@blacklinechile.cl. Nivel 4: eventos de varios días.
 function extNivel(){ return S.extInactivo ? 0 : (S.ext && S.ext.nivel) || 1; }
-function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < 16; }
+function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < 19; }
 let sincTimer = null;
 // Después de cambiar tareas, el script actualiza los recordatorios del calendario (en segundo plano).
 function sincPronto(){
@@ -1808,7 +1832,7 @@ function viewInicio(){
   const totalHoy = lista.length + hechas.length;
   let html = '<div class="ihead"><button class="quick" id="qa"><b>+</b>Agregar tarea… <span style="margin-left:auto">🎤</span></button>' +
     '<button class="btn sec" id="prodBtn">' + icon('box') + ' Producto</button><button class="btn sec" id="fzBtn">' + icon('chart') + ' Fuentes</button><button class="btn sec" id="planBtn">' + icon('spark') + ' Plan de la semana</button></div>';
-  if (necesitaActualizar()) html += '<div class="w" style="margin-bottom:14px;display:flex;gap:12px;align-items:center"><div class="grow"><b>Nueva versión del script</b><div class="wsub">' + (extNivel() >= 14 ? 'El Cerebro: plan del día automático, Copiloto que consulta todo, Specialized Chile (ventas, ofertas y stock por talla), clima, noticias y avisos para el equipo.' : extNivel() >= 10 ? 'Instagram: métricas diarias y calendario de contenido con IA. También filtra los correos automáticos de bancos y pagos.' : extNivel() >= 8 ? 'Asistente de IA para planificar tu día y tu semana, Instagram y conexión con Bsale.' : 'Importar chats de WhatsApp y agente de IA.') + '</div></div><button class="btn sm" id="updBtn">Actualizar</button></div>';
+  if (necesitaActualizar()) html += '<div class="w" style="margin-bottom:14px;display:flex;gap:12px;align-items:center"><div class="grow"><b>Nueva versión del script</b><div class="wsub">' + (extNivel() >= 16 ? 'Agente de tareas: piensa cada tarea que dictas (fecha, pasos, proveedor, stock, pedido y mejores opciones) antes de guardarla. También Compras y proveedores.' : extNivel() >= 14 ? 'El Cerebro: plan del día automático, Copiloto que consulta todo, Specialized Chile (ventas, ofertas y stock por talla), clima, noticias y avisos para el equipo.' : extNivel() >= 10 ? 'Instagram: métricas diarias y calendario de contenido con IA. También filtra los correos automáticos de bancos y pagos.' : extNivel() >= 8 ? 'Asistente de IA para planificar tu día y tu semana, Instagram y conexión con Bsale.' : 'Importar chats de WhatsApp y agente de IA.') + '</div></div><button class="btn sm" id="updBtn">Actualizar</button></div>';
   if (extNivel() >= 13 && !S.leadsCanal && !S._leadsPend){ S._leadsPend = 1; loadLeads().then(() => { S._leadsPend = 0; if (S.tab === 'inicio' && !$('.pop-bg')) render(); }); }
   html += planStrip() + kpiRow();
   const rad = senales();
@@ -6217,7 +6241,7 @@ function openAdd(pre){
       '<label class="l">🔁 Repetir</label>' + pills('f_rep', [{ v: '', t: 'No' }].concat(REPETIR.map(x => ({ v: x, t: x }))), '') +
       '<label class="l">☑ Subtareas (una por línea)</label><textarea class="note" id="f_subs" placeholder="Cotizar&#10;Enviar correo&#10;Confirmar"></textarea>') +
     '<label class="l">Notas</label><input type="text" id="f_notas" autocomplete="off" value="' + esc(pre.notas || '') + '"></details>' +
-    '<div class="btns"><button class="btn sec" id="f_otra">Guardar y otra</button><button class="btn" id="f_ok">Agregar</button></div>');
+    (agenteTareasOk() ? '<div class="hint" style="margin:10px 0 0">✨ El agente piensa la tarea por ti: pasos, fecha, proveedor, stock, pedido y mejores opciones. Tú solo apruebas.</div><div class="btns"><button class="btn sec" id="f_ok">Guardar tal cual</button><button class="btn ia" id="f_ia">✨ Pensar con el agente</button></div><button class="link" id="f_otra" style="margin-top:6px">Guardar tal cual y agregar otra</button>' : '<div class="btns"><button class="btn sec" id="f_otra">Guardar y otra</button><button class="btn" id="f_ok">Agregar</button></div>'));
   const fillCats = sel => { $('#f_cat').innerHTML = '<option value="">— sin categoría —</option>' + catsDe(area).map(x => '<option' + (x.nombre === sel ? ' selected' : '') + '>' + esc(x.nombre) + '</option>').join(''); };
   fillCats(proy && proy.categoria);
   const setArea = (a, cat) => { area = a; setPill('f_area', a); fillCats(cat); };
@@ -6260,7 +6284,9 @@ function openAdd(pre){
   $('#f_t').oninput = actualizar;
   actualizar();
   setTimeout(() => $('#f_t').focus(), 80);
-  if (voz) $('#f_mic').onclick = () => dictar($('#f_t'), $('#f_mic'), actualizar);
+  const iaBtn = $('#f_ia'); if (iaBtn) iaBtn.onclick = () => pensarTarea($('#f_t').value);
+  // Al terminar de dictar algo largo, el agente la piensa solo (se puede desactivar en el texto de la hoja).
+  if (voz) $('#f_mic').onclick = () => dictar($('#f_t'), $('#f_mic'), actualizar, () => { const v = $('#f_t') && $('#f_t').value.trim(); if (v && agenteTareasOk() && v.split(/\s+/).length >= 7) pensarTarea(v); });
   const enviar = async otra => {
     const crudo = $('#f_t').value.trim(); if (!crudo){ toast('Escribe la tarea'); return; }
     const texto = P.titulo || crudo;
@@ -6293,14 +6319,14 @@ async function guardarExtrasNueva(texto, antes, repetir, subs){
   } catch(e){ toast('No se guardaron subtareas/repetición: ' + e.message); }
 }
 // Dictado por voz (Chrome en Android lo soporta).
-function dictar(input, btn, cb){
+function dictar(input, btn, cb, alTerminar){
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   const rec = new SR(); rec.lang = 'es-CL'; rec.interimResults = true; rec.maxAlternatives = 1;
   const base = input.value ? input.value.trim() + ' ' : '';
   btn.classList.add('on');
   rec.onresult = e => { let t = ''; for (let i = 0; i < e.results.length; i++) t += e.results[i][0].transcript; input.value = base + t; cb(); };
   rec.onerror = e => { btn.classList.remove('on'); if (e.error === 'not-allowed') toast('Permite el micrófono para dictar'); };
-  rec.onend = () => btn.classList.remove('on');
+  rec.onend = () => { btn.classList.remove('on'); if (alTerminar) alTerminar(); };
   try { rec.start(); } catch(e){ btn.classList.remove('on'); }
 }
 
@@ -6309,6 +6335,7 @@ function openDetail(t){
   const c = S.data.config, q = QUAD[quadOf(t)];
   sheet('<h3>✏️ Editar tarea</h3><div class="meta" style="margin:6px 0 4px">' + tagFecha(t) + '<span class="tag" style="background:' + hexToRgba(q.c, .15) + ';color:' + q.c + '">' + q.ic + ' ' + q.n + '</span>' + (t.puntos ? '<span class="tag">⭐ ' + esc(t.puntos) + ' pts</span>' : '') + '</div>' +
     (!t.hecho ? '<div class="btns" style="margin-top:8px"><button class="btn sec" id="e_focus">▶ Enfocarme 25 min</button><button class="btn sec" id="e_done">✅ Marcar hecha</button></div>' : '') +
+    (!t.hecho && agenteTareasOk() ? '<button class="btn ia" id="e_ia" style="width:100%;margin-top:8px">✨ Repensar con el agente</button>' : '') +
     '<label class="l">Tarea</label><input type="text" id="e_t" value="' + esc(t.tarea) + '">' +
     '<label class="l">Estado</label>' + pills('e_est', c.estados.map(x => ({ v: x, t: (EST_IC[x] || '') + ' ' + x })), t.estado) +
     '<label class="l">Fecha límite</label><input type="date" id="e_f" value="' + esc(t.limite) + '">' +
@@ -6331,6 +6358,7 @@ function openDetail(t){
   $('#e_lun').onclick = () => $('#e_f').value = nextMonday(h); $('#e_sin').onclick = () => $('#e_f').value = '';
   $('#e_sem').onclick = () => $('#e_f').value = addDays($('#e_f').value || h, 7);
   if (!t.hecho){ $('#e_focus').onclick = () => openFocus(t); $('#e_done').onclick = () => { closeSheet(); toggle(t); }; }
+  if ($('#e_ia')) $('#e_ia').onclick = () => pensarTarea(t.tarea, t);
   $$('[data-cto]').forEach(b => b.onclick = () => openContacto(contactoPorId(b.dataset.cto)));
   if (S.extInactivo) $('#e_act').onclick = showExtrasSetup;
   else bindSubtareas(t);
@@ -6736,6 +6764,109 @@ function dashRedes(){
       { k: 'ring', l: 'Constancia · 4 semanas', p: pub28 / (metaSem * 4), centro: pub28, sub: 'de ' + (metaSem * 4), q: 'Publicaciones del último mes contra tu meta (' + metaSem + ' por semana).' },
       leads != null && { k: 'num', l: 'Clientes desde Instagram', v: leads, sub: ' en 28 días', q: 'Personas que escribieron por WhatsApp desde un link o código de Instagram.', go: () => { S.rtab = 'leads'; viewRedes(); } }
     ] };
+}
+
+/* ---------- Agente de tareas: piensa la tarea antes de guardarla ---------- */
+function agenteTareasOk(){ return extNivel() >= 19 && agenteActivo(); }
+// texto: lo dictado o escrito. t: tarea existente (para repensarla y reemplazarla).
+async function pensarTarea(texto, t){
+  texto = String(texto || '').trim(); if (!texto){ toast('Escribe o dicta la tarea'); return; }
+  if (!agenteTareasOk()){ toast(extNivel() < 19 ? 'Actualiza el script para usar el agente de tareas' : 'Falta la clave de Claude en el script'); return; }
+  const pasos = ['Entendiendo lo que dictaste…', 'Buscando proveedor y contactos…', 'Revisando correos y pedidos anteriores…', 'Mirando stock y catálogos…', 'Investigando las mejores opciones…', 'Armando la tarea, los pasos y el pedido…'];
+  sheet('<h3>🧠 El agente está pensando tu tarea</h3><div class="ta-q">«' + esc(texto) + '»</div><div class="ta-steps">' + pasos.map((p, i) => '<div data-tp="' + i + '"><span class="spin"></span>' + esc(p) + '</div>').join('') + '</div><div class="hint">Tarda entre 30 segundos y 2 minutos. Puedes cerrar esto: la tarea no se guarda hasta que la apruebes.</div>');
+  let k = 0; const tick = setInterval(() => { const el = $('[data-tp="' + k + '"]'); if (!el){ clearInterval(tick); return; } el.classList.add('ok'); k++; const nx = $('[data-tp="' + k + '"]'); if (nx) nx.classList.add('on'); }, 9000);
+  const p0 = $('[data-tp="0"]'); if (p0) p0.classList.add('on');
+  try {
+    const c = S.data.config;
+    const r = await apiX('tareaIA', { texto, notas: t ? t.notas : '', config: { areas: c.areas, categorias: c.categorias } });
+    clearInterval(tick);
+    if (!$('.ta-steps')) { toast('El agente terminó tu tarea'); }
+    revisarPlanTarea(r.plan, texto, t, r.fuentes || []);
+  } catch(e){ clearInterval(tick); if ($('.ta-steps')) sheet('<h3>No se pudo pensar la tarea</h3><div class="hint">' + esc(e.message) + '</div><div class="btns"><button class="btn sec" id="ta_raw">Guardarla tal cual</button><button class="btn" id="ta_re">Reintentar</button></div>'), $('#ta_re').onclick = () => pensarTarea(texto, t), $('#ta_raw').onclick = () => openAdd({ texto }); else toast('El agente no pudo: ' + e.message); }
+}
+const FUENTE_TXT = { buscar_proveedor: 'contactos', buscar_correos: 'Gmail', stock_tienda: 'Bsale', buscar_en_proveedores: 'catálogos', buscar_producto: 'Specialized', web_search: 'internet', ver_agenda: 'agenda', ver_tareas: 'tareas', correos_proveedores: 'correos de proveedores', buscar_en_planillas: 'planillas', ver_clima: 'clima', buscar_clientes: 'clientes', ver_negociaciones: 'negocios' };
+function revisarPlanTarea(P, texto, t, fuentes){
+  const c = S.data.config, T = P.tarea || {}, ped = P.pedido || { items: [] }, pv = P.proveedor || {}, ev = P.evento || {};
+  const cto = pv.estado === 'encontrado' && pv.id ? contactoPorId(pv.id) : null;
+  const cats = c.categorias.filter(x => x.area === T.area);
+  const sec = (ic, tit, cuerpo, extra) => '<div class="ta-sec"><div class="ta-h">' + ic + ' ' + tit + (extra || '') + '</div>' + cuerpo + '</div>';
+  let h = '<h3>🧠 Así lo pensó el agente</h3>';
+  h += '<div class="ta-res">' + esc(P.resumen || '') + (fuentes.length ? '<div class="ta-src">Consultó: ' + fuentes.map(f => esc(FUENTE_TXT[f] || f)).join(' · ') + '</div>' : '') + '</div>';
+  if ((P.correcciones || []).length) h += '<div class="ta-fix">✍️ ' + P.correcciones.map(esc).join(' · ') + '</div>';
+  if ((P.preguntas || []).length) h += '<div class="ta-ask"><b>Para confirmar</b>' + P.preguntas.map(q => '<div>• ' + esc(q) + '</div>').join('') + '</div>';
+  // Tarea
+  h += sec('📋', 'La tarea',
+    '<input type="text" id="ta_t" value="' + esc(T.titulo || texto) + '">' +
+    '<div class="row" style="margin-top:8px;gap:8px"><input type="date" id="ta_f" value="' + esc(T.limite || '') + '"><input type="time" id="ta_h" value="' + esc(T.hora || '') + '"></div>' +
+    '<div class="row" style="margin-top:8px;gap:8px"><select id="ta_area">' + c.areas.map(a => '<option' + (a === T.area ? ' selected' : '') + '>' + esc(a) + '</option>').join('') + '</select><select id="ta_cat"><option value="">— sin categoría —</option>' + c.categorias.map(x => '<option' + (x.nombre === T.categoria ? ' selected' : '') + '>' + esc(x.nombre) + '</option>').join('') + '</select></div>' +
+    '<div class="ta-pri"><label><input type="checkbox" id="ta_urg"' + (T.urgente ? ' checked' : '') + '> 🔴 Urgente</label><label><input type="checkbox" id="ta_imp"' + (T.importante !== false ? ' checked' : '') + '> ⭐ Importante</label><select id="ta_tam">' + c.tamanos.map(x => '<option' + (x.nombre === T.tamano ? ' selected' : '') + '>' + esc(x.nombre) + '</option>').join('') + '</select></div>' +
+    '<label class="l">Pasos</label><textarea class="note" id="ta_subs" rows="4">' + esc((T.subtareas || []).join('\n')) + '</textarea>' +
+    '<label class="l">Notas</label><textarea class="note" id="ta_n" rows="2">' + esc(T.notas || '') + '</textarea>');
+  void cats;
+  // Proveedor
+  if (pv.estado && pv.estado !== 'no_aplica'){
+    if (cto) h += sec('🏢', 'Proveedor', '<div class="ta-card ok"><b>' + esc(cto.nombre || pv.nombre) + '</b><span>' + esc([cto.empresa, cto.telefono, cto.email].filter(Boolean).join(' · ')) + '</span>' + (pv.notas ? '<small>' + esc(pv.notas) + '</small>' : '') + '<button class="btn sm sec" id="ta_vcto">Ver ficha</button></div>');
+    else h += sec('🏢', 'Proveedor nuevo', '<div class="hint" style="margin:0 0 8px">' + esc(pv.falta ? 'Falta: ' + pv.falta : 'No está en tus contactos: dejé la ficha lista.') + '</div>' +
+      '<label class="ta-ck"><input type="checkbox" id="ta_cto" checked> Crear la ficha del proveedor</label>' +
+      '<div class="row" style="gap:8px"><input type="text" id="ta_pn" placeholder="Nombre" value="' + esc(pv.nombre) + '"><input type="text" id="ta_pe" placeholder="Empresa" value="' + esc(pv.empresa) + '"></div>' +
+      '<div class="row" style="gap:8px;margin-top:8px"><input type="text" id="ta_pt" placeholder="Teléfono (lo completas mañana)" value="' + esc(pv.telefono) + '"><input type="text" id="ta_pm" placeholder="Correo" value="' + esc(pv.email) + '"></div>' +
+      '<input type="text" id="ta_pmarcas" style="margin-top:8px" placeholder="Marcas que trae" value="' + esc(pv.marcas) + '">');
+  }
+  // Pedido
+  if (ped.aplica && (ped.items || []).length){
+    h += sec('🛒', 'Pedido sugerido', '<div class="ta-ped">' + ped.items.map((it, i) => '<div class="ta-it"><div class="grow"><b>' + esc(it.producto) + (it.formato ? ' <span>' + esc(it.formato) + '</span>' : '') + '</b><small>' + esc([it.stock_tienda ? 'Stock: ' + it.stock_tienda : '', it.precio_ref, it.motivo].filter(Boolean).join(' · ')) + '</small></div><input type="number" min="0" data-tq="' + i + '" value="' + (+it.cantidad || 0) + '" aria-label="Cantidad"></div>').join('') + '</div>' +
+      (ped.criterio ? '<div class="hint">' + esc(ped.criterio) + '</div>' : '') +
+      '<label class="l">Mensaje para el proveedor</label><textarea class="note" id="ta_msg" rows="5">' + esc(ped.mensaje || '') + '</textarea>' +
+      '<div class="btns" style="margin-top:8px"><button class="btn sm sec" id="ta_copy">Copiar mensaje</button>' + ((cto && telWA(cto)) || pv.telefono ? '<button class="btn sm sec" id="ta_wa">💬 Abrir WhatsApp</button>' : '') + '</div>');
+  }
+  // Opciones
+  if ((P.opciones || []).length) h += sec('🔎', 'Mejores opciones', P.opciones.map(o => '<div class="ta-op"><b>' + esc(o.nombre) + '</b><span>' + esc(o.detalle) + '</span><small>' + esc(o.fuente || '') + (o.url ? ' · <a href="' + esc(o.url) + '" target="_blank" rel="noopener">ver</a>' : '') + '</small></div>').join(''));
+  // Evento
+  if (ev.crear && ev.fecha) h += sec('📅', 'En el calendario', '<label class="ta-ck"><input type="checkbox" id="ta_ev" checked> Crear «' + esc(ev.titulo) + '» · ' + esc(fmtRel(ev.fecha)) + (ev.inicio ? ' ' + esc(ev.inicio) + (ev.fin ? '–' + esc(ev.fin) : '') : '') + '</label>' + (ev.motivo ? '<div class="hint">' + esc(ev.motivo) + '</div>' : ''));
+  h += '<div class="btns"><button class="btn sec" id="ta_raw">' + (t ? 'Dejarla como estaba' : 'Guardar tal cual') + '</button><button class="btn" id="ta_ok">' + (t ? '✓ Reemplazar la tarea' : '✓ Crear todo') + '</button></div>';
+  sheet(h);
+  const leer = () => {
+    const items = (ped.items || []).map((it, i) => Object.assign({}, it, { cantidad: +(($('[data-tq="' + i + '"]') || {}).value || 0) })).filter(it => it.cantidad > 0);
+    return { items, msg: $('#ta_msg') ? $('#ta_msg').value.trim() : '' };
+  };
+  const msgFinal = () => { const L = leer(); let m = L.msg; return m; };
+  if ($('#ta_copy')) $('#ta_copy').onclick = () => { try { navigator.clipboard.writeText(msgFinal()); toast('Mensaje copiado'); } catch(e){ toast('No se pudo copiar'); } };
+  if ($('#ta_wa')) $('#ta_wa').onclick = () => { const tel = cto ? telWA(cto) : telWA({ telefono: $('#ta_pt') ? $('#ta_pt').value : pv.telefono }); window.open('https://wa.me/' + tel + '?text=' + encodeURIComponent(msgFinal()), '_blank'); };
+  if ($('#ta_vcto')) $('#ta_vcto').onclick = () => openContacto(cto);
+  $('#ta_raw').onclick = () => { if (t) closeSheet(); else openAdd({ texto }); };
+  $('#ta_ok').onclick = async () => {
+    const b = $('#ta_ok'); b.disabled = true; b.textContent = 'Creando…';
+    const L = leer(), hora = $('#ta_h').value, titulo = $('#ta_t').value.trim() || texto;
+    let notas = $('#ta_n').value.trim();
+    if (L.items.length) notas += (notas ? '\n' : '') + '🛒 Pedido: ' + L.items.map(it => it.cantidad + '× ' + it.producto + (it.formato ? ' ' + it.formato : '')).join(', ');
+    if ((P.preguntas || []).length) notas += (notas ? '\n' : '') + '❓ ' + P.preguntas.join(' · ');
+    if (hora) notas = '⏰ ' + hora + (notas ? ' · ' + notas : '');
+    const subs = parseSub($('#ta_subs').value), urg = $('#ta_urg').checked ? 'Sí' : 'No', imp = $('#ta_imp').checked ? 'Sí' : 'No';
+    const hechos = [];
+    try {
+      // 1. Proveedor nuevo (primero, para que la tarea lo nombre bien)
+      if ($('#ta_cto') && $('#ta_cto').checked && $('#ta_pn').value.trim()){
+        const nom = $('#ta_pn').value.trim();
+        await apiX('contacto', { contacto: { tipo: 'Proveedor', nombre: nom, empresa: $('#ta_pe').value.trim(), telefono: $('#ta_pt').value.trim(), email: $('#ta_pm').value.trim(), etiquetas: $('#ta_pmarcas').value.trim(), notas: [pv.notas, pv.falta ? 'Falta: ' + pv.falta : ''].filter(Boolean).join(' · '), origen: '🧠 Agente de tareas' } });
+        hechos.push('ficha de ' + nom); S.base = null;
+      }
+      // 2. La tarea (nueva o reemplazando la dictada)
+      const campos = { tarea: titulo, area: $('#ta_area').value, categoria: $('#ta_cat').value, proyecto: t ? t.proyecto || '' : '', limite: $('#ta_f').value, urgente: urg, importante: imp, tamano: $('#ta_tam').value, notas, estado: t ? t.estado || 'Pendiente' : 'Pendiente' };
+      const antes = new Set(S.data.tareas.filter(x => x.tarea === titulo).map(x => x.row));
+      await api('add', { tarea: campos });
+      // Repensar: la tarea dictada se reemplaza por la nueva (se borra la original).
+      if (t && t.row != null) await api('delete', { row: t.row, tarea: t.tarea });
+      await load();
+      if (subs.length && !S.extInactivo) await guardarExtrasNueva(titulo, antes, '', subs);
+      hechos.unshift(t ? 'tarea reemplazada' : 'tarea creada');
+      // 3. Evento
+      if ($('#ta_ev') && $('#ta_ev').checked){
+        try { await apiX('eventoCrear', { evento: { titulo: ev.titulo, fecha: ev.fecha, inicio: ev.inicio, fin: ev.fin, detalle: titulo + (L.items.length ? '\n' + L.items.map(it => it.cantidad + '× ' + it.producto).join('\n') : '') } }); hechos.push('evento en el calendario'); S.googleAt = 0; }
+        catch(e){ toast('No se creó el evento: ' + e.message); }
+      }
+      closeSheet(); toast('✓ ' + hechos.join(' · ')); vibrar(20); render();
+    } catch(e){ b.disabled = false; b.textContent = t ? '✓ Reemplazar la tarea' : '✓ Crear todo'; toast('No se pudo: ' + e.message); }
+  };
 }
 </script>
 </body>

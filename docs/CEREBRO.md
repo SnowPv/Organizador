@@ -123,3 +123,22 @@ Cada pestaña (Hoy, Tareas, Calendario, Compras, Negocios, Proyectos, Contactos 
 El botón **Ocultar** lo deja en una línea, y la app recuerda la elección por pestaña. En el celular las tarjetas se deslizan hacia el lado.
 
 **Tareas** muestra las tareas como tarjetas: borde azul para Trabajo, violeta para Personal, la fecha en color y 🔥 en las urgentes. En el escritorio, las vencidas van a la izquierda; lo de hoy y los próximos 3 días, a la derecha. En **Inicio**, el Pipeline volvió a ser una torta por etapa.
+
+## Agente de tareas
+
+Cuando dictas o escribes una tarea, el agente la piensa antes de guardarla, como la habrías pensado tú:
+- **Corrige el dictado.** Por ejemplo, «Makov» → Muc-Off.
+- **Arma la tarea.** Pone título, fecha, hora, área, categoría, prioridad y los pasos en orden.
+- **Busca al proveedor** en tus contactos, en los proveedores de Compras y en Gmail (cotizaciones, facturas, firmas con teléfono). Si no lo encuentra, deja la ficha lista para crearla y te dice qué falta.
+- **Si es un pedido**, revisa el stock de Bsale, los catálogos de proveedores y, si está habilitado, internet. Con eso sugiere productos, formatos y cantidades con su motivo, y deja el mensaje para el proveedor listo para WhatsApp.
+- **Propone un evento** en el calendario si conviene (una llamada o una visita).
+
+Nada se crea hasta que tocas **✓ Crear todo**. Antes puedes corregir cualquier campo y las cantidades.
+
+**Cómo usarlo:**
+- En **Nueva tarea**, toca **✨ Pensar con el agente**. Si dictas algo de 7 palabras o más, se activa solo.
+- En una tarea ya guardada, toca **✨ Repensar con el agente**: la tarea original se reemplaza por la nueva.
+
+**Configuración (opcional, en las Propiedades del script):**
+- `TAREAS_MODELO`: el modelo que usa el agente. Por defecto `claude-opus-5-5`, el más inteligente, a unos centavos de dólar por tarea. Con `claude-haiku-5-5` cuesta mucho menos, pero piensa menos.
+- `TAREAS_WEB` = `no`: desactiva la búsqueda en internet. Si la búsqueda web no está habilitada en tu cuenta de Anthropic, el agente sigue sin ella.
