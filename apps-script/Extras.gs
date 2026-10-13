@@ -15,8 +15,8 @@
  * Para actualizar este archivo más adelante: reemplaza todo su contenido y repite los dos pasos anteriores.
  */
 
-const EX_VERSION = '2026-11-14';
-const EX_NIVEL = 21;      // la app lo usa para saber qué funciones tiene este script
+const EX_VERSION = '2026-11-15';
+const EX_NIVEL = 22;      // la app lo usa para saber qué funciones tiene este script
 const EX_HOJA = 'Tareas';
 const EX_PRIMERA = 4;
 const EX_ULTIMA = 400;
@@ -1195,7 +1195,24 @@ function ex_imagen_(p) {
       const it = ex_carpetaBanco_().getFiles();
       while (it.hasNext() && out.length < 300) { const f = it.next(); if (/^image\//.test(f.getMimeType()) && !/^logo-marca/.test(f.getName())) out.push({ fuente: 'drive', id: f.getId(), nombre: f.getName().replace(/\.[a-z0-9]+$/i, ''), fecha: f.getDateCreated().toISOString() }); }
     } catch (e) { return { ok: true, items: [], error: 'Falta autorizar Google Drive: ejecuta autorizarEstudio en el editor.' }; }
-    return { ok: true, items: out };
+    const carpetas = [];
+    ex_bancoCarpetas_().forEach(function (id) { try { const f = DriveApp.getFolderById(id), antes = out.length; ex_fotosCarpeta_(f, f.getName(), out, 0); carpetas.push({ id: id, nombre: f.getName(), fotos: out.length - antes }); } catch (e) { carpetas.push({ id: id, nombre: '', error: 'sin acceso' }); } });
+    return { ok: true, items: out, carpetas: carpetas };
+  }
+  if (p.accion === 'carpeta') {   // agregar o quitar una carpeta de Drive (link) al banco de fotos
+    const id = ex_idCarpeta_(p.link || p.id); if (!id) throw new Error('No reconozco el link de la carpeta de Drive');
+    let L = ex_bancoCarpetas_().filter(function (x) { return x !== id; });
+    if (!p.quitar) { let f; try { f = DriveApp.getFolderById(id); } catch (e) { throw new Error('No tengo acceso a esa carpeta: compártela con la cuenta dueña del script'); } L.push(id); pr.setProperty('BANCO_CARPETAS', L.join(',')); return { ok: true, nombre: f.getName() }; }
+    pr.setProperty('BANCO_CARPETAS', L.join(',')); return { ok: true };
+  }
+  if (p.accion === 'spz') {   // fotos oficiales de producto (specialized.com/cl) para el modelo que se nombra
+    return { ok: true, items: ex_spzBuscar_(String(p.q || ''), 4).filter(function (x) { return x.img; }).map(function (x) { return { fuente: 'spz', id: 'spz' + x.id, nombre: 'Foto oficial · ' + x.nombre, thumb: x.img.replace(/w=\d+&h=\d+/, 'w=400&h=400'), url: x.img.replace(/w=\d+&h=\d+/, 'w=1600&h=1600') }; }) };
+  }
+  if (p.accion === 'yt') {   // miniaturas de videos oficiales de Specialized
+    return { ok: true, items: ex_biblioteca_(80).filter(function (b) { return b.tipo === 'video' && /^https:\/\/i\.ytimg\.com\//.test(b.img); }).map(function (b) { return { fuente: 'yt', id: 'yt' + b.link.split('v=')[1], nombre: b.fuente + ' · ' + b.titulo, thumb: b.img.replace('maxresdefault', 'hqdefault'), url: b.img, link: b.link }; }) };
+  }
+  if (p.accion === 'elegir') return ex_elegirFotos_(p);
+  if (p.accion === 'biblioteca') { if (p.sinc) ex_bibliotecaSinc_(); return { ok: true, items: ex_biblioteca_(80) };
   }
   if (p.accion === 'buscar') {   // Pexels
     const k = pr.getProperty('PEXELS_KEY'); if (!k) return { ok: true, items: [], sinClave: true };
@@ -1211,6 +1228,8 @@ function ex_imagen_(p) {
         if (x.fuente === 'drive') blob = UrlFetchApp.fetch('https://drive.google.com/thumbnail?id=' + encodeURIComponent(x.id) + '&sz=w' + (x.ancho || 1600), { headers: { Authorization: 'Bearer ' + ScriptApp.getOAuthToken() } }).getBlob();
         else if (x.fuente === 'ig') { const m = ex_igGet_('/' + x.id + '?fields=media_url,thumbnail_url,media_type', tok); blob = UrlFetchApp.fetch(m.media_type === 'VIDEO' ? m.thumbnail_url : m.media_url).getBlob(); }
         else if (x.fuente === 'stock' && /^https:\/\/images\.pexels\.com\//.test(x.url || '')) blob = UrlFetchApp.fetch(x.url.split('?')[0] + '?auto=compress&cs=tinysrgb&w=' + (x.ancho || 1600)).getBlob();
+        else if (x.fuente === 'spz' && /^https:\/\/resources\.specialized\.com\//.test(x.url || '')) blob = UrlFetchApp.fetch(x.url).getBlob();
+        else if (x.fuente === 'yt' && /^https:\/\/i\.ytimg\.com\//.test(x.url || '')) { const rr = UrlFetchApp.fetch(x.url, { muteHttpExceptions: true }); blob = rr.getResponseCode() === 200 ? rr.getBlob() : UrlFetchApp.fetch(x.url.replace('maxresdefault', 'hqdefault')).getBlob(); }
         else return { id: x.id, error: 'fuente no permitida' };
         return { id: x.id, fuente: x.fuente, data: 'data:' + (blob.getContentType() || 'image/jpeg') + ';base64,' + Utilities.base64Encode(blob.getBytes()) };
       } catch (e) { return { id: x.id, error: e.message }; }
@@ -1222,6 +1241,110 @@ function ex_imagen_(p) {
     return { ok: true, items: (j.data || []).filter(function (m) { return m.media_url || m.thumbnail_url; }).map(function (m) { return { fuente: 'ig', id: m.id, nombre: String(m.caption || '').split('\n')[0].slice(0, 120), thumb: m.media_type === 'VIDEO' ? m.thumbnail_url : m.media_url, fecha: m.timestamp }; }) };
   }
   throw new Error('acción desconocida');
+}
+
+
+/* ---------- Estudio 2: fotos atingentes y biblioteca de conocimiento ---------- */
+// Carpetas de Drive extra para el banco de fotos (por ejemplo, una carpeta compartida desde la cuenta de la tienda).
+function ex_bancoCarpetas_() { return String(PropertiesService.getScriptProperties().getProperty('BANCO_CARPETAS') || '').split(',').filter(Boolean); }
+function ex_idCarpeta_(link) { const m = String(link || '').match(/folders\/([\w-]{10,})|^([\w-]{20,})$/); return m ? (m[1] || m[2]) : ''; }
+// Lista las fotos de una carpeta y sus subcarpetas (hasta 2 niveles). El nombre incluye la ruta de carpetas: da contexto ("Levo 4 / sendero").
+function ex_fotosCarpeta_(f, ruta, out, nivel) {
+  const it = f.getFiles();
+  while (it.hasNext() && out.length < 900) { const x = it.next(); if (/^image\//.test(x.getMimeType()) && !/^logo-marca/.test(x.getName())) out.push({ fuente: 'drive', id: x.getId(), nombre: (ruta ? ruta + ' / ' : '') + x.getName().replace(/\.[a-z0-9]+$/i, '') + (x.getDescription() ? ' · ' + x.getDescription() : ''), fecha: x.getDateCreated().toISOString() }); }
+  if (nivel >= 2) return;
+  const sub = f.getFolders();
+  while (sub.hasNext() && out.length < 900) { const s = sub.next(); ex_fotosCarpeta_(s, (ruta ? ruta + ' / ' : '') + s.getName(), out, nivel + 1); }
+}
+const EX_EST_MTB = [
+  'CONOCIMIENTO MTB (úsalo para que el contenido sea experto y correcto):',
+  '- E-MTB Specialized: Turbo Levo 4 (motor Specialized 2.2, 111 Nm, batería 840 Wh, aluminio o carbono, 160/150 mm), Levo SL 2 (motor SL 1.2, 50 Nm, 320 Wh + range extender de 160 Wh, liviana, sensación natural), Kenevo SL 2 (enduro/park liviana), Turbo Vado y Vado SL (urbana y trekking), Turbo Como (urbana cómoda), Turbo Tero (aventura). La app Specialized (Mission Control/Specialized App) permite ajustar la asistencia (modos Eco, Trail, Turbo y Smart Control para llegar con batería al final de la ruta).',
+  '- Autonomía de una e-bike: depende del modo de asistencia, el desnivel, el peso del ciclista, la presión de neumáticos, la temperatura (el frío baja la capacidad), la cadencia (pedalear más rápido y suave rinde más) y el estado de la batería. Cuidados: cargar entre 20 y 80 % para guardarla, no dejarla al sol ni bajo 0 °C, guardarla a media carga en invierno.',
+  '- Mantención relevante para Puerto Varas (lluvia y barro): limpiar y lubricar la cadena después de rodar mojado (lubricante húmedo en invierno, seco o cerámico en verano), revisar pastillas de freno (se gastan rápido en barro), servicio de suspensión cada 50 a 100 horas (sellos y aceite), presión de neumáticos según peso y terreno, revisión de los 30 días para bicis nuevas (reapriete de pernos y ajuste de cambios).',
+  '- Temas que más interesan a la comunidad MTB (Pinkbike, Vital MTB): comparativas y reviews honestas, setup de suspensión (sag, rebote), geometría y tallas, neumáticos y presiones, e-bike vs bici normal, rutas y senderos locales, mantención casera, carreras de enduro y downhill, tecnología nueva (motores, baterías, transmisiones inalámbricas SRAM AXS y Shimano Di2).',
+  '- Senderos y lugares cercanos para contenido: cerro Pichijuán y Philippi (Puerto Varas), lago Llanquihue, volcán Osorno y Calbuco, Ensenada, Petrohué, Frutillar, Huilo Huilo.'
+].join('\n');
+const EX_EST_FOTOS = [
+  'Eres el editor de fotografía de Blackline Puerto Varas (tienda Specialized). Eliges qué foto va en cada lámina de un carrusel o historia de Instagram. La calidad y la pertinencia importan más que llenar: es mejor dejar una lámina sin foto que poner una foto que no corresponde.',
+  'Reglas estrictas:',
+  '- Si la lámina habla de e-bikes (Levo, Kenevo, Vado, Como, batería, motor, autonomía, asistencia), la foto debe mostrar una e-bike reconocible (tubo inferior grueso con batería, motor en el pedalier). Nunca una bici sin motor.',
+  '- Si habla de MTB, la foto debe ser de MTB (suspensión, neumáticos con taco, sendero). Nada de bicis de ruta, urbanas, de niños, BMX ni bicis antiguas, salvo que el tema sea exactamente ese.',
+  '- Descarta fotos sin relación con ciclismo o con el tema (banderas, comida, personas posando sin bici, interiores sin bicis, textos, logos de otras marcas, memes).',
+  '- Prefiere, en este orden: fotos propias de la tienda (Instagram o banco de Drive) que calcen; fotos oficiales de producto Specialized cuando se habla de un modelo; material oficial de Specialized University; y fotos de stock solo para paisajes o ambiente genérico.',
+  '- Evita repetir la misma foto en dos láminas. La portada necesita la foto más potente.',
+  '- Para cada lámina devuelve el id elegido y una nota de 0 a 10. Si ninguna candidata llega a 7, devuelve id vacío y escribe en pedido una indicación concreta para que Gustavo la saque o la grabe (qué bici, ángulo, lugar, luz y formato vertical), por ejemplo: «Foto vertical de una Turbo Levo en el sendero del Pichijuán, lado del motor, luz de tarde».'
+].join('\n');
+const EX_EST_ESQUEMA = { type: 'object', additionalProperties: false, required: ['laminas'], properties: { laminas: { type: 'array', items: { type: 'object', additionalProperties: false, required: ['i', 'id', 'nota', 'motivo', 'pedido'], properties: {
+  i: { type: 'integer' }, id: { type: 'string' }, nota: { type: 'integer' }, motivo: { type: 'string' }, pedido: { type: 'string' } } } } } };
+// Mira las fotos candidatas (con visión) y elige la mejor para cada lámina, o pide que se saque una.
+function ex_elegirFotos_(p) {
+  const pr = PropertiesService.getScriptProperties(), clave = pr.getProperty('ANTHROPIC_API_KEY'); if (!clave) throw new Error('falta ANTHROPIC_API_KEY');
+  const modelo = pr.getProperty('ESTUDIO_MODELO') || 'claude-opus-5-5', tok = ex_igToken_(), C = (p.candidatos || []).slice(0, 36), content = [];
+  content.push({ type: 'text', text: 'Pieza: ' + String(p.titulo || '') + '\nLáminas que necesitan foto:\n' + (p.laminas || []).map(function (l) { return '- Lámina ' + l.i + ' (' + l.layout + '): «' + String(l.titulo || '').slice(0, 120) + '» · foto buscada: ' + String(l.descripcion || '') + ' · palabras: ' + (l.palabras || []).join(', '); }).join('\n') + '\n\nCandidatas (cada imagen va precedida de su id y su fuente):' });
+  let n = 0;
+  C.forEach(function (x) {
+    try {
+      let blob;
+      if (x.fuente === 'drive') blob = UrlFetchApp.fetch('https://drive.google.com/thumbnail?id=' + encodeURIComponent(x.id) + '&sz=w480', { headers: { Authorization: 'Bearer ' + ScriptApp.getOAuthToken() } }).getBlob();
+      else if (x.fuente === 'ig') { const m = ex_igGet_('/' + x.id + '?fields=media_url,thumbnail_url,media_type', tok); blob = UrlFetchApp.fetch(m.media_type === 'VIDEO' ? m.thumbnail_url : m.media_url).getBlob(); }
+      else if (x.fuente === 'stock' && /^https:\/\/images\.pexels\.com\//.test(x.url || '')) blob = UrlFetchApp.fetch(x.url.split('?')[0] + '?auto=compress&cs=tinysrgb&w=480').getBlob();
+      else if (x.fuente === 'spz' && /^https:\/\/resources\.specialized\.com\//.test(x.url || '')) blob = UrlFetchApp.fetch(x.url.replace(/w=\d+&h=\d+/, 'w=480&h=480')).getBlob();
+      else if (x.fuente === 'yt' && /^https:\/\/i\.ytimg\.com\//.test(x.url || '')) blob = UrlFetchApp.fetch(x.url.replace('maxresdefault', 'hqdefault')).getBlob();
+      if (!blob || blob.getBytes().length > 3500000) return;
+      const tipo = /png/.test(blob.getContentType()) ? 'image/png' : /webp/.test(blob.getContentType()) ? 'image/webp' : 'image/jpeg';
+      content.push({ type: 'text', text: 'id=' + x.id + ' · fuente=' + x.fuente + (x.nombre ? ' · ' + String(x.nombre).slice(0, 100) : '') });
+      content.push({ type: 'image', source: { type: 'base64', media_type: tipo, data: Utilities.base64Encode(blob.getBytes()) } });
+      n++;
+    } catch (e) {}
+  });
+  if (!n) return { ok: true, laminas: (p.laminas || []).map(function (l) { return { i: l.i, id: '', nota: 0, motivo: 'sin candidatas', pedido: 'Foto vertical para «' + (l.titulo || '') + '»: ' + (l.descripcion || '') }; }) };
+  const cuerpo = { model: modelo, max_tokens: 4000, output_config: { effort: 'low', format: { type: 'json_schema', schema: EX_EST_ESQUEMA } }, system: EX_EST_FOTOS, messages: [{ role: 'user', content: content }] };
+  const headers = { 'x-api-key': clave, 'anthropic-version': '2023-06-01' };
+  if (!/haiku/.test(modelo)) { cuerpo.fallbacks = 'default'; headers['anthropic-beta'] = 'server-side-fallback-2026-07-01'; }
+  const r = UrlFetchApp.fetch('https://api.anthropic.com/v1/messages', { method: 'post', contentType: 'application/json', muteHttpExceptions: true, payload: JSON.stringify(cuerpo), headers: headers });
+  const j = JSON.parse(r.getContentText() || '{}');
+  if (r.getResponseCode() !== 200) throw new Error('Claude respondió ' + r.getResponseCode() + ': ' + ((j.error && j.error.message) || '').slice(0, 200));
+  const txt = (j.content || []).filter(function (c) { return c.type === 'text'; }).map(function (c) { return c.text; }).join('');
+  return Object.assign({ ok: true, vistas: n }, JSON.parse(txt || '{"laminas":[]}'));
+}
+
+// Biblioteca: videos de Specialized University y noticias del mundo MTB, para que el contenido tenga fondo experto.
+const EX_HOJA_BIB = 'Biblioteca', EX_CAB_BIB = ['Fecha', 'Fuente', 'Título', 'Resumen', 'Link', 'Imagen', 'Tipo', 'Visto'];
+function ex_ytCanal_(handle) {
+  const pr = PropertiesService.getScriptProperties(), k = 'YT_' + handle; let id = pr.getProperty(k);
+  if (!id) { const h = UrlFetchApp.fetch('https://www.youtube.com/' + handle, { muteHttpExceptions: true, headers: { 'Accept-Language': 'es-CL,es;q=0.9' } }).getContentText(); const m = h.match(/"channelId":"(UC[\w-]{20,})"/) || h.match(/channel\/(UC[\w-]{20,})/); if (m) { id = m[1]; pr.setProperty(k, id); } }
+  return id;
+}
+function ex_bibliotecaSinc_() {
+  const sh = ex_hojaCab_(EX_HOJA_BIB, EX_CAB_BIB), n = sh.getLastRow() - 1, vistos = {};
+  (n > 0 ? sh.getRange(2, 5, n, 1).getValues() : []).forEach(function (r) { vistos[String(r[0])] = 1; });
+  const nuevos = [];
+  ['@SpecializedUniversity', '@specialized'].forEach(function (h) {
+    try {
+      const id = ex_ytCanal_(h); if (!id) return;
+      const x = XmlService.parse(UrlFetchApp.fetch('https://www.youtube.com/feeds/videos.xml?channel_id=' + id).getContentText()), root = x.getRootElement(), ns = root.getNamespace(), media = XmlService.getNamespace('media', 'http://search.yahoo.com/mrss/'), yt = XmlService.getNamespace('yt', 'http://www.youtube.com/xml/schemas/2015');
+      root.getChildren('entry', ns).forEach(function (e) {
+        const vid = e.getChildText('videoId', yt), link = 'https://www.youtube.com/watch?v=' + vid; if (vistos[link]) return;
+        const g = e.getChild('group', media), desc = g ? String(g.getChildText('description', media) || '').replace(/\s+/g, ' ').slice(0, 900) : '';
+        nuevos.push([new Date(e.getChildText('published', ns)), h === '@specialized' ? 'Specialized (YouTube)' : 'Specialized University', e.getChildText('title', ns), desc, link, 'https://i.ytimg.com/vi/' + vid + '/maxresdefault.jpg', 'video', new Date()]);
+      });
+    } catch (e) { console.log('Biblioteca ' + h + ': ' + e.message); }
+  });
+  try { (ex_noticias_(false).items || []).forEach(function (x) { if (!x.link || vistos[x.link]) return; nuevos.push([x.fecha ? new Date(x.fecha) : new Date(), x.fuente, x.titulo, String(x.por_que || x.resumen || '').slice(0, 600), x.link, x.img || '', x.tipo || 'noticia', new Date()]); }); } catch (e) {}
+  if (nuevos.length) sh.getRange(sh.getLastRow() + 1, 1, nuevos.length, EX_CAB_BIB.length).setValues(nuevos);
+  return nuevos.length;
+}
+function ex_biblioteca_(max) {
+  const sh = SpreadsheetApp.getActive().getSheetByName(EX_HOJA_BIB); if (!sh || sh.getLastRow() < 2) return [];
+  const tz = ex_tz_();
+  return sh.getRange(2, 1, sh.getLastRow() - 1, EX_CAB_BIB.length).getValues().filter(function (r) { return r[2]; }).map(function (r) { return { fecha: r[0] instanceof Date ? ex_ymd_(r[0], tz) : '', fuente: String(r[1]), titulo: String(r[2]), resumen: String(r[3]), link: String(r[4]), img: String(r[5]), tipo: String(r[6]) }; })
+    .sort(function (a, b) { return b.fecha.localeCompare(a.fecha); }).slice(0, max || 60);
+}
+function ex_bibliotecaContexto_() {
+  try {
+    const B = ex_biblioteca_(40); if (!B.length) return '';
+    return 'BIBLIOTECA (videos oficiales de Specialized y noticias recientes del mundo MTB; úsalos como fondo y referencia, citando la fuente si corresponde):\n' + B.map(function (b) { return '- [' + b.fuente + ', ' + b.fecha + '] ' + b.titulo + (b.resumen ? ': ' + b.resumen.slice(0, 220) : ''); }).join('\n');
+  } catch (e) { return ''; }
 }
 
 // Piezas: listar, guardar (nueva o editada), cambiar estado o programar.
@@ -1377,7 +1500,8 @@ const EX_AS_SISTEMA = {
     '- Carrusel: 5 a 8 láminas. La primera es un gancho fuerte (portada con foto); luego valor concreto (consejos, comparación, guía de talla, datos, mitos y realidades); la última invita a actuar (cta). Historias: 3 a 5, verticales, más directas; la última invita a escribir al WhatsApp.',
     '- Texto en láminas: títulos cortos (máximo 7 palabras), textos de máximo 30 palabras, listas de 3 a 5 ítems de máximo 8 palabras. Nada de párrafos largos. Español de Chile, cercano y experto, sin exageraciones ni promesas vacías.',
     '- Usa los layouts disponibles: portada (foto de fondo + título grande), texto (fondo de color + título + texto), lista (título + ítems numerados), comparativa (dos columnas con título A y B y filas en items con el formato "A | B"), dato (un número o cifra grande + texto, sobre foto), foto (foto protagonista con un título breve), cta (llamado a la acción final). En historias usa portada, texto, pregunta (una pregunta grande para responder por mensaje) y cta.',
-    '- Para cada lámina con foto describe qué foto buscar: palabras clave en español e inglés (modelo, lugar, acción), y la fuente preferida: propia (fotos de la tienda en su Instagram o su banco de Drive, mejor para productos y clientes reales) o stock (paisajes, ciclismo genérico). Nunca pidas fotos de personas específicas.',
+    '- Para cada lámina con foto describe con precisión qué foto buscar: tipo de bici (e-MTB con motor y batería visibles, MTB, gravel, ruta, urbana), modelo si corresponde, escena (sendero, taller, lago, volcán, detalle de componente), acción y luz; palabras clave en español e inglés; y la fuente preferida: propia (fotos de la tienda en su Instagram o su banco de Drive: clientes, taller, salidas), producto (foto oficial de Specialized del modelo nombrado), video (material oficial de Specialized University) o stock (solo paisajes o ambiente genérico). Usa foto solo donde aporte: en láminas de datos o listas puede ir sin foto. Nunca pidas fotos de personas específicas.',
+    '- Calidad profesional: cada pieza enseña algo útil y verdadero (datos reales del producto, consejos de taller probados, la realidad del clima local), con un gancho que haga detenerse, y está pensada para que la gente la guarde y la comparta. Apóyate en el CONOCIMIENTO MTB y la BIBLIOTECA que se te entregan; no inventes especificaciones.',
     '- Nunca inventes precios, promociones ni stock que no estén en los datos. Si hay stock en los datos puedes mencionarlo.',
     '- caption: texto de la publicación (gancho en la primera línea, valor, llamado a la acción; si el cta es WhatsApp termina con «Escríbenos al WhatsApp, link en la bio»). hashtags: 5 a 10, mezcla locales (#puertovaras #surdechile #lagollanquihue) y del tema. alt: descripción breve para accesibilidad.',
     'Si se entrega una PIEZA ACTUAL con CAMBIOS PEDIDOS, devuelve la pieza completa corregida respetando lo que no se pidió cambiar. Responde solo con el JSON pedido.'
@@ -1465,7 +1589,8 @@ function ex_asistente_(p) {
   const modo = ['semana', 'contenido', 'tareas', 'redes', 'insights', 'pieza'].indexOf(p.modo) >= 0 ? p.modo : 'dia';
   const ctx = String(p.contexto || '').slice(0, 40000);
   if (!ctx) throw new Error('sin contexto');
-  return { ok: true, modo: modo, r: ex_llamarClaude_(ctx, EX_AS_SISTEMA[modo], EX_AS_ESQUEMA[modo]) };
+  const extra = (modo === 'pieza' || modo === 'contenido' || modo === 'redes') ? '\n\n' + EX_EST_MTB + '\n\n' + ex_bibliotecaContexto_() : '';
+  return { ok: true, modo: modo, r: ex_llamarClaude_(ctx + extra, EX_AS_SISTEMA[modo], EX_AS_ESQUEMA[modo]) };
 }
 
 /* ---------- agente de ventas con IA ---------- */
@@ -3159,6 +3284,7 @@ function ex_tareaHoraria() {
   try { ex_spzRonda_(); } catch (e) { console.log('Specialized: ' + e.message); }
   try { ex_rondaProveedores_(); } catch (e) { console.log('Proveedores: ' + e.message); }
   try { ex_rondaCerebro_(); } catch (e) { console.log('Cerebro: ' + e.message); }
+  try { const pr = PropertiesService.getScriptProperties(), u = +pr.getProperty('EX_BIB_SINC') || 0; if (Date.now() - u > 12 * 3600000) { pr.setProperty('EX_BIB_SINC', String(Date.now())); ex_bibliotecaSinc_(); } } catch (e) { console.log('Biblioteca: ' + e.message); }
 }
 function ex_tareaBase() {
   if (!ex_cuentaVigente_()) return;

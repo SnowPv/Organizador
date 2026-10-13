@@ -1447,6 +1447,9 @@ body:has(.selbar) .fab,body:has(.selbar) .fab2{display:none}
 .tk2 .tlist + .dayh{margin-top:18px}
 .tk2 .empty{background:var(--card);border:1px dashed var(--line);border-radius:14px}
 @media (min-width:1000px){.tk2 .cols2{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}.tk2 .cols2 .tlist{grid-template-columns:1fr}}
+/* Fotos pedidas por el Estudio */
+.pz-ped{border:1px solid var(--warn);background:rgba(229,160,0,.07);border-radius:12px;padding:10px 12px;margin-top:12px;font-size:13.5px;line-height:1.45}
+.pz-ped b{display:block;margin-bottom:6px}.pz-ped div span{font-weight:700;margin-right:6px}
 /* Campañas 1 a 1 */
 .cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
 .ccard{text-align:left;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:5px;cursor:pointer;transition:border-color .15s,box-shadow .15s}
@@ -1575,7 +1578,8 @@ async function api(action, extra){
 function apiX(op, extra){ return api('extra', Object.assign({ op }, extra || {})); }
 // Nivel 2 del script Extras: recordatorios y base de contactos. Nivel 3: la base solo usa contacto@blacklinechile.cl. Nivel 4: eventos de varios días.
 function extNivel(){ return S.extInactivo ? 0 : (S.ext && S.ext.nivel) || 1; }
-function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < 21; }
+const APP_VER = 'v31', NIVEL_ULTIMO = 22;
+function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < NIVEL_ULTIMO; }
 let sincTimer = null;
 // Después de cambiar tareas, el script actualiza los recordatorios del calendario (en segundo plano).
 function sincPronto(){
@@ -1843,7 +1847,7 @@ function viewInicio(){
   const totalHoy = lista.length + hechas.length;
   let html = '<div class="ihead"><button class="quick" id="qa"><b>+</b>Agregar tarea… <span style="margin-left:auto">🎤</span></button>' +
     '<button class="btn sec" id="prodBtn">' + icon('box') + ' Producto</button><button class="btn sec" id="fzBtn">' + icon('chart') + ' Fuentes</button><button class="btn sec" id="planBtn">' + icon('spark') + ' Plan de la semana</button></div>';
-  if (necesitaActualizar()) html += '<div class="w" style="margin-bottom:14px;display:flex;gap:12px;align-items:center"><div class="grow"><b>Nueva versión del script</b><div class="wsub">' + (extNivel() >= 20 ? 'Postventa automática: al marcar una venta como ganada se agendan la entrega, el registro de garantía, el llamado a los 7 días, la revisión de los 30 días y la foto o reseña.' : extNivel() >= 19 ? 'El Copiloto ahora corrige datos: negociaciones (etapa, fecha real de cierre, valor), notas en la ficha del cliente y tareas, siempre con tu aprobación.' : extNivel() >= 16 ? 'Agente de tareas: piensa cada tarea que dictas (fecha, pasos, proveedor, stock, pedido y mejores opciones) antes de guardarla. También Compras y proveedores.' : extNivel() >= 14 ? 'El Cerebro: plan del día automático, Copiloto que consulta todo, Specialized Chile (ventas, ofertas y stock por talla), clima, noticias y avisos para el equipo.' : extNivel() >= 10 ? 'Instagram: métricas diarias y calendario de contenido con IA. También filtra los correos automáticos de bancos y pagos.' : extNivel() >= 8 ? 'Asistente de IA para planificar tu día y tu semana, Instagram y conexión con Bsale.' : 'Importar chats de WhatsApp y agente de IA.') + '</div></div><button class="btn sm" id="updBtn">Actualizar</button></div>';
+  if (necesitaActualizar()) html += '<div class="w" style="margin-bottom:14px;display:flex;gap:12px;align-items:center"><div class="grow"><b>Nueva versión del script</b><div class="wsub">' + (extNivel() >= 21 ? 'Estudio: el agente mira las fotos antes de usarlas (descarta las que no calzan), suma fotos oficiales de Specialized, videos de Specialized University y tus carpetas de Drive, y te pide las fotos que faltan.' : extNivel() >= 20 ? 'Postventa automática: al marcar una venta como ganada se agendan la entrega, el registro de garantía, el llamado a los 7 días, la revisión de los 30 días y la foto o reseña.' : extNivel() >= 19 ? 'El Copiloto ahora corrige datos: negociaciones (etapa, fecha real de cierre, valor), notas en la ficha del cliente y tareas, siempre con tu aprobación.' : extNivel() >= 16 ? 'Agente de tareas: piensa cada tarea que dictas (fecha, pasos, proveedor, stock, pedido y mejores opciones) antes de guardarla. También Compras y proveedores.' : extNivel() >= 14 ? 'El Cerebro: plan del día automático, Copiloto que consulta todo, Specialized Chile (ventas, ofertas y stock por talla), clima, noticias y avisos para el equipo.' : extNivel() >= 10 ? 'Instagram: métricas diarias y calendario de contenido con IA. También filtra los correos automáticos de bancos y pagos.' : extNivel() >= 8 ? 'Asistente de IA para planificar tu día y tu semana, Instagram y conexión con Bsale.' : 'Importar chats de WhatsApp y agente de IA.') + '</div></div><button class="btn sm" id="updBtn">Actualizar</button></div>';
   if (extNivel() >= 13 && !S.leadsCanal && !S._leadsPend){ S._leadsPend = 1; loadLeads().then(() => { S._leadsPend = 0; if (S.tab === 'inicio' && !$('.pop-bg')) render(); }); }
   html += planStrip() + kpiRow();
   const rad = senales();
@@ -3307,28 +3311,46 @@ async function traerImgs(refs, ancho){
   }
 }
 async function bancoListas(){
-  if (!S.banco){ try { S.banco = (await apiX('imagen', { accion: 'listar' })).items || []; } catch(e){ S.banco = []; } }
+  if (!S.banco){ try { const r = await apiX('imagen', { accion: 'listar' }); S.banco = r.items || []; S.bancoCarp = r.carpetas || []; } catch(e){ S.banco = []; } }
+  if (!S.ytFotos && extNivel() >= 22){ try { S.ytFotos = (await apiX('imagen', { accion: 'yt' })).items || []; } catch(e){ S.ytFotos = []; } }
   if (!S.propias){ try { S.propias = igActivo() ? (await apiX('imagen', { accion: 'propias' })).items || [] : []; } catch(e){ S.propias = []; } }
 }
-// Elige la foto que mejor calza con lo que pide cada lámina (palabras clave en nombres de archivo y textos de tus publicaciones).
-async function resolverFotos(pz){
+// Elige la foto que mejor calza con cada lámina. Con el script nuevo, el agente MIRA las candidatas (visión) y descarta las que no
+// corresponden; si ninguna sirve, deja la lámina sin foto y te pide la foto concreta que hay que sacar.
+async function resolverFotos(pz, opt){
+  opt = opt || {};
   await bancoListas();
   const usadas = new Set(pz.slides.map(s => s.foto && s.foto.ref && s.foto.ref.id).filter(Boolean));
-  for (const s of pz.slides){
-    if (!s.foto || !s.foto.usar || s.foto.ref) continue;
-    const pal = (s.foto.palabras || []).concat(tokens(s.foto.descripcion || '')).map(w => norm(w)).filter(w => w.length >= 3);
-    const pts = it => { const t = norm(it.nombre || ''); return pal.reduce((n, w) => n + (t.includes(w) ? (RE_MODELO.test(w) ? 3 : 1) : 0), 0); };
-    const propias = (S.banco || []).concat(S.propias || []).filter(x => !usadas.has(x.id)).map(x => ({ x, p: pts(x) })).sort((a, b) => b.p - a.p);
-    let ref = null;
-    if (s.foto.fuente !== 'stock' && propias[0] && propias[0].p > 0) ref = propias[0].x;
-    if (!ref && S.marcaSrv && S.marcaSrv.pexels){
-      try { const q = (s.foto.palabras || []).filter(w => /^[a-z0-9 -]+$/i.test(w)).slice(0, 4).join(' ') || s.foto.descripcion; const r = await apiX('imagen', { accion: 'buscar', q, orientacion: 'portrait' }); ref = (r.items || []).find(x => !usadas.has(x.id)) || null; } catch(e){}
+  const falta = pz.slides.map((s, i) => ({ s, i })).filter(x => x.s.foto && x.s.foto.usar && !x.s.foto.ref);
+  const palDe = s => (s.foto.palabras || []).concat(tokens(s.foto.descripcion || ''), tokens(s.titulo || '')).map(w => norm(w)).filter(w => w.length >= 3);
+  const pts = (it, pal) => { const t = norm(it.nombre || ''); return pal.reduce((n, w) => n + (t.includes(w) ? (RE_MODELO.test(w) ? 3 : 1) : 0), 0); };
+  if (falta.length && opt.vision !== false && extNivel() >= 22 && iaDisponible()){
+    const cand = new Map(), addC = x => { if (x && !usadas.has(x.id) && cand.size < 36) cand.set(x.id, x); };
+    for (const { s } of falta){
+      const pal = palDe(s), propias = (S.banco || []).concat(S.propias || []).map(x => ({ x, p: pts(x, pal) })).filter(y => y.p > 0).sort((a, b) => b.p - a.p);
+      propias.slice(0, 5).forEach(y => addC(y.x));
+      (S.ytFotos || []).map(x => ({ x, p: pts(x, pal) })).filter(y => y.p > 0).sort((a, b) => b.p - a.p).slice(0, 2).forEach(y => addC(y.x));
+      const modelo = pal.filter(w => RE_MODELO.test(w)).slice(0, 3).join(' ');
+      if (modelo || s.foto.fuente === 'producto'){ try { ((await apiX('imagen', { accion: 'spz', q: modelo || s.foto.descripcion })).items || []).slice(0, 2).forEach(addC); } catch(e){} }
+      if (S.marcaSrv && S.marcaSrv.pexels && (s.foto.fuente === 'stock' || propias.length < 2)){ try { const q = (s.foto.palabras || []).filter(w => /^[a-z0-9 -]+$/i.test(w)).slice(0, 4).join(' ') || s.foto.descripcion; ((await apiX('imagen', { accion: 'buscar', q, orientacion: 'portrait' })).items || []).slice(0, 3).forEach(addC); } catch(e){} }
     }
-    if (!ref && propias[0]) ref = propias[0].x;
-    if (ref){ s.foto.ref = { fuente: ref.fuente, id: ref.id, url: ref.url || '', nombre: ref.nombre || '' }; usadas.add(ref.id); }
+    try {
+      const r = await apiX('imagen', { accion: 'elegir', titulo: pz.titulo || '', laminas: falta.map(({ s, i }) => ({ i, layout: s.layout, titulo: s.titulo || s.numero || '', descripcion: s.foto.descripcion || '', palabras: s.foto.palabras || [] })), candidatos: [...cand.values()].map(x => ({ fuente: x.fuente, id: x.id, url: x.url || '', nombre: x.nombre || '' })) });
+      (r.laminas || []).forEach(l => { const s = pz.slides[l.i]; if (!s || !s.foto) return; const x = l.id && l.nota >= 7 ? cand.get(l.id) : null;
+        if (x && !usadas.has(x.id)){ s.foto.ref = { fuente: x.fuente, id: x.id, url: x.url || '', nombre: x.nombre || '' }; s.foto.nota = l.nota; usadas.add(x.id); delete s.foto.pedido; }
+        else { s.foto.usar = false; s.foto.pedido = l.pedido || ('Foto vertical para «' + (s.titulo || '') + '»: ' + (s.foto.descripcion || '')); } });
+    } catch(e){ console.warn('elegir fotos', e); }
+  } else {
+    for (const { s } of falta){
+      const pal = palDe(s), propias = (S.banco || []).concat(S.propias || []).filter(x => !usadas.has(x.id)).map(x => ({ x, p: pts(x, pal) })).sort((a, b) => b.p - a.p);
+      let ref = s.foto.fuente !== 'stock' && propias[0] && propias[0].p >= 2 ? propias[0].x : null;
+      if (!ref && S.marcaSrv && S.marcaSrv.pexels && s.foto.fuente === 'stock' && opt.vision !== false){ try { const q = (s.foto.palabras || []).filter(w => /^[a-z0-9 -]+$/i.test(w)).slice(0, 4).join(' ') || s.foto.descripcion; const r = await apiX('imagen', { accion: 'buscar', q, orientacion: 'portrait' }); ref = (r.items || []).find(x => !usadas.has(x.id)) || null; } catch(e){} }
+      if (ref){ s.foto.ref = { fuente: ref.fuente, id: ref.id, url: ref.url || '', nombre: ref.nombre || '' }; usadas.add(ref.id); }
+    }
   }
   await traerImgs(pz.slides.map(s => s.foto && s.foto.usar && s.foto.ref).filter(Boolean));
 }
+function pedidosFoto(pz){ return (pz.slides || []).map((s, i) => s.foto && s.foto.pedido && !(s.foto.usar && s.foto.ref) ? { i, t: s.foto.pedido } : null).filter(Boolean); }
 
 /* --- Motor de dibujo (plantillas de la marca) --- */
 function tamPieza(tipo){ return tipo === 'historias' ? { W: 1080, H: 1920 } : { W: 1080, H: 1350 }; }
@@ -3440,7 +3462,7 @@ function redesEstudio(){
   if (!srv.banco) falta.push(['Banco de imágenes', 'En Apps Script ejecuta autorizarEstudio: crea la carpeta de Drive donde subes tus fotos.', '']);
   if (!srv.alojamiento) falta.push(['Publicar con un toque', 'Falta el alojamiento de imágenes (GITHUB_TOKEN). Mientras, puedes compartir a Instagram desde el teléfono.', 'guia']);
   const tmp = temporadaPV();
-  let html = '<div class="est-top"><div><div class="wh" style="margin:0">' + icon('spark') + 'Estudio de contenido</div><div class="wsub">Temporada: <b>' + esc(tmp.k) + '</b> · ' + esc(tmp.t.split(':')[1] || '') + '</div></div><div class="est-acts"><button class="btn sm sec" id="esMarca">' + icon('target') + ' Kit de marca</button><button class="btn sm" id="esNueva">' + icon('spark') + ' Crear con IA</button></div></div>';
+  let html = '<div class="est-top"><div><div class="wh" style="margin:0">' + icon('spark') + 'Estudio de contenido</div><div class="wsub">Temporada: <b>' + esc(tmp.k) + '</b> · ' + esc(tmp.t.split(':')[1] || '') + '</div></div><div class="est-acts">' + (extNivel() >= 22 ? '<button class="btn sm sec" id="esCarp">' + icon('camera') + ' Carpetas de fotos</button>' : '') + '<button class="btn sm sec" id="esMarca">' + icon('target') + ' Kit de marca</button><button class="btn sm" id="esNueva">' + icon('spark') + ' Crear con IA</button></div></div>';
   if (falta.length) html += '<div class="w est-setup"><div class="lab2">Para dejarlo listo</div>' + falta.map(f => '<div class="est-f">' + icon('flag') + '<div><b>' + esc(f[0]) + '</b><span>' + esc(f[1]) + '</span></div>' + (f[2] === 'marca' ? '<button class="btn sm" data-esm="1">Configurar</button>' : f[2] === 'guia' ? '<a class="btn sm sec" target="_blank" href="https://github.com/SnowPv/Organizador/blob/main/docs/INSTAGRAM.md#estudio-de-contenido" style="text-decoration:none">Ver cómo</a>' : '') + '</div>').join('') + (srv.banco ? '' : '') + '</div>';
   if (srv.banco) html += '<div class="wsub" style="margin:0 2px 12px">Banco de imágenes: <a href="' + esc(srv.banco) + '" target="_blank">abrir la carpeta de Drive</a>. Sube fotos reales con nombres descriptivos (por ejemplo «levo-sendero-pichijuan.jpg») y el agente las elige solas.' + (srv.pexels ? ' También usa el banco gratuito Pexels.' : '') + '</div>';
   const grupos = [['Borrador', 'Para revisar'], ['Aprobado', 'Aprobadas'], ['Programado', 'Programadas'], ['Error', 'Con error'], ['Publicado', 'Publicadas']];
@@ -3453,13 +3475,25 @@ async function miniaturas(){
   S._thumbs = S._thumbs || {};
   for (const p of (S.piezas || []).slice(0, 18)){
     if (S._thumbs[p.id] || !p.diseno || !p.diseno.slides || !p.diseno.slides.length) continue;
-    try { const pz = Object.assign({ tipo: p.tipo }, p.diseno, { slides: [p.diseno.slides[0]] }); const m = marca(); await cargarFuentes(m); await prepararLogo(m); await resolverFotos(pz);
+    try { const pz = Object.assign({ tipo: p.tipo }, p.diseno, { slides: [p.diseno.slides[0]] }); const m = marca(); await cargarFuentes(m); await prepararLogo(m); await resolverFotos(pz, { vision: false });
       const cv = dibujarSlide(pz, 0, m), sm = document.createElement('canvas'); sm.width = 270; sm.height = cv.height * 270 / cv.width; sm.getContext('2d').drawImage(cv, 0, 0, sm.width, sm.height); S._thumbs[p.id] = sm.toDataURL('image/jpeg', .8);
       const el = document.getElementById('th-' + p.id); if (el) el.innerHTML = '<img src="' + S._thumbs[p.id] + '" alt="">'; } catch(e){}
   }
 }
+function abrirCarpetas(){
+  const pintar = () => '<p style="margin:0 0 10px;color:var(--muted);line-height:1.5">El agente busca fotos en tu Instagram, en el banco de Drive y en estas carpetas (con sus subcarpetas). Para usar fotos de otra cuenta (por ejemplo la de la tienda), comparte la carpeta con la cuenta dueña del script y pega aquí su link. Nombres descriptivos ayudan: «levo-sendero-pichijuan.jpg» o carpetas como «Levo 4 / Taller».</p>' +
+    '<div class="wl">' + ((S.bancoCarp || []).map(c => '<div class="it"><span class="dot" style="background:' + (c.error ? 'var(--bad)' : 'var(--ok)') + '"></span><div class="tx">' + esc(c.nombre || c.id) + '<small>' + (c.error ? 'Sin acceso: compártela con la cuenta del script' : c.fotos + ' fotos') + '</small></div><button class="btn sm sec" data-cq="' + esc(c.id) + '">Quitar</button></div>').join('') || '<div class="wsub">Aún no agregas carpetas extra.</div>') + '</div>' +
+    '<label class="l">Link de la carpeta de Drive</label><div class="row" style="gap:8px"><input type="text" id="cf_l" placeholder="https://drive.google.com/drive/folders/…"><button class="btn" id="cf_ok">Agregar</button></div>';
+  const md = modal(icon('camera') + ' Carpetas de fotos', '<div id="cfB">' + pintar() + '</div>');
+  const bind = () => {
+    md.el.querySelector('#cf_ok').onclick = async e => { const l = md.el.querySelector('#cf_l').value.trim(); if (!l) return; e.target.disabled = true; try { const r = await apiX('imagen', { accion: 'carpeta', link: l }); toast('✓ Carpeta «' + r.nombre + '» agregada'); S.banco = null; await bancoListas(); md.el.querySelector('#cfB').innerHTML = pintar(); bind(); } catch(err){ e.target.disabled = false; toast(err.message); } };
+    md.el.querySelectorAll('[data-cq]').forEach(b => b.onclick = async () => { try { await apiX('imagen', { accion: 'carpeta', id: b.dataset.cq, quitar: true }); S.banco = null; await bancoListas(); md.el.querySelector('#cfB').innerHTML = pintar(); bind(); } catch(err){ toast(err.message); } });
+  };
+  bind();
+}
 function bindEstudio(){
   const nb = $('#esNueva'); if (nb) nb.onclick = () => crearPieza();
+  const cf = $('#esCarp'); if (cf) cf.onclick = async () => { await bancoListas(); abrirCarpetas(); };
   $$('#esMarca,[data-esm]').forEach(b => b.onclick = () => abrirMarca());
   $$('[data-pz]').forEach(b => b.onclick = () => { const p = S.piezas.find(x => x.id === b.dataset.pz); if (p) abrirPieza(p); });
   miniaturas();
@@ -3519,6 +3553,7 @@ async function abrirPieza(p){
         '<div class="btns" style="margin-top:10px"><button class="btn sm sec" id="pe_up">↑</button><button class="btn sm sec" id="pe_dn">↓</button><button class="btn sm sec" id="pe_dup">Duplicar</button><button class="btn sm bad" id="pe_del">Eliminar</button><button class="btn sm" id="pe_ap">Aplicar</button></div></div>' +
       '<div class="pz-side"><label class="l" style="margin-top:0">Texto de la publicación</label><textarea class="note" id="pe_c" rows="6">' + esc(pz.caption || '') + '</textarea><label class="l">Hashtags</label><input type="text" id="pe_h" value="' + esc(pz.hashtags || '') + '">' +
         (pz.por_que ? '<div class="hint">Por qué ahora: ' + esc(pz.por_que) + '</div>' : '') +
+        (pedidosFoto(pz).length ? '<div class="pz-ped"><b>📸 Fotos que te pido</b>' + pedidosFoto(pz).map(x => '<div><span>Lámina ' + (x.i + 1) + '</span>' + esc(x.t) + '</div>').join('') + '<div class="hint" style="margin:6px 0 8px">No encontré fotos que calcen de verdad. Sácalas (o súbelas a tu carpeta de fotos) y vuelve a elegir en cada lámina.</div><button class="btn sm sec" id="pe_ped">＋ Crear tarea para sacarlas</button></div>' : '') +
         '<div class="pz-ia"><label class="l">Pedir cambios al agente</label><textarea class="note" id="pe_q" rows="2" placeholder="Ej.: más corto, enfócalo en la Levo SL, agrega una lámina de tallas, cambia el tono a más técnico…"></textarea><button class="btn sm" id="pe_ia">' + icon('spark') + ' Pedir cambios</button></div>' +
         (pub ? '<div class="pz-ok">' + icon('check') + ' Publicada' + (p.link ? ' · <a href="' + esc(p.link) + '" target="_blank">ver en Instagram</a>' : '') + '</div>' : '') +
         (p.error ? '<div class="im-warn" style="margin-top:10px">' + icon('flag') + '<span>' + esc(p.error) + '</span></div>' : '') +
@@ -3541,6 +3576,7 @@ async function abrirPieza(p){
         Object.keys(pz).forEach(k => delete pz[k]); Object.assign(pz, r); sel = Math.min(sel, pz.slides.length - 1); canvases = await renderPieza(pz); pintar(); await guardar(); toast('✓ Cambios aplicados');
       } catch(e){ b.disabled = false; b.textContent = 'Pedir cambios'; toast('No se pudo: ' + e.message); } };
     $b('#pe_sh').onclick = () => { leer(); compartirPieza(pz, canvases); };
+    $b('#pe_ped') && ($b('#pe_ped').onclick = () => openAdd({ texto: 'Sacar fotos para el contenido «' + (pz.titulo || '') + '»', notas: pedidosFoto(pz).map(x => 'Lámina ' + (x.i + 1) + ': ' + x.t).join(' · '), limite: addDays(hoy(), 2) }));
     $b('#pe_rm').onclick = async () => { const b = $b('#pe_rm'); if (b.dataset.c !== '1'){ b.dataset.c = '1'; b.textContent = '¿Seguro? Toca otra vez'; return; } try { const r = await apiX('piezas', { borrar: p.id }); S.piezas = r.items; md.cerrar(); render(); } catch(e){ toast('No se pudo: ' + e.message); } };
     $b('#pe_ok') && ($b('#pe_ok').onclick = async () => { leer(); try { await guardar({ estado: 'Aprobado' }); toast('✓ Aprobada'); md.cerrar(); render(); } catch(e){ toast('No se pudo: ' + e.message); } });
     $b('#pe_pub') && ($b('#pe_pub').onclick = () => { leer(); publicarPieza(p, pz, canvases, null, $b('#pe_pub'), md); });
@@ -3583,16 +3619,17 @@ async function compartirPieza(pz, canvases){
 }
 // Selector de fotos: tus publicaciones, tu banco de Drive y Pexels.
 async function elegirFoto(tipo, cb){
-  const md = modal(icon('camera') + ' Elegir foto', '<div class="seg" id="ef_t"><button type="button" class="pill on" data-v="ig">Tu Instagram</button><button type="button" class="pill" data-v="drive">Banco de Drive</button>' + (S.marcaSrv && S.marcaSrv.pexels ? '<button type="button" class="pill" data-v="stock">Pexels</button>' : '') + '</div><div class="tbar" id="ef_b" style="margin-top:10px"><input type="text" id="ef_q" placeholder="Buscar (ej.: levo, lago, sendero)"></div><div id="ef_g" class="ef-g"><div class="empty"><span class="spin"></span></div></div>', { wide: true });
+  const md = modal(icon('camera') + ' Elegir foto', '<div class="seg" id="ef_t"><button type="button" class="pill on" data-v="ig">Tu Instagram</button><button type="button" class="pill" data-v="drive">Banco de Drive</button>' + (extNivel() >= 22 ? '<button type="button" class="pill" data-v="spz">Specialized</button><button type="button" class="pill" data-v="yt">Videos Specialized</button>' : '') + (S.marcaSrv && S.marcaSrv.pexels ? '<button type="button" class="pill" data-v="stock">Pexels</button>' : '') + '</div><div class="tbar" id="ef_b" style="margin-top:10px"><input type="text" id="ef_q" placeholder="Buscar (ej.: levo, lago, sendero)"></div><div id="ef_g" class="ef-g"><div class="empty"><span class="spin"></span></div></div>', { wide: true });
   await bancoListas();
   let fuente = 'ig';
   const pintar = async () => {
     const q = norm(md.el.querySelector('#ef_q').value), g = md.el.querySelector('#ef_g');
-    if (fuente === 'stock'){
-      if (!q){ g.innerHTML = '<div class="wsub">Escribe qué buscar (en inglés funciona mejor: mountain bike, lake, rain…).</div>'; return; }
-      g.innerHTML = '<div class="empty"><span class="spin"></span></div>'; const r = await apiX('imagen', { accion: 'buscar', q, orientacion: tipo === 'historias' ? 'portrait' : 'portrait' }); S._stock = r.items || [];
-      g.innerHTML = S._stock.map((x, i) => '<button class="ef-i" data-ef="' + i + '"><img src="' + esc(x.thumb) + '" alt="" loading="lazy"><small>' + esc(x.autor) + '</small></button>').join('') || '<div class="wsub">Sin resultados.</div>';
-      g.querySelectorAll('[data-ef]').forEach(b => b.onclick = async () => { const x = S._stock[+b.dataset.ef]; b.classList.add('cargando'); await traerImgs([x]); md.cerrar(); cb({ fuente: 'stock', id: x.id, url: x.url, nombre: 'Foto de ' + x.autor + ' (Pexels)' }); });
+    if (fuente === 'stock' || fuente === 'spz' || fuente === 'yt'){
+      if (!q && fuente !== 'yt'){ g.innerHTML = '<div class="wsub">' + (fuente === 'spz' ? 'Escribe el modelo (ej.: turbo levo 4, levo sl, kenevo).' : 'Escribe qué buscar (en inglés funciona mejor: mountain bike, lake, rain…).') + '</div>'; return; }
+      g.innerHTML = '<div class="empty"><span class="spin"></span></div>';
+      const r = fuente === 'yt' ? { items: (S.ytFotos || []).filter(x => !q || norm(x.nombre).includes(q)) } : await apiX('imagen', fuente === 'spz' ? { accion: 'spz', q } : { accion: 'buscar', q, orientacion: 'portrait' }); S._stock = r.items || [];
+      g.innerHTML = S._stock.map((x, i) => '<button class="ef-i" data-ef="' + i + '"><img src="' + esc(x.thumb) + '" alt="" loading="lazy"><small>' + esc(x.autor || x.nombre || '') + '</small></button>').join('') || '<div class="wsub">Sin resultados.</div>';
+      g.querySelectorAll('[data-ef]').forEach(b => b.onclick = async () => { const x = S._stock[+b.dataset.ef]; b.classList.add('cargando'); await traerImgs([x]); md.cerrar(); cb({ fuente: x.fuente || 'stock', id: x.id, url: x.url, nombre: x.fuente === 'stock' || !x.fuente ? 'Foto de ' + x.autor + ' (Pexels)' : x.nombre }); });
       return;
     }
     const L = (fuente === 'ig' ? S.propias : S.banco).filter(x => !q || norm(x.nombre).includes(q)).slice(0, 30);
@@ -6593,6 +6630,7 @@ function showSetup(){
 function showSettings(){
   const g = S.google, gTxt = S.extInactivo || (g && g.inactivo) ? 'No activadas' : !g ? 'Revisando…' : 'Activas ✓ · ' + (g.eventos || []).length + ' eventos · ' + (g.correos || []).length + ' correos' + (g.avisos && g.avisos.length ? ' · ⚠️ ' + g.avisos.join(' · ') : '');
   sheet('<h3>⚙️ Ajustes</h3><div class="hint">Conectado a tu Sheet del organizador.</div>' +
+    '<div class="card"><b>🔢 Versiones</b><div class="hint">App: ' + esc(APP_VER) + ' · Script: ' + (S.extInactivo ? 'funciones extra no activadas' : 'versión ' + esc((S.ext && S.ext.version) || '?') + ' (nivel ' + extNivel() + ')') + (extNivel() < NIVEL_ULTIMO ? ' · <b style="color:var(--bad-ink)">hay una versión nueva del script</b>: pega el Extras.gs nuevo y crea una Nueva versión de la implementación.' : ' · al día ✓') + '</div></div>' +
     (deferredInstall ? '<div class="btns"><button class="btn" id="s_inst">📲 Instalar app en este dispositivo</button></div>' : '') +
     '<div class="card"><b>🧠 Cerebro y fuentes</b><div class="hint">' + (extNivel() >= 16 ? 'Activo ✓ Cada mañana a las 7:00 el agente cruza todas tus fuentes y arma el plan del día. El Copiloto (botón ✨ abajo a la derecha, o la tecla /) responde con tus datos. Specialized Chile se lee solo cada hora.' : 'Actualiza el script para activar el plan del día, el Copiloto, Specialized Chile, noticias y avisos.') + '</div><div class="btns" style="margin-top:8px"><button class="btn sm sec" id="s_fz">📊 Fuentes de información</button>' + (extNivel() >= 16 ? '<button class="btn sm sec" id="s_av">📣 Avisos</button>' : '') + '</div></div>' +
     '<div class="card"><b>✨ Funciones extra</b> <span class="hint">(calendario, correo, subtareas, repetir)</span><div class="hint">' + esc(gTxt) + '</div><button class="btn sm sec" id="s_g">' + (g && !g.inactivo ? 'Ver sugerencias' : 'Cómo activarlas') + '</button></div>' +

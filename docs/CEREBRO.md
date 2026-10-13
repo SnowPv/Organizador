@@ -186,3 +186,19 @@ En **Contactos → 📣 Campañas** eliges un objetivo:
 - foto o reseña.
 
 La app arma la lista con tus perfiles y negocios, y un mensaje personal para cada cliente (con su nombre, su bici o su interés). Lo revisas, lo envías por WhatsApp con un toque y queda registrado en la ficha. La barra muestra el avance. Los mensajes siguen la política de la marca: asesoría y experiencia, nunca descuentos.
+
+## Estudio: fotos atingentes
+
+- **El agente mira las fotos antes de usarlas.** Para cada lámina reúne candidatas de estas fuentes:
+  - tu Instagram;
+  - el banco de Drive y tus carpetas extra;
+  - las fotos oficiales de producto de specialized.com/cl;
+  - las miniaturas de los videos de Specialized University;
+  - Pexels, solo para paisajes.
+
+  Las revisa con visión y les pone nota del 0 al 10. Descarta lo que no corresponde: bicis sin motor cuando se habla de e-bikes, bicis de niños o de ruta en temas de MTB, y fotos sin relación con el ciclismo (banderas, por ejemplo).
+- **Si ninguna llega a 7, la lámina queda sin foto** y en «📸 Fotos que te pido» aparece qué sacar: bici, ángulo, lugar y luz. Con un toque se crea la tarea.
+- **Carpetas de fotos:** en Redes → Estudio → «Carpetas de fotos» pegas el link de cualquier carpeta de Drive. Para usar las fotos de la cuenta de la tienda, comparte la carpeta con la cuenta dueña del script. El agente lee también las subcarpetas y usa sus nombres como contexto.
+- **Biblioteca:** cada 12 horas se guardan en la hoja `Biblioteca` los videos nuevos de Specialized University y de Specialized (título, descripción y link), junto con las noticias de Pinkbike y Vital MTB. El agente de contenido los usa como base experta, sumados a un bloque de conocimiento técnico de MTB y e-MTB.
+- **Configuración opcional:** la propiedad `ESTUDIO_MODELO` cambia el modelo que elige las fotos. Por defecto es `claude-opus-5-5`.
+- **Versión:** en ⚙️ Ajustes → Versiones ves la versión de la app y la del script, y si falta actualizar.
