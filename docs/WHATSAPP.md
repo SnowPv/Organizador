@@ -138,6 +138,23 @@ La app sube los chats y el agente los analiza de a 3 a la vez. Si cierras la app
 
 **Privacidad:** el 1 de diciembre de 2026 entra en vigor la Ley 21.719 de datos personales. Guarda solo lo necesario, borra los datos de quien lo pida y pide permiso antes de enviar promociones por WhatsApp.
 
+## Historial automático de 6 meses (coexistencia)
+
+Al conectar tu número en Telnyx en modo **coexistencia** (sigues usando la app WhatsApp Business del teléfono), Meta te pregunta en el teléfono si quieres **compartir el historial de chats**. Si aceptas, Meta envía hasta **6 meses** de conversaciones por el mismo webhook, por partes, durante las horas siguientes. No hay que exportar nada a mano.
+
+**Qué hace la app (Extras.gs nivel 24 o superior):**
+- Guarda cada mensaje del historial en la ficha del contacto, con su dirección (cliente o tienda).
+- Crea los contactos que no existían, con el nombre que trae WhatsApp.
+- **No crea negociaciones ni tareas** por mensajes antiguos.
+- Encola cada contacto para el **perfilado masivo** (las mismas reglas de la importación masiva de arriba).
+- Ignora los envíos repetidos: si Meta manda dos veces lo mismo, no se duplica.
+
+**Dónde ver el avance:** Ajustes → **💬 Historial de WhatsApp**: mensajes y chats recibidos, porcentaje de avance y fecha del último envío. Si dijiste que no en el teléfono, ahí aparece el aviso de que se rechazó compartir.
+
+**Importante:**
+- Hay que aceptar **«Compartir historial»** en el teléfono en el momento de conectar el número. Si lo rechazas, para repetirlo hay que desconectar y volver a conectar el número.
+- Depende de que Telnyx reenvíe el evento de historial al webhook. Si después de unas horas el contador sigue en 0, usa la importación masiva por exportación (sección anterior) y consulta al soporte de Telnyx por los eventos «history» de coexistencia.
+
 ## Importar chats antiguos (negociaciones en curso)
 
 El agente lee todo lo que está guardado de cada cliente: los chats importados más los mensajes nuevos que lleguen por Telnyx. Para sumar una conversación anterior a la conexión:

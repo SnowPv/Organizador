@@ -15,8 +15,8 @@
  * Para actualizar este archivo más adelante: reemplaza todo su contenido y repite los dos pasos anteriores.
  */
 
-const EX_VERSION = '2026-11-16';
-const EX_NIVEL = 23;      // la app lo usa para saber qué funciones tiene este script
+const EX_VERSION = '2026-11-17';
+const EX_NIVEL = 24;      // la app lo usa para saber qué funciones tiene este script
 const EX_HOJA = 'Tareas';
 const EX_PRIMERA = 4;
 const EX_ULTIMA = 400;
@@ -179,7 +179,7 @@ function ex_leer_() {
     filas.push({ row: EX_PRIMERA + i, sub: String(extra[i][0] || ''), rep: String(extra[i][1] || '') });
   }
   const pr = PropertiesService.getScriptProperties();
-  return { ok: true, version: EX_VERSION, nivel: EX_NIVEL, filas: filas, calendario: EX_CAL_NOMBRE, wa: pr.getProperty('EX_WA_ULTIMO') || '',
+  return { ok: true, version: EX_VERSION, nivel: EX_NIVEL, filas: filas, calendario: EX_CAL_NOMBRE, wa: pr.getProperty('EX_WA_ULTIMO') || '', waHist: JSON.parse(pr.getProperty('EX_WA_HIST') || 'null'),
     bsale: { activo: !!pr.getProperty('BSALE_TOKEN'), sinc: pr.getProperty('EX_BSALE_SINC') || '' },
     instagram: { activo: !!pr.getProperty('IG_TOKEN'), usuario: pr.getProperty('IG_USUARIO') || '', sinc: pr.getProperty('EX_IG_SINC') || '' },
     agente: { activo: !!pr.getProperty('ANTHROPIC_API_KEY'), modelo: pr.getProperty('AGENTE_MODELO') || EX_AG_MODELO, ultimo: pr.getProperty('EX_AG_ULTIMO') || '' } };
@@ -691,9 +691,43 @@ function ex_desdeTelnyx_(pay, msgs, nombres) {
   if (m.id && (m.from || m.to)) msgs.push({ m: m, saliente: saliente });
 }
 
+// Historial de chats (coexistencia): al conectar el número, si aceptas compartir el historial, Meta envía hasta
+// 6 meses de conversaciones en partes (campo «history»). Se buscan en cualquier nivel del aviso, por si el proveedor
+// (Telnyx) lo envuelve en su propio formato. También se leen los nombres de tus contactos («state_sync»).
+function ex_waHistorial_(obj, propio, out, nombres, prof) {
+  if (!obj || typeof obj !== 'object' || (prof || 0) > 8) return;
+  if (Array.isArray(obj)) { obj.forEach(function (x) { ex_waHistorial_(x, propio, out, nombres, (prof || 0) + 1); }); return; }
+  const md = obj.metadata && obj.metadata.display_phone_number ? String(obj.metadata.display_phone_number).replace(/\D/g, '') : propio;
+  if (Array.isArray(obj.threads)) {
+    if (obj.metadata && obj.metadata.progress != null) out.progreso = Math.max(out.progreso || 0, +obj.metadata.progress || 0);
+    obj.threads.forEach(function (th) {
+      const cli = String(th.id || th.wa_id || '').replace(/\D/g, '');
+      (th.messages || []).forEach(function (m) {
+        const de = String(m.from || '').replace(/\D/g, ''), sal = cli ? de !== cli : (!!md && de === md);
+        out.msgs.push({ m: Object.assign({}, m, sal ? { to: m.to || cli } : { from: m.from || cli }), saliente: sal, historial: true });
+      });
+      if (cli) out.chats[cli] = 1;
+    });
+  }
+  if (Array.isArray(obj.errors)) obj.errors.forEach(function (e) { if (+e.code === 2593109 || /history/i.test(String(e.title || e.message || ''))) out.rechazado = String(e.title || e.message || e.code); });
+  if (Array.isArray(obj.state_sync)) obj.state_sync.forEach(function (x) { const c = x.contact || {}, t = String(c.phone_number || '').replace(/\D/g, ''); if (t && (c.full_name || c.first_name)) nombres[t] = c.full_name || c.first_name; });
+  Object.keys(obj).forEach(function (k) { if (k !== 'threads' && k !== 'messages' && obj[k] && typeof obj[k] === 'object') ex_waHistorial_(obj[k], md, out, nombres, (prof || 0) + 1); });
+}
+
 function ex_whatsapp_(p) {
   const pay = p.payload || {}, msgs = [], nombres = {};
   if (pay.data && pay.data.event_type) ex_desdeTelnyx_(pay, msgs, nombres);
+  const hist = { msgs: [], chats: {}, progreso: null, rechazado: '' };
+  ex_waHistorial_(pay, '', hist, nombres, 0);
+  hist.msgs.forEach(function (x) { msgs.push(x); });
+  const anotarHist = function (n, chats) {
+    if (!hist.msgs.length && !hist.rechazado) return;
+    const pr = PropertiesService.getScriptProperties(), H = JSON.parse(pr.getProperty('EX_WA_HIST') || '{}');
+    H.mensajes = (H.mensajes || 0) + n; H.chats = (H.chats || 0) + chats;
+    if (hist.progreso != null) H.progreso = hist.progreso; if (hist.rechazado) H.rechazado = hist.rechazado;
+    H.ultimo = new Date().toISOString(); if (!H.desde) H.desde = H.ultimo;
+    pr.setProperty('EX_WA_HIST', JSON.stringify(H));
+  };
   (pay.entry || []).forEach(function (en) {
     (en.changes || []).forEach(function (ch) {
       const v = ch.value || {}, campo = String(ch.field || '');
@@ -702,10 +736,9 @@ function ex_whatsapp_(p) {
       const add = function (m, saliente) { if (m && m.id && (m.from || m.to)) msgs.push({ m: m, saliente: saliente }); };
       (v.messages || []).forEach(function (m) { add(m, campo === 'smb_message_echoes' || (!!propio && String(m.from) === propio)); });
       (v.message_echoes || []).forEach(function (m) { add(m, true); });
-      (v.history || []).forEach(function (h) { (h.threads || []).forEach(function (th) { (th.messages || []).forEach(function (m) { add(m, !!propio && String(m.from) === propio); }); }); });
     });
   });
-  if (!msgs.length) return { ok: true, mensajes: 0 };
+  if (!msgs.length){ anotarHist(0, 0); return { ok: true, mensajes: 0 }; }
   const b = ex_baseHojas_(), wa = ex_hojaWa_(), neg = ex_hojaNeg_(), hoy = Date.now();
   const filasC = ex_filasContactos_(b.cs), contactos = {}, porTel = {};
   const ult9 = function (t) { return String(t || '').replace(/\D/g, '').slice(-9); };
@@ -714,7 +747,7 @@ function ex_whatsapp_(p) {
   (ni > 0 ? b.is.getRange(2, 6, ni, 1).getValues() : []).forEach(function (r) { claves[String(r[0])] = true; });
   const abiertas = {};
   ex_filasNeg_(neg).forEach(function (r, i) { if (r[0] && r[10] === 'Abierta' && r[2]) (abiertas[String(r[2])] = abiertas[String(r[2])] || []).push(i + 2); });
-  const nuevosC = [], nuevasI = [], filasWa = [], telefonos = [], actividad = {}, leads = [];
+  const nuevosC = [], nuevasI = [], filasWa = [], telefonos = [], actividad = {}, leads = [], histIds = {}; let histN = 0;
   msgs.sort(function (x, y) { return Number(x.m.timestamp || 0) - Number(y.m.timestamp || 0); });
   msgs.forEach(function (x) {
     const m = x.m, clave = 'w:' + m.id;
@@ -742,6 +775,7 @@ function ex_whatsapp_(p) {
     filasWa.push([fecha, x.saliente ? 'Enviado' : 'Recibido', '+' + tel, c.nombre || nombreWa, texto.slice(0, 500), m.type || '', id, m.id]);
     if (abiertas[id]) abiertas[id].forEach(function (f) { if (!actividad[f] || fecha > actividad[f]) actividad[f] = fecha; });
     // Lead nuevo: mensaje reciente con intención de compra de alguien sin negociación abierta.
+    if (x.historial){ histIds[id] = c.nombre || nombreWa || id; histN++; return; }
     if (!x.saliente && !abiertas[id] && hoy - fecha.getTime() < 30 * 86400000 && EX_WA_INTENCION.test(ex_norm_(texto))) {
       const mod = texto.match(EX_WA_MODELOS);
       leads.push({ titulo: (c.nombre || nombreWa || '+' + tel) + (mod ? ' – ' + mod[1].replace(/\s+/g, ' ').replace(/\b\w/g, function (l) { return l.toUpperCase(); }) : ' – WhatsApp'), contacto: id, producto: mod ? mod[1] : '', proxima: 'Responder por WhatsApp', fechaProx: ex_hoyYmd_(), origen: '💬 WhatsApp', notas: 'Primer mensaje: ' + texto.slice(0, 200) });
@@ -759,9 +793,12 @@ function ex_whatsapp_(p) {
   props.setProperty('EX_WA_ULTIMO', new Date().toISOString());
   // El agente revisa estas conversaciones en su próxima ronda (cada 10 min), cuando la conversación se calme.
   const pend = JSON.parse(props.getProperty('EX_AG_PEND') || '{}');
-  filasWa.forEach(function (f) { pend[f[6]] = Date.now(); });
+  filasWa.forEach(function (f) { if (!histIds[f[6]]) pend[f[6]] = Date.now(); });
   props.setProperty('EX_AG_PEND', JSON.stringify(pend));
-  return { ok: true, mensajes: nuevasI.length, contactosNuevos: nuevosC.length, leads: leads.length };
+  // Chats del historial: el agente arma el perfil de cada contacto en modo masivo (sin tareas ni negocios antiguos).
+  anotarHist(histN, Object.keys(histIds).length);
+  if (props.getProperty('ANTHROPIC_API_KEY')) Object.keys(histIds).forEach(function (id) { try { ex_encolarPerfil_(id, histIds[id]); } catch (e) {} });
+  return { ok: true, mensajes: nuevasI.length, contactosNuevos: nuevosC.length, leads: leads.length, historial: Object.keys(histIds).length };
 }
 
 /* ---------- importar un chat exportado desde WhatsApp ---------- */
