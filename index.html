@@ -1423,7 +1423,7 @@ body:has(.selbar) .fab,body:has(.selbar) .fab2{display:none}
 .dt .hbar{margin-top:2px}
 .dt .meter{margin-top:2px}
 @media (max-width:560px){.dsh{padding:14px}.dsh-g{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:84%;overflow-x:auto;scroll-snap-type:x mandatory;margin:12px -14px 0;padding:0 14px 4px;scrollbar-width:none}.dsh-g::-webkit-scrollbar{display:none}.dt{scroll-snap-align:center}.dt-big{font-size:25px}}
-.dsh:not(.off) ~ .nkpis,.dsh:not(.off) ~ .cp-k,.dsh:not(.off) ~ .hy-hero .hy-ring{display:none}
+.dsh:not(.off) ~ .nkpis:not(.bsk),.dsh:not(.off) ~ .cp-k,.dsh:not(.off) ~ .hy-hero .hy-ring{display:none}
 /* Pipeline en torta (Inicio) */
 .pipe-dn{display:flex;align-items:center;gap:14px;margin-top:10px}
 .pipe-dn .leg{flex:1;min-width:0;font-size:12.5px}
@@ -1447,6 +1447,9 @@ body:has(.selbar) .fab,body:has(.selbar) .fab2{display:none}
 .tk2 .tlist + .dayh{margin-top:18px}
 .tk2 .empty{background:var(--card);border:1px dashed var(--line);border-radius:14px}
 @media (min-width:1000px){.tk2 .cols2{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}.tk2 .cols2 .tlist{grid-template-columns:1fr}}
+/* Ventas Bsale */
+.bsv-g{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:12px}
+.bsv-g .it .btn{flex:none}
 /* Fotos pedidas por el Estudio */
 .pz-ped{border:1px solid var(--warn);background:rgba(229,160,0,.07);border-radius:12px;padding:10px 12px;margin-top:12px;font-size:13.5px;line-height:1.45}
 .pz-ped b{display:block;margin-bottom:6px}.pz-ped div span{font-weight:700;margin-right:6px}
@@ -1578,7 +1581,7 @@ async function api(action, extra){
 function apiX(op, extra){ return api('extra', Object.assign({ op }, extra || {})); }
 // Nivel 2 del script Extras: recordatorios y base de contactos. Nivel 3: la base solo usa contacto@blacklinechile.cl. Nivel 4: eventos de varios días.
 function extNivel(){ return S.extInactivo ? 0 : (S.ext && S.ext.nivel) || 1; }
-const APP_VER = 'v31', NIVEL_ULTIMO = 22;
+const APP_VER = 'v33', NIVEL_ULTIMO = 23;
 function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < NIVEL_ULTIMO; }
 let sincTimer = null;
 // Después de cambiar tareas, el script actualiza los recordatorios del calendario (en segundo plano).
@@ -1847,7 +1850,7 @@ function viewInicio(){
   const totalHoy = lista.length + hechas.length;
   let html = '<div class="ihead"><button class="quick" id="qa"><b>+</b>Agregar tarea… <span style="margin-left:auto">🎤</span></button>' +
     '<button class="btn sec" id="prodBtn">' + icon('box') + ' Producto</button><button class="btn sec" id="fzBtn">' + icon('chart') + ' Fuentes</button><button class="btn sec" id="planBtn">' + icon('spark') + ' Plan de la semana</button></div>';
-  if (necesitaActualizar()) html += '<div class="w" style="margin-bottom:14px;display:flex;gap:12px;align-items:center"><div class="grow"><b>Nueva versión del script</b><div class="wsub">' + (extNivel() >= 21 ? 'Estudio: el agente mira las fotos antes de usarlas (descarta las que no calzan), suma fotos oficiales de Specialized, videos de Specialized University y tus carpetas de Drive, y te pide las fotos que faltan.' : extNivel() >= 20 ? 'Postventa automática: al marcar una venta como ganada se agendan la entrega, el registro de garantía, el llamado a los 7 días, la revisión de los 30 días y la foto o reseña.' : extNivel() >= 19 ? 'El Copiloto ahora corrige datos: negociaciones (etapa, fecha real de cierre, valor), notas en la ficha del cliente y tareas, siempre con tu aprobación.' : extNivel() >= 16 ? 'Agente de tareas: piensa cada tarea que dictas (fecha, pasos, proveedor, stock, pedido y mejores opciones) antes de guardarla. También Compras y proveedores.' : extNivel() >= 14 ? 'El Cerebro: plan del día automático, Copiloto que consulta todo, Specialized Chile (ventas, ofertas y stock por talla), clima, noticias y avisos para el equipo.' : extNivel() >= 10 ? 'Instagram: métricas diarias y calendario de contenido con IA. También filtra los correos automáticos de bancos y pagos.' : extNivel() >= 8 ? 'Asistente de IA para planificar tu día y tu semana, Instagram y conexión con Bsale.' : 'Importar chats de WhatsApp y agente de IA.') + '</div></div><button class="btn sm" id="updBtn">Actualizar</button></div>';
+  if (necesitaActualizar()) html += '<div class="w" style="margin-bottom:14px;display:flex;gap:12px;align-items:center"><div class="grow"><b>Nueva versión del script</b><div class="wsub">' + (extNivel() >= 22 ? 'Ventas reales de Bsale: ventas por mes, lo más vendido, qué reponer, stock quieto, mejores clientes y el historial de compras en la ficha de cada cliente.' : extNivel() >= 21 ? 'Estudio: el agente mira las fotos antes de usarlas (descarta las que no calzan), suma fotos oficiales de Specialized, videos de Specialized University y tus carpetas de Drive, y te pide las fotos que faltan.' : extNivel() >= 20 ? 'Postventa automática: al marcar una venta como ganada se agendan la entrega, el registro de garantía, el llamado a los 7 días, la revisión de los 30 días y la foto o reseña.' : extNivel() >= 19 ? 'El Copiloto ahora corrige datos: negociaciones (etapa, fecha real de cierre, valor), notas en la ficha del cliente y tareas, siempre con tu aprobación.' : extNivel() >= 16 ? 'Agente de tareas: piensa cada tarea que dictas (fecha, pasos, proveedor, stock, pedido y mejores opciones) antes de guardarla. También Compras y proveedores.' : extNivel() >= 14 ? 'El Cerebro: plan del día automático, Copiloto que consulta todo, Specialized Chile (ventas, ofertas y stock por talla), clima, noticias y avisos para el equipo.' : extNivel() >= 10 ? 'Instagram: métricas diarias y calendario de contenido con IA. También filtra los correos automáticos de bancos y pagos.' : extNivel() >= 8 ? 'Asistente de IA para planificar tu día y tu semana, Instagram y conexión con Bsale.' : 'Importar chats de WhatsApp y agente de IA.') + '</div></div><button class="btn sm" id="updBtn">Actualizar</button></div>';
   if (extNivel() >= 13 && !S.leadsCanal && !S._leadsPend){ S._leadsPend = 1; loadLeads().then(() => { S._leadsPend = 0; if (S.tab === 'inicio' && !$('.pop-bg')) render(); }); }
   html += planStrip() + kpiRow();
   const rad = senales();
@@ -2621,6 +2624,7 @@ function ctoTab(c, tab){
     const tareas = tareasDe(c).filter(t => !t.hecho).sort(ordenar);
     box.innerHTML = agenteHTML(c) + (c.etiquetas || c.notas ? '<div class="sec"><div class="sh">Lo que sabemos</div>' + (c.etiquetas ? '<div class="tm" style="margin:0 0 6px">' + String(c.etiquetas).split(',').map(x => '<span class="pill2">' + esc(x.trim()) + '</span>').join('') + '</div>' : '') + (c.notas ? '<div style="font-size:14px;line-height:1.45;padding-bottom:6px">' + esc(c.notas) + '</div>' : '') + '</div>' : '') +
       '<div class="sec"><div class="sh">Tareas pendientes <span class="n">' + tareas.length + '</span></div>' + (tareas.length ? tareas.map(t => taskHTML(t)).join('') : '<div class="wsub" style="padding:4px 0 8px">Sin tareas con este contacto.</div>') + '</div>';
+    if (bsvListo()){ box.insertAdjacentHTML('beforeend', '<div id="ct_bsv"></div>'); comprasBsale(c, box.querySelector('#ct_bsv')); }
     bindTasks(box);
     box.querySelectorAll('[data-agente]').forEach(b => b.onclick = () => analizarAhora(b.dataset.agente, b));
     box.querySelectorAll('[data-impc]').forEach(b => b.onclick = () => openImportar({ contacto: b.dataset.impc }));
@@ -4236,6 +4240,12 @@ function kpiRow(){
     T.push({ go: 'negocios', ic: 'chart', t: 'Pipeline abierto', v: clpCorto(m.abiertoV), sub: '<span class="dl">' + A.length + ' abiertas · ' + aten + ' piden atención</span>', viz: '<div class="kp-stack">' + et.map(x => '<i style="flex:' + x.v / tv + ';background:' + x.c + '"></i>').join('') + '</div>', pie: 'por etapa · pronóstico ' + clpCorto(m.ponderado) });
     T.push({ go: 'negocios', ic: 'trophy', t: 'Ventas del mes', v: clpCorto(m.gMesV), sub: deltaTag(m.gMesV, prev, false, 'vs mes ant.') || '<span class="dl">' + m.gMes.length + ' cerradas</span>', viz: sparkSVG(mv, 120, 34, 'var(--s5)'), pie: 'últimos 6 meses' + (m.tasa != null ? ' · cierre ' + Math.round(m.tasa * 100) + '%' : '') });
   }
+  if (bsvListo()){
+    const r = S.bsv;
+    if (!r && !S._bsvPend) loadBsv().then(() => { if (S.tab === 'inicio' && !$('.pop-bg')) render(); });
+    if (r && r.meses && r.meses.length){ const ix = T.findIndex(x => x.t === 'Ventas del mes'), M = r.meses.slice(-6), tile = { go: 'compras', ic: 'trophy', t: 'Ventas del mes', v: clpCorto(r.mes), sub: deltaTag(r.mes, r.mes_anterior_a_la_fecha, false, 'vs mes ant.') || '<span class="dl">hoy ' + clpCorto(r.hoy) + '</span>', viz: sparkSVG(M.map(x => x.total), 120, 34, 'var(--s5)'), pie: 'Bsale · últimos 6 meses' };
+      if (ix >= 0) T[ix] = tile; else T.push(tile); }
+  }
   if (S.base){
     const esp = esperanRespuesta().length, st = S.leadsCanal && S.leadsCanal.stats, sem = st && st.nuevas ? Object.keys(st.nuevas).sort().slice(-10) : [];
     const rk = st && st.respuesta ? Object.keys(st.respuesta).sort() : [], r = rk.length ? st.respuesta[rk[rk.length - 1]] : null;
@@ -4444,8 +4454,9 @@ function viewCompras(){
   let html = '<div class="kstrip cp-k"><div class="ks1"><div><b>' + P.length + '</b><small>proveedores</small></div></div><div class="ks1"><div><b>' + (C.total || 0).toLocaleString('es-CL') + '</b><small>productos catalogados</small></div></div><div class="ks1"><div><b>' + O.length + '</b><small>oportunidades de compra</small></div></div><div class="ks1"><div><b>' + promos.length + '</b><small>correos con promos (30 d)</small></div></div></div>';
   html += '<div class="cp-pol">' + icon('flag') + '<span><b>Uso interno.</b> Las promociones de proveedores sirven para comprar mejor y vender a precio normal. Blackline no hace descuentos ni los comunica.</span></div>';
   html += '<div class="cp-bus"><input type="search" id="cpQ" placeholder="Buscar en todos los proveedores: «fox 36 grip x2», «hope tech 4», «edge 1050», «magic mary 29»…" value="' + esc(S.cpQ || '') + '"><button class="btn" id="cpGo">Buscar</button></div><div id="cpRes"></div>';
-  html += '<div class="btabs"><div class="tabs">' + [['oport', 'Oportunidades de compra (' + O.length + ')'], ['prov', 'Proveedores'], ['mail', 'Correos (' + M.length + ')'], ['mov', 'Cambios de precio (' + mov.length + ')']].map(x => '<button class="' + (x[0] === t ? 'on' : '') + '" data-cpt2="' + x[0] + '">' + x[1] + '</button>').join('') + '</div><button class="btn sm sec" id="cpRef">↻ Actualizar</button></div>';
-  if (t === 'oport'){
+  html += '<div class="btabs"><div class="tabs">' + (extNivel() >= 23 ? [['ventas', '📊 Ventas y rotación']] : []).concat([['oport', 'Oportunidades de compra (' + O.length + ')'], ['prov', 'Proveedores'], ['mail', 'Correos (' + M.length + ')'], ['mov', 'Cambios de precio (' + mov.length + ')']]).map(x => '<button class="' + (x[0] === t ? 'on' : '') + '" data-cpt2="' + x[0] + '">' + x[1] + '</button>').join('') + '</div><button class="btn sm sec" id="cpRef">↻ Actualizar</button></div>';
+  if (t === 'ventas') html += ventasHTML();
+  else if (t === 'oport'){
     const f = S.cpF || 'todas', L = O.filter(o => f === 'todas' || (f === 'vende' && o.vende) || (f === 'piden' && o.piden) || o.prov === f);
     html += '<div class="cp-fil">' + [['todas', 'Todas'], ['vende', 'Las que vendes'], ['piden', 'Las que piden clientes']].concat(P.filter(p => O.some(o => o.prov === p.id)).map(p => [p.id, p.nombre])).map(x => '<button class="pill' + (x[0] === f ? ' on' : '') + '" data-cpf="' + esc(x[0]) + '">' + esc(x[1]) + '</button>').join('') + '</div>';
     html += '<div class="wsub" style="margin:0 2px 10px">Productos en promoción en la web del proveedor. El costo aplica tu descuento sobre el precio de promoción; el margen se calcula vendiendo a precio normal cuando la promo termine.</div>';
@@ -4461,6 +4472,7 @@ function viewCompras(){
   }
   $('#view').innerHTML = html;
   $$('[data-cpt2]').forEach(b => b.onclick = () => { S.cpTab = b.dataset.cpt2; render(); });
+  if (t === 'ventas') bindVentas();
   $$('[data-cpf]').forEach(b => b.onclick = () => { S.cpF = b.dataset.cpf; S.cpN = 18; render(); });
   if ($('#cpMas')) $('#cpMas').onclick = () => { S.cpN = (S.cpN || 18) + 18; render(); };
   $('#cpRef').onclick = () => { S.compras = null; loadCompras(true); render(); };
@@ -6999,6 +7011,55 @@ function bindCampanas(){
   const marcar = (c, nota) => { const e = campEnviados(k); e[c.id] = hoy(); lsSet('camp_' + k, e); if (nota) apiX('nota', { id: c.id, texto: '📣 Campaña «' + C.t + '»: ' + nota }).catch(() => {}); };
   $$('[data-csend]').forEach(b => b.onclick = () => { const i = +b.dataset.csend, c = L[i], m = $('[data-cm="' + i + '"]').value; window.open('https://wa.me/' + telWA(c) + '?text=' + encodeURIComponent(m), '_blank'); marcar(c, m.slice(0, 300)); setTimeout(viewBase, 400); });
   $$('[data-cskip]').forEach(b => b.onclick = () => { marcar(L[+b.dataset.cskip], ''); viewBase(); });
+}
+
+/* ---------- Ventas reales (Bsale): resumen, rotación, stock quieto y compras por cliente ---------- */
+function bsvListo(){ return extNivel() >= 23 && bsaleActivo(); }
+async function loadBsv(forzar){
+  if (!bsvListo()) return null;
+  if (!forzar && S.bsv && Date.now() - (S.bsvAt || 0) < 10 * 60000) return S.bsv;
+  if (S._bsvPend) return S._bsvPend;
+  S._bsvPend = apiX('bsaleVentas', forzar ? { sinc: true } : {}).then(r => { S.bsv = r; S.bsvAt = Date.now(); S._bsvPend = null; return r; }).catch(e => { S._bsvPend = null; S.bsv = { error: e.message }; return null; });
+  return S._bsvPend;
+}
+const mesCorto = k => MESES_C[+k.slice(5, 7) - 1].slice(0, 3) + (k.slice(5, 7) === '01' ? ' ' + k.slice(2, 4) : '');
+function ventasHTML(){
+  if (!bsvListo()) return '<div class="sec" style="padding:18px"><div class="wh">' + icon('chart') + 'Ventas reales de Bsale</div><p style="margin:0;line-height:1.5;color:var(--muted)">' + (extNivel() < 23 ? 'Actualiza el script (Extras.gs) para ver tus ventas reales.' : 'Falta conectar Bsale: agrega la propiedad BSALE_TOKEN en el script y ejecuta probarBsale.') + '</p></div>';
+  const r = S.bsv;
+  if (!r){ loadBsv().then(() => { if (S.tab === 'compras') render(); }); return '<div class="empty"><span class="spin"></span>Leyendo tus ventas de Bsale…</div>'; }
+  if (r.error) return '<div class="empty">No se pudo leer Bsale: ' + esc(r.error) + '</div>';
+  if (r.vacio) return '<div class="sec" style="padding:18px"><div class="wh">' + icon('chart') + 'Copiando tus ventas…</div><p style="margin:0 0 10px;line-height:1.5;color:var(--muted)">La primera vez se copian los últimos 12 meses de Bsale, por partes, cada hora. Puedes acelerarlo ejecutando <b>sincronizarVentasBsale</b> en Apps Script.' + (r.estado && r.estado.total ? ' Avance: ' + Math.min(100, Math.round(r.estado.offset / r.estado.total * 100)) + '%.' : '') + '</p><button class="btn sm" id="bsvSinc">↻ Copiar ahora</button></div>';
+  const dl = (a, b) => b ? deltaTag(a, b, false, '') : '';
+  const M = r.meses || [], mx = Math.max(1, ...M.map(x => x.total));
+  let h = '<div class="nkpis bsk">' +
+    '<div class="nkpi"><small>Hoy</small><b>' + clpCorto(r.hoy) + '</b><span>esta semana ' + clpCorto(r.semana) + '</span></div>' +
+    '<div class="nkpi"><small>Este mes</small><b>' + clpCorto(r.mes) + '</b><span>' + (dl(r.mes, r.mes_anterior_a_la_fecha) || '') + ' vs mes anterior a la fecha</span></div>' +
+    '<div class="nkpi"><small>Mismo mes, año pasado</small><b>' + clpCorto(r.mismo_mes_anio_anterior) + '</b><span>' + (r.mismo_mes_anio_anterior ? dl(r.mes, r.mismo_mes_anio_anterior) + ' este año' : 'sin datos aún') + '</span></div>' +
+    '<div class="nkpi"><small>Ticket promedio (mes)</small><b>' + clpCorto((M[M.length - 1] || {}).ticket || 0) + '</b><span>' + ((M[M.length - 1] || {}).docs || 0) + ' documentos</span></div></div>';
+  h += '<div class="w" style="margin:12px 0"><div class="wh">' + icon('chart') + 'Ventas por mes<span class="wsub" style="margin-left:auto">Bsale · ' + esc(fmt(r.desde)) + ' a ' + esc(fmt(r.hasta)) + '</span></div><div class="bars" style="height:120px">' + M.map((x, i) => '<i class="' + (i === M.length - 1 ? 'hit' : '') + '" style="height:' + Math.max(1, x.total / mx * 100) + '%" data-t="' + esc(mesCorto(x.mes) + ': ' + clp(x.total) + ' · ' + x.docs + ' docs') + '"></i>').join('') + '</div><div class="bx">' + M.map(x => '<span style="flex:1;text-align:center">' + esc(mesCorto(x.mes)) + '</span>').join('') + '</div></div>';
+  const lista = (L, f) => L.length ? '<div class="wl">' + L.map(f).join('') + '</div>' : '<div class="wsub">Nada por ahora ✓</div>';
+  h += '<div class="bsv-g">';
+  h += '<div class="w"><div class="wh">' + icon('trophy') + 'Lo más vendido · 30 días</div>' + lista((r.top30 || []).slice(0, 10), (x, i) => '<div class="it"><span class="dot" style="background:var(--s' + (i < 3 ? 5 : 3) + ')"></span><div class="tx">' + esc(x.producto) + '<small>' + x.unidades + ' u · ' + clpCorto(x.monto) + '</small></div></div>') + '</div>';
+  h += '<div class="w"><div class="wh">' + icon('box') + 'Reponer pronto<span class="wsub" style="margin-left:auto">stock para ≤ 30 días</span></div>' + lista((r.reponer || []).slice(0, 10), x => '<div class="it" data-bsr="' + esc(x.producto) + '"><span class="dot" style="background:' + (x.cobertura_dias <= 10 ? 'var(--bad)' : 'var(--warn)') + '"></span><div class="tx">' + esc(x.producto) + '<small>' + x.stock + ' en stock · se venden ' + x.vendidas90 + ' cada 90 días · alcanza ~' + x.cobertura_dias + ' días</small></div><button class="btn sm sec">＋ Pedido</button></div>') + '</div>';
+  h += '<div class="w"><div class="wh">' + icon('clock') + 'Stock quieto<span class="wsub" style="margin-left:auto">sin ventas en 90 días</span></div>' + lista((r.quietos || []).slice(0, 10), x => '<div class="it"><span class="dot" style="background:var(--s1)"></span><div class="tx">' + esc(x.producto) + '<small>' + x.stock + ' en stock' + (x.ultima_venta ? ' · última venta ' + esc(fmtRel(x.ultima_venta)) : ' · sin ventas registradas') + '</small></div></div>') + '<div class="hint">Ideas: muéstralo en la tienda y en contenido de asesoría, ofrécelo a clientes a los que les sirve o úsalo en salidas y test rides. Sin descuentos.</div></div>';
+  h += '<div class="w"><div class="wh">' + icon('users') + 'Mejores clientes · 12 meses</div>' + lista((r.clientes || []).slice(0, 10), x => '<div class="it"><span class="dot" style="background:var(--ok)"></span><div class="tx">' + esc(x.nombre) + '<small>' + clpCorto(x.total) + ' · ' + x.compras + ' compras · última ' + esc(fmtRel(x.ultima)) + '</small></div></div>') + '</div>';
+  h += '</div><div class="btns" style="margin-top:6px"><button class="btn sm sec" id="bsvSinc">↻ Actualizar ventas</button></div>';
+  return h;
+}
+function bindVentas(){
+  const b = $('#bsvSinc'); if (b) b.onclick = async () => { b.disabled = true; b.innerHTML = '<span class="spin"></span>Copiando…'; await loadBsv(true); render(); };
+  $$('[data-bsr]').forEach(x => x.querySelector('button').onclick = () => pensarTarea('Hacer pedido para reponer ' + x.dataset.bsr + ' (se está acabando según las ventas de Bsale)'));
+}
+// Compras en Bsale de un contacto (en su ficha).
+async function comprasBsale(c, box){
+  if (!bsvListo() || !box) return;
+  box.innerHTML = '<div class="sec"><div class="sh">🧾 Compras en tienda (Bsale)</div><div class="wsub" style="padding:4px 0 8px"><span class="spin"></span> Buscando…</div></div>';
+  try {
+    const r = await apiX('bsaleVentas', { cliente: { email: c.email || '', telefono: c.telefono || '', nombre: c.nombre || '' } }), L = r.compras || [];
+    const tot = L.reduce((s, d) => s + (d.total || 0), 0);
+    box.innerHTML = '<div class="sec"><div class="sh">🧾 Compras en tienda (Bsale) <span class="n">' + L.length + '</span>' + (L.length ? '<span class="r" style="font-weight:700">' + clpCorto(tot) + '</span>' : '') + '</div>' +
+      (L.length ? '<div class="wl">' + L.slice(0, 12).map(d => '<div class="it"><span class="dot" style="background:' + (d.total < 0 ? 'var(--bad)' : 'var(--ok)') + '"></span><div class="tx">' + esc(d.items.slice(0, 3).join(' · ') || d.tipo) + (d.items.length > 3 ? ' +' + (d.items.length - 3) : '') + '<small>' + esc(fmt(d.fecha)) + ' · ' + esc(d.tipo.replace(/ ELECTR[OÓ]NICA/i, '').toLowerCase()) + ' ' + esc(String(d.numero || '')) + ' · ' + clp(d.total) + '</small></div></div>').join('') + '</div>' : '<div class="wsub" style="padding:4px 0 8px">No encontré compras en Bsale con su correo o teléfono.</div>') + '</div>';
+  } catch(e){ box.innerHTML = ''; }
 }
 </script>
 </body>

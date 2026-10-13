@@ -202,3 +202,22 @@ La app arma la lista con tus perfiles y negocios, y un mensaje personal para cad
 - **Biblioteca:** cada 12 horas se guardan en la hoja `Biblioteca` los videos nuevos de Specialized University y de Specialized (título, descripción y link), junto con las noticias de Pinkbike y Vital MTB. El agente de contenido los usa como base experta, sumados a un bloque de conocimiento técnico de MTB y e-MTB.
 - **Configuración opcional:** la propiedad `ESTUDIO_MODELO` cambia el modelo que elige las fotos. Por defecto es `claude-opus-5-5`.
 - **Versión:** en ⚙️ Ajustes → Versiones ves la versión de la app y la del script, y si falta actualizar.
+
+## Ventas reales (Bsale)
+
+Con `BSALE_TOKEN` en las propiedades del script, cada hora se copian las ventas de Bsale a la hoja `Bsale ventas`: boletas, facturas y notas de crédito (estas restan), con una fila por producto vendido. La primera vez trae los últimos 12 meses por partes. Para traerlos de una vez, ejecuta `sincronizarVentasBsale`.
+
+Dónde se ve:
+- **Compras → 📊 Ventas y rotación:**
+  - ventas de hoy, la semana y el mes, comparadas con el mes anterior a la misma fecha y con el mismo mes del año pasado;
+  - ticket promedio y ventas por mes (12 meses);
+  - lo más vendido en 30 días;
+  - **reponer pronto**: el stock alcanza para 30 días o menos según el ritmo de venta; con «＋ Pedido» el agente arma el pedido;
+  - **stock quieto**: productos con stock y sin ventas en 90 días;
+  - mejores clientes de los últimos 12 meses.
+- **Inicio:** «Ventas del mes» usa las ventas reales de Bsale.
+- **Ficha de cada cliente:** «🧾 Compras en tienda». Busca las compras por correo, teléfono o RUT.
+- **Agentes:**
+  - el Copiloto tiene `ventas_tienda` y `compras_cliente`;
+  - el agente de tareas calcula los pedidos con las ventas reales;
+  - el plan del día incluye ventas, qué reponer y el stock quieto.
