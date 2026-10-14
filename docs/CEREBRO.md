@@ -249,3 +249,7 @@ Archivar no borra: quedan en el filtro «🗄️ Archivados» (hoja «Depuració
 **Redes → Estudio → 📥 Subir fotos.** Elige una carpeta completa (por ejemplo, tu Google Fotos descargado, con subcarpetas) o fotos sueltas desde el iPhone. La app achica cada foto a 2048 px, la guarda en tu Drive (carpeta «Fotos subidas» del banco) y la anota en la hoja «Fotos». Si se corta, vuelve a elegir la misma carpeta: las ya subidas se saltan. Al terminar puedes borrar la copia de tu computador.
 
 Cada 10 minutos la IA (Claude Haiku, ~US$0,0005 por foto) mira las fotos sin descripción y escribe qué se ve y sus etiquetas. Con eso el Estudio encuentra «Levo en sendero con barro» aunque el archivo se llame IMG_4821.jpg. Las carpetas de Drive que agregues en «Carpetas de fotos» se suman al archivo cada hora (y al agregarlas).
+
+## Pestaña Chats
+
+**Contactos → 💬 Chats** muestra todas las conversaciones de WhatsApp como en el teléfono: la más reciente arriba, con el último mensaje y la hora. Al tocar una se abre la conversación completa (en el computador, al lado; en el celular, a pantalla completa con «‹» para volver), con botones para abrir WhatsApp, ver la ficha y clasificar al contacto. Hay buscador por nombre, número o texto del mensaje, y un botón para ver también los archivados.

@@ -15,8 +15,8 @@
  * Para actualizar este archivo más adelante: reemplaza todo su contenido y repite los dos pasos anteriores.
  */
 
-const EX_VERSION = '2026-11-24';
-const EX_NIVEL = 27;      // la app lo usa para saber qué funciones tiene este script
+const EX_VERSION = '2026-11-25';
+const EX_NIVEL = 28;      // la app lo usa para saber qué funciones tiene este script
 const EX_HOJA = 'Tareas';
 const EX_PRIMERA = 4;
 const EX_ULTIMA = 400;
@@ -114,6 +114,7 @@ function app_extra_(p) {
     case 'base':       return ex_leerBase_();
     case 'contacto':   return ex_guardarContacto_(p.contacto || {});
     case 'chat':       return ex_chat_(p);
+    case 'chats':      return ex_chats_(p);
     case 'depurar': {
       const lk = LockService.getScriptLock();
       if (!lk.tryLock(30000)) throw new Error('El script está ocupado (llegando mensajes). Intenta en un minuto.');
@@ -687,6 +688,26 @@ function ex_chat_(p) {
   return { ok: true, total: L.length, mensajes: L.slice(-1500) };
 }
 
+// Lista de conversaciones (como la pantalla de chats de WhatsApp): último mensaje de cada contacto, más reciente arriba.
+function ex_chats_(p) {
+  const cache = CacheService.getScriptCache(), k = 'ex_chats_v1';
+  if (!p.forzar) { const c = cache.get(k); if (c) return JSON.parse(c); }
+  const wa = ex_hojaWa_(), n = wa.getLastRow() - 1, tz = ex_tz_(), ult = {};
+  if (n > 0) {
+    const v = wa.getRange(2, 1, n, 7).getValues();
+    v.forEach(function (r) {
+      const id = String(r[6] || ''); if (!id || /^\[(edit|errors|revoke|reaction|unsupported|system)\]$/.test(String(r[4]))) return;
+      const t = r[0] instanceof Date ? r[0].getTime() : 0, u = ult[id] = ult[id] || { n: 0, t: -1 };
+      u.n++; if (t >= u.t) { u.t = t; u.yo = r[1] === 'Enviado'; u.tx = String(r[4] || '').slice(0, 90); u.nom = String(r[3] || ''); u.tel = String(r[2] || ''); }
+    });
+  }
+  const L = Object.keys(ult).map(function (id) { const u = ult[id]; return { id: id, f: u.t > 0 ? Utilities.formatDate(new Date(u.t), tz, 'yyyy-MM-dd HH:mm') : '', yo: !!u.yo, tx: u.tx, n: u.n, nom: u.nom, tel: u.tel }; })
+    .sort(function (a, b) { return a.f < b.f ? 1 : a.f > b.f ? -1 : 0; });
+  const out = { ok: true, chats: L.slice(0, 1500) };
+  try { cache.put(k, JSON.stringify(out), 120); } catch (e) {}
+  return out;
+}
+
 function ex_textoWa_(m) {
   if (m.text && m.text.body) return m.text.body;
   if (m.button && m.button.text) return m.button.text;
@@ -888,6 +909,7 @@ function ex_whatsapp_(p) {
   ex_recalcular_(b.cs, b.is);
   const props = PropertiesService.getScriptProperties();
   props.setProperty('EX_WA_ULTIMO', new Date().toISOString());
+  try { CacheService.getScriptCache().remove('ex_chats_v1'); } catch (e) {}
   // El agente revisa estas conversaciones en su próxima ronda (cada 10 min), cuando la conversación se calme.
   const pend = JSON.parse(props.getProperty('EX_AG_PEND') || '{}');
   filasWa.forEach(function (f) { if (!histIds[f[6]]) pend[f[6]] = Date.now(); });
