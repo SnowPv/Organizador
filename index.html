@@ -1581,7 +1581,7 @@ async function api(action, extra){
 function apiX(op, extra){ return api('extra', Object.assign({ op }, extra || {})); }
 // Nivel 2 del script Extras: recordatorios y base de contactos. Nivel 3: la base solo usa contacto@blacklinechile.cl. Nivel 4: eventos de varios días.
 function extNivel(){ return S.extInactivo ? 0 : (S.ext && S.ext.nivel) || 1; }
-const APP_VER = 'v34', NIVEL_ULTIMO = 24;
+const APP_VER = 'v35', NIVEL_ULTIMO = 24;
 function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < NIVEL_ULTIMO; }
 let sincTimer = null;
 // Después de cambiar tareas, el script actualiza los recordatorios del calendario (en segundo plano).
@@ -6642,6 +6642,7 @@ function showSetup(){
 function showSettings(){
   const g = S.google, gTxt = S.extInactivo || (g && g.inactivo) ? 'No activadas' : !g ? 'Revisando…' : 'Activas ✓ · ' + (g.eventos || []).length + ' eventos · ' + (g.correos || []).length + ' correos' + (g.avisos && g.avisos.length ? ' · ⚠️ ' + g.avisos.join(' · ') : '');
   sheet('<h3>⚙️ Ajustes</h3><div class="hint">Conectado a tu Sheet del organizador.</div>' +
+    (S.ext && !S.ext.waHist && extNivel() >= 24 ? '<div class="card"><b>💬 Historial de WhatsApp</b><div class="hint">Todavía no llega el historial. Al conectar el número con «compartir historial», Meta lo envía por partes durante las primeras 24 horas y aquí verás el avance.</div></div>' : '') +
     (S.ext && S.ext.waHist ? '<div class="card"><b>💬 Historial de WhatsApp</b><div class="hint">' + (S.ext.waHist.rechazado ? 'No se compartió el historial al conectar el número (' + esc(S.ext.waHist.rechazado) + '). Para recibirlo hay que desconectar y volver a conectar el número aceptando «compartir historial».' : 'Recibidos ' + (S.ext.waHist.mensajes || 0).toLocaleString('es-CL') + ' mensajes de ' + (S.ext.waHist.chats || 0) + ' chats' + (S.ext.waHist.progreso != null ? ' · avance ' + S.ext.waHist.progreso + '%' : '') + ' · último envío ' + esc(haceTxt(String(S.ext.waHist.ultimo || '').slice(0, 10))) + '. El agente arma el perfil de cada contacto en modo masivo (sin tareas ni negocios antiguos).') + '</div></div>' : '') +
     '<div class="card"><b>🔢 Versiones</b><div class="hint">App: ' + esc(APP_VER) + ' · Script: ' + (S.extInactivo ? 'funciones extra no activadas' : 'versión ' + esc((S.ext && S.ext.version) || '?') + ' (nivel ' + extNivel() + ')') + (extNivel() < NIVEL_ULTIMO ? ' · <b style="color:var(--bad-ink)">hay una versión nueva del script</b>: pega el Extras.gs nuevo y crea una Nueva versión de la implementación.' : ' · al día ✓') + '</div></div>' +
     (deferredInstall ? '<div class="btns"><button class="btn" id="s_inst">📲 Instalar app en este dispositivo</button></div>' : '') +

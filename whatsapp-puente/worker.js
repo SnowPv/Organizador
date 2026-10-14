@@ -30,6 +30,10 @@ export default {
           ? new Response(url.searchParams.get('hub.challenge') || '', { status: 200 })
           : new Response('verify token incorrecto', { status: 403 });
       }
+      // Prueba de punta a punta: abre el link del webhook agregando ?prueba=1 (solo con la clave correcta).
+      if (url.searchParams.has('prueba') && env.URL_KEY && url.pathname.split('/').includes(env.URL_KEY)) {
+        return new Response(await probar(env), { status: 200, headers: { 'content-type': 'text/plain; charset=utf-8' } });
+      }
       return new Response('Organizador BlackLine: puente de WhatsApp activo ✓', { status: 200 });
     }
     if (req.method !== 'POST') return new Response('método no permitido', { status: 405 });
@@ -59,6 +63,22 @@ export default {
     return new Response('ok', { status: 200 });
   }
 };
+
+async function probar(env) {
+  const faltan = ['APPS_SCRIPT_URL', 'APP_TOKEN', 'VERIFY_TOKEN', 'URL_KEY'].filter(k => !env[k]);
+  if (faltan.length) return '✗ Faltan variables en Cloudflare: ' + faltan.join(', ');
+  if (!/^https:\/\/script\.google\.com\/macros\/s\/.+\/exec$/.test(env.APPS_SCRIPT_URL)) return '✗ APPS_SCRIPT_URL no parece un link /exec de Apps Script.';
+  try {
+    const r = await fetch(env.APPS_SCRIPT_URL, { method: 'POST', redirect: 'follow', body: JSON.stringify({ token: env.APP_TOKEN, action: 'extra', op: 'whatsapp', payload: {} }) });
+    const txt = await r.text();
+    if (txt.includes('"ok":true')) return '✓ Todo bien: el puente llega a tu planilla. Ahora escribe a la tienda desde otro teléfono y revisa la app.';
+    if (/token|clave|auth|autoriz/i.test(txt)) return '✗ La planilla rechazó la clave: revisa APP_TOKEN (debe ser la misma clave de la app).';
+    if (/op desconocida|unknown/i.test(txt)) return '✗ El script no reconoce WhatsApp: actualiza Extras.gs y crea una Nueva versión de la implementación.';
+    return '✗ Respuesta inesperada de la planilla (revisa el link y que la implementación sea «Cualquier persona»):\n' + txt.slice(0, 400);
+  } catch (e) {
+    return '✗ No se pudo conectar con Apps Script: ' + e.message;
+  }
+}
 
 async function reenviar(env, payload) {
   const cuerpo = JSON.stringify({ token: env.APP_TOKEN, action: 'extra', op: 'whatsapp', payload });
