@@ -31,8 +31,11 @@ export default {
           : new Response('verify token incorrecto', { status: 403 });
       }
       // Prueba de punta a punta: abre el link del webhook agregando ?prueba=1 (solo con la clave correcta).
-      if (url.searchParams.has('prueba') && env.URL_KEY && url.pathname.split('/').includes(env.URL_KEY)) {
-        return new Response(await probar(env), { status: 200, headers: { 'content-type': 'text/plain; charset=utf-8' } });
+      if (url.searchParams.has('prueba')) {
+        const txt = env.URL_KEY && !url.pathname.split('/').includes(env.URL_KEY)
+          ? '✗ La clave al final del link no coincide con la variable URL_KEY de Cloudflare (revisa mayúsculas y espacios).'
+          : await probar(env);
+        return new Response('Prueba del puente (versión 2026-10-14)\n\n' + txt, { status: 200, headers: { 'content-type': 'text/plain; charset=utf-8' } });
       }
       return new Response('Organizador BlackLine: puente de WhatsApp activo ✓', { status: 200 });
     }
