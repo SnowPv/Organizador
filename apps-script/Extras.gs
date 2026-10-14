@@ -15,7 +15,7 @@
  * Para actualizar este archivo más adelante: reemplaza todo su contenido y repite los dos pasos anteriores.
  */
 
-const EX_VERSION = '2026-11-19';
+const EX_VERSION = '2026-11-20';
 const EX_NIVEL = 24;      // la app lo usa para saber qué funciones tiene este script
 const EX_HOJA = 'Tareas';
 const EX_PRIMERA = 4;
@@ -118,7 +118,11 @@ function app_extra_(p) {
     case 'negocios':   return ex_leerNegocios_();
     case 'negocio':    return ex_guardarNegocio_(p.negocio || {});
     case 'negocioNota': return ex_notaNegocio_(p);
-    case 'whatsapp':   return ex_whatsapp_(p);
+    case 'whatsapp': { // de a un aviso a la vez (el historial llega en muchas partes seguidas); si está ocupado, Meta reintenta
+      const lk = LockService.getScriptLock();
+      if (!lk.tryLock(20000)) return { ok: false, error: 'ocupado, reintentar' };
+      try { return ex_whatsapp_(p); } finally { lk.releaseLock(); }
+    }
     case 'agente':     return ex_agente_(p.id);
     case 'importarChat': return ex_importarChat_(p);
     case 'bsale':      return ex_bsale_(p);

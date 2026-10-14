@@ -58,8 +58,13 @@ export default {
       return new Response('ok', { status: 200 });
     }
 
-    // Responder rápido a Meta y reenviar en segundo plano (con un reintento si el Sheet está ocupado).
-    ctx.waitUntil(reenviar(env, payload));
+    // Se reenvía a la planilla y se espera hasta 15 s. Si la planilla rechaza el aviso, se responde con error
+    // para que Meta lo vuelva a enviar más tarde (reintenta por días): así no se pierden mensajes ni el historial.
+    // Si la planilla tarda más, se responde «ok» y el reenvío sigue en segundo plano.
+    const envio = reenviar(env, payload);
+    ctx.waitUntil(envio);
+    const res = await Promise.race([envio, new Promise(r => setTimeout(() => r('lento'), 15000))]);
+    if (res === false) return new Response('la planilla no aceptó el aviso; reintentar', { status: 503 });
     return new Response('ok', { status: 200 });
   }
 };
@@ -86,13 +91,14 @@ async function reenviar(env, payload) {
     try {
       const r = await fetch(env.APPS_SCRIPT_URL, { method: 'POST', body: cuerpo, redirect: 'follow' });
       const txt = await r.text();
-      if (txt.includes('"ok":true')) return;
+      if (txt.includes('"ok":true')) return true;
       console.log('Apps Script respondió:', txt.slice(0, 300));
     } catch (e) {
       console.log('Error al reenviar:', e.message);
     }
     await new Promise(res => setTimeout(res, 3000));
   }
+  return false;
 }
 
 async function firmaValida(cuerpo, cabecera, secreto) {

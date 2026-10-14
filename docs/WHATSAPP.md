@@ -64,7 +64,7 @@ Dualhook conecta tu número a la API oficial de Meta **sin sacarlo de la app Wha
    **No pongas** `APP_SECRET` ni `TELNYX_PUBLIC_KEY`: con Dualhook la firma es de su app y no se puede validar; la seguridad la da `URL_KEY`.
 3. Tu link de webhook queda así: `https://organizador-wa.<tu-cuenta>.workers.dev/<URL_KEY>`. Ábrelo: debe decir **"puente de WhatsApp activo ✓"**.
 
-**2 · Actualizar el script:** pega el Extras.gs nuevo (versión 2026-11-19 o posterior) y crea una **Nueva versión** de la implementación.
+**2 · Actualizar el script:** pega el Extras.gs nuevo (versión 2026-11-20 o posterior) y crea una **Nueva versión** de la implementación.
 
 **3 · Conectar en Dualhook**
 1. Crea la cuenta en **dualhook.com** y elige el plan **Developer**.
