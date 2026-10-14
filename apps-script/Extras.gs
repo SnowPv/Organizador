@@ -15,7 +15,7 @@
  * Para actualizar este archivo más adelante: reemplaza todo su contenido y repite los dos pasos anteriores.
  */
 
-const EX_VERSION = '2026-11-18';
+const EX_VERSION = '2026-11-19';
 const EX_NIVEL = 24;      // la app lo usa para saber qué funciones tiene este script
 const EX_HOJA = 'Tareas';
 const EX_PRIMERA = 4;
@@ -715,15 +715,43 @@ function ex_waHistorial_(obj, propio, out, nombres, prof) {
     });
   }
   if (Array.isArray(obj.errors)) obj.errors.forEach(function (e) { if (+e.code === 2593109 || /history/i.test(String(e.title || e.message || ''))) out.rechazado = String(e.title || e.message || e.code); });
-  if (Array.isArray(obj.state_sync)) obj.state_sync.forEach(function (x) { const c = x.contact || {}, t = String(c.phone_number || '').replace(/\D/g, ''); if (t && (c.full_name || c.first_name)) nombres[t] = c.full_name || c.first_name; });
+  if (Array.isArray(obj.state_sync)) obj.state_sync.forEach(function (x) { const c = x.contact || {}, t = String(c.phone_number || '').replace(/\D/g, ''); if (t && (c.full_name || c.first_name)) { nombres[t] = c.full_name || c.first_name; if (out.agenda) out.agenda[t] = nombres[t]; } });
   Object.keys(obj).forEach(function (k) { if (k !== 'threads' && k !== 'messages' && obj[k] && typeof obj[k] === 'object') ex_waHistorial_(obj[k], md, out, nombres, (prof || 0) + 1); });
+}
+
+// Agenda de WhatsApp Business (Meta la envía una vez al conectar, «smb_app_state_sync»): se guarda en la hoja
+// «WA agenda» para poner nombre a los contactos que lleguen después, y se renombran los que solo tenían el número.
+function ex_waAgenda_(nuevos) {
+  const ss = SpreadsheetApp.getActive();
+  let sh = ss.getSheetByName('WA agenda');
+  if (!sh) { sh = ss.insertSheet('WA agenda'); sh.appendRow(['Teléfono', 'Nombre', 'Actualizado']); sh.setFrozenRows(1); }
+  const n = sh.getLastRow() - 1, filas = n > 0 ? sh.getRange(2, 1, n, 2).getValues() : [], pos = {}, mapa = {};
+  filas.forEach(function (r, i) { const t = String(r[0]).replace(/\D/g, ''); if (t) { pos[t] = i + 2; mapa[t] = String(r[1] || ''); } });
+  if (!nuevos) return mapa;
+  const altas = [];
+  Object.keys(nuevos).forEach(function (t) {
+    if (!nuevos[t] || mapa[t] === nuevos[t]) return;
+    if (pos[t]) sh.getRange(pos[t], 2, 1, 2).setValues([[nuevos[t], new Date()]]); else altas.push(["'" + t, nuevos[t], new Date()]);
+    mapa[t] = nuevos[t];
+  });
+  if (altas.length) sh.getRange(sh.getLastRow() + 1, 1, altas.length, 3).setValues(altas);
+  // Contactos que solo tenían el número como nombre.
+  const b = ex_baseHojas_(), fc = ex_filasContactos_(b.cs), ult9 = function (t) { return String(t || '').replace(/\D/g, '').slice(-9); }, porU = {};
+  Object.keys(nuevos).forEach(function (t) { if (t.length >= 9) porU[ult9(t)] = nuevos[t]; });
+  let renombrados = 0;
+  fc.forEach(function (r, i) {
+    const nom = String(r[2] || ''), nu = porU[ult9(r[5])];
+    if (nu && (!nom || /^\+?[\d\s]+$/.test(nom))) { b.cs.getRange(i + 2, 3).setValue(nu); renombrados++; }
+  });
+  return { agenda: Object.keys(nuevos).length, renombrados: renombrados };
 }
 
 function ex_whatsapp_(p) {
   const pay = p.payload || {}, msgs = [], nombres = {}, uidTel = {};
   if (pay.data && pay.data.event_type) ex_desdeTelnyx_(pay, msgs, nombres);
-  const hist = { msgs: [], chats: {}, progreso: null, rechazado: '' };
+  const hist = { msgs: [], chats: {}, progreso: null, rechazado: '', agenda: {} };
   ex_waHistorial_(pay, '', hist, nombres, 0);
+  const agendaRes = Object.keys(hist.agenda).length ? ex_waAgenda_(hist.agenda) : null;
   hist.msgs.forEach(function (x) { msgs.push(x); });
   const anotarHist = function (n, chats) {
     if (!hist.msgs.length && !hist.rechazado) return;
@@ -747,7 +775,8 @@ function ex_whatsapp_(p) {
       (v.message_echoes || []).forEach(function (m) { add(m, true); });
     });
   });
-  if (!msgs.length){ anotarHist(0, 0); return { ok: true, mensajes: 0 }; }
+  if (!msgs.length){ anotarHist(0, 0); return agendaRes ? { ok: true, mensajes: 0, agenda: agendaRes.agenda, renombrados: agendaRes.renombrados } : { ok: true, mensajes: 0 }; }
+  const agenda = ex_waAgenda_(null);
   const b = ex_baseHojas_(), wa = ex_hojaWa_(), neg = ex_hojaNeg_(), hoy = Date.now();
   const filasC = ex_filasContactos_(b.cs), contactos = {}, porTel = {};
   const ult9 = function (t) { return String(t || '').replace(/\D/g, '').slice(-9); };
@@ -768,7 +797,7 @@ function ex_whatsapp_(p) {
     if (!tel && uid && uidTel[uid]) tel = uidTel[uid];
     if (!tel && !uid) return;
     const fecha = new Date(Number(m.timestamp || 0) * 1000 || hoy), texto = ex_textoWa_(m);
-    const nombreWa = nombres[tel] || nombres[uid] || '';
+    const nombreWa = nombres[tel] || nombres[uid] || agenda[tel] || '';
     let id = tel ? porTel[ult9(tel)] : '';
     // Si ya existía por su identificador y ahora llega su teléfono, se completa el mismo contacto.
     if (!id && uid && contactos['wa:u:' + uid]) { id = 'wa:u:' + uid; if (tel) porTel[ult9(tel)] = id; }
