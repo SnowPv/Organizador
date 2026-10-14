@@ -770,6 +770,8 @@ function ex_whatsapp_(p) {
     const fecha = new Date(Number(m.timestamp || 0) * 1000 || hoy), texto = ex_textoWa_(m);
     const nombreWa = nombres[tel] || nombres[uid] || '';
     let id = tel ? porTel[ult9(tel)] : '';
+    // Si ya existía por su identificador y ahora llega su teléfono, se completa el mismo contacto.
+    if (!id && uid && contactos['wa:u:' + uid]) { id = 'wa:u:' + uid; if (tel) porTel[ult9(tel)] = id; }
     if (!id) {
       id = tel ? 'wa:+' + tel : 'wa:u:' + uid;
       if (!contactos[id]) {
