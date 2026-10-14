@@ -243,3 +243,9 @@ En **Contactos**, al abrir un contacto, la pestaña **💬 Chat** (entre Resumen
 - **No se tocan:** chats de los últimos 30 días, quien tiene una negociación abierta, proveedores, instituciones, equipo y contactos de correo.
 
 Archivar no borra: quedan en el filtro «🗄️ Archivados» (hoja «Depuración» con el motivo) y vuelven solos si escriben de nuevo. «Restaurar archivados» lo deshace.
+
+## Archivo de fotos
+
+**Redes → Estudio → 📥 Subir fotos.** Elige una carpeta completa (por ejemplo, tu Google Fotos descargado, con subcarpetas) o fotos sueltas desde el iPhone. La app achica cada foto a 2048 px, la guarda en tu Drive (carpeta «Fotos subidas» del banco) y la anota en la hoja «Fotos». Si se corta, vuelve a elegir la misma carpeta: las ya subidas se saltan. Al terminar puedes borrar la copia de tu computador.
+
+Cada 10 minutos la IA (Claude Haiku, ~US$0,0005 por foto) mira las fotos sin descripción y escribe qué se ve y sus etiquetas. Con eso el Estudio encuentra «Levo en sendero con barro» aunque el archivo se llame IMG_4821.jpg. Las carpetas de Drive que agregues en «Carpetas de fotos» se suman al archivo cada hora (y al agregarlas).

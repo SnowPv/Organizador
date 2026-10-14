@@ -15,8 +15,8 @@
  * Para actualizar este archivo más adelante: reemplaza todo su contenido y repite los dos pasos anteriores.
  */
 
-const EX_VERSION = '2026-11-23';
-const EX_NIVEL = 26;      // la app lo usa para saber qué funciones tiene este script
+const EX_VERSION = '2026-11-24';
+const EX_NIVEL = 27;      // la app lo usa para saber qué funciones tiene este script
 const EX_HOJA = 'Tareas';
 const EX_PRIMERA = 4;
 const EX_ULTIMA = 400;
@@ -1305,6 +1305,88 @@ function ex_carpetaBanco_() {
   return f;
 }
 
+// ---------- Archivo de fotos (hoja «Fotos») ----------
+// Índice de todas las fotos del banco (las que subes desde el computador o el celular y las de tus carpetas de Drive),
+// con una descripción hecha por la IA mirando cada foto. Así el Estudio encuentra «Levo en sendero con barro» aunque
+// el archivo se llame IMG_4821.jpg, y la lista carga rápido aunque sean miles.
+const EX_CAB_FOTOS = ['ID archivo', 'Carpeta', 'Nombre', 'Fecha', 'Descripción IA', 'Etiquetas', 'Origen', 'Clave', 'Carpeta ID'];
+function ex_hojaFotos_() { return ex_hojaCab_('Fotos', EX_CAB_FOTOS); }
+function ex_carpetaSubidas_() {
+  const pr = PropertiesService.getScriptProperties(), id = pr.getProperty('EX_SUBIDAS_ID');
+  if (id) { try { return DriveApp.getFolderById(id); } catch (e) {} }
+  const banco = ex_carpetaBanco_(), it = banco.getFoldersByName('Fotos subidas'), f = it.hasNext() ? it.next() : banco.createFolder('Fotos subidas');
+  pr.setProperty('EX_SUBIDAS_ID', f.getId());
+  return f;
+}
+// Recibe una foto (ya achicada a ~2048 px por la app) y la guarda en Drive + índice. Si ya existe (misma clave), no la repite.
+function ex_subirFoto_(p) {
+  const sh = ex_hojaFotos_(), clave = String(p.clave || '').slice(0, 300);
+  if (clave && sh.getLastRow() > 1 && sh.getRange(2, 8, sh.getLastRow() - 1, 1).createTextFinder(clave).matchEntireCell(true).findNext()) return { ok: true, repetida: true };
+  const datos = Utilities.base64Decode(String(p.data || '').replace(/^data:[^,]+,/, ''));
+  if (!datos.length) throw new Error('foto vacía');
+  const nombre = String(p.nombre || 'foto.jpg').replace(/\.(heic|heif|png|webp)$/i, '.jpg').slice(0, 120), ruta = String(p.ruta || '').slice(0, 200);
+  const f = ex_carpetaSubidas_().createFile(Utilities.newBlob(datos, 'image/jpeg', nombre));
+  if (ruta) { try { f.setDescription(ruta); } catch (e) {} }
+  sh.appendRow([f.getId(), ruta, nombre, p.fecha ? new Date(p.fecha) : new Date(), '', '', 'subida', clave, ex_carpetaSubidas_().getId()]);
+  return { ok: true, id: f.getId() };
+}
+// Agrega al índice las fotos nuevas de tus carpetas de Drive (banco y carpetas extra, con 2 niveles de subcarpetas).
+function ex_fotosSync_(maxMs) {
+  const t0 = Date.now(), sh = ex_hojaFotos_(), n = sh.getLastRow() - 1, ya = {};
+  (n > 0 ? sh.getRange(2, 1, n, 1).getValues() : []).forEach(function (r) { ya[String(r[0])] = 1; });
+  const sub = ex_carpetaSubidas_().getId(), filas = [];
+  const recorrer = function (f, ruta, raiz, nivel) {
+    if (Date.now() - t0 > maxMs || f.getId() === sub) return;
+    const it = f.getFiles();
+    while (it.hasNext() && Date.now() - t0 < maxMs) {
+      const x = it.next(); if (ya[x.getId()] || !/^image\//.test(x.getMimeType()) || /^logo-marca/.test(x.getName())) continue;
+      ya[x.getId()] = 1; filas.push([x.getId(), ruta, x.getName(), x.getDateCreated(), x.getDescription() && x.getDescription() !== ruta ? x.getDescription() : '', '', 'drive', '', raiz]);
+    }
+    if (nivel >= 2) return;
+    const sf = f.getFolders(); while (sf.hasNext()) { const c = sf.next(); recorrer(c, (ruta ? ruta + ' / ' : '') + c.getName(), raiz, nivel + 1); }
+  };
+  try { const b = ex_carpetaBanco_(); recorrer(b, '', b.getId(), 0); } catch (e) {}
+  ex_bancoCarpetas_().forEach(function (id) { try { const f = DriveApp.getFolderById(id); recorrer(f, f.getName(), id, 0); } catch (e) {} });
+  if (filas.length) sh.getRange(sh.getLastRow() + 1, 1, filas.length, EX_CAB_FOTOS.length).setValues(filas);
+  return filas.length;
+}
+// La IA mira las fotos sin descripción (de a 8, en miniatura) y escribe qué se ve. Modelo económico (Haiku).
+const EX_FOTO_ESQUEMA = { type: 'object', additionalProperties: false, required: ['fotos'], properties: { fotos: { type: 'array', items: { type: 'object', additionalProperties: false, required: ['i', 'descripcion', 'etiquetas'], properties: { i: { type: 'integer' }, descripcion: { type: 'string' }, etiquetas: { type: 'array', items: { type: 'string' } } } } } } };
+function ex_describirFotos_(maxMs) {
+  const pr = PropertiesService.getScriptProperties(), clave = pr.getProperty('ANTHROPIC_API_KEY'); if (!clave) return 0;
+  const t0 = Date.now(), sh = ex_hojaFotos_(), n = sh.getLastRow() - 1; if (n < 1) return 0;
+  const datos = sh.getRange(2, 1, n, 6).getValues(), pend = [];
+  datos.forEach(function (r, k) { if (r[0] && !r[4]) pend.push(k); });
+  let hechas = 0;
+  for (let a = 0; a < pend.length && Date.now() - t0 < maxMs; a += 8) {
+    const lote = pend.slice(a, a + 8), content = [{ type: 'text', text: 'Fotos de Blackline Puerto Varas (tienda Specialized de bicicletas, taller y salidas por los senderos del sur de Chile). Para cada foto escribe una descripción breve y concreta en español (qué se ve: bici y modelo si se reconoce, persona, lugar, acción, luz, si sirve para redes) y 3 a 8 etiquetas cortas.' }], idx = [];
+    lote.forEach(function (k, j) {
+      try {
+        const b = UrlFetchApp.fetch('https://drive.google.com/thumbnail?id=' + encodeURIComponent(datos[k][0]) + '&sz=w512', { headers: { Authorization: 'Bearer ' + ScriptApp.getOAuthToken() } }).getBlob();
+        content.push({ type: 'text', text: 'Foto i=' + j + (datos[k][1] ? ' · carpeta: ' + datos[k][1] : '') });
+        content.push({ type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: Utilities.base64Encode(b.getBytes()) } });
+        idx.push(j);
+      } catch (e) { sh.getRange(k + 2, 5).setValue('(sin vista previa)'); }
+    });
+    if (!idx.length) continue;
+    const r = UrlFetchApp.fetch('https://api.anthropic.com/v1/messages', { method: 'post', contentType: 'application/json', muteHttpExceptions: true, headers: { 'x-api-key': clave, 'anthropic-version': '2023-06-01' },
+      payload: JSON.stringify({ model: pr.getProperty('FOTOS_MODELO') || 'claude-haiku-5-5', max_tokens: 2500, output_config: { format: { type: 'json_schema', schema: EX_FOTO_ESQUEMA } }, messages: [{ role: 'user', content: content }] }) });
+    if (r.getResponseCode() !== 200) { console.log('Fotos IA: ' + r.getResponseCode() + ' ' + r.getContentText().slice(0, 200)); break; }
+    const j = JSON.parse(r.getContentText()), txt = (j.content || []).filter(function (c) { return c.type === 'text'; }).map(function (c) { return c.text; }).join('');
+    let res = []; try { res = JSON.parse(txt).fotos || []; } catch (e) {}
+    res.forEach(function (x) {
+      const k = lote[x.i]; if (k == null || !x.descripcion) return;
+      sh.getRange(k + 2, 5, 1, 2).setValues([[String(x.descripcion).slice(0, 400), (x.etiquetas || []).slice(0, 8).join(', ')]]); hechas++;
+      try { DriveApp.getFileById(datos[k][0]).setDescription(((datos[k][1] ? datos[k][1] + ' · ' : '') + x.descripcion).slice(0, 500)); } catch (e) {}
+    });
+  }
+  return hechas;
+}
+function ex_fotosEstado_() {
+  const sh = ex_hojaFotos_(), n = sh.getLastRow() - 1; if (n < 1) return { total: 0, pendientes: 0 };
+  const v = sh.getRange(2, 5, n, 1).getValues(); return { total: n, pendientes: v.filter(function (r) { return !r[0]; }).length };
+}
+
 // Kit de marca (colores, tipografías, logo, tono y contexto del negocio), guardado en la hoja "Marca".
 function ex_marca_(p) {
   const sh = ex_hojaCab_('Marca', ['Actualizado', 'Marca (JSON)']);
@@ -1324,6 +1406,16 @@ function ex_marca_(p) {
 // para que la app pueda dibujarlas (el navegador no deja exportar imágenes de otros sitios).
 function ex_imagen_(p) {
   const pr = PropertiesService.getScriptProperties();
+  if (p.accion === 'subir') return ex_subirFoto_(p);
+  if (p.accion === 'fotosEstado') { if (p.sinc) ex_fotosSync_(60000); return Object.assign({ ok: true }, ex_fotosEstado_()); }
+  if (p.accion === 'listar' && ex_hojaFotos_().getLastRow() > 1) {   // desde el índice (rápido y con la descripción de la IA)
+    const sh = ex_hojaFotos_(), filas = sh.getRange(2, 1, sh.getLastRow() - 1, EX_CAB_FOTOS.length).getValues(), tz = ex_tz_(), porC = {};
+    const validas = {}; ex_bancoCarpetas_().forEach(function (id) { validas[id] = 1; }); try { validas[ex_carpetaBanco_().getId()] = 1; validas[ex_carpetaSubidas_().getId()] = 1; } catch (e) {}
+    const out = filas.filter(function (r) { return r[0] && r[4] !== '(sin vista previa)' && (!r[8] || validas[r[8]]); }).slice(-5000).map(function (r) { porC[r[8]] = (porC[r[8]] || 0) + 1;
+      return { fuente: 'drive', id: String(r[0]), nombre: [r[1], String(r[2]).replace(/\.[a-z0-9]+$/i, ''), r[4], r[5]].filter(String).join(' · ').slice(0, 400), fecha: r[3] instanceof Date ? Utilities.formatDate(r[3], tz, "yyyy-MM-dd") : '' }; }).reverse();
+    const carpetas = ex_bancoCarpetas_().map(function (id) { try { return { id: id, nombre: DriveApp.getFolderById(id).getName(), fotos: porC[id] || 0 }; } catch (e) { return { id: id, nombre: '', error: 'sin acceso' }; } });
+    return { ok: true, items: out, carpetas: carpetas, archivo: ex_fotosEstado_() };
+  }
   if (p.accion === 'listar') {
     const out = [];
     try {
@@ -1337,7 +1429,7 @@ function ex_imagen_(p) {
   if (p.accion === 'carpeta') {   // agregar o quitar una carpeta de Drive (link) al banco de fotos
     const id = ex_idCarpeta_(p.link || p.id); if (!id) throw new Error('No reconozco el link de la carpeta de Drive');
     let L = ex_bancoCarpetas_().filter(function (x) { return x !== id; });
-    if (!p.quitar) { let f; try { f = DriveApp.getFolderById(id); } catch (e) { throw new Error('No tengo acceso a esa carpeta: compártela con la cuenta dueña del script'); } L.push(id); pr.setProperty('BANCO_CARPETAS', L.join(',')); return { ok: true, nombre: f.getName() }; }
+    if (!p.quitar) { let f; try { f = DriveApp.getFolderById(id); } catch (e) { throw new Error('No tengo acceso a esa carpeta: compártela con la cuenta dueña del script'); } L.push(id); pr.setProperty('BANCO_CARPETAS', L.join(',')); let nuevas = 0; try { nuevas = ex_fotosSync_(60000); } catch (e) {} return { ok: true, nombre: f.getName(), nuevas: nuevas }; }
     pr.setProperty('BANCO_CARPETAS', L.join(',')); return { ok: true };
   }
   if (p.accion === 'spz') {   // fotos oficiales de producto (specialized.com/cl) para el modelo que se nombra
@@ -3615,6 +3707,7 @@ function ex_tareaHoraria() {
   try { ex_spzRonda_(); } catch (e) { console.log('Specialized: ' + e.message); }
   try { ex_rondaProveedores_(); } catch (e) { console.log('Proveedores: ' + e.message); }
   try { ex_rondaCerebro_(); } catch (e) { console.log('Cerebro: ' + e.message); }
+  try { ex_fotosSync_(90000); } catch (e) { console.log('Fotos: ' + e.message); }
   if (ex_bsaleToken_()) { try { ex_bsaleVentasSinc_(150000); } catch (e) { console.log('Bsale ventas: ' + e.message); } }
   try { const pr = PropertiesService.getScriptProperties(), u = +pr.getProperty('EX_BIB_SINC') || 0; if (Date.now() - u > 12 * 3600000) { pr.setProperty('EX_BIB_SINC', String(Date.now())); ex_bibliotecaSinc_(); } } catch (e) { console.log('Biblioteca: ' + e.message); }
 }
@@ -3628,7 +3721,11 @@ function ex_tareaBase() {
     else { try { ex_igSincHistorias_(); } catch (e) { console.log('Historias: ' + e.message); } }   // las historias duran 24 h: se revisan cada 6 h
   }
 }
-function ex_tareaAgente() { if (!ex_cuentaVigente_()) return; ex_rondaAgente_(); ex_rondaPerfiles_(); }
+function ex_tareaAgente() {
+  if (!ex_cuentaVigente_()) return;
+  ex_rondaAgente_(); ex_rondaPerfiles_();
+  try { ex_describirFotos_(90000); } catch (e) { console.log('Fotos IA: ' + e.message); }
+}
 
 /* ---------- hábitos: mes nuevo ---------- */
 // Guarda el resumen del mes que termina en "Historial hábitos" y deja la grilla lista para el mes actual.
