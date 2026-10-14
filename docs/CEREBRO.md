@@ -221,3 +221,12 @@ Dónde se ve:
   - el Copiloto tiene `ventas_tienda` y `compras_cliente`;
   - el agente de tareas calcula los pedidos con las ventas reales;
   - el plan del día incluye ventas, qué reponer y el stock quieto.
+
+## Nombres de los contactos de WhatsApp
+
+Cuando un contacto llega solo con su número, el nombre se completa solo, en este orden:
+1. **Tarjeta de WhatsApp:** el nombre de su perfil o el de tu agenda del teléfono (Meta la envía una vez al conectar; queda en la hoja «WA agenda»).
+2. **El chat:** el agente lo busca en la conversación (cómo se presenta, cómo firma, lo que responde si le preguntas el nombre o cómo lo saludas tú).
+3. **Contactos → 📇 Contactos sin guardar:** los que no tienen ninguna pista. Ahí escribes el nombre, se lo preguntas por WhatsApp con un toque (cuando responda, el agente lo guarda) o pides al agente que revise esos chats de nuevo.
+
+Nunca se pisa un nombre que ya existe: solo se completan los que están vacíos o son un número.

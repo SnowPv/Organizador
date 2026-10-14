@@ -1581,7 +1581,7 @@ async function api(action, extra){
 function apiX(op, extra){ return api('extra', Object.assign({ op }, extra || {})); }
 // Nivel 2 del script Extras: recordatorios y base de contactos. Nivel 3: la base solo usa contacto@blacklinechile.cl. Nivel 4: eventos de varios días.
 function extNivel(){ return S.extInactivo ? 0 : (S.ext && S.ext.nivel) || 1; }
-const APP_VER = 'v35', NIVEL_ULTIMO = 24;
+const APP_VER = 'v36', NIVEL_ULTIMO = 24;
 function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < NIVEL_ULTIMO; }
 let sincTimer = null;
 // Después de cambiar tareas, el script actualiza los recordatorios del calendario (en segundo plano).
@@ -2493,12 +2493,12 @@ function viewBase(){
   const todos = contactos(), cuenta = t => todos.filter(c => c.tipo === t).length, frios = contactosFrios();
   const q = norm(S.bq);
   const conPerf = perfiles().length, vt = S.bv || (conPerf || perfPendientes() ? 'seg' : 'lista'), nOps = oportunidades().length;
-  let top = '<div class="btabs"><div class="tabs">' + [['seg', 'Resumen'], ['lista', 'Lista · ' + todos.length], ['ops', 'A quién escribir' + (nOps ? ' · ' + nOps : '')], ['camp', '📣 Campañas']].map(t => '<button class="' + (vt === t[0] ? 'on' : '') + '" data-bv="' + t[0] + '">' + t[1] + '</button>').join('') + '</div>' +
+  let top = '<div class="btabs"><div class="tabs">' + [['seg', 'Resumen'], ['lista', 'Lista · ' + todos.length], ['ops', 'A quién escribir' + (nOps ? ' · ' + nOps : '')], ['camp', '📣 Campañas']].concat(sinGuardar().length ? [['sn', '📇 Contactos sin guardar · ' + sinGuardar().length]] : []).map(t => '<button class="' + (vt === t[0] ? 'on' : '') + '" data-bv="' + t[0] + '">' + t[1] + '</button>').join('') + '</div>' +
     (extNivel() >= 8 ? '<button class="btn sm" id="bImp2">' + icon('users') + ' Importar chats</button>' : '') + '</div>';
   if (vt === 'seg' && extNivel() >= 13 && !S._baseStatsPend && (!S.leadsCanal || (extNivel() >= 14 && !S.igEst))){ S._baseStatsPend = 1; Promise.all([loadLeads(), S.igEst ? null : apiX('igEstrategia').then(e => { S.igEst = e; }).catch(() => {})]).then(() => { S._baseStatsPend = 0; if (S.tab === 'base') render(); }); }
   if (vt !== 'lista'){
-    $('#view').innerHTML = top + (vt === 'seg' ? segmentosHTML() : vt === 'camp' ? campanasHTML() : opsHTML());
-    bindBaseTop(); if (vt === 'camp') bindCampanas();
+    $('#view').innerHTML = top + (vt === 'seg' ? segmentosHTML() : vt === 'camp' ? campanasHTML() : vt === 'sn' ? sinGuardarHTML() : opsHTML());
+    bindBaseTop(); if (vt === 'camp') bindCampanas(); if (vt === 'sn') bindSinGuardar();
     if (vt === 'ops'){ const L2 = oportunidades(); bindOps($('#view'), L2, () => viewBase()); }
     return;
   }
@@ -6965,6 +6965,39 @@ function revisarPlanTarea(P, texto, t, fuentes){
       }
       closeSheet(); toast('✓ ' + hechos.join(' · ')); vibrar(20); render();
     } catch(e){ b.disabled = false; b.textContent = t ? '✓ Reemplazar la tarea' : '✓ Crear todo'; toast('No se pudo: ' + e.message); }
+  };
+}
+
+/* ---------- Contactos sin guardar: los que todavía no tienen nombre ---------- */
+// El nombre se completa solo desde la tarjeta de WhatsApp (perfil o agenda del teléfono) o, si no está ahí,
+// el agente lo busca en el chat (cómo se presenta, cómo firma o cómo lo saludas). Aquí quedan los que no tienen ninguna pista.
+const sinNombre = n => { n = String(n == null ? '' : n).trim(); return !n || /^\+?[\d\s()-]+$/.test(n) || /^WhatsApp [\w.]{1,8}$/.test(n) || /^#(ERROR!|NAME\?|VALUE!)/.test(n); };
+function sinGuardar(){ return contactos().filter(c => c.tipo !== 'Ignorar' && !c.email && sinNombre(c.nombre)); }
+function sinGuardarHTML(){
+  const L = sinGuardar().sort((a, b) => (b.ultima || '').localeCompare(a.ultima || ''));
+  if (!L.length) return '<div class="sec"><div class="empty">Todos tus contactos tienen nombre ✓</div></div>';
+  return '<div class="wsub" style="margin:0 2px 12px;line-height:1.5">Contactos de WhatsApp sin nombre: no está en su tarjeta de WhatsApp ni en tu agenda, y el agente no lo encontró en el chat. Escríbelo aquí, o pregúntaselo por WhatsApp: cuando te responda, el agente lo guarda solo.</div>' +
+    '<div class="btns" style="margin:0 0 12px"><button class="btn sm" id="snIA">🧠 Buscar nombres en los chats (' + L.length + ')</button></div>' +
+    '<div class="sec">' + L.map((c, i) => '<div class="ct-row" style="flex-wrap:wrap;gap:10px;cursor:default">' + avatar(c, 36) + '<div class="grow" style="min-width:160px"><b>' + esc(c.telefono || c.nombre || c.id) + '</b><div class="tm"><span>' + esc(c.tipo) + '</span>' + (c.ultima ? '<span>última conversación ' + esc(haceTxt(c.ultima)) + '</span>' : '') + (c.telefono ? '' : '<span>sin teléfono (usuario de WhatsApp)</span>') + '</div></div>' +
+      '<input type="text" data-snn="' + i + '" placeholder="Nombre" style="flex:1;min-width:140px;max-width:240px">' +
+      '<button class="btn sm" data-sns="' + i + '">Guardar</button>' + (telWA(c) ? '<button class="btn sm sec" data-snp="' + i + '">💬 Preguntar</button>' : '') + '<button class="btn sm sec" data-sno="' + i + '">Ver ficha</button></div>').join('') + '</div>';
+}
+function bindSinGuardar(){
+  const L = sinGuardar().sort((a, b) => (b.ultima || '').localeCompare(a.ultima || ''));
+  $$('[data-sns]').forEach(b => b.onclick = async () => {
+    const i = +b.dataset.sns, c = L[i], nom = $('[data-snn="' + i + '"]').value.trim();
+    if (!nom) return toast('Escribe el nombre');
+    b.disabled = true; b.innerHTML = '<span class="spin"></span>';
+    try { await apiX('contacto', { contacto: { id: c.id, nombre: nom } }); toast('✓ ' + nom + ' guardado'); await loadBase(true); viewBase(); }
+    catch(e){ b.disabled = false; b.textContent = 'Guardar'; toast('No se pudo: ' + e.message); }
+  });
+  $$('[data-snn]').forEach(x => x.onkeydown = e => { if (e.key === 'Enter') $('[data-sns="' + x.dataset.snn + '"]').click(); });
+  $$('[data-snp]').forEach(b => b.onclick = () => { const c = L[+b.dataset.snp]; window.open('https://wa.me/' + telWA(c) + '?text=' + encodeURIComponent('¡Hola! Te escribe Gustavo de Blackline Puerto Varas 🙌 Para tenerte bien registrado, ¿me recuerdas tu nombre?'), '_blank'); });
+  $$('[data-sno]').forEach(b => b.onclick = () => openContacto(L[+b.dataset.sno]));
+  const ia = $('#snIA'); if (ia) ia.onclick = async () => {
+    ia.disabled = true; ia.innerHTML = '<span class="spin"></span>Encolando…';
+    try { await apiX('perfilar', { encolar: L.map(c => c.id) }); toast('🧠 El agente revisará esos chats en las próximas rondas (cada 10 min)'); ia.textContent = '✓ En cola'; }
+    catch(e){ ia.disabled = false; ia.textContent = '🧠 Buscar nombres en los chats'; toast('No se pudo: ' + e.message); }
   };
 }
 

@@ -15,7 +15,7 @@
  * Para actualizar este archivo más adelante: reemplaza todo su contenido y repite los dos pasos anteriores.
  */
 
-const EX_VERSION = '2026-11-20';
+const EX_VERSION = '2026-11-21';
 const EX_NIVEL = 24;      // la app lo usa para saber qué funciones tiene este script
 const EX_HOJA = 'Tareas';
 const EX_PRIMERA = 4;
@@ -725,6 +725,17 @@ function ex_waHistorial_(obj, propio, out, nombres, prof) {
 
 // Agenda de WhatsApp Business (Meta la envía una vez al conectar, «smb_app_state_sync»): se guarda en la hoja
 // «WA agenda» para poner nombre a los contactos que lleguen después, y se renombran los que solo tenían el número.
+// ¿El contacto todavía no tiene nombre de verdad? (vacío, solo el número, el identificador de WhatsApp o un error de fórmula)
+function ex_sinNombre_(nom) {
+  nom = String(nom == null ? '' : nom).trim();
+  return !nom || /^\+?[\d\s()-]+$/.test(nom) || /^WhatsApp [\w.]{1,8}$/.test(nom) || /^#(ERROR!|NAME\?|VALUE!)/.test(nom);
+}
+// Nombre propuesto por el agente: se descarta si es un número, «desconocido» o claramente no es un nombre.
+function ex_nombreValido_(nom) {
+  nom = String(nom || '').trim();
+  return nom.length >= 2 && nom.length <= 60 && !ex_sinNombre_(nom) && !/^(desconocido|cliente|sin nombre|n\/a|no indica)$/i.test(nom) && /[a-záéíóúñ]/i.test(nom);
+}
+
 function ex_waAgenda_(nuevos) {
   const ss = SpreadsheetApp.getActive();
   let sh = ss.getSheetByName('WA agenda');
@@ -745,7 +756,7 @@ function ex_waAgenda_(nuevos) {
   let renombrados = 0;
   fc.forEach(function (r, i) {
     const nom = String(r[2] || ''), nu = porU[ult9(r[5])];
-    if (nu && (!nom || /^\+?[\d\s]+$/.test(nom))) { b.cs.getRange(i + 2, 3).setValue(nu); renombrados++; }
+    if (nu && ex_sinNombre_(nom)) { b.cs.getRange(i + 2, 3).setValue(nu); renombrados++; }
   });
   return { agenda: Object.keys(nuevos).length, renombrados: renombrados };
 }
@@ -789,7 +800,7 @@ function ex_whatsapp_(p) {
   (ni > 0 ? b.is.getRange(2, 6, ni, 1).getValues() : []).forEach(function (r) { claves[String(r[0])] = true; });
   const abiertas = {};
   ex_filasNeg_(neg).forEach(function (r, i) { if (r[0] && r[10] === 'Abierta' && r[2]) (abiertas[String(r[2])] = abiertas[String(r[2])] || []).push(i + 2); });
-  const nuevosC = [], nuevasI = [], filasWa = [], telefonos = [], actividad = {}, leads = [], histIds = {}; let histN = 0;
+  const nuevosC = [], nuevasI = [], filasWa = [], telefonos = [], renombres = [], actividad = {}, leads = [], histIds = {}; let histN = 0;
   msgs.sort(function (x, y) { return Number(x.m.timestamp || 0) - Number(y.m.timestamp || 0); });
   msgs.forEach(function (x) {
     const m = x.m, clave = 'w:' + m.id;
@@ -817,6 +828,8 @@ function ex_whatsapp_(p) {
     }
     const c = contactos[id];
     if (c.tipo === 'Ignorar') return;
+    // Nombre de la tarjeta de WhatsApp (perfil o agenda) para quien solo tenía el número.
+    if (!c.nuevo && c.fila && nombreWa && ex_sinNombre_(c.nombre)) { renombres.push([c.fila, nombreWa]); c.nombre = nombreWa; }
     if (tel && !c.nuevo && !ult9(c.tel) && c.fila) { telefonos.push([c.fila, '+' + tel]); c.tel = '+' + tel; }
     nuevasI.push([fecha, id, x.saliente ? '💬 WhatsApp enviado' : '💬 WhatsApp recibido', texto.slice(0, 300), tel ? 'https://wa.me/' + tel : '', clave]);
     filasWa.push([fecha, x.saliente ? 'Enviado' : 'Recibido', tel ? '+' + tel : uid, c.nombre || nombreWa, texto.slice(0, 500), m.type || '', id, m.id]);
@@ -831,6 +844,7 @@ function ex_whatsapp_(p) {
   });
   if (nuevosC.length) b.cs.getRange(b.cs.getLastRow() + 1, 1, nuevosC.length, EX_CAB_CONTACTOS.length).setValues(nuevosC);
   telefonos.forEach(function (t) { b.cs.getRange(t[0], 6).setValue("'" + t[1]); });
+  renombres.forEach(function (t) { b.cs.getRange(t[0], 3).setValue(t[1]); });
   if (nuevasI.length) b.is.getRange(b.is.getLastRow() + 1, 1, nuevasI.length, EX_CAB_INTER.length).setValues(nuevasI);
   if (filasWa.length) wa.getRange(wa.getLastRow() + 1, 1, filasWa.length, EX_CAB_WA.length).setValues(filasWa);
   Object.keys(actividad).forEach(function (f) { neg.getRange(Number(f), 15).setValue(actividad[f]); });
@@ -1692,6 +1706,7 @@ const EX_AG_SISTEMA = [
   '6. Definir la próxima acción más efectiva para avanzar la venta, con fecha.',
   '7. Indicar si el cliente está esperando respuesta del encargado (su último mensaje no tiene respuesta).',
   '8. Proponer una idea breve de respuesta (tono cercano, chileno, profesional) solo si el cliente espera respuesta; si no, deja el texto vacío.',
+  '   NOMBRE DEL CONTACTO (contacto.nombre): el nombre de la persona (nombre y, si aparece, apellido). Búscalo en este orden: cómo se presenta («soy Pedro», «habla Carla»), cómo firma, cómo responde si el encargado le pregunta su nombre, o cómo la saluda el encargado («Hola Pedro»). Si el CONTACTO ya trae un nombre real, devuélvelo igual. Si no hay ninguna pista, deja el texto vacío: nunca uses el número, un apodo de usuario ni inventes.',
   '9. Armar el PERFIL del contacto como lo haría un vendedor experto de bicicletas (ver reglas abajo).',
   '10. Proponer hasta 3 RECOMENDACIONES futuras para venderle más (no son tareas): avisar cuando llegue algo que pidió y no había, mantención a los 6 meses de su compra, revisar batería antes de que venza la garantía (2 años), ofrecer upgrade o parte de pago si su bici tiene 3 o más años, reactivar un interés antiguo, invitar a una salida o clínica si es principiante. Cada una con fecha sugerida (AAAA-MM-DD) y el producto relacionado.',
   '',
@@ -1860,7 +1875,7 @@ function ex_aplicarAgente_(id, ctx, a, opt) {
   const b = ex_baseHojas_(), filas = ex_filasContactos_(b.cs), i = filas.findIndex(function (r) { return String(r[0]) === id; });
   const cambios = [], c = filas[i], ac = a.contacto || {};
   // Contacto: completa lo que falta, sin pisar lo que tú ya definiste.
-  if (ac.nombre && (/^\+?[\d\s()-]+$/.test(String(c[2])) || /^#(ERROR!|NAME\?|VALUE!)/.test(String(c[2])) || !c[2])) { b.cs.getRange(i + 2, 3).setValue(ac.nombre); cambios.push('nombre: ' + ac.nombre); }
+  if (ex_nombreValido_(ac.nombre) && ex_sinNombre_(c[2])) { b.cs.getRange(i + 2, 3).setValue(String(ac.nombre).trim()); cambios.push('nombre: ' + String(ac.nombre).trim()); }
   if (ac.tipo && ac.tipo !== 'Por clasificar' && (c[1] === 'Por clasificar' || !c[1])) { b.cs.getRange(i + 2, 2).setValue(ac.tipo); cambios.push('tipo: ' + ac.tipo); }
   if (ac.email && !c[4]) { b.cs.getRange(i + 2, 5).setValue(ac.email.toLowerCase()); cambios.push('correo'); }
   const tags = String(c[6] || '').split(',').map(function (t) { return t.trim(); }).filter(String);
