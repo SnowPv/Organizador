@@ -234,3 +234,12 @@ Nunca se pisa un nombre que ya existe: solo se completan los que están vacíos 
 ## Chat en la ficha del contacto
 
 En **Contactos**, al abrir un contacto, la pestaña **💬 Chat** (entre Resumen y Perfil) muestra toda la conversación de WhatsApp guardada: mensajes en vivo, el historial que compartió Meta y los chats importados. Debajo puedes clasificar al contacto con un toque (Cliente, Proveedor, Institución, Equipo, Otro o Ignorar).
+
+## Depurar contactos de WhatsApp
+
+**Contactos → Lista → 🧹 Depurar.** Primero muestra qué haría, sin cambiar nada. Al confirmar:
+- **Se archivan:** quienes no están guardados en tu teléfono, los que no tuvieron conversación, los de conversación de un solo lado y los que consultaron, se les respondió y no volvieron a escribir.
+- **El agente revisa** a los que están guardados y tuvieron una conversación de ida y vuelta: si se habló de comprar un producto o un servicio, abre la negociación en el Pipeline (aunque sea antigua; si ya compró, te pide confirmarlo); si no, los archiva.
+- **No se tocan:** chats de los últimos 30 días, quien tiene una negociación abierta, proveedores, instituciones, equipo y contactos de correo.
+
+Archivar no borra: quedan en el filtro «🗄️ Archivados» (hoja «Depuración» con el motivo) y vuelven solos si escriben de nuevo. «Restaurar archivados» lo deshace.

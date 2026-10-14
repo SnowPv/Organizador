@@ -15,8 +15,8 @@
  * Para actualizar este archivo más adelante: reemplaza todo su contenido y repite los dos pasos anteriores.
  */
 
-const EX_VERSION = '2026-11-22';
-const EX_NIVEL = 25;      // la app lo usa para saber qué funciones tiene este script
+const EX_VERSION = '2026-11-23';
+const EX_NIVEL = 26;      // la app lo usa para saber qué funciones tiene este script
 const EX_HOJA = 'Tareas';
 const EX_PRIMERA = 4;
 const EX_ULTIMA = 400;
@@ -114,6 +114,11 @@ function app_extra_(p) {
     case 'base':       return ex_leerBase_();
     case 'contacto':   return ex_guardarContacto_(p.contacto || {});
     case 'chat':       return ex_chat_(p);
+    case 'depurar': {
+      const lk = LockService.getScriptLock();
+      if (!lk.tryLock(30000)) throw new Error('El script está ocupado (llegando mensajes). Intenta en un minuto.');
+      try { return ex_depurar_(p); } finally { lk.releaseLock(); }
+    }
     case 'nota':       return ex_nota_(p);
     case 'escanear':   return ex_escanearBase_();
     case 'negocios':   return ex_leerNegocios_();
@@ -717,18 +722,21 @@ function ex_desdeTelnyx_(pay, msgs, nombres) {
 // Historial de chats (coexistencia): al conectar el número, si aceptas compartir el historial, Meta envía hasta
 // 6 meses de conversaciones en partes (campo «history»). Se buscan en cualquier nivel del aviso, por si el proveedor
 // (Telnyx) lo envuelve en su propio formato. También se leen los nombres de tus contactos («state_sync»).
+// Eventos de WhatsApp que no son mensajes (ediciones, errores, reacciones…): no se guardan en el chat.
+const EX_WA_RUIDO = /^(edit|errors|revoke|reaction|unsupported|system|request_welcome|ephemeral)$/;
 function ex_waHistorial_(obj, propio, out, nombres, prof) {
   if (!obj || typeof obj !== 'object' || (prof || 0) > 8) return;
   if (Array.isArray(obj)) { obj.forEach(function (x) { ex_waHistorial_(x, propio, out, nombres, (prof || 0) + 1); }); return; }
   const md = obj.metadata && obj.metadata.display_phone_number ? String(obj.metadata.display_phone_number).replace(/\D/g, '') : propio;
   if (Array.isArray(obj.threads)) {
-    if (obj.metadata && obj.metadata.progress != null) out.progreso = Math.max(out.progreso || 0, +obj.metadata.progress || 0);
+    if (obj.metadata && obj.metadata.progress != null) { out.progreso = Math.max(out.progreso || 0, +obj.metadata.progress || 0); if (obj.metadata.phase != null) out.fase = String(obj.metadata.phase); }
     obj.threads.forEach(function (th) {
       // El cliente se identifica por teléfono o, desde 2026, por su identificador de WhatsApp (BSUID, ej. «CL.1234…»).
       const ctx = th.context || {}, crudo = String(th.id || th.wa_id || ctx.user_id || ''), esUid = /^[A-Z]{2}\./.test(crudo);
       const cli = esUid ? '' : crudo.replace(/\D/g, ''), uid = esUid ? crudo : String(ctx.user_id || '');
       if (uid && ctx.username && !nombres[uid]) nombres[uid] = ctx.username;
       (th.messages || []).forEach(function (m) {
+        if (EX_WA_RUIDO.test(String(m.type || ''))) return;
         const de = String(m.from || '').replace(/\D/g, '');
         const sal = m.from_user_id ? false : cli ? (de ? de !== cli : true) : (de ? !!md && de === md : true);
         const extra = sal ? { to: m.to || cli, to_user_id: m.to_user_id || uid } : { from: m.from || cli, from_user_id: m.from_user_id || uid };
@@ -791,7 +799,8 @@ function ex_whatsapp_(p) {
     if (!hist.msgs.length && !hist.rechazado) return;
     const pr = PropertiesService.getScriptProperties(), H = JSON.parse(pr.getProperty('EX_WA_HIST') || '{}');
     H.mensajes = (H.mensajes || 0) + n; H.chats = (H.chats || 0) + chats;
-    if (hist.progreso != null) H.progreso = hist.progreso; if (hist.rechazado) H.rechazado = hist.rechazado;
+    if (hist.progreso != null) { H.progreso = Math.max(hist.progreso, H.fase === hist.fase ? H.progreso || 0 : 0); H.fase = hist.fase || H.fase; H.fases = H.fases || {}; if (hist.fase != null) H.fases[hist.fase] = Math.max(H.fases[hist.fase] || 0, hist.progreso); }
+    if (hist.rechazado) H.rechazado = hist.rechazado;
     H.ultimo = new Date().toISOString(); if (!H.desde) H.desde = H.ultimo;
     pr.setProperty('EX_WA_HIST', JSON.stringify(H));
   };
@@ -804,7 +813,7 @@ function ex_whatsapp_(p) {
         if (c.wa_id) nombres[String(c.wa_id)] = nom;
         if (c.user_id) { nombres[String(c.user_id)] = nom; if (c.wa_id) uidTel[String(c.user_id)] = String(c.wa_id).replace(/\D/g, ''); }
       });
-      const add = function (m, saliente) { if (m && m.id && (m.from || m.to || m.from_user_id || m.to_user_id)) msgs.push({ m: m, saliente: saliente }); };
+      const add = function (m, saliente) { if (m && m.id && !EX_WA_RUIDO.test(String(m.type || '')) && (m.from || m.to || m.from_user_id || m.to_user_id)) msgs.push({ m: m, saliente: saliente }); };
       (v.messages || []).forEach(function (m) { add(m, campo === 'smb_message_echoes' || (!!propio && String(m.from) === propio)); });
       (v.message_echoes || []).forEach(function (m) { add(m, true); });
     });
@@ -819,11 +828,11 @@ function ex_whatsapp_(p) {
   (ni > 0 ? b.is.getRange(2, 6, ni, 1).getValues() : []).forEach(function (r) { claves[String(r[0])] = true; });
   const abiertas = {};
   ex_filasNeg_(neg).forEach(function (r, i) { if (r[0] && r[10] === 'Abierta' && r[2]) (abiertas[String(r[2])] = abiertas[String(r[2])] || []).push(i + 2); });
-  const nuevosC = [], nuevasI = [], filasWa = [], telefonos = [], renombres = [], actividad = {}, leads = [], histIds = {}; let histN = 0;
+  const nuevosC = [], nuevasI = [], filasWa = [], telefonos = [], renombres = [], reactivar = [], actividad = {}, leads = [], histIds = {}, largos = {}; let histN = 0;
   msgs.sort(function (x, y) { return Number(x.m.timestamp || 0) - Number(y.m.timestamp || 0); });
   msgs.forEach(function (x) {
     const m = x.m, clave = 'w:' + m.id;
-    if (claves[clave]) return;
+    if (claves[clave]) { const tx = ex_textoWa_(m); if (tx.length > 500) largos[m.id] = tx; return; }
     claves[clave] = true;
     // Teléfono del cliente; si Meta no lo envía (clientes con nombre de usuario), se usa su identificador (BSUID).
     const uid = String(x.saliente ? (m.to_user_id || '') : (m.from_user_id || ''));
@@ -847,11 +856,13 @@ function ex_whatsapp_(p) {
     }
     const c = contactos[id];
     if (c.tipo === 'Ignorar') return;
+    // Un contacto archivado que vuelve a escribir (mensaje en vivo) vuelve a la base.
+    if (c.tipo === 'Archivado' && !x.historial && !x.saliente && c.fila) { reactivar.push(c.fila); c.tipo = 'Por clasificar'; }
     // Nombre de la tarjeta de WhatsApp (perfil o agenda) para quien solo tenía el número.
     if (!c.nuevo && c.fila && nombreWa && ex_sinNombre_(c.nombre)) { renombres.push([c.fila, nombreWa]); c.nombre = nombreWa; }
     if (tel && !c.nuevo && !ult9(c.tel) && c.fila) { telefonos.push([c.fila, '+' + tel]); c.tel = '+' + tel; }
     nuevasI.push([fecha, id, x.saliente ? '💬 WhatsApp enviado' : '💬 WhatsApp recibido', texto.slice(0, 300), tel ? 'https://wa.me/' + tel : '', clave]);
-    filasWa.push([fecha, x.saliente ? 'Enviado' : 'Recibido', tel ? '+' + tel : uid, c.nombre || nombreWa, texto.slice(0, 500), m.type || '', id, m.id]);
+    filasWa.push([fecha, x.saliente ? 'Enviado' : 'Recibido', tel ? '+' + tel : uid, c.nombre || nombreWa, texto.slice(0, 4000), m.type || '', id, m.id]);
     if (abiertas[id]) abiertas[id].forEach(function (f) { if (!actividad[f] || fecha > actividad[f]) actividad[f] = fecha; });
     // Lead nuevo: mensaje reciente con intención de compra de alguien sin negociación abierta.
     if (x.historial){ histIds[id] = c.nombre || nombreWa || id; histN++; return; }
@@ -864,6 +875,12 @@ function ex_whatsapp_(p) {
   if (nuevosC.length) b.cs.getRange(b.cs.getLastRow() + 1, 1, nuevosC.length, EX_CAB_CONTACTOS.length).setValues(nuevosC);
   telefonos.forEach(function (t) { b.cs.getRange(t[0], 6).setValue("'" + t[1]); });
   renombres.forEach(function (t) { b.cs.getRange(t[0], 3).setValue(t[1]); });
+  reactivar.forEach(function (f) { b.cs.getRange(f, 2).setValue('Por clasificar'); });
+  // Mensajes que antes se guardaron cortados (500 caracteres): se completan si vuelven a llegar enteros.
+  Object.keys(largos).forEach(function (mid) {
+    const cel = wa.getRange(2, 8, Math.max(1, wa.getLastRow() - 1), 1).createTextFinder(mid).matchEntireCell(true).findNext();
+    if (cel) { const r = wa.getRange(cel.getRow(), 5); if (String(r.getValue()).length < largos[mid].length) r.setValue(largos[mid].slice(0, 4000)); }
+  });
   if (nuevasI.length) b.is.getRange(b.is.getLastRow() + 1, 1, nuevasI.length, EX_CAB_INTER.length).setValues(nuevasI);
   if (filasWa.length) wa.getRange(wa.getLastRow() + 1, 1, filasWa.length, EX_CAB_WA.length).setValues(filasWa);
   Object.keys(actividad).forEach(function (f) { neg.getRange(Number(f), 15).setValue(actividad[f]); });
@@ -1870,7 +1887,7 @@ function ex_contextoAgente_(id, opt) {
     .filter(function (r) { return r[1] && r[0] !== true && String(r[14]).indexOf(id) >= 0; }).map(function (r) { return '- ' + r[1] + (r[9] instanceof Date ? ' (' + ex_ymd_(r[9], tz) + ')' : ''); });
   const contexto = [
     'Hoy es ' + Utilities.formatDate(new Date(), tz, "EEEE yyyy-MM-dd HH:mm") + ' (hora de Chile).',
-    opt.masivo ? 'MODO HISTORIAL: este chat se importó como historial junto a muchos otros. No crees tareas. Negociación solo si hay intención real y el cliente escribió en los últimos ' + EX_PERF_DIAS_NEG + ' días.' : '',
+    opt.pipeline ? 'MODO DEPURACIÓN: este contacto está guardado en el teléfono y tuvo una conversación de ida y vuelta. Si se habló de comprar un producto o un servicio del taller, crea la negociación aunque la conversación sea antigua (si ya compró o desistió, deja la etapa más avanzada que corresponda y explícalo en el resumen). Si no se habló de comprar nada, negociación «ninguna». No crees tareas.' : opt.masivo ? 'MODO HISTORIAL: este chat se importó como historial junto a muchos otros. No crees tareas. Negociación solo si hay intención real y el cliente escribió en los últimos ' + EX_PERF_DIAS_NEG + ' días.' : '',
     '', 'CONTACTO: ' + JSON.stringify({ nombre: c[2], tipo: c[1], empresa: c[3], email: c[4], telefono: String(c[5] || ''), etiquetas: c[6], notas: c[7] }),
     '', 'NEGOCIACIÓN ABIERTA: ' + (neg ? JSON.stringify({ titulo: neg[1], etapa: neg[3], valor: neg[4], producto: neg[5], proxima_accion: neg[8], notas: neg[12] }) : 'ninguna'),
     '', 'TAREAS ABIERTAS CON ESTE CONTACTO:', tareas.length ? tareas.join('\n') : '(ninguna)',
@@ -1916,7 +1933,10 @@ function ex_aplicarAgente_(id, ctx, a, opt) {
   let negId = ctx.neg ? String(ctx.neg[0]) : '';
   // Regla de negociaciones: solo con intención real de compra o servicio y si el cliente escribió en los últimos 60 días.
   const intencionVenta = ['compra_bici', 'upgrade_componentes', 'servicio_taller', 'repuesto_accesorio'].indexOf(pf.intencion) >= 0;
-  const abrir = met.diasCliente <= EX_PERF_DIAS_NEG && ['proveedor', 'marca', 'personal', 'spam'].indexOf(pf.relacion) < 0 && (intencionVenta || !a.perfil) && (sc.prob >= 35 || pf.fuerza_intencion === 'alta' || (!opt.masivo && n.accion === 'crear'));
+  const abrir = opt.pipeline ? ['proveedor', 'marca', 'personal', 'spam'].indexOf(pf.relacion) < 0 && (n.accion === 'crear' || intencionVenta)
+    : met.diasCliente <= EX_PERF_DIAS_NEG && ['proveedor', 'marca', 'personal', 'spam'].indexOf(pf.relacion) < 0 && (intencionVenta || !a.perfil) && (sc.prob >= 35 || pf.fuerza_intencion === 'alta' || (!opt.masivo && n.accion === 'crear'));
+  if (opt.pipeline && abrir && n.accion !== 'crear') { n.accion = 'crear'; n.etapa = 'Contactado'; }
+  if (opt.pipeline && (n.etapa === 'Ganada' || n.etapa === 'Perdida')) { a.proxima_accion = { texto: '🧠 Confirmar: ¿' + (n.etapa === 'Ganada' ? 'compró? → marcar Ganada' : 'se perdió? → marcar Perdida'), fecha: ex_hoyYmd_(tz) }; n.etapa = 'Negociación'; }
   if (!ctx.neg && n.accion === 'crear' && !abrir) cambios.push('negociación no abierta (' + (met.diasCliente > EX_PERF_DIAS_NEG ? 'conversación de hace más de ' + EX_PERF_DIAS_NEG + ' días' : 'poca intención de compra') + ')');
   // En historial, si los puntajes muestran una venta probable aunque la IA no lo propuso, igual se abre (en "Contactado").
   if (!ctx.neg && abrir && n.accion !== 'crear' && opt.masivo && sc.prob >= 50) { n.accion = 'crear'; if (etapas.indexOf(n.etapa) < 0) n.etapa = 'Contactado'; }
@@ -1934,6 +1954,11 @@ function ex_aplicarAgente_(id, ctx, a, opt) {
     // Ganada o perdida: lo confirmas tú (el agente solo lo sugiere como próxima acción).
     if (n.etapa === 'Ganada' || n.etapa === 'Perdida') { upd.proxima = '🧠 Confirmar: ¿' + (n.etapa === 'Ganada' ? 'compró? → marcar Ganada' : 'se perdió? (' + (n.motivo_perdida || 'sin motivo') + ') → marcar Perdida'); upd.fechaProx = ex_hoyYmd_(tz); cambios.push('sugiere ' + n.etapa); }
     if (Object.keys(upd).length > 1) ex_guardarNegocio_(upd);
+  }
+  // Depuración: si no se habló de comprar nada (y no es proveedor ni del equipo), el contacto se archiva.
+  if (opt.pipeline && !negId && ['Proveedor', 'Institución', 'Equipo'].indexOf(String(ac.tipo || c[1])) < 0) {
+    b.cs.getRange(i + 2, 2).setValue('Archivado'); cambios.push('archivado: sin conversación de compra');
+    ex_logDepuracion_([[id, ac.nombre || c[2], 'sin conversación de compra (agente)', c[1], new Date()]]);
   }
   // Recordatorios de lo conversado (sin repetir los que ya creó ni duplicar tareas pendientes parecidas).
   const props = PropertiesService.getScriptProperties(), hechas = JSON.parse(props.getProperty('EX_AG_TAREAS') || '[]');
@@ -2111,10 +2136,67 @@ function ex_guardarPerfil_(id, nombre, p, met, sc, a, estado, conf) {
 }
 
 // Pone en cola de análisis (la ronda automática los procesa aunque la app esté cerrada).
-function ex_encolarPerfil_(id, nombre) {
-  const sh = ex_hojaPerf_(), filas = ex_filasPerf_(sh), i = filas.findIndex(function (r) { return String(r[0]) === id; });
-  if (i >= 0) sh.getRange(i + 2, 2).setValue('⏳ Pendiente');
-  else sh.appendRow([id, '⏳ Pendiente', /^[+=@-]/.test(String(nombre)) ? "'" + nombre : nombre]);
+// ---------- Depuración de la base de WhatsApp ----------
+// Deja solo a quien está guardado en tu teléfono y tuvo una conversación de ida y vuelta; el agente revisa esos chats
+// y los que hablaron de comprar entran al Pipeline. El resto se archiva (no se borra: si vuelve a escribir, reaparece).
+// Nunca toca: proveedores, instituciones, equipo, contactos de correo, quien tiene una negociación abierta ni chats de los últimos 30 días.
+function ex_logDepuracion_(filas) {
+  if (!filas.length) return;
+  const ss = SpreadsheetApp.getActive();
+  let sh = ss.getSheetByName('Depuración');
+  if (!sh) { sh = ss.insertSheet('Depuración'); sh.appendRow(['Contacto (ID)', 'Nombre', 'Motivo', 'Tipo anterior', 'Fecha']); sh.setFrozenRows(1); }
+  sh.getRange(sh.getLastRow() + 1, 1, filas.length, 5).setValues(filas);
+}
+function ex_depurar_(p) {
+  const b = ex_baseHojas_(), filas = ex_filasContactos_(b.cs), wa = ex_hojaWa_(), n = wa.getLastRow() - 1, ahora = Date.now();
+  if (p.restaurar) {
+    const sh = SpreadsheetApp.getActive().getSheetByName('Depuración'), prev = {};
+    if (sh && sh.getLastRow() > 1) sh.getRange(2, 1, sh.getLastRow() - 1, 4).getValues().forEach(function (r) { if (!prev[r[0]]) prev[String(r[0])] = r[3] || 'Por clasificar'; });
+    let k = 0; filas.forEach(function (r, i) { if (r[1] === 'Archivado' && prev[String(r[0])]) { b.cs.getRange(i + 2, 2).setValue(prev[String(r[0])] === 'Archivado' ? 'Por clasificar' : prev[String(r[0])]); k++; } });
+    return { ok: true, restaurados: k };
+  }
+  const agenda = ex_waAgenda_(null), ag9 = {}; Object.keys(agenda).forEach(function (t) { ag9[t.slice(-9)] = 1; });
+  const usarAgenda = Object.keys(agenda).length >= 20, ult9 = function (t) { return String(t || '').replace(/\D/g, '').slice(-9); };
+  const st = {};
+  if (n > 0) {
+    const ab = wa.getRange(2, 1, n, 2).getValues(), ids = wa.getRange(2, 7, n, 1).getValues();
+    ids.forEach(function (x, k) {
+      const id = String(x[0] || ''); if (!id) return;
+      const t = ab[k][0] instanceof Date ? ab[k][0].getTime() : 0, s = st[id] = st[id] || { i: 0, o: 0, fo: 0, li: 0, ul: 0 };
+      if (ab[k][1] === 'Enviado') { s.o++; if (!s.fo || t < s.fo) s.fo = t; } else { s.i++; if (t > s.li) s.li = t; }
+      if (t > s.ul) s.ul = t;
+    });
+  }
+  const abiertas = {}; ex_filasNeg_(ex_hojaNeg_()).forEach(function (r) { if (r[10] === 'Abierta' && r[2]) abiertas[String(r[2])] = 1; });
+  const archivar = [], pipeline = [], cuenta = { sin_conversacion: 0, solo_consulto: 0, no_guardado: 0, un_solo_lado: 0 }, protegidos = { recientes: 0, negocio_abierto: 0, otros: 0 };
+  filas.forEach(function (r, i) {
+    const id = String(r[0] || ''), s = st[id]; if (!id || !s) return;
+    const tipo = String(r[1] || '');
+    if (['Ignorar', 'Archivado'].indexOf(tipo) >= 0) return;
+    if (['Proveedor', 'Institución', 'Equipo'].indexOf(tipo) >= 0 || r[4]) { protegidos.otros++; return; }
+    if (abiertas[id]) { protegidos.negocio_abierto++; return; }
+    if (ahora - s.ul < 30 * 86400000) { protegidos.recientes++; return; }
+    const guardado = usarAgenda ? !!ag9[ult9(r[5])] : !ex_sinNombre_(r[2]), ambos = s.i > 0 && s.o > 0, replico = ambos && s.li > s.fo;
+    const motivo = !guardado && !ambos ? 'sin_conversacion' : ambos && !replico ? 'solo_consulto' : !guardado ? 'no_guardado' : !ambos ? 'un_solo_lado' : '';
+    const fila = { id: id, nombre: String(r[2] || r[5] || id), fila: i + 2, tipo: tipo, motivo: motivo, msgs: s.i + s.o };
+    if (motivo) { cuenta[motivo]++; archivar.push(fila); } else pipeline.push(fila);
+  });
+  const MOT = { sin_conversacion: 'no está guardado y no hubo conversación', solo_consulto: 'consultó, se le respondió y no volvió a escribir', no_guardado: 'no está guardado en el teléfono', un_solo_lado: 'conversación de un solo lado' };
+  if (!p.aplicar) return { ok: true, simulacion: true, agenda: usarAgenda, archivar: archivar.length, pipeline: pipeline.length, cuenta: cuenta, protegidos: protegidos,
+    ejemplos: { archivar: archivar.slice(0, 40).map(function (x) { return { nombre: x.nombre, motivo: MOT[x.motivo] }; }), pipeline: pipeline.slice(0, 40).map(function (x) { return { nombre: x.nombre, msgs: x.msgs }; }) } };
+  archivar.forEach(function (x) { b.cs.getRange(x.fila, 2).setValue('Archivado'); });
+  ex_logDepuracion_(archivar.map(function (x) { return [x.id, x.nombre, MOT[x.motivo], x.tipo, new Date()]; }));
+  pipeline.forEach(function (x) { ex_encolarPerfil_(x.id, x.nombre, true); });
+  // Los archivados salen de la cola del agente (no se gasta en analizarlos).
+  const arch = {}; archivar.forEach(function (x) { arch[x.id] = 1; });
+  const shp = ex_hojaPerf_(); ex_filasPerf_(shp).forEach(function (r, k) { if (arch[String(r[0])] && /Pendiente/.test(String(r[1]))) shp.getRange(k + 2, 2).setValue('🗄️ Archivado'); });
+  return { ok: true, archivados: archivar.length, enCola: pipeline.length };
+}
+
+function ex_encolarPerfil_(id, nombre, pipeline) {
+  const sh = ex_hojaPerf_(), filas = ex_filasPerf_(sh), i = filas.findIndex(function (r) { return String(r[0]) === id; }), est = pipeline ? '⏳ Pendiente (pipeline)' : '⏳ Pendiente';
+  if (i >= 0) sh.getRange(i + 2, 2).setValue(est);
+  else sh.appendRow([id, est, /^[+=@-]/.test(String(nombre)) ? "'" + nombre : nombre]);
 }
 function ex_pendientesPerf_() { return ex_filasPerf_(ex_hojaPerf_()).filter(function (r) { return /Pendiente/.test(String(r[1])); }).map(function (r) { return String(r[0]); }); }
 
@@ -2144,9 +2226,10 @@ function ex_perfilarOp_(p) {
 // Ronda automática: sigue con los pendientes mientras haya tiempo (unos 4 minutos por ejecución).
 function ex_rondaPerfiles_() {
   if (!PropertiesService.getScriptProperties().getProperty('ANTHROPIC_API_KEY')) return;
-  const t0 = Date.now(), ids = ex_pendientesPerf_();
+  const t0 = Date.now(), ids = ex_pendientesPerf_(), pipe = {};
+  ex_filasPerf_(ex_hojaPerf_()).forEach(function (r) { if (/pipeline/.test(String(r[1]))) pipe[String(r[0])] = true; });
   for (let k = 0; k < ids.length && Date.now() - t0 < 240000; k++) {
-    try { const ctx = ex_contextoAgente_(ids[k], { masivo: true }), a = ex_llamarClaude_(ctx.contexto); ex_conLock_(function () { ex_aplicarAgente_(ids[k], ex_contextoAgente_(ids[k], { masivo: true }), a, { masivo: true }); }); }
+    try { const o = { masivo: true, pipeline: !!pipe[ids[k]] }, ctx = ex_contextoAgente_(ids[k], o), a = ex_llamarClaude_(ctx.contexto); ex_conLock_(function () { ex_aplicarAgente_(ids[k], ex_contextoAgente_(ids[k], o), a, o); }); }
     catch (err) { console.log('Perfil ' + ids[k] + ': ' + err.message); if (/401|credit|429/.test(err.message)) return; try { ex_perfilarError_(ids[k], err); } catch (e) {} }
   }
 }
