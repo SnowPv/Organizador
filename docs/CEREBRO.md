@@ -230,3 +230,7 @@ Cuando un contacto llega solo con su número, el nombre se completa solo, en est
 3. **Contactos → 📇 Contactos sin guardar:** los que no tienen ninguna pista. Ahí escribes el nombre, se lo preguntas por WhatsApp con un toque (cuando responda, el agente lo guarda) o pides al agente que revise esos chats de nuevo.
 
 Nunca se pisa un nombre que ya existe: solo se completan los que están vacíos o son un número.
+
+## Chat en la ficha del contacto
+
+En **Contactos**, al abrir un contacto, la pestaña **💬 Chat** (entre Resumen y Perfil) muestra toda la conversación de WhatsApp guardada: mensajes en vivo, el historial que compartió Meta y los chats importados. Debajo puedes clasificar al contacto con un toque (Cliente, Proveedor, Institución, Equipo, Otro o Ignorar).

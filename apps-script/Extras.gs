@@ -15,8 +15,8 @@
  * Para actualizar este archivo más adelante: reemplaza todo su contenido y repite los dos pasos anteriores.
  */
 
-const EX_VERSION = '2026-11-21';
-const EX_NIVEL = 24;      // la app lo usa para saber qué funciones tiene este script
+const EX_VERSION = '2026-11-22';
+const EX_NIVEL = 25;      // la app lo usa para saber qué funciones tiene este script
 const EX_HOJA = 'Tareas';
 const EX_PRIMERA = 4;
 const EX_ULTIMA = 400;
@@ -113,6 +113,7 @@ function app_extra_(p) {
     case 'sinc':       return ex_sincCalendario_();
     case 'base':       return ex_leerBase_();
     case 'contacto':   return ex_guardarContacto_(p.contacto || {});
+    case 'chat':       return ex_chat_(p);
     case 'nota':       return ex_nota_(p);
     case 'escanear':   return ex_escanearBase_();
     case 'negocios':   return ex_leerNegocios_();
@@ -661,6 +662,24 @@ function ex_hojaWa_() {
   let sh = ss.getSheetByName(EX_HOJA_WA);
   if (!sh) { sh = ss.insertSheet(EX_HOJA_WA); sh.appendRow(EX_CAB_WA); sh.setFrozenRows(1); }
   return sh;
+}
+
+// Conversación completa de WhatsApp de un contacto (para la pestaña Chat de su ficha). Busca sus filas con
+// TextFinder para no leer toda la hoja; devuelve hasta los últimos 1.500 mensajes, del más antiguo al más nuevo.
+function ex_chat_(p) {
+  const id = String(p.id || ''); if (!id) throw new Error('falta el contacto');
+  const wa = ex_hojaWa_(), n = wa.getLastRow() - 1, tz = ex_tz_();
+  if (n < 1) return { ok: true, mensajes: [] };
+  const filas = wa.getRange(2, 7, n, 1).createTextFinder(id).matchEntireCell(true).findAll().map(function (r) { return r.getRow(); });
+  const ancho = EX_CAB_WA.length, vistos = {};
+  if (!filas.length) return { ok: true, mensajes: [] };
+  // Se lee de una vez el tramo de la hoja donde están sus mensajes (mucho más rápido que fila por fila).
+  const r0 = Math.min.apply(null, filas), r1 = Math.max.apply(null, filas), bloque = wa.getRange(r0, 1, r1 - r0 + 1, ancho).getValues();
+  const L = filas.map(function (f) { return bloque[f - r0]; })
+    .filter(function (r) { const k = String(r[7] || ''); if (k && vistos[k]) return false; vistos[k] = 1; return true; })
+    .map(function (r) { return { f: r[0] instanceof Date ? Utilities.formatDate(r[0], tz, 'yyyy-MM-dd HH:mm') : String(r[0] || ''), yo: r[1] === 'Enviado', t: String(r[4] || ''), tipo: String(r[5] || '') }; })
+    .sort(function (a, b) { return a.f < b.f ? -1 : a.f > b.f ? 1 : 0; });
+  return { ok: true, total: L.length, mensajes: L.slice(-1500) };
 }
 
 function ex_textoWa_(m) {

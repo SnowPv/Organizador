@@ -1453,6 +1453,14 @@ body:has(.selbar) .fab,body:has(.selbar) .fab2{display:none}
 /* Fotos pedidas por el Estudio */
 .pz-ped{border:1px solid var(--warn);background:rgba(229,160,0,.07);border-radius:12px;padding:10px 12px;margin-top:12px;font-size:13.5px;line-height:1.45}
 .pz-ped b{display:block;margin-bottom:6px}.pz-ped div span{font-weight:700;margin-right:6px}
+/* Chat de WhatsApp en la ficha */
+.chatw{background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:10px;max-height:62vh;overflow-y:auto;display:flex;flex-direction:column;gap:4px}
+.chatw .dsep{align-self:center;font-size:11.5px;font-weight:700;color:var(--muted);background:var(--card);border:1px solid var(--line);border-radius:999px;padding:2px 10px;margin:8px 0 4px}
+.chatw .bub{max-width:82%;padding:7px 10px 5px;border-radius:12px;font-size:14px;line-height:1.4;white-space:pre-wrap;word-wrap:break-word;background:var(--card);border:1px solid var(--line);align-self:flex-start;border-bottom-left-radius:4px}
+.chatw .bub.yo{align-self:flex-end;background:var(--accent-soft);border-color:transparent;border-bottom-left-radius:12px;border-bottom-right-radius:4px}
+.chatw .bub small{display:block;text-align:right;font-size:10.5px;color:var(--muted);margin-top:2px}
+.chatw .bub.med{font-style:italic;color:var(--muted)}
+.chatbar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:10px 0 2px;font-size:13px}
 /* Campañas 1 a 1 */
 .cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
 .ccard{text-align:left;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:5px;cursor:pointer;transition:border-color .15s,box-shadow .15s}
@@ -1581,7 +1589,7 @@ async function api(action, extra){
 function apiX(op, extra){ return api('extra', Object.assign({ op }, extra || {})); }
 // Nivel 2 del script Extras: recordatorios y base de contactos. Nivel 3: la base solo usa contacto@blacklinechile.cl. Nivel 4: eventos de varios días.
 function extNivel(){ return S.extInactivo ? 0 : (S.ext && S.ext.nivel) || 1; }
-const APP_VER = 'v36', NIVEL_ULTIMO = 24;
+const APP_VER = 'v37', NIVEL_ULTIMO = 25;
 function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < NIVEL_ULTIMO; }
 let sincTimer = null;
 // Después de cambiar tareas, el script actualiza los recordatorios del calendario (en segundo plano).
@@ -1850,7 +1858,7 @@ function viewInicio(){
   const totalHoy = lista.length + hechas.length;
   let html = '<div class="ihead"><button class="quick" id="qa"><b>+</b>Agregar tarea… <span style="margin-left:auto">🎤</span></button>' +
     '<button class="btn sec" id="prodBtn">' + icon('box') + ' Producto</button><button class="btn sec" id="fzBtn">' + icon('chart') + ' Fuentes</button><button class="btn sec" id="planBtn">' + icon('spark') + ' Plan de la semana</button></div>';
-  if (necesitaActualizar()) html += '<div class="w" style="margin-bottom:14px;display:flex;gap:12px;align-items:center"><div class="grow"><b>Nueva versión del script</b><div class="wsub">' + (extNivel() >= 23 ? 'WhatsApp: lee el historial de chats (hasta 6 meses) que Meta comparte al conectar el número con Telnyx, y arma el perfil de cada contacto.' : extNivel() >= 22 ? 'Ventas reales de Bsale: ventas por mes, lo más vendido, qué reponer, stock quieto, mejores clientes y el historial de compras en la ficha de cada cliente.' : extNivel() >= 21 ? 'Estudio: el agente mira las fotos antes de usarlas (descarta las que no calzan), suma fotos oficiales de Specialized, videos de Specialized University y tus carpetas de Drive, y te pide las fotos que faltan.' : extNivel() >= 20 ? 'Postventa automática: al marcar una venta como ganada se agendan la entrega, el registro de garantía, el llamado a los 7 días, la revisión de los 30 días y la foto o reseña.' : extNivel() >= 19 ? 'El Copiloto ahora corrige datos: negociaciones (etapa, fecha real de cierre, valor), notas en la ficha del cliente y tareas, siempre con tu aprobación.' : extNivel() >= 16 ? 'Agente de tareas: piensa cada tarea que dictas (fecha, pasos, proveedor, stock, pedido y mejores opciones) antes de guardarla. También Compras y proveedores.' : extNivel() >= 14 ? 'El Cerebro: plan del día automático, Copiloto que consulta todo, Specialized Chile (ventas, ofertas y stock por talla), clima, noticias y avisos para el equipo.' : extNivel() >= 10 ? 'Instagram: métricas diarias y calendario de contenido con IA. También filtra los correos automáticos de bancos y pagos.' : extNivel() >= 8 ? 'Asistente de IA para planificar tu día y tu semana, Instagram y conexión con Bsale.' : 'Importar chats de WhatsApp y agente de IA.') + '</div></div><button class="btn sm" id="updBtn">Actualizar</button></div>';
+  if (necesitaActualizar()) html += '<div class="w" style="margin-bottom:14px;display:flex;gap:12px;align-items:center"><div class="grow"><b>Nueva versión del script</b><div class="wsub">' + (extNivel() >= 24 ? 'Pestaña Chat en la ficha de cada contacto: lees toda la conversación de WhatsApp y lo clasificas con un toque. Además, nombres automáticos desde la tarjeta de WhatsApp y el chat.' : extNivel() >= 23 ? 'WhatsApp: lee el historial de chats (hasta 6 meses) que Meta comparte al conectar el número con Telnyx, y arma el perfil de cada contacto.' : extNivel() >= 22 ? 'Ventas reales de Bsale: ventas por mes, lo más vendido, qué reponer, stock quieto, mejores clientes y el historial de compras en la ficha de cada cliente.' : extNivel() >= 21 ? 'Estudio: el agente mira las fotos antes de usarlas (descarta las que no calzan), suma fotos oficiales de Specialized, videos de Specialized University y tus carpetas de Drive, y te pide las fotos que faltan.' : extNivel() >= 20 ? 'Postventa automática: al marcar una venta como ganada se agendan la entrega, el registro de garantía, el llamado a los 7 días, la revisión de los 30 días y la foto o reseña.' : extNivel() >= 19 ? 'El Copiloto ahora corrige datos: negociaciones (etapa, fecha real de cierre, valor), notas en la ficha del cliente y tareas, siempre con tu aprobación.' : extNivel() >= 16 ? 'Agente de tareas: piensa cada tarea que dictas (fecha, pasos, proveedor, stock, pedido y mejores opciones) antes de guardarla. También Compras y proveedores.' : extNivel() >= 14 ? 'El Cerebro: plan del día automático, Copiloto que consulta todo, Specialized Chile (ventas, ofertas y stock por talla), clima, noticias y avisos para el equipo.' : extNivel() >= 10 ? 'Instagram: métricas diarias y calendario de contenido con IA. También filtra los correos automáticos de bancos y pagos.' : extNivel() >= 8 ? 'Asistente de IA para planificar tu día y tu semana, Instagram y conexión con Bsale.' : 'Importar chats de WhatsApp y agente de IA.') + '</div></div><button class="btn sm" id="updBtn">Actualizar</button></div>';
   if (extNivel() >= 13 && !S.leadsCanal && !S._leadsPend){ S._leadsPend = 1; loadLeads().then(() => { S._leadsPend = 0; if (S.tab === 'inicio' && !$('.pop-bg')) render(); }); }
   html += planStrip() + kpiRow();
   const rad = senales();
@@ -2606,7 +2614,7 @@ function openCto(c, opt){
   html += '<div class="nextc' + (vencP ? ' bad' : '') + '"><div class="tx"><small>Próximo paso</small>' + (t0 ? '<b>' + esc(t0.tarea) + '</b><span>' + (t0.limite ? (t0.limite < hoy() ? 'Venció ' : '') + fmtLong(t0.limite) : 'sin fecha') + '</span>' : abierta && abierta.proxima ? '<b>' + esc(abierta.proxima) + '</b><span>' + (abierta.fechaProx ? (abierta.fechaProx < hoy() ? 'Venció ' : '') + fmtLong(abierta.fechaProx) : '') + ' · de la negociación</span>' : '<b>Sin próximo paso</b><span>Agenda un seguimiento para no perder a este contacto</span>') + '</div>' + (t0 ? '<button class="btn sm" id="ct_done">✓ Hecho</button>' : '<button class="btn sm" id="ct_seg">Agendar</button>') + '</div>';
   const pfC = perfilDe(c.id);
   if (pfC && pfC.p && pfC.p.relacion) html = html.replace('<div class="qa">', '<div class="pcs" style="margin:-4px 0 12px">' + chipsPerfil(pfC, 4) + '</div><div class="qa">');
-  const tabs = [['resumen', 'Resumen']].concat(pfC ? [['perfil', 'Perfil']] : []).concat([['actividad', 'Actividad (' + inter.length + ')'], ['negocios', 'Negocios (' + negs.length + ')'], ['datos', 'Datos']]);
+  const tabs = [['resumen', 'Resumen']].concat(extNivel() >= 25 ? [['chat', '💬 Chat']] : []).concat(pfC ? [['perfil', 'Perfil']] : []).concat([['actividad', 'Actividad (' + inter.length + ')'], ['negocios', 'Negocios (' + negs.length + ')'], ['datos', 'Datos']]);
   html += '<div class="tabs">' + tabs.map(t => '<button class="' + (t[0] === tab ? 'on' : '') + '" data-ctab="' + t[0] + '">' + t[1] + '</button>').join('') + '</div><div id="ctab"></div>';
   sheet(html);
   ctoTab(c, tab);
@@ -2620,6 +2628,7 @@ function openCto(c, opt){
 function ctoTab(c, tab){
   const box = $('#ctab');
   if (tab === 'perfil') return perfilTab(c, box);
+  if (tab === 'chat') return chatTab(c, box);
   if (tab === 'resumen'){
     const tareas = tareasDe(c).filter(t => !t.hecho).sort(ordenar);
     box.innerHTML = agenteHTML(c) + (c.etiquetas || c.notas ? '<div class="sec"><div class="sh">Lo que sabemos</div>' + (c.etiquetas ? '<div class="tm" style="margin:0 0 6px">' + String(c.etiquetas).split(',').map(x => '<span class="pill2">' + esc(x.trim()) + '</span>').join('') + '</div>' : '') + (c.notas ? '<div style="font-size:14px;line-height:1.45;padding-bottom:6px">' + esc(c.notas) + '</div>' : '') + '</div>' : '') +
@@ -6966,6 +6975,40 @@ function revisarPlanTarea(P, texto, t, fuentes){
       closeSheet(); toast('✓ ' + hechos.join(' · ')); vibrar(20); render();
     } catch(e){ b.disabled = false; b.textContent = t ? '✓ Reemplazar la tarea' : '✓ Crear todo'; toast('No se pudo: ' + e.message); }
   };
+}
+
+/* ---------- Chat de WhatsApp en la ficha del contacto ---------- */
+// Toda la conversación guardada (mensajes en vivo, historial de Meta y chats importados), para leerla y clasificar al contacto.
+async function chatTab(c, box, forzar){
+  S.chatC = S.chatC || {};
+  const cache = S.chatC[c.id];
+  if (!cache || forzar || Date.now() - cache.at > 5 * 60000){
+    box.innerHTML = '<div class="empty"><span class="spin"></span>Cargando la conversación…</div>';
+    try { const r = await apiX('chat', { id: c.id }); S.chatC[c.id] = { at: Date.now(), r }; }
+    catch(e){ box.innerHTML = '<div class="empty">No se pudo cargar el chat: ' + esc(e.message) + '</div>'; return; }
+    if (S.ctab !== 'chat' || !document.body.contains(box)) return;
+  }
+  const r = S.chatC[c.id].r, L = r.mensajes || [];
+  const hora = f => String(f).slice(11, 16), dia = f => String(f).slice(0, 10);
+  const diaTxt = d => d === hoy() ? 'Hoy' : fmtLong(d);
+  let html = '<div class="chatbar"><span class="wsub" style="flex:1">' + (L.length ? (r.total || L.length).toLocaleString('es-CL') + ' mensajes · desde ' + esc(fmtLong(dia(L[0].f))) + (r.total > L.length ? ' (se muestran los últimos ' + L.length + ')' : '') : '') + '</span><button class="btn sm sec" id="chRef">↻</button></div>';
+  if (!L.length) html += '<div class="empty">No hay mensajes de WhatsApp guardados con este contacto.</div><div class="btns"><button class="btn sec" data-impc="' + esc(c.id) + '">📥 Importar su chat</button></div>';
+  else {
+    let ult = '';
+    html += '<div class="chatw" id="chatw">' + L.map(m => { const d = dia(m.f), sep = d !== ult ? '<div class="dsep">' + esc(diaTxt(d)) + '</div>' : ''; ult = d; const med = /^\[[a-z_]+\]$/i.test(m.t); return sep + '<div class="bub' + (m.yo ? ' yo' : '') + (med ? ' med' : '') + '">' + esc(med ? ({ image: '📷 Foto', audio: '🎤 Audio', voice: '🎤 Audio', video: '🎬 Video', document: '📄 Documento', sticker: '🙂 Sticker', location: '📍 Ubicación', contacts: '👤 Contacto' }[m.t.slice(1, -1)] || '📎 ' + m.t.slice(1, -1)) : m.t) + '<small>' + esc(hora(m.f)) + (m.yo ? ' · tienda' : '') + '</small></div>'; }).join('') + '</div>';
+  }
+  // Clasificar rápido después de leer.
+  html += '<div class="chatbar"><b>Clasificar:</b>' + ['Cliente', 'Proveedor', 'Institución', 'Equipo', 'Otro', 'Ignorar'].map(t => '<button class="pill' + (c.tipo === t ? ' on' : '') + '" data-chtipo="' + t + '">' + (TIPO_IC[t] || '') + ' ' + t + '</button>').join('') + '</div>';
+  box.innerHTML = html;
+  const w = $('#chatw'); if (w) w.scrollTop = w.scrollHeight;
+  $('#chRef').onclick = () => chatTab(c, box, true);
+  box.querySelectorAll('[data-impc]').forEach(b => b.onclick = () => openImportar({ contacto: b.dataset.impc }));
+  box.querySelectorAll('[data-chtipo]').forEach(b => b.onclick = async () => {
+    const tipo = b.dataset.chtipo; b.disabled = true;
+    try { await apiX('contacto', { contacto: { id: c.id, tipo } }); toast(tipo === 'Ignorar' ? '🚫 No volverá a aparecer' : '✓ Clasificado como ' + tipo); await loadBase(true);
+      if (tipo === 'Ignorar'){ closeSheet(); render(); } else openCto(contactoPorId(c.id) || c, { tab: 'chat' }); }
+    catch(e){ b.disabled = false; toast('No se pudo: ' + e.message); }
+  });
 }
 
 /* ---------- Contactos sin guardar: los que todavía no tienen nombre ---------- */
