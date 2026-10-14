@@ -15,7 +15,7 @@
  * Para actualizar este archivo más adelante: reemplaza todo su contenido y repite los dos pasos anteriores.
  */
 
-const EX_VERSION = '2026-11-17';
+const EX_VERSION = '2026-11-18';
 const EX_NIVEL = 24;      // la app lo usa para saber qué funciones tiene este script
 const EX_HOJA = 'Tareas';
 const EX_PRIMERA = 4;
@@ -701,12 +701,17 @@ function ex_waHistorial_(obj, propio, out, nombres, prof) {
   if (Array.isArray(obj.threads)) {
     if (obj.metadata && obj.metadata.progress != null) out.progreso = Math.max(out.progreso || 0, +obj.metadata.progress || 0);
     obj.threads.forEach(function (th) {
-      const cli = String(th.id || th.wa_id || '').replace(/\D/g, '');
+      // El cliente se identifica por teléfono o, desde 2026, por su identificador de WhatsApp (BSUID, ej. «CL.1234…»).
+      const ctx = th.context || {}, crudo = String(th.id || th.wa_id || ctx.user_id || ''), esUid = /^[A-Z]{2}\./.test(crudo);
+      const cli = esUid ? '' : crudo.replace(/\D/g, ''), uid = esUid ? crudo : String(ctx.user_id || '');
+      if (uid && ctx.username && !nombres[uid]) nombres[uid] = ctx.username;
       (th.messages || []).forEach(function (m) {
-        const de = String(m.from || '').replace(/\D/g, ''), sal = cli ? de !== cli : (!!md && de === md);
-        out.msgs.push({ m: Object.assign({}, m, sal ? { to: m.to || cli } : { from: m.from || cli }), saliente: sal, historial: true });
+        const de = String(m.from || '').replace(/\D/g, '');
+        const sal = m.from_user_id ? false : cli ? (de ? de !== cli : true) : (de ? !!md && de === md : true);
+        const extra = sal ? { to: m.to || cli, to_user_id: m.to_user_id || uid } : { from: m.from || cli, from_user_id: m.from_user_id || uid };
+        out.msgs.push({ m: Object.assign({}, m, extra), saliente: sal, historial: true });
       });
-      if (cli) out.chats[cli] = 1;
+      if (cli || uid) out.chats[cli || uid] = 1;
     });
   }
   if (Array.isArray(obj.errors)) obj.errors.forEach(function (e) { if (+e.code === 2593109 || /history/i.test(String(e.title || e.message || ''))) out.rechazado = String(e.title || e.message || e.code); });
@@ -715,7 +720,7 @@ function ex_waHistorial_(obj, propio, out, nombres, prof) {
 }
 
 function ex_whatsapp_(p) {
-  const pay = p.payload || {}, msgs = [], nombres = {};
+  const pay = p.payload || {}, msgs = [], nombres = {}, uidTel = {};
   if (pay.data && pay.data.event_type) ex_desdeTelnyx_(pay, msgs, nombres);
   const hist = { msgs: [], chats: {}, progreso: null, rechazado: '' };
   ex_waHistorial_(pay, '', hist, nombres, 0);
@@ -732,8 +737,12 @@ function ex_whatsapp_(p) {
     (en.changes || []).forEach(function (ch) {
       const v = ch.value || {}, campo = String(ch.field || '');
       const propio = String((v.metadata && v.metadata.display_phone_number) || '').replace(/\D/g, '');
-      (v.contacts || []).forEach(function (c) { if (c.wa_id) nombres[String(c.wa_id)] = (c.profile && c.profile.name) || ''; });
-      const add = function (m, saliente) { if (m && m.id && (m.from || m.to)) msgs.push({ m: m, saliente: saliente }); };
+      (v.contacts || []).forEach(function (c) {
+        const nom = (c.profile && (c.profile.name || c.profile.username)) || '';
+        if (c.wa_id) nombres[String(c.wa_id)] = nom;
+        if (c.user_id) { nombres[String(c.user_id)] = nom; if (c.wa_id) uidTel[String(c.user_id)] = String(c.wa_id).replace(/\D/g, ''); }
+      });
+      const add = function (m, saliente) { if (m && m.id && (m.from || m.to || m.from_user_id || m.to_user_id)) msgs.push({ m: m, saliente: saliente }); };
       (v.messages || []).forEach(function (m) { add(m, campo === 'smb_message_echoes' || (!!propio && String(m.from) === propio)); });
       (v.message_echoes || []).forEach(function (m) { add(m, true); });
     });
@@ -753,32 +762,35 @@ function ex_whatsapp_(p) {
     const m = x.m, clave = 'w:' + m.id;
     if (claves[clave]) return;
     claves[clave] = true;
-    const tel = String(x.saliente ? (m.to || '') : (m.from || '')).replace(/\D/g, '');
-    if (!tel) return;
+    // Teléfono del cliente; si Meta no lo envía (clientes con nombre de usuario), se usa su identificador (BSUID).
+    const uid = String(x.saliente ? (m.to_user_id || '') : (m.from_user_id || ''));
+    let tel = String(x.saliente ? (m.to || '') : (m.from || '')).replace(/\D/g, '');
+    if (!tel && uid && uidTel[uid]) tel = uidTel[uid];
+    if (!tel && !uid) return;
     const fecha = new Date(Number(m.timestamp || 0) * 1000 || hoy), texto = ex_textoWa_(m);
-    const nombreWa = nombres[tel] || '';
-    let id = porTel[ult9(tel)];
+    const nombreWa = nombres[tel] || nombres[uid] || '';
+    let id = tel ? porTel[ult9(tel)] : '';
     if (!id) {
-      id = 'wa:+' + tel;
+      id = tel ? 'wa:+' + tel : 'wa:u:' + uid;
       if (!contactos[id]) {
         const intencion = EX_WA_INTENCION.test(ex_norm_(texto));
-        const fila = [id, intencion ? 'Cliente' : 'Por clasificar', nombreWa || '+' + tel, '', '', "'+" + tel, '', '', '', 0, '💬 WhatsApp', new Date()];
-        contactos[id] = { tipo: fila[1], nombre: fila[2], tel: '+' + tel, nuevo: true };
+        const fila = [id, intencion ? 'Cliente' : 'Por clasificar', nombreWa || (tel ? '+' + tel : 'WhatsApp ' + uid.slice(-4)), '', '', tel ? "'+" + tel : '', '', '', '', 0, '💬 WhatsApp', new Date()];
+        contactos[id] = { tipo: fila[1], nombre: fila[2], tel: tel ? '+' + tel : '', nuevo: true };
         nuevosC.push(fila);
       }
-      porTel[ult9(tel)] = id;
+      if (tel) porTel[ult9(tel)] = id;
     }
     const c = contactos[id];
     if (c.tipo === 'Ignorar') return;
-    if (!c.nuevo && !ult9(c.tel) && c.fila) { telefonos.push([c.fila, '+' + tel]); c.tel = '+' + tel; }
-    nuevasI.push([fecha, id, x.saliente ? '💬 WhatsApp enviado' : '💬 WhatsApp recibido', texto.slice(0, 300), 'https://wa.me/' + tel, clave]);
-    filasWa.push([fecha, x.saliente ? 'Enviado' : 'Recibido', '+' + tel, c.nombre || nombreWa, texto.slice(0, 500), m.type || '', id, m.id]);
+    if (tel && !c.nuevo && !ult9(c.tel) && c.fila) { telefonos.push([c.fila, '+' + tel]); c.tel = '+' + tel; }
+    nuevasI.push([fecha, id, x.saliente ? '💬 WhatsApp enviado' : '💬 WhatsApp recibido', texto.slice(0, 300), tel ? 'https://wa.me/' + tel : '', clave]);
+    filasWa.push([fecha, x.saliente ? 'Enviado' : 'Recibido', tel ? '+' + tel : uid, c.nombre || nombreWa, texto.slice(0, 500), m.type || '', id, m.id]);
     if (abiertas[id]) abiertas[id].forEach(function (f) { if (!actividad[f] || fecha > actividad[f]) actividad[f] = fecha; });
     // Lead nuevo: mensaje reciente con intención de compra de alguien sin negociación abierta.
     if (x.historial){ histIds[id] = c.nombre || nombreWa || id; histN++; return; }
     if (!x.saliente && !abiertas[id] && hoy - fecha.getTime() < 30 * 86400000 && EX_WA_INTENCION.test(ex_norm_(texto))) {
       const mod = texto.match(EX_WA_MODELOS);
-      leads.push({ titulo: (c.nombre || nombreWa || '+' + tel) + (mod ? ' – ' + mod[1].replace(/\s+/g, ' ').replace(/\b\w/g, function (l) { return l.toUpperCase(); }) : ' – WhatsApp'), contacto: id, producto: mod ? mod[1] : '', proxima: 'Responder por WhatsApp', fechaProx: ex_hoyYmd_(), origen: '💬 WhatsApp', notas: 'Primer mensaje: ' + texto.slice(0, 200) });
+      leads.push({ titulo: (c.nombre || nombreWa || (tel ? '+' + tel : 'WhatsApp')) + (mod ? ' – ' + mod[1].replace(/\s+/g, ' ').replace(/\b\w/g, function (l) { return l.toUpperCase(); }) : ' – WhatsApp'), contacto: id, producto: mod ? mod[1] : '', proxima: 'Responder por WhatsApp', fechaProx: ex_hoyYmd_(), origen: '💬 WhatsApp', notas: 'Primer mensaje: ' + texto.slice(0, 200) });
       abiertas[id] = [];
     }
   });

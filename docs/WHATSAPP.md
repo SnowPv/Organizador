@@ -1,6 +1,6 @@
 # 💬🧠 WhatsApp Business + Agente de ventas IA · Organizador BlackLine
 
-> **Estado actual (octubre 2026):** el número de la tienda está conectado a **Kommo**, y un número solo puede estar en una plataforma con API a la vez. Por eso los **pasos 1 a 4 quedan en pausa** hasta que dejes Kommo. **Haz ahora el Paso 5** (actualizar el script y activar el agente). El Paso 6 se prueba **importando un chat exportado** y tocando 🧠 Analizar ahora.
+> **Estado actual (octubre 2026):** Kommo ya está desconectado. Telnyx lanzó la coexistencia el 7 de octubre, pero todavía no aparece en tu cuenta (el caso está en su soporte). **Mientras tanto, se conecta con Dualhook** (sección siguiente). Cuando Telnyx la active, se puede cambiar.
 
 Con esta conexión, el organizador funciona como un **asistente de ventas que lee tu WhatsApp Business y lo organiza como lo harías tú**. **Nunca escribe a tus clientes.** Tú sigues respondiendo desde el teléfono como siempre.
 
@@ -45,6 +45,41 @@ Cliente ──► WhatsApp Business (tu teléfono, sin cambios)
 | Agente IA con más capacidad: Claude Sonnet 5.5 u Opus 5.5 | Infieren mejor en conversaciones largas o ambiguas. Opus cuesta ~US$0,03–0,08 por conversación (≈ US$15–35 al mes). Se cambia con una línea (Paso 5). |
 
 ---
+
+## Conectar con Dualhook (camino actual, 30 min)
+
+Dualhook conecta tu número a la API oficial de Meta **sin sacarlo de la app WhatsApp Business** (coexistencia). Meta envía los mensajes **directo a tu puente**; Dualhook no los guarda. Cuesta **US$12 al mes** (1 número), con **14 días de prueba**; pide tarjeta. No cobra por mensaje.
+
+**1 · Crear el puente en Cloudflare** (si no lo tienes; ver Paso 3 más abajo para el detalle)
+1. dash.cloudflare.com → **Workers & Pages → Create → Create Worker** → nombre `organizador-wa` → **Deploy** → **Edit code** → pega [`whatsapp-puente/worker.js`](../whatsapp-puente/worker.js) → **Deploy**.
+2. **Settings → Variables and Secrets** (usa **Secret** en las claves):
+
+   | Nombre | Valor |
+   |---|---|
+   | `APPS_SCRIPT_URL` | tu link `/exec`, el mismo de la app |
+   | `APP_TOKEN` | la clave del organizador |
+   | `VERIFY_TOKEN` | una palabra que inventes (ej. `blackline-pv-2026`) |
+   | `URL_KEY` | una clave larga al azar que inventes, solo letras y números (unos 30 caracteres) |
+
+   **No pongas** `APP_SECRET` ni `TELNYX_PUBLIC_KEY`: con Dualhook la firma es de su app y no se puede validar; la seguridad la da `URL_KEY`.
+3. Tu link de webhook queda así: `https://organizador-wa.<tu-cuenta>.workers.dev/<URL_KEY>`. Ábrelo: debe decir **"puente de WhatsApp activo ✓"**.
+
+**2 · Actualizar el script:** pega el Extras.gs nuevo (versión 2026-11-18) y crea una **Nueva versión** de la implementación.
+
+**3 · Conectar en Dualhook**
+1. Crea la cuenta en **dualhook.com** y elige el plan **Developer**.
+2. **Antes de abrir la ventana de Meta**, Dualhook te pide el **Webhook URL** y el **Verify token**: pega el link del paso 1.3 y el mismo `VERIFY_TOKEN`.
+3. En la ventana de Meta, elige el portafolio **- BlackLine -** (después es difícil cambiarlo) y la opción de **conectar tu app WhatsApp Business existente**. **Nunca** elijas verificar un número nuevo por SMS: eso saca el número de la app.
+4. En el celular, abre el mensaje de Meta en WhatsApp Business → **Conectar** → confirma.
+5. Cuando pregunte, elige **compartir el historial** (hasta 6 meses). Deja WhatsApp Business abierto un rato mientras Meta lo prepara (hasta 24 h).
+
+**4 · Revisar:** en la app, **Ajustes → 💬 Historial de WhatsApp** muestra el avance. En Dualhook, la pestaña **Debug** de la conexión muestra si los avisos llegan a tu puente. En Cloudflare, **Worker → Logs**.
+
+**Para tener en cuenta**
+- Abre WhatsApp Business en el teléfono **al menos cada 13 días**; si no, Meta puede cortar la coexistencia (Dualhook avisa antes). No desinstales la app.
+- Las listas de difusión quedan solo de lectura y WhatsApp Web se desvincula (se vuelve a vincular).
+- Clientes con nombre de usuario de WhatsApp pueden llegar **sin teléfono** (Meta usa un identificador tipo `CL.123…`). La app los guarda igual y los une al contacto cuando aparezca su número.
+- **Cambiar a Telnyx más adelante:** en el celular, **Ajustes → Cuenta → Plataforma de WhatsApp Business → Dualhook → Desconectar**; luego cancela Dualhook y conecta con Telnyx. En el puente cambias `URL_KEY` por `TELNYX_PUBLIC_KEY`. El historial ya importado queda en tu planilla.
 
 ## Paso 1 · Requisitos (5 min)
 

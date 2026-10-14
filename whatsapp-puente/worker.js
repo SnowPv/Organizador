@@ -1,7 +1,7 @@
 /**
  * Organizador BlackLine · Puente de WhatsApp (Cloudflare Worker, plan gratuito)
  *
- * Telnyx (o Meta) envía cada mensaje a este Worker; el Worker responde
+ * Dualhook, Telnyx o Meta envía cada mensaje a este Worker; el Worker responde
  * de inmediato y reenvía el mensaje a tu Apps Script, que lo guarda en el Sheet.
  * Apps Script no puede recibir los avisos de Meta directamente (responde con una redirección),
  * por eso existe este puente.
@@ -12,7 +12,12 @@
  *   VERIFY_TOKEN     una palabra secreta que inventas y pegas también en Meta («Verify token»)
  *   TELNYX_PUBLIC_KEY  (recomendado con Telnyx) la «Public Key» de tu cuenta Telnyx: valida que el aviso viene de Telnyx
  *   APP_SECRET       (opcional, solo con Meta directo) el «App secret» de tu app de Meta
- *   URL_KEY          (opcional) si tu proveedor no firma los avisos: agrega ?k=ESTA_CLAVE al link del webhook
+ *   URL_KEY          (recomendado con Dualhook) clave larga al azar. Ponla al final del link del webhook:
+ *                    https://TU-PUENTE.workers.dev/ESTA_CLAVE  (o ?k=ESTA_CLAVE). Sin ella, el aviso se rechaza.
+ *   WABA_ID          (opcional) el identificador de tu cuenta de WhatsApp en Meta: solo se aceptan avisos de esa cuenta.
+ *
+ * Con Dualhook (coexistencia) Meta envía los avisos directo a este puente, en su formato estándar,
+ * firmados con la app de Dualhook (por eso no se usa APP_SECRET): la seguridad es la clave secreta del link.
  */
 export default {
   async fetch(req, env, ctx) {
@@ -36,10 +41,18 @@ export default {
     if (env.TELNYX_PUBLIC_KEY && !(await firmaTelnyx(cuerpo, req.headers, env.TELNYX_PUBLIC_KEY))) {
       return new Response('firma de Telnyx inválida', { status: 401 });
     }
-    if (env.URL_KEY && url.searchParams.get('k') !== env.URL_KEY) return new Response('clave inválida', { status: 401 });
+    if (env.URL_KEY && url.searchParams.get('k') !== env.URL_KEY && !url.pathname.split('/').includes(env.URL_KEY)) {
+      return new Response('clave inválida', { status: 401 });
+    }
 
     let payload;
     try { payload = JSON.parse(cuerpo); } catch (e) { return new Response('ok', { status: 200 }); }
+    // Formato de Meta (Dualhook o Meta directo): solo avisos de WhatsApp Business y, si se configuró, de tu cuenta.
+    if (payload && payload.object && payload.object !== 'whatsapp_business_account') return new Response('ok', { status: 200 });
+    if (env.WABA_ID && Array.isArray(payload.entry) && payload.entry.some(e => String(e.id) !== String(env.WABA_ID))) {
+      console.log('Aviso de otra cuenta de WhatsApp, ignorado');
+      return new Response('ok', { status: 200 });
+    }
 
     // Responder rápido a Meta y reenviar en segundo plano (con un reintento si el Sheet está ocupado).
     ctx.waitUntil(reenviar(env, payload));
