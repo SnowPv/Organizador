@@ -281,3 +281,17 @@ Un solo lugar para avisar que una negociación se cayó: **❌ Perdida** en la n
 - **Tableros**: tasa de cierre, motivos de pérdida y pronóstico se recalculan solos con el estado «Perdida».
 
 Ops del script (nivel 32): `eventosContacto` y `perderNegocio`.
+
+## Etapas después del pago (seguimiento, entrega y postventa)
+
+Una venta se da por **ganada cuando el cliente paga**, pero muchas veces hay que pedir la bici o armarla antes de entregarla. Por eso el pipeline sigue después del pago:
+
+- **🏆 Ganada · seguimiento**: pagó y falta entregar. Al marcar Ganada la app pregunta la fecha de pago y si ya se la llevó. Si no, pide la entrega estimada y crea la tarea «📦 Entrega a … (pedir, armar y avisar)» y el próximo paso «📦 Coordinar la entrega».
+- **✅ Entregada**: se la llevó. Desde la fecha real de entrega se agenda la postventa: registrar la garantía (día 1), llamada a los 7 días, revisión gratuita de los 30 días y foto o reseña a los 45.
+- **🤝 Postventa**: a la semana de la entrega pasa sola (revisión diaria del script). Se ve en el pipeline hasta 90 días después de la venta.
+
+Las tres cuentan como venta ganada en los tableros, con la **fecha del pago** (no la de entrega). Pasar directo a Entregada desde una etapa abierta registra también la fecha de ganada.
+
+El agente ya no abre una negociación nueva cuando un cliente con una venta ganada en los últimos 120 días escribe por el saldo, el pedido, la entrega o la garantía: actualiza el próximo paso de esa venta. Si pide otro producto distinto, sí abre una nueva. En la pestaña Datos de cada negociación hay un botón para eliminar duplicados.
+
+Ops del script (nivel 33): `negocioBorrar`; `negocio` acepta `entrega` y `fechaGanada`.

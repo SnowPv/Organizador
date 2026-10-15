@@ -15,8 +15,8 @@
  * Para actualizar este archivo más adelante: reemplaza todo su contenido y repite los dos pasos anteriores.
  */
 
-const EX_VERSION = '2026-12-05';
-const EX_NIVEL = 32;      // la app lo usa para saber qué funciones tiene este script
+const EX_VERSION = '2026-12-08';
+const EX_NIVEL = 33;      // la app lo usa para saber qué funciones tiene este script
 const EX_HOJA = 'Tareas';
 const EX_PRIMERA = 4;
 const EX_ULTIMA = 400;
@@ -133,6 +133,7 @@ function app_extra_(p) {
     case 'negocioNota': return ex_notaNegocio_(p);
     case 'eventosContacto': return ex_eventosContacto_(p);
     case 'perderNegocio': return ex_perderNegocio_(p);
+    case 'negocioBorrar': return ex_borrarNegocio_(p);
     case 'whatsapp': { // de a un aviso a la vez (el historial llega en muchas partes seguidas); si está ocupado, Meta reintenta
       const lk = LockService.getScriptLock();
       if (!lk.tryLock(20000)) return { ok: false, error: 'ocupado, reintentar' };
@@ -615,26 +616,72 @@ function ex_guardarNegocio_(n) {
     const c = EX_CAMPOS_NEG[k] - 1;
     r[c] = (k === 'cierre' || k === 'fechaProx') ? fecha(n[k]) : k === 'valor' ? (Number(n[k]) || 0) : n[k];
   });
-  const etapa = n.etapa || r[3] || 'Nuevo';
+  const etapa = n.etapa || r[3] || 'Nuevo', fEtapa = /^\d{4}-\d{2}-\d{2}$/.test(String(n.fechaEtapa || '')) ? n.fechaEtapa : hoy;
+  const ganadaAntes = EX_ETAPAS_GANADA.indexOf(antes) >= 0, ganadaAhora = EX_ETAPAS_GANADA.indexOf(etapa) >= 0;
   if (i < 0 || etapa !== antes) {
     r[3] = etapa;
-    r[13] = (r[13] ? r[13] + '|' : '') + (/^\d{4}-\d{2}-\d{2}$/.test(String(n.fechaEtapa || '')) ? n.fechaEtapa : hoy) + ':' + etapa;
-    r[10] = etapa === 'Ganada' ? 'Ganada' : etapa === 'Perdida' ? 'Perdida' : 'Abierta';
+    // Pasar directo a Entregada o Postventa implica que se ganó: queda registrada la fecha de la venta (la que cuentan los tableros).
+    if (ganadaAhora && etapa !== 'Ganada' && !ganadaAntes) r[13] = (r[13] ? r[13] + '|' : '') + (/^\d{4}-\d{2}-\d{2}$/.test(String(n.fechaGanada || '')) ? n.fechaGanada : fEtapa) + ':Ganada';
+    r[13] = (r[13] ? r[13] + '|' : '') + fEtapa + ':' + etapa;
+    r[10] = ganadaAhora ? 'Ganada' : etapa === 'Perdida' ? 'Perdida' : 'Abierta';
+    // Seguimiento de la entrega: pagó pero aún no se la lleva (hay que pedirla o armarla).
+    if (etapa === 'Ganada' && !ganadaAntes && n.proxima === undefined) { r[8] = '📦 Coordinar la entrega' + (r[5] ? ': ' + String(r[5]).slice(0, 60) : ''); r[9] = ex_aFecha_(/^\d{4}-\d{2}-\d{2}$/.test(String(n.entrega || '')) ? n.entrega : ex_ymd_(new Date(Date.now() + 3 * 86400000), tz), tz); }
+    if (etapa === 'Entregada' && n.proxima === undefined) { r[8] = '📞 Llamar: ¿cómo le va con ' + String(r[5] || 'su compra').slice(0, 50) + '?'; r[9] = ex_aFecha_(ex_ymd_(new Date(ex_aFecha_(fEtapa, tz).getTime() + 7 * 86400000 + 43200000), tz), tz); }
+    if (etapa === 'Postventa' && n.proxima === undefined && antes === 'Entregada') { r[8] = '🔧 Revisión gratuita de los 30 días'; r[9] = ''; }
   }
   r[14] = new Date();
   if (i >= 0) sh.getRange(i + 2, 1, 1, EX_CAB_NEG.length).setValues([r]);
   else sh.appendRow(r);
-  if (etapa === 'Ganada' && antes !== 'Ganada') { try { ex_postventa_(r, n.fechaEtapa); } catch (e) { console.log('postventa: ' + e.message); } }
+  if (etapa === 'Ganada' && !ganadaAntes) { try { ex_tareaEntrega_(r, n.entrega); } catch (e) { console.log('entrega: ' + e.message); } }
+  if (etapa === 'Entregada' && ['Entregada', 'Postventa'].indexOf(antes) < 0) { try { ex_postventa_(r, n.fechaEtapa); } catch (e) { console.log('postventa: ' + e.message); } }
   if (r[2] && (i < 0 || etapa !== antes)) {
     const b = ex_baseHojas_();
     const det = i < 0 ? 'Nueva negociación: ' + r[1] : r[1] + ': ' + antes + ' → ' + etapa + (etapa === 'Perdida' && r[11] ? ' (' + r[11] + ')' : '');
-    b.is.appendRow([new Date(), String(r[2]), etapa === 'Ganada' ? '🏆 Venta ganada' : '🤝 Negociación', det, '', 'd:' + r[0] + ':' + Date.now()]);
+    b.is.appendRow([new Date(), String(r[2]), ganadaAhora && !ganadaAntes ? '🏆 Venta ganada' : etapa === 'Entregada' ? '✅ Producto entregado' : '🤝 Negociación', det, '', 'd:' + r[0] + ':' + Date.now()]);
     ex_recalcular_(b.cs, b.is);
   }
   return { ok: true, id: String(r[0]) };
 }
 
-// Postventa automática: al ganar una venta se agenda el seguimiento que fideliza al cliente.
+// Etapas posteriores al pago (cuentan como venta ganada): Ganada = pagó y está en seguimiento (pedir, armar, avisar),
+// Entregada = se la llevó, Postventa = pasó la primera semana (revisión de los 30 días, reseña, fidelización).
+const EX_ETAPAS_GANADA = ['Ganada', 'Entregada', 'Postventa'];
+const EX_DIAS_ENTREGADA = 7;   // una semana después de la entrega pasa sola a Postventa
+
+// Al ganar una venta que aún no se entrega: una tarea para coordinar el pedido, el armado y la entrega.
+function ex_tareaEntrega_(r, fecha) {
+  const props = PropertiesService.getScriptProperties();
+  if (props.getProperty('POSTVENTA') === 'no' || typeof app_agregar_ !== 'function') return;
+  const id = String(r[0]), hechas = JSON.parse(props.getProperty('EX_ENTREGAS') || '[]');
+  if (hechas.indexOf(id) >= 0) return;
+  const tz = ex_tz_(), f = /^\d{4}-\d{2}-\d{2}$/.test(String(fecha || '')) ? fecha : ex_ymd_(new Date(Date.now() + 3 * 86400000), tz);
+  let nombre = 'cliente «' + String(r[1] || '').slice(0, 50) + '»';
+  try { const c = ex_filasContactos_(ex_baseHojas_().cs).find(function (x) { return String(x[0]) === String(r[2]); }); if (c && c[2]) nombre = String(c[2]); } catch (e) {}
+  app_agregar_({ tarea: { tarea: '📦 Entrega a ' + nombre + ': ' + String(r[5] || r[1] || 'su compra').slice(0, 60) + ' (pedir, armar y avisar)', area: 'Trabajo', categoria: 'Ventas', proyecto: '', limite: f, urgente: 'No', importante: 'Sí', tamano: 'Pequeña', notas: '⏰ 10:00 · 📦 Seguimiento de entrega · ' + nombre + (r[2] ? ' [' + r[2] + ']' : '') + ' (' + id + ')', estado: 'Pendiente' } });
+  hechas.push(id); props.setProperty('EX_ENTREGAS', JSON.stringify(hechas.slice(-500)));
+}
+
+// Cada día: las ventas entregadas hace más de una semana pasan a Postventa.
+function ex_avanzarPostventa_() {
+  const sh = ex_hojaNeg_(), filas = ex_filasNeg_(sh), tz = ex_tz_(), hoy = ex_hoyYmd_(tz), lim = ex_ymd_(new Date(Date.now() - EX_DIAS_ENTREGADA * 86400000), tz);
+  filas.forEach(function (r) {
+    if (r[3] !== 'Entregada') return;
+    const h = String(r[13] || '').split('|').filter(function (x) { return /:Entregada$/.test(x); }).pop();
+    if (h && h.slice(0, 10) <= lim) ex_guardarNegocio_({ id: r[0], etapa: 'Postventa', fechaEtapa: hoy });
+  });
+}
+
+// Borra una negociación (por ejemplo, una duplicada). Queda anotado en el historial del contacto.
+function ex_borrarNegocio_(p) {
+  const sh = ex_hojaNeg_(), filas = ex_filasNeg_(sh), i = filas.findIndex(function (x) { return String(x[0]) === String(p.id || ''); });
+  if (i < 0) throw new Error('no encontré la negociación');
+  const r = filas[i];
+  sh.deleteRow(i + 2);
+  if (r[2]) { const b = ex_baseHojas_(); b.is.appendRow([new Date(), String(r[2]), '🗑 Negociación eliminada', String(r[1]) + (p.motivo ? ' · ' + p.motivo : ''), '', 'del:' + r[0] + ':' + Date.now()]); ex_recalcular_(b.cs, b.is); }
+  return { ok: true };
+}
+
+// Postventa automática: al entregar la venta se agenda el seguimiento que fideliza al cliente.
 // Solo crea los pasos cuya fecha aún no pasó, una sola vez por negociación. Se desactiva con la propiedad POSTVENTA = no.
 function ex_postventa_(r, fechaVenta) {
   const props = PropertiesService.getScriptProperties();
@@ -646,8 +693,7 @@ function ex_postventa_(r, fechaVenta) {
   let nombre = 'cliente «' + String(r[1] || '').slice(0, 50) + '»';
   try { const c = ex_filasContactos_(ex_baseHojas_().cs).find(function (x) { return String(x[0]) === String(r[2]); }); if (c && c[2]) nombre = String(c[2]); } catch (e) {}
   const prod = String(r[5] || r[1] || 'su compra').slice(0, 60), ref = ' · 🏆 Postventa · ' + nombre + (r[2] ? ' [' + r[2] + ']' : '') + ' (' + id + ')';
-  [[0, 'Entrega y ajuste a medida: ' + prod + ' – ' + nombre, 'Sí'],
-   [2, 'Registrar la garantía en Specialized y la bici en la bitácora – ' + nombre, 'No'],
+  [[1, 'Registrar la garantía en Specialized y la bici en la bitácora – ' + nombre, 'No'],
    [7, 'Llamar a ' + nombre + ': ¿cómo le va con ' + prod + '? Resolver dudas de uso', 'No'],
    [30, 'Invitar a ' + nombre + ' a la revisión gratuita de los 30 días (reapriete y ajuste)', 'No'],
    [45, 'Pedirle a ' + nombre + ' una foto o reseña de su experiencia (contenido para Redes, con permiso)', 'No']
@@ -721,6 +767,19 @@ function ex_perderNegocio_(p) {
   }
   try { ex_sincCalendario_(); } catch (e) { console.log('sinc: ' + e.message); }
   return res;
+}
+
+// Venta ganada del contacto en los últimos 120 días (en seguimiento, entregada o en postventa).
+function ex_ganadaReciente_(id) {
+  const tz = ex_tz_(), lim = ex_ymd_(new Date(Date.now() - 120 * 86400000), tz);
+  let mejor = null;
+  ex_filasNeg_(ex_hojaNeg_()).forEach(function (r) {
+    if (String(r[2]) !== String(id) || r[10] !== 'Ganada') return;
+    const h = String(r[13] || '').split('|').filter(function (x) { return /:Ganada$/.test(x); }).pop();
+    const f = h ? h.slice(0, 10) : (r[14] instanceof Date ? ex_ymd_(r[14], tz) : '');
+    if (f && f >= lim && (!mejor || f > mejor.fecha)) mejor = { id: String(r[0]), fecha: f, etapa: String(r[3]), titulo: String(r[1]), producto: String(r[5] || ''), valor: Number(r[4]) || 0 };
+  });
+  return mejor;
 }
 
 // Última negociación perdida del contacto en los últimos 180 días: el agente no la reabre si el cliente no ha vuelto a escribir.
@@ -2112,7 +2171,7 @@ function ex_contextoAgente_(id, opt) {
   const otras = (ni > 0 ? b.is.getRange(2, 1, ni, 4).getValues() : []).filter(function (r) { return String(r[1]) === id && !/whatsapp|agente/i.test(r[2]); })
     .sort(function (x, y) { return x[0] - y[0]; }).slice(-15).map(function (r) { return '[' + fmt(r[0]) + '] ' + r[2] + ': ' + r[3]; });
   const neg = ex_filasNeg_(ex_hojaNeg_()).filter(function (r) { return String(r[2]) === id && r[10] === 'Abierta'; })[0];
-  const perdida = neg ? null : ex_perdidaReciente_(id);
+  const perdida = neg ? null : ex_perdidaReciente_(id), ganada = neg ? null : ex_ganadaReciente_(id);
   const tareas = ex_hoja_().getRange(EX_PRIMERA, 1, EX_ULTIMA - EX_PRIMERA + 1, 15).getValues()
     .filter(function (r) { return r[1] && r[0] !== true && String(r[14]).indexOf(id) >= 0; }).map(function (r) { return '- ' + r[1] + (r[9] instanceof Date ? ' (' + ex_ymd_(r[9], tz) + ')' : ''); });
   const contexto = [
@@ -2120,13 +2179,14 @@ function ex_contextoAgente_(id, opt) {
     opt.pipeline ? 'MODO DEPURACIÓN: este contacto está guardado en el teléfono y tuvo una conversación de ida y vuelta. Si se habló de comprar un producto o un servicio del taller, crea la negociación aunque la conversación sea antigua (si ya compró o desistió, deja la etapa más avanzada que corresponda y explícalo en el resumen). Si no se habló de comprar nada, negociación «ninguna». No crees tareas.' : opt.masivo ? 'MODO HISTORIAL: este chat se importó como historial junto a muchos otros. No crees tareas. Negociación solo si hay intención real y el cliente escribió en los últimos ' + EX_PERF_DIAS_NEG + ' días.' : '',
     '', 'CONTACTO: ' + JSON.stringify({ nombre: c[2], tipo: c[1], empresa: c[3], email: c[4], telefono: String(c[5] || ''), etiquetas: c[6], notas: c[7] }),
     '', 'NEGOCIACIÓN ABIERTA: ' + (neg ? JSON.stringify({ titulo: neg[1], etapa: neg[3], valor: neg[4], producto: neg[5], proxima_accion: neg[8], notas: neg[12] }) : 'ninguna'),
+    ganada ? 'VENTA GANADA RECIENTE (etapa ' + ganada.etapa + '): ' + JSON.stringify({ titulo: ganada.titulo, producto: ganada.producto, valor: ganada.valor, ganada: ganada.fecha }) + '. Si la conversación es sobre esta compra (pago del saldo, pedido, armado, entrega, retiro, garantía, ajustes), NO crees una negociación nueva (negociación «ninguna»): pon el siguiente paso de la entrega o la postventa en proxima_accion. Crea una nueva solo si pide otro producto distinto.' : '',
     perdida ? 'VENTA PERDIDA RECIENTE: «' + perdida.titulo + '» se marcó perdida el ' + perdida.fecha + ' (' + (perdida.motivo || 'sin motivo') + '). No propongas reabrirla ni escribirle salvo que el cliente haya vuelto a escribir después de esa fecha con una necesidad nueva.' : '',
     '', 'TAREAS ABIERTAS CON ESTE CONTACTO:', tareas.length ? tareas.join('\n') : '(ninguna)',
     '', 'OTRAS INTERACCIONES:', otras.length ? otras.join('\n') : '(ninguna)',
     '', 'CONVERSACIÓN DE WHATSAPP (más antigua primero):', chat.length ? chat.join('\n') : '(sin mensajes)'
   ].join('\n');
   const stock = ex_bsaleParaAgente_(chat.slice(-60).join(' ') + ' ' + (neg ? neg[5] : '') + ' ' + c[6]);
-  return { contexto: stock ? contexto + '\n\nSTOCK EN BSALE (consultado ahora, productos que se mencionan):\n' + stock : contexto, c: c, neg: neg, perdida: perdida, filasWa: filasWa, chatTexto: filasWa.filter(function (r) { return r[1] !== 'Enviado'; }).map(function (r) { return r[4]; }).join(' ') };
+  return { contexto: stock ? contexto + '\n\nSTOCK EN BSALE (consultado ahora, productos que se mencionan):\n' + stock : contexto, c: c, neg: neg, perdida: perdida, ganada: ganada, filasWa: filasWa, chatTexto: filasWa.filter(function (r) { return r[1] !== 'Enviado'; }).map(function (r) { return r[4]; }).join(' ') };
 }
 
 // Analiza la conversación de un contacto y aplica los cambios al CRM (desde la app: ya corre con el Sheet tomado).
@@ -2175,6 +2235,13 @@ function ex_aplicarAgente_(id, ctx, a, opt) {
     if (abrir || n.accion === 'crear') cambios.push('negociación no reabierta (se perdió el ' + perdida.fecha + ' y el cliente no ha vuelto a escribir)');
     abrir = false; n.accion = 'ninguna'; a.esperando_respuesta = false; a.tareas = [];
   }
+  // Venta ganada hace poco: lo que se conversa (saldo, entrega, garantía) es seguimiento de esa venta, no una negociación nueva.
+  const ganada = ctx.neg ? null : (ctx.ganada !== undefined ? ctx.ganada : ex_ganadaReciente_(id));
+  if (ganada && n.accion === 'crear' && !(n.producto && ex_parecido_(n.producto + ' ' + (n.titulo || ''), ganada.producto + ' ' + ganada.titulo) < 0.15)) {
+    abrir = false; n.accion = 'ninguna'; negId = ganada.id;
+    cambios.push('sin negociación nueva: es seguimiento de la venta ganada «' + ganada.titulo + '»');
+    if (a.proxima_accion && a.proxima_accion.texto && ganada.etapa !== 'Postventa') { ex_guardarNegocio_({ id: ganada.id, proxima: a.proxima_accion.texto, fechaProx: a.proxima_accion.fecha || '' }); cambios.push('próximo paso de la entrega actualizado'); }
+  }
   if (!ctx.neg && n.accion === 'crear' && !abrir) cambios.push('negociación no abierta (' + (met.diasCliente > EX_PERF_DIAS_NEG ? 'conversación de hace más de ' + EX_PERF_DIAS_NEG + ' días' : 'poca intención de compra') + ')');
   // En historial, si los puntajes muestran una venta probable aunque la IA no lo propuso, igual se abre (en "Contactado").
   if (!ctx.neg && abrir && n.accion !== 'crear' && opt.masivo && sc.prob >= 50) { n.accion = 'crear'; if (etapas.indexOf(n.etapa) < 0) n.etapa = 'Contactado'; }
@@ -2194,7 +2261,7 @@ function ex_aplicarAgente_(id, ctx, a, opt) {
     if (Object.keys(upd).length > 1) ex_guardarNegocio_(upd);
   }
   // Depuración: si no se habló de comprar nada (y no es proveedor ni del equipo), el contacto se archiva.
-  if (opt.pipeline && !negId && !perdida && ['Proveedor', 'Institución', 'Equipo'].indexOf(String(ac.tipo || c[1])) < 0) {
+  if (opt.pipeline && !negId && !perdida && !ganada && ['Proveedor', 'Institución', 'Equipo'].indexOf(String(ac.tipo || c[1])) < 0) {
     b.cs.getRange(i + 2, 2).setValue('Archivado'); cambios.push('archivado: sin conversación de compra');
     ex_logDepuracion_([[id, ac.nombre || c[2], 'sin conversación de compra (agente)', c[1], new Date()]]);
   }
@@ -3513,7 +3580,7 @@ const EX_COP_TOOLS = [
   { name: 'correos_proveedores', description: 'Correos recientes de los proveedores (promociones, lanzamientos, llegadas, listas de precios).', input_schema: { type: 'object', properties: {} } },
   { name: 'proponer_cambio_negocio', description: 'Propone corregir o actualizar una negociación existente (etapa, valor, próxima acción, motivo de pérdida) y/o agregarle una nota. Gustavo la aprueba con un toque. Busca antes el id con ver_negociaciones (filtro "todas" si no está abierta). Para sacar del pipeline una venta que ya terminó, usa etapa "Ganada" (o "Perdida") con la fecha real en fecha_etapa.', input_schema: { type: 'object', properties: {
     id: { type: 'string', description: 'ID de la negociación (N-...)' }, titulo: { type: 'string', description: 'Texto del botón, ej. «Marcar como ganada (29/09)»' },
-    etapa: { type: 'string', enum: ['Nuevo', 'Contactado', 'Prueba / visita', 'Cotización', 'Negociación', 'Ganada', 'Perdida'] }, fecha_etapa: { type: 'string', description: 'yyyy-MM-dd en que ocurrió el cambio de etapa, si no fue hoy' },
+    etapa: { type: 'string', enum: ['Nuevo', 'Contactado', 'Prueba / visita', 'Cotización', 'Negociación', 'Ganada', 'Entregada', 'Postventa', 'Perdida'] }, fecha_etapa: { type: 'string', description: 'yyyy-MM-dd en que ocurrió el cambio de etapa, si no fue hoy' },
     valor: { type: 'integer' }, proxima: { type: 'string', description: 'Próxima acción (vacío para quitarla)' }, fecha_proxima: { type: 'string' }, motivo: { type: 'string', description: 'Motivo de pérdida' },
     nota: { type: 'string', description: 'Nota que queda en el historial de la negociación y del cliente' } }, required: ['id', 'titulo'] } },
   { name: 'proponer_nota_contacto', description: 'Propone registrar una nota en la ficha de un cliente o contacto (reclamos, garantías, acuerdos, datos nuevos). Gustavo la aprueba con un toque.', input_schema: { type: 'object', properties: { id: { type: 'string' }, titulo: { type: 'string' }, texto: { type: 'string' } }, required: ['id', 'titulo', 'texto'] } },
@@ -3577,7 +3644,7 @@ function ex_copHerramienta_(nombre, inp, estado) {
     case 'proponer_cambio_negocio': {
       const cambios = {}; ['etapa', 'valor', 'proxima', 'motivo'].forEach(function (k) { if (inp[k] !== undefined && inp[k] !== null) cambios[k] = inp[k]; });
       if (inp.fecha_etapa) cambios.fechaEtapa = inp.fecha_etapa; if (inp.fecha_proxima !== undefined) cambios.fechaProx = inp.fecha_proxima;
-      if (cambios.etapa === 'Ganada' || cambios.etapa === 'Perdida') { if (cambios.proxima === undefined) cambios.proxima = ''; if (cambios.fechaProx === undefined) cambios.fechaProx = ''; }
+      if (cambios.etapa === 'Perdida') { if (cambios.proxima === undefined) cambios.proxima = ''; if (cambios.fechaProx === undefined) cambios.fechaProx = ''; }
       estado.acciones.push({ tipo: 'editar_negocio', titulo: String(inp.titulo || 'Actualizar negociación').slice(0, 160), ref: String(inp.id || ''), cambios: cambios, detalle: String(inp.nota || '').slice(0, 1500) });
       return 'Cambio propuesto. Gustavo lo verá como botón para aprobar.';
     }
@@ -3944,6 +4011,7 @@ function ex_tareaHoraria() {
 function ex_tareaBase() {
   if (!ex_cuentaVigente_()) return;
   ex_conLock_(ex_escanearBase_);
+  try { ex_avanzarPostventa_(); } catch (e) { console.log('postventa: ' + e.message); }
   if (ex_bsaleToken_()) { try { ex_bsaleCatalogo_(); ex_bsaleSincStock_(); } catch (e) { console.log('Bsale: ' + e.message); } }   // catálogo y stock (arribos, stock crítico)
   const pr = PropertiesService.getScriptProperties();
   if (pr.getProperty('IG_TOKEN')) {
