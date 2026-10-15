@@ -1461,6 +1461,15 @@ body:has(.selbar) .fab,body:has(.selbar) .fab2{display:none}
 .chatw .bub small{display:block;text-align:right;font-size:10.5px;color:var(--muted);margin-top:2px}
 .chatw .bub.med{font-style:italic;color:var(--muted)}
 .chatbar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:10px 0 2px;font-size:13px}
+/* Selección múltiple de contactos */
+.ctable th.ck,.ctable td.ck{width:34px;padding-right:0}.ctable input[type=checkbox],.ct-row .ckm{width:18px;height:18px;cursor:pointer;accent-color:var(--accent)}
+.ctable tr.sel td{background:var(--accent-soft)}.ct-row.sel{background:var(--accent-soft);border-radius:10px}.ct-row .ckm{flex:none;margin:0 2px}
+.bulk{position:sticky;top:8px;z-index:5;display:flex;flex-wrap:wrap;gap:8px;align-items:center;background:var(--card);border:1px solid var(--accent);border-radius:14px;padding:10px 12px;margin:0 0 12px;box-shadow:var(--shadow-md)}
+.bulk b{margin-right:4px}.btn.sec.bad{color:var(--bad-ink)}
+.ctacts{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}.ctacts .btn{padding:6px 10px;font-size:12.5px}
+.ctnav{display:flex;gap:6px;margin-left:auto;flex:none}.ctnav button{width:34px;height:34px;border-radius:10px;border:1px solid var(--line);background:var(--card);font-size:18px;cursor:pointer;color:var(--ink)}.ctnav button:disabled{opacity:.35;cursor:default}
+.aviso{position:fixed;left:50%;bottom:92px;transform:translateX(-50%);z-index:90;display:flex;gap:10px;align-items:center;background:var(--ink);color:var(--card);padding:10px 12px 10px 16px;border-radius:14px;box-shadow:var(--shadow-md);font-size:14px;max-width:calc(100vw - 32px)}
+.aviso button{flex:none;background:var(--card);color:var(--ink);border:0;border-radius:10px;padding:6px 12px;font-weight:700;cursor:pointer}
 /* Pestaña Chats (como WhatsApp) */
 .chl{display:grid;grid-template-columns:minmax(280px,360px) 1fr;gap:14px;align-items:start}
 .chl-l{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden}
@@ -1604,7 +1613,7 @@ async function api(action, extra){
 function apiX(op, extra){ return api('extra', Object.assign({ op }, extra || {})); }
 // Nivel 2 del script Extras: recordatorios y base de contactos. Nivel 3: la base solo usa contacto@blacklinechile.cl. Nivel 4: eventos de varios días.
 function extNivel(){ return S.extInactivo ? 0 : (S.ext && S.ext.nivel) || 1; }
-const APP_VER = 'v40', NIVEL_ULTIMO = 28;
+const APP_VER = 'v41', NIVEL_ULTIMO = 29;
 function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < NIVEL_ULTIMO; }
 let sincTimer = null;
 // Después de cambiar tareas, el script actualiza los recordatorios del calendario (en segundo plano).
@@ -1873,7 +1882,7 @@ function viewInicio(){
   const totalHoy = lista.length + hechas.length;
   let html = '<div class="ihead"><button class="quick" id="qa"><b>+</b>Agregar tarea… <span style="margin-left:auto">🎤</span></button>' +
     '<button class="btn sec" id="prodBtn">' + icon('box') + ' Producto</button><button class="btn sec" id="fzBtn">' + icon('chart') + ' Fuentes</button><button class="btn sec" id="planBtn">' + icon('spark') + ' Plan de la semana</button></div>';
-  if (necesitaActualizar()) html += '<div class="w" style="margin-bottom:14px;display:flex;gap:12px;align-items:center"><div class="grow"><b>Nueva versión del script</b><div class="wsub">' + (extNivel() >= 27 ? 'Pestaña Chats en Contactos: todas las conversaciones de WhatsApp, la más reciente arriba, como en el teléfono.' : extNivel() >= 26 ? 'Archivo de fotos: sube carpetas completas (por ejemplo, tu Google Fotos descargado) o fotos del iPhone; la IA describe cada foto para que el Estudio la encuentre.' : extNivel() >= 25 ? 'Depuración de contactos: el agente deja solo a quienes tienes guardados y con conversación de compra (al Pipeline) y archiva el resto. Además, los chats ya no se cortan.' : extNivel() >= 24 ? 'Pestaña Chat en la ficha de cada contacto: lees toda la conversación de WhatsApp y lo clasificas con un toque. Además, nombres automáticos desde la tarjeta de WhatsApp y el chat.' : extNivel() >= 23 ? 'WhatsApp: lee el historial de chats (hasta 6 meses) que Meta comparte al conectar el número con Telnyx, y arma el perfil de cada contacto.' : extNivel() >= 22 ? 'Ventas reales de Bsale: ventas por mes, lo más vendido, qué reponer, stock quieto, mejores clientes y el historial de compras en la ficha de cada cliente.' : extNivel() >= 21 ? 'Estudio: el agente mira las fotos antes de usarlas (descarta las que no calzan), suma fotos oficiales de Specialized, videos de Specialized University y tus carpetas de Drive, y te pide las fotos que faltan.' : extNivel() >= 20 ? 'Postventa automática: al marcar una venta como ganada se agendan la entrega, el registro de garantía, el llamado a los 7 días, la revisión de los 30 días y la foto o reseña.' : extNivel() >= 19 ? 'El Copiloto ahora corrige datos: negociaciones (etapa, fecha real de cierre, valor), notas en la ficha del cliente y tareas, siempre con tu aprobación.' : extNivel() >= 16 ? 'Agente de tareas: piensa cada tarea que dictas (fecha, pasos, proveedor, stock, pedido y mejores opciones) antes de guardarla. También Compras y proveedores.' : extNivel() >= 14 ? 'El Cerebro: plan del día automático, Copiloto que consulta todo, Specialized Chile (ventas, ofertas y stock por talla), clima, noticias y avisos para el equipo.' : extNivel() >= 10 ? 'Instagram: métricas diarias y calendario de contenido con IA. También filtra los correos automáticos de bancos y pagos.' : extNivel() >= 8 ? 'Asistente de IA para planificar tu día y tu semana, Instagram y conexión con Bsale.' : 'Importar chats de WhatsApp y agente de IA.') + '</div></div><button class="btn sm" id="updBtn">Actualizar</button></div>';
+  if (necesitaActualizar()) html += '<div class="w" style="margin-bottom:14px;display:flex;gap:12px;align-items:center"><div class="grow"><b>Nueva versión del script</b><div class="wsub">' + (extNivel() >= 28 ? 'Contactos: casillas para marcar varios y archivar, etiquetar, mover a un grupo o eliminar en lote; acciones rápidas y flechas ‹ › en cada ficha; Depurar en segundo plano.' : extNivel() >= 27 ? 'Pestaña Chats en Contactos: todas las conversaciones de WhatsApp, la más reciente arriba, como en el teléfono.' : extNivel() >= 26 ? 'Archivo de fotos: sube carpetas completas (por ejemplo, tu Google Fotos descargado) o fotos del iPhone; la IA describe cada foto para que el Estudio la encuentre.' : extNivel() >= 25 ? 'Depuración de contactos: el agente deja solo a quienes tienes guardados y con conversación de compra (al Pipeline) y archiva el resto. Además, los chats ya no se cortan.' : extNivel() >= 24 ? 'Pestaña Chat en la ficha de cada contacto: lees toda la conversación de WhatsApp y lo clasificas con un toque. Además, nombres automáticos desde la tarjeta de WhatsApp y el chat.' : extNivel() >= 23 ? 'WhatsApp: lee el historial de chats (hasta 6 meses) que Meta comparte al conectar el número con Telnyx, y arma el perfil de cada contacto.' : extNivel() >= 22 ? 'Ventas reales de Bsale: ventas por mes, lo más vendido, qué reponer, stock quieto, mejores clientes y el historial de compras en la ficha de cada cliente.' : extNivel() >= 21 ? 'Estudio: el agente mira las fotos antes de usarlas (descarta las que no calzan), suma fotos oficiales de Specialized, videos de Specialized University y tus carpetas de Drive, y te pide las fotos que faltan.' : extNivel() >= 20 ? 'Postventa automática: al marcar una venta como ganada se agendan la entrega, el registro de garantía, el llamado a los 7 días, la revisión de los 30 días y la foto o reseña.' : extNivel() >= 19 ? 'El Copiloto ahora corrige datos: negociaciones (etapa, fecha real de cierre, valor), notas en la ficha del cliente y tareas, siempre con tu aprobación.' : extNivel() >= 16 ? 'Agente de tareas: piensa cada tarea que dictas (fecha, pasos, proveedor, stock, pedido y mejores opciones) antes de guardarla. También Compras y proveedores.' : extNivel() >= 14 ? 'El Cerebro: plan del día automático, Copiloto que consulta todo, Specialized Chile (ventas, ofertas y stock por talla), clima, noticias y avisos para el equipo.' : extNivel() >= 10 ? 'Instagram: métricas diarias y calendario de contenido con IA. También filtra los correos automáticos de bancos y pagos.' : extNivel() >= 8 ? 'Asistente de IA para planificar tu día y tu semana, Instagram y conexión con Bsale.' : 'Importar chats de WhatsApp y agente de IA.') + '</div></div><button class="btn sm" id="updBtn">Actualizar</button></div>';
   if (extNivel() >= 13 && !S.leadsCanal && !S._leadsPend){ S._leadsPend = 1; loadLeads().then(() => { S._leadsPend = 0; if (S.tab === 'inicio' && !$('.pop-bg')) render(); }); }
   html += planStrip() + kpiRow();
   const rad = senales();
@@ -2536,19 +2545,28 @@ function viewBase(){
   let html = top + (S.bseg ? '<div class="fchips"><button class="fchip" id="bsegX">' + esc(segNombre(S.bseg)) + ' <span>✕</span></button><span class="wsub">' + L.length + ' contactos</span></div>' : '') + '<div class="kstrip"><div class="ks1" data-bfj="todos"><div><b>' + todos.length + '</b><small>contactos</small></div></div><div class="ks1" data-bfj="Cliente"><div><b>' + cuenta('Cliente') + '</b><small>clientes</small></div></div>' +
     '<div class="ks1" data-bfj="esperan"><div><b style="color:' + (esperan ? 'var(--bad-ink)' : 'inherit') + '">' + esperan + '</b><small>esperan respuesta</small></div></div><div class="ks1" data-bfj="frios"><div><b>' + frios.length + '</b><small>sin contacto +30 d</small></div></div></div>';
   html += '<div class="tbar"><input type="text" id="bq" placeholder="🔎 Buscar nombre, empresa, teléfono o interés" value="' + esc(S.bq) + '"><select id="bfs">' + filtros.map(f => '<option value="' + f[0] + '"' + (S.bf === f[0] ? ' selected' : '') + '>' + f[1] + '</option>').join('') + '</select>' +
-    (extNivel() >= 8 ? '<button class="btn sm sec" id="bImp">📥 Importar chats</button>' : '') + (extNivel() >= 26 ? '<button class="btn sm sec" id="bDep">🧹 Depurar</button>' : '') + '<button class="btn sm sec" id="bScan">↻ Revisar correo</button><button class="btn sm" id="bNew">＋ Nuevo</button></div>';
+    (extNivel() >= 8 ? '<button class="btn sm sec" id="bImp">📥 Importar chats</button>' : '') + (extNivel() >= 26 ? '<button class="btn sm sec" id="bDep">🧹 Depurar</button>' : '') + (extNivel() >= 29 ? '<button class="btn sm sec" id="bArch" title="Archiva los contactos marcados">🗄️ Archivar</button><button class="btn sm sec" id="bDesarch" title="Devuelve a la base los contactos marcados">↩️ Desarchivar</button>' : '') + '<button class="btn sm sec" id="bScan">↻ Revisar correo</button><button class="btn sm" id="bNew">＋ Nuevo</button></div>';
   const negDe = c => negocios().filter(n => n.contacto === c.id && n.estado === 'Abierta')[0];
+  S.ctNav = L.slice().sort((a, b) => String(a.nombre || a.email || '').localeCompare(String(b.nombre || b.email || ''), 'es')).map(c => c.id);
+  const nSel = S.csel ? S.csel.size : 0;
+  if (nSel) html += '<div class="bulk"><b>' + nSel + ' seleccionado' + (nSel === 1 ? '' : 's') + '</b><button class="btn sm sec" data-lote="archivar">🗄️ Archivar</button><button class="btn sm sec" data-lote="desarchivar">↩️ Desarchivar</button><button class="btn sm sec" data-lote="etiqueta">🏷️ Etiquetar</button><button class="btn sm sec" data-lote="tipo">🗂️ Mover a grupo</button><button class="btn sm sec bad" data-lote="eliminar">🗑 Eliminar</button><button class="btn sm sec" id="ckNone">✕ Quitar selección</button></div>';
   if (!L.length) html += '<div class="sec"><div class="empty">' + (todos.length ? 'Nada con este filtro 🔍' : 'Aún no hay contactos. Importa tus chats de WhatsApp o agrega uno a mano.') + '</div></div>';
-  else if (ANCHO()) html += '<div class="tablewrap"><table class="ntable ctable"><thead><tr><th>Nombre</th><th>Perfil</th><th>Prob.</th><th>Teléfono</th><th>Negociación abierta</th><th>Última interacción</th></tr></thead><tbody>' +
-    L.map(c => { const n = negDe(c), idea = agenteDe(c.id).idea; return '<tr data-c="' + esc(c.id) + '"><td><div class="row" style="gap:10px">' + avatar(c, 32) + '<div style="min-width:0"><b>' + esc(c.nombre || c.email) + '</b>' + (c.empresa || c.etiquetas ? '<div class="hint" style="margin:1px 0 0">' + esc([c.empresa, c.etiquetas].filter(Boolean).join(' · ').slice(0, 60)) + '</div>' : '') + '</div></div></td>' +
+  else if (ANCHO()) html += '<div class="tablewrap"><table class="ntable ctable"><thead><tr><th class="ck"><input type="checkbox" id="ckAll"' + (L.length && L.every(c => (S.csel || new Set()).has(c.id)) ? ' checked' : '') + ' aria-label="Marcar todos"></th><th>Nombre</th><th>Perfil</th><th>Prob.</th><th>Teléfono</th><th>Negociación abierta</th><th>Última interacción</th></tr></thead><tbody>' +
+    L.map(c => { const n = negDe(c), idea = agenteDe(c.id).idea; return '<tr data-c="' + esc(c.id) + '"' + ((S.csel || new Set()).has(c.id) ? ' class="sel"' : '') + '><td class="ck"><input type="checkbox" data-ck="' + esc(c.id) + '"' + ((S.csel || new Set()).has(c.id) ? ' checked' : '') + '></td><td><div class="row" style="gap:10px">' + avatar(c, 32) + '<div style="min-width:0"><b>' + esc(c.nombre || c.email) + '</b>' + (c.empresa || c.etiquetas ? '<div class="hint" style="margin:1px 0 0">' + esc([c.empresa, c.etiquetas].filter(Boolean).join(' · ').slice(0, 60)) + '</div>' : '') + '</div></div></td>' +
       '<td>' + (perfilDe(c.id) && perfilDe(c.id).p ? '<div class="pcs">' + chipsPerfil(perfilDe(c.id), 3) + '</div>' : '<span class="dot" style="background:' + (TIPO_COL[c.tipo] || '#98A2B3') + ';margin-right:6px"></span>' + esc(c.tipo)) + '</td><td class="num">' + (perfilDe(c.id) && /oportunidad|lead/.test(perfilDe(c.id).ciclo || '') ? perfilDe(c.id).prob + '%' : '<span class="hint">–</span>') + '</td><td style="white-space:nowrap">' + esc(c.telefono || '–') + '</td>' +
       '<td>' + (n ? '<span class="dot" style="background:' + etapaDe(n).c + ';margin-right:6px"></span>' + esc(n.etapa) + (n.valor ? ' · ' + clpCorto(n.valor) : '') : '<span class="hint">–</span>') + '</td><td style="white-space:nowrap">' + (idea ? '<span class="pill2 bad">Espera respuesta</span> ' : '') + haceTxt(c.ultima) + '</td></tr>'; }).join('') + '</tbody></table></div>';
-  else html += '<div class="sec">' + L.map(c => { const n = negDe(c), idea = agenteDe(c.id).idea; return '<div class="ct-row" data-c="' + esc(c.id) + '">' + avatar(c, 40) + '<div class="grow"><b style="font-size:14.5px">' + esc(c.nombre || c.email) + '</b>' + (perfilDe(c.id) && perfilDe(c.id).p ? '<div class="pcs" style="margin-top:4px">' + chipsPerfil(perfilDe(c.id), 3) + '</div>' : '') + '<div class="tm"><span>' + esc(c.tipo) + '</span>' + (n ? '<span>' + esc(n.etapa) + (n.valor ? ' · ' + clpCorto(n.valor) : '') + '</span>' : '') + (idea ? '<span class="d bad">Espera respuesta</span>' : '') + '</div></div><div class="ct-last">' + haceTxt(c.ultima) + '</div></div>'; }).join('') + '</div>';
+  else html += '<div class="sec">' + L.map(c => { const n = negDe(c), idea = agenteDe(c.id).idea; return '<div class="ct-row' + ((S.csel || new Set()).has(c.id) ? ' sel' : '') + '" data-c="' + esc(c.id) + '"><input type="checkbox" class="ckm" data-ck="' + esc(c.id) + '"' + ((S.csel || new Set()).has(c.id) ? ' checked' : '') + '>' + avatar(c, 40) + '<div class="grow"><b style="font-size:14.5px">' + esc(c.nombre || c.email) + '</b>' + (perfilDe(c.id) && perfilDe(c.id).p ? '<div class="pcs" style="margin-top:4px">' + chipsPerfil(perfilDe(c.id), 3) + '</div>' : '') + '<div class="tm"><span>' + esc(c.tipo) + '</span>' + (n ? '<span>' + esc(n.etapa) + (n.valor ? ' · ' + clpCorto(n.valor) : '') + '</span>' : '') + (idea ? '<span class="d bad">Espera respuesta</span>' : '') + '</div></div><div class="ct-last">' + haceTxt(c.ultima) + '</div></div>'; }).join('') + '</div>';
   $('#view').innerHTML = html;
   const bq = $('#bq'); bq.oninput = () => { S.bq = bq.value; const pos = bq.selectionStart; viewBase(); const b2 = $('#bq'); b2.focus(); b2.setSelectionRange(pos, pos); };
   $('#bfs').onchange = e => { S.bf = e.target.value; viewBase(); };
   $$('[data-bfj]').forEach(b => b.onclick = () => { S.bf = b.dataset.bfj; viewBase(); });
-  $$('[data-c]').forEach(b => b.onclick = () => openContacto(contactoPorId(b.dataset.c)));
+  $$('[data-c]').forEach(b => b.onclick = e => { if (e.target.closest('[data-ck], .ck')) return; openContacto(contactoPorId(b.dataset.c)); });
+  $$('[data-ck]').forEach(x => x.onclick = e => { e.stopPropagation(); S.csel = S.csel || new Set(); x.checked ? S.csel.add(x.dataset.ck) : S.csel.delete(x.dataset.ck); viewBase(); });
+  const ckA = $('#ckAll'); if (ckA) ckA.onclick = e => { e.stopPropagation(); S.csel = S.csel || new Set(); L.forEach(c => ckA.checked ? S.csel.add(c.id) : S.csel.delete(c.id)); viewBase(); };
+  const ckN = $('#ckNone'); if (ckN) ckN.onclick = () => { S.csel = new Set(); viewBase(); };
+  $$('[data-lote]').forEach(b => b.onclick = () => accionContactos(b.dataset.lote, [...(S.csel || [])]));
+  const bA = $('#bArch'); if (bA) bA.onclick = () => accionContactos('archivar', [...(S.csel || [])]);
+  const bD = $('#bDesarch'); if (bD) bD.onclick = () => accionContactos('desarchivar', [...(S.csel || [])]);
   $('#bNew').onclick = () => openContacto(null);
   bindBaseTop();
   const bx = $('#bsegX'); if (bx) bx.onclick = () => { S.bseg = null; viewBase(); };
@@ -2623,9 +2641,13 @@ function openCto(c, opt){
   const tel = String(c.telefono || '').replace(/[^\d+]/g, ''), wa = tel.replace(/^\+/, '').replace(/^9(\d{8})$/, '569$1');
   const negs = negocios().filter(x => x.contacto === c.id), abierta = negs.find(x => x.estado === 'Abierta');
   const tareas = tareasDe(c).filter(t => !t.hecho).sort(ordenar), inter = ((S.base && S.base.interacciones) || []).filter(i => i.id === c.id);
-  let html = '<div id="ct_root" data-id="' + esc(c.id) + '"></div><div class="dh">' + avatar(c, 50) + '<div style="min-width:0"><h3>' + esc(c.nombre || c.email) + '</h3><div class="ds"><span class="dot" style="background:' + (TIPO_COL[c.tipo] || '#98A2B3') + ';margin-right:5px"></span>' + esc(c.tipo) + (c.empresa ? ' · ' + esc(c.empresa) : '') + ' · ' + (c.n ? c.n + ' interacciones · ' : '') + 'última ' + haceTxt(c.ultima) + '</div></div></div>';
+  let html = '<div id="ct_root" data-id="' + esc(c.id) + '"></div><div class="dh">' + avatar(c, 50) + '<div style="min-width:0"><h3>' + esc(c.nombre || c.email) + '</h3><div class="ds"><span class="dot" style="background:' + (TIPO_COL[c.tipo] || '#98A2B3') + ';margin-right:5px"></span>' + esc(c.tipo) + (c.empresa ? ' · ' + esc(c.empresa) : '') + ' · ' + (c.n ? c.n + ' interacciones · ' : '') + 'última ' + haceTxt(c.ultima) + '</div></div>' + (function(){ const N = S.ctNav || [], k = N.indexOf(c.id); return k >= 0 ? '<div class="ctnav"><button id="ct_prev" aria-label="Contacto anterior"' + (k > 0 ? '' : ' disabled') + '>‹</button><button id="ct_next" aria-label="Contacto siguiente"' + (k < N.length - 1 ? '' : ' disabled') + '>›</button></div>' : ''; })() + '</div>';
   html += '<div class="qa">' + (tel ? '<a href="https://wa.me/' + esc(wa) + '" target="_blank">' + icon('note') + 'WhatsApp</a><a href="tel:' + esc(tel) + '">' + icon('phone') + 'Llamar</a>' : '<button disabled style="opacity:.45">' + icon('note') + 'WhatsApp</button><button disabled style="opacity:.45">' + icon('phone') + 'Llamar</button>') +
     (c.email ? '<a href="mailto:' + esc(c.email) + '">' + icon('arrow') + 'Correo</a>' : '<button disabled style="opacity:.45">' + icon('arrow') + 'Correo</button>') + '<button id="ct_tk">' + icon('check') + 'Tarea</button><button id="ct_ng">' + icon('deal') + (abierta ? 'Negocio' : 'Nuevo negocio') + '</button></div>';
+  // Acciones rápidas sobre el contacto
+  if (extNivel() >= 29) html += '<div class="ctacts"><button class="btn sm sec" data-cta="chat">💬 Ver chat</button><button class="btn sm sec" data-cta="etiqueta">🏷️ Etiquetar</button><button class="btn sm sec" data-cta="tipo">🗂️ Grupo</button>' +
+    (c.tipo === 'Archivado' ? '<button class="btn sm sec" data-cta="desarchivar">↩️ Desarchivar</button>' : '<button class="btn sm sec" data-cta="archivar">🗄️ Archivar</button>') +
+    (iaDisponible() ? '<button class="btn sm sec" data-cta="ia">🧠 Analizar</button>' : '') + '<button class="btn sm sec bad" data-cta="eliminar">🗑 Eliminar</button></div>';
   const t0 = tareas[0];
   const vencP = t0 ? (t0.limite && t0.limite < hoy()) : abierta && abierta.proxima ? (abierta.fechaProx && abierta.fechaProx < hoy()) : true;
   html += '<div class="nextc' + (vencP ? ' bad' : '') + '"><div class="tx"><small>Próximo paso</small>' + (t0 ? '<b>' + esc(t0.tarea) + '</b><span>' + (t0.limite ? (t0.limite < hoy() ? 'Venció ' : '') + fmtLong(t0.limite) : 'sin fecha') + '</span>' : abierta && abierta.proxima ? '<b>' + esc(abierta.proxima) + '</b><span>' + (abierta.fechaProx ? (abierta.fechaProx < hoy() ? 'Venció ' : '') + fmtLong(abierta.fechaProx) : '') + ' · de la negociación</span>' : '<b>Sin próximo paso</b><span>Agenda un seguimiento para no perder a este contacto</span>') + '</div>' + (t0 ? '<button class="btn sm" id="ct_done">✓ Hecho</button>' : '<button class="btn sm" id="ct_seg">Agendar</button>') + '</div>';
@@ -2637,6 +2659,15 @@ function openCto(c, opt){
   ctoTab(c, tab);
   $$('[data-ctab]').forEach(b => b.onclick = () => { S.ctab = b.dataset.ctab; $$('[data-ctab]').forEach(x => x.classList.toggle('on', x === b)); ctoTab(c, b.dataset.ctab); });
   const nombre = c.nombre || c.email;
+  const navTo = d => { const N = S.ctNav || [], k = N.indexOf(c.id), sig = contactoPorId(N[k + d]); if (sig) openCto(sig); };
+  const cp = $('#ct_prev'); if (cp) cp.onclick = () => navTo(-1);
+  const cn = $('#ct_next'); if (cn) cn.onclick = () => navTo(1);
+  $$('[data-cta]').forEach(b => b.onclick = () => {
+    const a = b.dataset.cta;
+    if (a === 'chat') return irAlChat(c.id);
+    if (a === 'ia') return analizarAhora(c.id, b);
+    accionContactos(a, [c.id], () => { if (a === 'eliminar' || a === 'archivar') { closeSheet(); render(); } else { const n2 = contactoPorId(c.id); if (n2) openCto(n2); } });
+  });
   $('#ct_tk').onclick = () => openAdd({ texto: 'Seguimiento ' + nombre + ' mañana', notas: c.telefono ? '📞 ' + c.telefono : '' });
   $('#ct_ng').onclick = () => abierta ? openNegocio(abierta) : openNegocio(null, { contacto: c.id });
   const sg = $('#ct_seg'); if (sg) sg.onclick = () => openAdd({ texto: 'Seguimiento ' + nombre + ' mañana', notas: c.telefono ? '📞 ' + c.telefono : '' });
@@ -5925,7 +5956,7 @@ function viewTareas(){
     if (S.q){ const q = norm(S.q); L = L.filter(t => norm(t.tarea + ' ' + (t.proyecto || '') + ' ' + (t.categoria || '') + ' ' + (t.notas || '')).includes(q)); }
     L.sort(ordenar);
     const opciones = [['todas', 'Todas las áreas y categorías']].concat(d.config.areas.map(a => [a, 'Área: ' + a]), d.config.categorias.map(c => [c.nombre, 'Categoría: ' + c.nombre]), (d.proyectos || []).map(p => [p.nombre, 'Proyecto: ' + p.nombre]));
-    cuerpo += '<div class="tbar"><input type="text" id="q" placeholder="🔎 Buscar" value="' + esc(S.q) + '"><select id="tf">' + opciones.map(o => '<option value="' + esc(o[0]) + '"' + (S.filtro === o[0] ? ' selected' : '') + '>' + esc(o[1]) + '</option>').join('') + '</select><div class="views">' + [['lista', 'Lista'], ['tablero', 'Tablero'], ['matriz', 'Matriz']].map(v => '<button class="' + (S.vista === v[0] ? 'on' : '') + '" data-v="' + v[0] + '">' + v[1] + '</button>').join('') + '</div></div>';
+    cuerpo += '<div class="tbar"><input type="text" id="q" placeholder="🔎 Buscar" value="' + esc(S.q) + '"><select id="tf">' + opciones.map(o => '<option value="' + esc(o[0]) + '"' + (S.filtro === o[0] ? ' selected' : '') + '>' + esc(o[1]) + '</option>').join('') + '</select><div class="views">' + [['lista', 'Lista'], ['tablero', 'Tablero'], ['matriz', 'Matriz']].map(v => '<button class="' + (S.vista === v[0] ? 'on' : '') + '" data-vista="' + v[0] + '">' + v[1] + '</button>').join('') + '</div></div>';
     cuerpo += S.vista === 'tablero' ? tableroHTML(L) : S.vista === 'matriz' ? matrizHTML(L) : '<div class="sec">' + (L.length ? lista(L) : '<div class="empty">Nada con este filtro 🔍</div>') + '</div>';
   }
   html += '<div id="tbody" class="tk2' + (S.sel ? ' selmode' : '') + '">' + cuerpo + '</div>';
@@ -5954,7 +5985,7 @@ function viewTareas(){
   $$('[data-dupno]').forEach(b => b.onclick = () => { const g = dups[+b.dataset.dupno]; lsSet('sugDesc', descartadas().concat('d:' + g.map(t => t.tarea).sort().join('|')).slice(-300)); viewTareas(); });
   const q = $('#q'); if (q) q.oninput = () => { S.q = q.value; const pos = q.selectionStart; viewTareas(); const q2 = $('#q'); q2.focus(); q2.setSelectionRange(pos, pos); };
   const tf = $('#tf'); if (tf) tf.onchange = e => { S.filtro = e.target.value; viewTareas(); };
-  $$('[data-v]').forEach(b => b.onclick = () => { S.vista = LS.vista = b.dataset.v; viewTareas(); });
+  $$('#view [data-vista]').forEach(b => b.onclick = () => { S.vista = LS.vista = b.dataset.vista; viewTareas(); });
   $$('[data-mv]').forEach(b => b.onclick = async e => {
     e.stopPropagation();
     const t = S.data.tareas[+b.dataset.mv], est = b.dataset.est;
@@ -7039,11 +7070,53 @@ function revisarPlanTarea(P, texto, t, fuentes){
   };
 }
 
+/* ---------- Acciones sobre contactos (lista y ficha) ---------- */
+// Aviso que se queda unos segundos con un botón (para tareas que terminan en segundo plano).
+function aviso(txt, btnTxt, fn){
+  $$('.aviso').forEach(x => x.remove());
+  const a = document.createElement('div'); a.className = 'aviso'; a.innerHTML = '<span>' + esc(txt) + '</span>' + (btnTxt ? '<button>' + esc(btnTxt) + '</button>' : '');
+  if (btnTxt) a.querySelector('button').onclick = () => { a.remove(); fn(); };
+  document.body.appendChild(a); setTimeout(() => a.remove(), 15000);
+}
+function etiquetasUsadas(){ const n = {}; ((S.base && S.base.contactos) || []).forEach(c => String(c.etiquetas || '').split(',').map(t => t.trim()).filter(Boolean).forEach(t => { n[t] = (n[t] || 0) + 1; })); return Object.keys(n).sort((a, b) => n[b] - n[a]).slice(0, 16); }
+function pedirValor(titulo, opciones, conTexto){
+  return new Promise(ok => {
+    const md = modal(titulo, (conTexto ? '<input type="text" id="pv_t" placeholder="Escribe una etiqueta (ej. Levo, Club Pichijuán, VIP)" style="width:100%;margin-bottom:10px">' : '') +
+      (opciones.length ? '<div class="seg" style="flex-wrap:wrap;gap:6px">' + opciones.map(o => '<button type="button" class="pill" data-pv="' + esc(o) + '">' + esc((TIPO_IC[o] ? TIPO_IC[o] + ' ' : '') + o) + '</button>').join('') + '</div>' : '') +
+      (conTexto ? '<div class="btns" style="margin-top:12px"><button class="btn" id="pv_ok">Aplicar</button></div>' : ''));
+    const fin = v => { md.cerrar(); ok(v); };
+    md.el.querySelectorAll('[data-pv]').forEach(b => b.onclick = () => conTexto ? (md.el.querySelector('#pv_t').value = b.dataset.pv) : fin(b.dataset.pv));
+    const okb = md.el.querySelector('#pv_ok'); if (okb) okb.onclick = () => { const v = md.el.querySelector('#pv_t').value.trim(); if (v) fin(v); };
+    const tx = md.el.querySelector('#pv_t'); if (tx){ tx.focus(); tx.onkeydown = e => { if (e.key === 'Enter') okb.click(); }; }
+  });
+}
+// Se ejecuta en segundo plano: puedes seguir usando la app y te avisa al terminar.
+async function accionContactos(acc, ids, alTerminar){
+  if (!ids.length){ toast('Marca uno o más contactos en la lista (la casilla a la izquierda)'); return; }
+  let valor = '';
+  if (acc === 'etiqueta'){ valor = await pedirValor('🏷️ Etiquetar ' + ids.length + ' contacto' + (ids.length === 1 ? '' : 's'), etiquetasUsadas(), true); if (!valor) return; }
+  if (acc === 'tipo'){ valor = await pedirValor('🗂️ Mover ' + ids.length + ' contacto' + (ids.length === 1 ? '' : 's') + ' a…', TIPOS_C.filter(t => t !== 'Ignorar'), false); if (!valor) return; }
+  if (acc === 'eliminar' && !confirm('¿Eliminar ' + ids.length + ' contacto' + (ids.length === 1 ? '' : 's') + ' de la base? Sus mensajes de WhatsApp quedan guardados; si vuelven a escribir, se crean de nuevo. Para ocultarlos sin borrar, usa Archivar.')) return;
+  const txt = { archivar: 'archivados', desarchivar: 'devueltos a la base', etiqueta: 'etiquetados «' + valor + '»', tipo: 'movidos a ' + valor, eliminar: 'eliminados' }[acc];
+  S.csel = new Set(); if (S.tab === 'base') viewBase();
+  toast('⏳ Aplicando en segundo plano…');
+  try { const r = await apiX('contactosLote', { ids, accion: acc, valor }); await loadBase(true); if (S.tab === 'base' && !$('#layer').innerHTML) viewBase(); toast('✓ ' + r.n + ' contacto' + (r.n === 1 ? '' : 's') + ' ' + txt); if (alTerminar) alTerminar(r); }
+  catch(e){ toast('No se pudo: ' + e.message); }
+}
+function irAlChat(id){ closeSheet(); S.bv = 'chats'; S.chatSel = id; S.chats = null; go('base'); }
+
 /* ---------- Depurar la base de WhatsApp ---------- */
 // Primero muestra qué haría (sin cambiar nada); al confirmar archiva y manda al agente los chats que van al Pipeline.
 async function openDepurar(){
-  const m = modal('🧹 Depurar contactos de WhatsApp', '<div class="empty"><span class="spin"></span>Revisando tus contactos y conversaciones…</div>');
-  let r; try { r = await apiX('depurar', {}); } catch(e){ m.el.querySelector('.empty').textContent = 'No se pudo revisar: ' + e.message; return; }
+  if (S.depJob){ toast('🧹 La revisión ya está en curso; te aviso cuando esté'); return; }
+  const m = modal('🧹 Depurar contactos de WhatsApp', '<div class="empty"><span class="spin"></span>Revisando tus contactos y conversaciones…</div><p class="hint" style="text-align:center;margin:0">Se hace en segundo plano: puedes cerrar esta ventana y seguir trabajando. Te aviso cuando esté.</p>');
+  S.depJob = apiX('depurar', {});
+  let r; try { r = await S.depJob; } catch(e){ S.depJob = null; if (document.body.contains(m.el)) m.el.querySelector('.empty').textContent = 'No se pudo revisar: ' + e.message; else toast('🧹 No se pudo revisar: ' + e.message); return; }
+  S.depJob = null;
+  if (!document.body.contains(m.el)){ aviso('🧹 Revisión lista: ' + r.archivar + ' por archivar · ' + r.pipeline + ' para el Pipeline', 'Ver', () => mostrarDepuracion(r)); return; }
+  m.cerrar(); mostrarDepuracion(r);
+}
+function mostrarDepuracion(r){
   const C = r.cuenta || {}, P = r.protegidos || {};
   const fila = (n, t) => n ? '<div class="it"><span class="dot" style="background:var(--s1)"></span><div class="tx">' + t + '<small>' + n + ' contactos</small></div></div>' : '';
   const html = '<p style="margin:0 0 10px;line-height:1.5">Quedan en tu base solo quienes tienes <b>guardados en el teléfono</b>' + (r.agenda ? '' : ' (no llegó tu agenda: se usa «tiene nombre»)') + ' y tuvieron una <b>conversación de ida y vuelta</b>. El agente revisa esos chats: los que hablaron de comprar entran al <b>Pipeline</b>; el resto se archiva.</p>' +
@@ -7052,11 +7125,11 @@ async function openDepurar(){
     '<details style="margin:10px 0"><summary class="wsub" style="cursor:pointer">Ver ejemplos</summary><div class="wsub" style="line-height:1.6;margin-top:6px"><b>Se archivan:</b> ' + esc((r.ejemplos.archivar || []).map(x => x.nombre).join(', ')) + '<br><b>Van al agente:</b> ' + esc((r.ejemplos.pipeline || []).map(x => x.nombre).join(', ')) + '</div></details>' +
     '<div class="hint" style="margin:0 0 12px">Archivar no borra nada: quedan en el filtro «🗄️ Archivados», y si alguien vuelve a escribir reaparece solo. Puedes deshacerlo con «Restaurar».</div>' +
     '<div class="btns"><button class="btn sec" id="depRest">Restaurar archivados</button><button class="btn" id="depOk"' + (r.archivar + r.pipeline ? '' : ' disabled') + '>Archivar ' + r.archivar + ' y revisar ' + r.pipeline + '</button></div>';
-  m.cerrar(); const m2 = modal('🧹 Depurar contactos de WhatsApp', html, { wide: true });
+  const m2 = modal('🧹 Depurar contactos de WhatsApp', html, { wide: true });
   m2.el.querySelector('#depOk').onclick = async e => {
-    const b = e.target; b.disabled = true; b.innerHTML = '<span class="spin"></span>Aplicando…';
-    try { const x = await apiX('depurar', { aplicar: true }); toast('🗄️ ' + x.archivados + ' archivados · 🧠 ' + x.enCola + ' chats en revisión para el Pipeline (cada 10 min)'); m2.cerrar(); await loadBase(true); render(); }
-    catch(err){ b.disabled = false; b.textContent = 'Reintentar'; toast('No se pudo: ' + err.message); }
+    m2.cerrar(); toast('⏳ Depurando en segundo plano… puedes seguir trabajando');
+    try { const x = await apiX('depurar', { aplicar: true }); await loadBase(true); if (!$('#layer').innerHTML) render(); aviso('🗄️ ' + x.archivados + ' archivados · 🧠 ' + x.enCola + ' chats en revisión para el Pipeline'); }
+    catch(err){ aviso('🧹 No se pudo depurar: ' + err.message, 'Reintentar', () => mostrarDepuracion(r)); }
   };
   m2.el.querySelector('#depRest').onclick = async e => {
     if (!confirm('¿Devolver a la base todos los contactos archivados por la depuración?')) return;

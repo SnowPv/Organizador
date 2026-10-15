@@ -15,8 +15,8 @@
  * Para actualizar este archivo más adelante: reemplaza todo su contenido y repite los dos pasos anteriores.
  */
 
-const EX_VERSION = '2026-11-25';
-const EX_NIVEL = 28;      // la app lo usa para saber qué funciones tiene este script
+const EX_VERSION = '2026-11-26';
+const EX_NIVEL = 29;      // la app lo usa para saber qué funciones tiene este script
 const EX_HOJA = 'Tareas';
 const EX_PRIMERA = 4;
 const EX_ULTIMA = 400;
@@ -115,6 +115,11 @@ function app_extra_(p) {
     case 'contacto':   return ex_guardarContacto_(p.contacto || {});
     case 'chat':       return ex_chat_(p);
     case 'chats':      return ex_chats_(p);
+    case 'contactosLote': {
+      const lk = LockService.getScriptLock();
+      if (!lk.tryLock(30000)) throw new Error('El script está ocupado. Intenta en un minuto.');
+      try { return ex_contactosLote_(p); } finally { lk.releaseLock(); }
+    }
     case 'depurar': {
       const lk = LockService.getScriptLock();
       if (!lk.tryLock(30000)) throw new Error('El script está ocupado (llegando mensajes). Intenta en un minuto.');
@@ -2261,6 +2266,37 @@ function ex_logDepuracion_(filas) {
   if (!sh) { sh = ss.insertSheet('Depuración'); sh.appendRow(['Contacto (ID)', 'Nombre', 'Motivo', 'Tipo anterior', 'Fecha']); sh.setFrozenRows(1); }
   sh.getRange(sh.getLastRow() + 1, 1, filas.length, 5).setValues(filas);
 }
+// Acciones en lote sobre contactos (desde la lista o la ficha): archivar, desarchivar, cambiar tipo, etiquetar, eliminar.
+function ex_contactosLote_(p) {
+  const ids = {}; (p.ids || []).forEach(function (x) { ids[String(x)] = 1; });
+  const acc = String(p.accion || ''), valor = String(p.valor || '').trim(), b = ex_baseHojas_(), filas = ex_filasContactos_(b.cs), log = [];
+  let prev = {};
+  if (acc === 'desarchivar') {
+    const sh = SpreadsheetApp.getActive().getSheetByName('Depuración');
+    if (sh && sh.getLastRow() > 1) sh.getRange(2, 1, sh.getLastRow() - 1, 4).getValues().forEach(function (r) { if (r[3] && r[3] !== 'Archivado') prev[String(r[0])] = r[3]; });
+  }
+  let n = 0;
+  if (acc === 'eliminar') {
+    const borrar = [];
+    filas.forEach(function (r, i) { if (ids[String(r[0])]) borrar.push(i + 2); });
+    borrar.sort(function (a, c) { return c - a; }).forEach(function (f) { b.cs.deleteRow(f); n++; });
+    return { ok: true, n: n };
+  }
+  filas.forEach(function (r, i) {
+    const id = String(r[0]); if (!ids[id]) return;
+    if (acc === 'archivar') { if (r[1] !== 'Archivado') { b.cs.getRange(i + 2, 2).setValue('Archivado'); log.push([id, r[2], 'archivado a mano', r[1], new Date()]); n++; } }
+    else if (acc === 'desarchivar') { if (r[1] === 'Archivado') { b.cs.getRange(i + 2, 2).setValue(prev[id] || 'Por clasificar'); n++; } }
+    else if (acc === 'tipo') { if (valor) { b.cs.getRange(i + 2, 2).setValue(valor); n++; } }
+    else if (acc === 'etiqueta' || acc === 'quitarEtiqueta') {
+      const tags = String(r[6] || '').split(',').map(function (t) { return t.trim(); }).filter(String), k = tags.map(function (t) { return t.toLowerCase(); }).indexOf(valor.toLowerCase());
+      if (acc === 'etiqueta' && valor && k < 0) tags.push(valor); else if (acc === 'quitarEtiqueta' && k >= 0) tags.splice(k, 1); else return;
+      b.cs.getRange(i + 2, 7).setValue(tags.join(', ')); n++;
+    }
+  });
+  ex_logDepuracion_(log);
+  return { ok: true, n: n };
+}
+
 function ex_depurar_(p) {
   const b = ex_baseHojas_(), filas = ex_filasContactos_(b.cs), wa = ex_hojaWa_(), n = wa.getLastRow() - 1, ahora = Date.now();
   if (p.restaurar) {
