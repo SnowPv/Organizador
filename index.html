@@ -1461,6 +1461,8 @@ body:has(.selbar) .fab,body:has(.selbar) .fab2{display:none}
 .chatw .bub small{display:block;text-align:right;font-size:10.5px;color:var(--muted);margin-top:2px}
 .chatw .bub.med{font-style:italic;color:var(--muted)}
 .chatbar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:10px 0 2px;font-size:13px}
+/* Tareas en cadena */
+.cadena{display:flex;gap:10px;align-items:center;justify-content:space-between;background:var(--accent-soft);border-radius:12px;padding:8px 12px;margin:0 0 10px;font-size:13.5px;font-weight:700;color:var(--accent-ink)}
 /* Agente comprador */
 .cp-ia{background:linear-gradient(135deg,var(--accent-soft),var(--card));border:1px solid var(--line);border-radius:16px;padding:14px;margin:0 0 12px}
 .cp-ia .wh{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
@@ -1618,7 +1620,7 @@ async function api(action, extra){
 function apiX(op, extra){ return api('extra', Object.assign({ op }, extra || {})); }
 // Nivel 2 del script Extras: recordatorios y base de contactos. Nivel 3: la base solo usa contacto@blacklinechile.cl. Nivel 4: eventos de varios días.
 function extNivel(){ return S.extInactivo ? 0 : (S.ext && S.ext.nivel) || 1; }
-const APP_VER = 'v43', NIVEL_ULTIMO = 31;
+const APP_VER = 'v44', NIVEL_ULTIMO = 31;
 function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < NIVEL_ULTIMO; }
 let sincTimer = null;
 // Después de cambiar tareas, el script actualiza los recordatorios del calendario (en segundo plano).
@@ -6557,10 +6559,22 @@ function dictar(input, btn, cb, alTerminar){
   try { rec.start(); } catch(e){ btn.classList.remove('on'); }
 }
 
-function openDetail(t){
+// Orden en que se trabajan las tareas (el mismo de la pestaña Tareas): vencidas e de hoy por prioridad, luego próximas y sin fecha.
+function ordenTrabajo(){
+  const h = hoy(), P = pendientes(), por = (a, b) => puntaje(b).s - puntaje(a).s;
+  const L = { venc: vencidas().sort(por), hoy: P.filter(t => t.limite === h).sort(por), prox: P.filter(t => t.limite > h).sort((a, b) => a.limite.localeCompare(b.limite) || ordenar(a, b)), sin: P.filter(t => !t.limite).sort(ordenar) };
+  return S.tv === 'prox' ? L.prox : S.tv === 'sin' ? L.sin : S.tv === 'hoy' ? L.venc.concat(L.hoy) : L.venc.concat(L.hoy, L.prox, L.sin);
+}
+function siguienteTarea(t){
+  const L = ordenTrabajo().filter(x => !x.hecho && x.row != null), k = L.indexOf(t), resto = L.filter(x => x !== t);
+  if (!resto.length) return null;
+  return k >= 0 && k < L.length - 1 ? L[k + 1] : resto[0];
+}
+function openDetail(t, opt){
+  opt = opt || {};
   if (!t || t.row == null){ toast('Espera a que se sincronice'); return; }
-  const c = S.data.config, q = QUAD[quadOf(t)];
-  sheet('<h3>✏️ Editar tarea</h3><div class="meta" style="margin:6px 0 4px">' + tagFecha(t) + '<span class="tag" style="background:' + hexToRgba(q.c, .15) + ';color:' + q.c + '">' + q.ic + ' ' + q.n + '</span>' + (t.puntos ? '<span class="tag">⭐ ' + esc(t.puntos) + ' pts</span>' : '') + '</div>' +
+  const c = S.data.config, q = QUAD[quadOf(t)], quedan = opt.cadena ? ordenTrabajo().filter(x => !x.hecho).length : 0;
+  sheet((opt.cadena ? '<div class="cadena"><span>➡️ Siguiente tarea · quedan ' + quedan + '</span><button class="btn sm sec" id="e_salir">Terminar por ahora</button></div>' : '') + '<h3>✏️ Editar tarea</h3><div class="meta" style="margin:6px 0 4px">' + tagFecha(t) + '<span class="tag" style="background:' + hexToRgba(q.c, .15) + ';color:' + q.c + '">' + q.ic + ' ' + q.n + '</span>' + (t.puntos ? '<span class="tag">⭐ ' + esc(t.puntos) + ' pts</span>' : '') + '</div>' +
     (!t.hecho ? '<div class="btns" style="margin-top:8px"><button class="btn sec" id="e_focus">▶ Enfocarme 25 min</button><button class="btn sec" id="e_done">✅ Marcar hecha</button></div>' : '') +
     (!t.hecho && agenteTareasOk() ? '<button class="btn ia" id="e_ia" style="width:100%;margin-top:8px">✨ Repensar con el agente</button>' : '') +
     '<label class="l">Tarea</label><input type="text" id="e_t" value="' + esc(t.tarea) + '">' +
@@ -6584,7 +6598,14 @@ function openDetail(t){
   $('#e_hoy').onclick = () => $('#e_f').value = h; $('#e_man').onclick = () => $('#e_f').value = addDays(h, 1);
   $('#e_lun').onclick = () => $('#e_f').value = nextMonday(h); $('#e_sin').onclick = () => $('#e_f').value = '';
   $('#e_sem').onclick = () => $('#e_f').value = addDays($('#e_f').value || h, 7);
-  if (!t.hecho){ $('#e_focus').onclick = () => openFocus(t); $('#e_done').onclick = () => { closeSheet(); toggle(t); }; }
+  if (!t.hecho){ $('#e_focus').onclick = () => openFocus(t); $('#e_done').onclick = () => {
+    // Al marcarla hecha se abre sola la siguiente (como «Empezar mi día»), en el orden de la pestaña Tareas.
+    const sig = S.tab === 'tareas' ? siguienteTarea(t) : null;
+    closeSheet(); toggle(t);
+    if (sig) setTimeout(() => { if (!$('#layer').innerHTML) openDetail(sig, { cadena: true }); }, 900);
+    else if (S.tab === 'tareas') setTimeout(() => toast('🎉 No quedan más tareas en esta lista'), 1200);
+  }; }
+  const es = $('#e_salir'); if (es) es.onclick = () => closeSheet();
   if ($('#e_ia')) $('#e_ia').onclick = () => pensarTarea(t.tarea, t);
   $$('[data-cto]').forEach(b => b.onclick = () => openContacto(contactoPorId(b.dataset.cto)));
   if (S.extInactivo) $('#e_act').onclick = showExtrasSetup;
