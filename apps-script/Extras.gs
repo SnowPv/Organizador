@@ -15,7 +15,7 @@
  * Para actualizar este archivo más adelante: reemplaza todo su contenido y repite los dos pasos anteriores.
  */
 
-const EX_VERSION = '2026-11-28';
+const EX_VERSION = '2026-11-29';
 const EX_NIVEL = 31;      // la app lo usa para saber qué funciones tiene este script
 const EX_HOJA = 'Tareas';
 const EX_PRIMERA = 4;
@@ -3678,7 +3678,7 @@ const EX_COM_TOOLS = ['buscar_en_proveedores', 'buscar_producto', 'ficha_special
 function ex_comprasIA_(p) {
   const pr = PropertiesService.getScriptProperties(), clave = pr.getProperty('ANTHROPIC_API_KEY'); if (!clave) throw new Error('falta ANTHROPIC_API_KEY en las propiedades del script');
   const q = String(p.q || '').trim(); if (!q) throw new Error('escribe qué buscas');
-  const modelo = pr.getProperty('COMPRAS_MODELO') || pr.getProperty('TAREAS_MODELO') || EX_TAR_MODELO, haiku = /haiku/.test(modelo);
+  const modelo = pr.getProperty('COMPRAS_MODELO') || 'claude-haiku-5-5', haiku = /haiku/.test(modelo);   // económico; se cambia con COMPRAS_MODELO
   const tools = EX_COP_TOOLS.filter(function (t) { return EX_COM_TOOLS.indexOf(t.name) >= 0; }).concat([Object.assign({}, EX_COM_FINAL, { cache_control: { type: 'ephemeral' } })]);
   const conf = ex_proveedoresConf_().map(function (x) { return x.nombre + ' (' + x.marcas + ', descuento ' + x.desc + '%' + (x.iva ? ', precios ' + x.iva : '') + ')'; }).join('; ');
   const messages = [{ role: 'user', content: 'Hoy es ' + ex_hoyYmd_(ex_tz_()) + '. Proveedores configurados: ' + conf + '.\nBúsqueda de Gustavo: «' + q.slice(0, 500) + '»' }], estado = { acciones: [], usadas: {} };
