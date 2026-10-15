@@ -15,7 +15,7 @@
  * Para actualizar este archivo más adelante: reemplaza todo su contenido y repite los dos pasos anteriores.
  */
 
-const EX_VERSION = '2026-11-29';
+const EX_VERSION = '2026-11-30';
 const EX_NIVEL = 31;      // la app lo usa para saber qué funciones tiene este script
 const EX_HOJA = 'Tareas';
 const EX_PRIMERA = 4;
@@ -1535,7 +1535,7 @@ const EX_EST_ESQUEMA = { type: 'object', additionalProperties: false, required: 
 // Mira las fotos candidatas (con visión) y elige la mejor para cada lámina, o pide que se saque una.
 function ex_elegirFotos_(p) {
   const pr = PropertiesService.getScriptProperties(), clave = pr.getProperty('ANTHROPIC_API_KEY'); if (!clave) throw new Error('falta ANTHROPIC_API_KEY');
-  const modelo = pr.getProperty('ESTUDIO_MODELO') || 'claude-opus-5-5', tok = ex_igToken_(), C = (p.candidatos || []).slice(0, 36), content = [];
+  const modelo = pr.getProperty('ESTUDIO_MODELO') || 'claude-sonnet-5-5', tok = ex_igToken_(), C = (p.candidatos || []).slice(0, 36), content = [];
   content.push({ type: 'text', text: 'Pieza: ' + String(p.titulo || '') + '\nLáminas que necesitan foto:\n' + (p.laminas || []).map(function (l) { return '- Lámina ' + l.i + ' (' + l.layout + '): «' + String(l.titulo || '').slice(0, 120) + '» · foto buscada: ' + String(l.descripcion || '') + ' · palabras: ' + (l.palabras || []).join(', '); }).join('\n') + '\n\nCandidatas (cada imagen va precedida de su id y su fuente):' });
   let n = 0;
   C.forEach(function (x) {
@@ -3539,7 +3539,7 @@ function ex_copiloto_(p) {
 // Recibe lo que Gustavo dictó o escribió y lo convierte en una tarea completa, como él la habría pensado:
 // fecha y hora, pasos, proveedor (lo busca o deja la ficha lista), cantidades según el stock, mejores opciones y mensaje para pedir.
 // Nunca crea nada por su cuenta: devuelve una propuesta y la app la muestra para aprobar o corregir.
-const EX_TAR_MODELO = 'claude-opus-5-5';   // se cambia con la propiedad TAREAS_MODELO
+const EX_TAR_MODELO = 'claude-haiku-5-5';   // se cambia con la propiedad TAREAS_MODELO
 const EX_TAR_SISTEMA = [
   'Eres el asistente de operaciones de Blackline Puerto Varas, tienda Specialized en Puerto Varas, Chile (lluvioso; temporada alta de primavera a verano, con muchos turistas en verano). Venden bicicletas (fuerte en e-bikes), ropa, accesorios, repuestos, lubricantes y servicio de taller. Gustavo es el encargado: tiene 2 vendedores (uno apoya marketing, otro el orden físico y el stock) y 2 mecánicos.',
   'Tu trabajo: Gustavo te dicta o escribe una tarea en bruto (a veces con errores del dictado por voz). Antes de guardarla, piénsala como la habría pensado él al ponerse a hacerla, y déjale todo listo para solo aprobar:',
