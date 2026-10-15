@@ -1620,7 +1620,7 @@ async function api(action, extra){
 function apiX(op, extra){ return api('extra', Object.assign({ op }, extra || {})); }
 // Nivel 2 del script Extras: recordatorios y base de contactos. Nivel 3: la base solo usa contacto@blacklinechile.cl. Nivel 4: eventos de varios días.
 function extNivel(){ return S.extInactivo ? 0 : (S.ext && S.ext.nivel) || 1; }
-const APP_VER = 'v44', NIVEL_ULTIMO = 31;
+const APP_VER = 'v45', NIVEL_ULTIMO = 32;
 function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < NIVEL_ULTIMO; }
 let sincTimer = null;
 // Después de cambiar tareas, el script actualiza los recordatorios del calendario (en segundo plano).
@@ -1889,7 +1889,7 @@ function viewInicio(){
   const totalHoy = lista.length + hechas.length;
   let html = '<div class="ihead"><button class="quick" id="qa"><b>+</b>Agregar tarea… <span style="margin-left:auto">🎤</span></button>' +
     '<button class="btn sec" id="prodBtn">' + icon('box') + ' Producto</button><button class="btn sec" id="fzBtn">' + icon('chart') + ' Fuentes</button><button class="btn sec" id="planBtn">' + icon('spark') + ' Plan de la semana</button></div>';
-  if (necesitaActualizar()) html += '<div class="w" style="margin-bottom:14px;display:flex;gap:12px;align-items:center"><div class="grow"><b>Nueva versión del script</b><div class="wsub">' + (extNivel() >= 30 ? 'Compras: el buscador ahora tiene un agente comprador que interpreta lo que escribes, busca en todos los proveedores y cruza con tu stock, ventas y clientes.' : extNivel() >= 29 ? 'Estudio: arma los carruseles con tus fotos, las oficiales y el stock real de Bsale; pide como máximo una foto por pieza.' : extNivel() >= 28 ? 'Contactos: casillas para marcar varios y archivar, etiquetar, mover a un grupo o eliminar en lote; acciones rápidas y flechas ‹ › en cada ficha; Depurar en segundo plano.' : extNivel() >= 27 ? 'Pestaña Chats en Contactos: todas las conversaciones de WhatsApp, la más reciente arriba, como en el teléfono.' : extNivel() >= 26 ? 'Archivo de fotos: sube carpetas completas (por ejemplo, tu Google Fotos descargado) o fotos del iPhone; la IA describe cada foto para que el Estudio la encuentre.' : extNivel() >= 25 ? 'Depuración de contactos: el agente deja solo a quienes tienes guardados y con conversación de compra (al Pipeline) y archiva el resto. Además, los chats ya no se cortan.' : extNivel() >= 24 ? 'Pestaña Chat en la ficha de cada contacto: lees toda la conversación de WhatsApp y lo clasificas con un toque. Además, nombres automáticos desde la tarjeta de WhatsApp y el chat.' : extNivel() >= 23 ? 'WhatsApp: lee el historial de chats (hasta 6 meses) que Meta comparte al conectar el número con Telnyx, y arma el perfil de cada contacto.' : extNivel() >= 22 ? 'Ventas reales de Bsale: ventas por mes, lo más vendido, qué reponer, stock quieto, mejores clientes y el historial de compras en la ficha de cada cliente.' : extNivel() >= 21 ? 'Estudio: el agente mira las fotos antes de usarlas (descarta las que no calzan), suma fotos oficiales de Specialized, videos de Specialized University y tus carpetas de Drive, y te pide las fotos que faltan.' : extNivel() >= 20 ? 'Postventa automática: al marcar una venta como ganada se agendan la entrega, el registro de garantía, el llamado a los 7 días, la revisión de los 30 días y la foto o reseña.' : extNivel() >= 19 ? 'El Copiloto ahora corrige datos: negociaciones (etapa, fecha real de cierre, valor), notas en la ficha del cliente y tareas, siempre con tu aprobación.' : extNivel() >= 16 ? 'Agente de tareas: piensa cada tarea que dictas (fecha, pasos, proveedor, stock, pedido y mejores opciones) antes de guardarla. También Compras y proveedores.' : extNivel() >= 14 ? 'El Cerebro: plan del día automático, Copiloto que consulta todo, Specialized Chile (ventas, ofertas y stock por talla), clima, noticias y avisos para el equipo.' : extNivel() >= 10 ? 'Instagram: métricas diarias y calendario de contenido con IA. También filtra los correos automáticos de bancos y pagos.' : extNivel() >= 8 ? 'Asistente de IA para planificar tu día y tu semana, Instagram y conexión con Bsale.' : 'Importar chats de WhatsApp y agente de IA.') + '</div></div><button class="btn sm" id="updBtn">Actualizar</button></div>';
+  if (necesitaActualizar()) html += '<div class="w" style="margin-bottom:14px;display:flex;gap:12px;align-items:center"><div class="grow"><b>Nueva versión del script</b><div class="wsub">' + (extNivel() >= 31 ? 'Venta perdida: al marcarla, la app cancela sus tareas y eventos, apaga la idea de respuesta del agente (y evita que la reabra), etiqueta al cliente y agenda el reintento.' : extNivel() >= 30 ? 'Compras: el buscador ahora tiene un agente comprador que interpreta lo que escribes, busca en todos los proveedores y cruza con tu stock, ventas y clientes.' : extNivel() >= 29 ? 'Estudio: arma los carruseles con tus fotos, las oficiales y el stock real de Bsale; pide como máximo una foto por pieza.' : extNivel() >= 28 ? 'Contactos: casillas para marcar varios y archivar, etiquetar, mover a un grupo o eliminar en lote; acciones rápidas y flechas ‹ › en cada ficha; Depurar en segundo plano.' : extNivel() >= 27 ? 'Pestaña Chats en Contactos: todas las conversaciones de WhatsApp, la más reciente arriba, como en el teléfono.' : extNivel() >= 26 ? 'Archivo de fotos: sube carpetas completas (por ejemplo, tu Google Fotos descargado) o fotos del iPhone; la IA describe cada foto para que el Estudio la encuentre.' : extNivel() >= 25 ? 'Depuración de contactos: el agente deja solo a quienes tienes guardados y con conversación de compra (al Pipeline) y archiva el resto. Además, los chats ya no se cortan.' : extNivel() >= 24 ? 'Pestaña Chat en la ficha de cada contacto: lees toda la conversación de WhatsApp y lo clasificas con un toque. Además, nombres automáticos desde la tarjeta de WhatsApp y el chat.' : extNivel() >= 23 ? 'WhatsApp: lee el historial de chats (hasta 6 meses) que Meta comparte al conectar el número con Telnyx, y arma el perfil de cada contacto.' : extNivel() >= 22 ? 'Ventas reales de Bsale: ventas por mes, lo más vendido, qué reponer, stock quieto, mejores clientes y el historial de compras en la ficha de cada cliente.' : extNivel() >= 21 ? 'Estudio: el agente mira las fotos antes de usarlas (descarta las que no calzan), suma fotos oficiales de Specialized, videos de Specialized University y tus carpetas de Drive, y te pide las fotos que faltan.' : extNivel() >= 20 ? 'Postventa automática: al marcar una venta como ganada se agendan la entrega, el registro de garantía, el llamado a los 7 días, la revisión de los 30 días y la foto o reseña.' : extNivel() >= 19 ? 'El Copiloto ahora corrige datos: negociaciones (etapa, fecha real de cierre, valor), notas en la ficha del cliente y tareas, siempre con tu aprobación.' : extNivel() >= 16 ? 'Agente de tareas: piensa cada tarea que dictas (fecha, pasos, proveedor, stock, pedido y mejores opciones) antes de guardarla. También Compras y proveedores.' : extNivel() >= 14 ? 'El Cerebro: plan del día automático, Copiloto que consulta todo, Specialized Chile (ventas, ofertas y stock por talla), clima, noticias y avisos para el equipo.' : extNivel() >= 10 ? 'Instagram: métricas diarias y calendario de contenido con IA. También filtra los correos automáticos de bancos y pagos.' : extNivel() >= 8 ? 'Asistente de IA para planificar tu día y tu semana, Instagram y conexión con Bsale.' : 'Importar chats de WhatsApp y agente de IA.') + '</div></div><button class="btn sm" id="updBtn">Actualizar</button></div>';
   if (extNivel() >= 13 && !S.leadsCanal && !S._leadsPend){ S._leadsPend = 1; loadLeads().then(() => { S._leadsPend = 0; if (S.tab === 'inicio' && !$('.pop-bg')) render(); }); }
   html += planStrip() + kpiRow();
   const rad = senales();
@@ -2280,8 +2280,8 @@ function openPersonas(){
 // Lo último que entendió el agente de IA sobre un contacto, con su idea de respuesta si el cliente espera.
 function agenteDe(id){
   const I = ((S.base && S.base.interacciones) || []).filter(i => i.id === id);
-  const r = I.find(i => /🧠 Agente/.test(i.tipo)), idea = I.find(i => /Idea de respuesta/.test(i.tipo));
-  return { r, idea: idea && r && idea.fecha >= r.fecha ? idea : null };
+  const r = I.find(i => /🧠 Agente/.test(i.tipo)), idea = I.find(i => /Idea de respuesta/.test(i.tipo)), perdida = I.find(i => /Venta perdida/.test(i.tipo));
+  return { r, idea: idea && r && idea.fecha >= r.fecha && !(perdida && perdida.fecha >= idea.fecha) ? idea : null };
 }
 function agenteActivo(){ return extNivel() >= 7 && S.ext && S.ext.agente && S.ext.agente.activo; }
 function agenteHTML(c){
@@ -2600,7 +2600,7 @@ function openContacto(c, opt){
   const inter = nuevo ? [] : ((S.base && S.base.interacciones) || []).filter(i => i.id === c.id);
   const tareas = nuevo ? [] : tareasDe(c);
   const tel = String(c.telefono || '').replace(/[^\d+]/g, ''), wa = tel.replace(/^\+/, '').replace(/^9(\d{8})$/, '569$1');
-  const icTl = t => /agente|idea/i.test(t) ? '🧠' : /whatsapp/i.test(t) ? '💬' : /correo/i.test(t) ? '✉️' : /reuni/i.test(t) ? '📅' : /tarea/i.test(t) ? '✅' : /negoci|venta/i.test(t) ? '🤝' : '📝';
+  const icTl = t => /perdida/i.test(t) ? '❌' : /agente|idea/i.test(t) ? '🧠' : /whatsapp/i.test(t) ? '💬' : /correo/i.test(t) ? '✉️' : /reuni/i.test(t) ? '📅' : /tarea/i.test(t) ? '✅' : /negoci|venta/i.test(t) ? '🤝' : '📝';
   sheet('<div class="row">' + avatar(c, 54) + '<div class="grow"><h3>' + (nuevo ? 'Nuevo contacto' : esc(c.nombre || c.email)) + '</h3><div class="hint" style="margin:2px 0 0">' + (nuevo ? 'Cliente, proveedor o lo que necesites recordar' : (c.n ? c.n + ' interacciones · última ' + haceTxt(c.ultima) : 'Sin interacciones aún') + (c.origen ? ' · ' + esc(c.origen) : '')) + '</div></div></div>' +
     (!nuevo ? agenteHTML(c) : '') +
     (!nuevo && (tel || c.email) ? '<div class="acts3">' + (tel ? '<a href="https://wa.me/' + esc(wa) + '" target="_blank">💬 WhatsApp</a><a href="tel:' + esc(tel) + '">📞 Llamar</a>' : '') + (c.email ? '<a href="mailto:' + esc(c.email) + '">✉️ Correo</a>' : '') + '</div>' : '') +
@@ -2654,7 +2654,7 @@ function openCto(c, opt){
   // Acciones rápidas sobre el contacto
   if (extNivel() >= 29) html += '<div class="ctacts"><button class="btn sm sec" data-cta="chat">💬 Ver chat</button><button class="btn sm sec" data-cta="etiqueta">🏷️ Etiquetar</button><button class="btn sm sec" data-cta="tipo">🗂️ Grupo</button>' +
     (c.tipo === 'Archivado' ? '<button class="btn sm sec" data-cta="desarchivar">↩️ Desarchivar</button>' : '<button class="btn sm sec" data-cta="archivar">🗄️ Archivar</button>') +
-    (iaDisponible() ? '<button class="btn sm sec" data-cta="ia">🧠 Analizar</button>' : '') + '<button class="btn sm sec bad" data-cta="eliminar">🗑 Eliminar</button></div>';
+    (iaDisponible() ? '<button class="btn sm sec" data-cta="ia">🧠 Analizar</button>' : '') + (abierta ? '<button class="btn sm sec" data-cta="perdida">❌ Venta perdida</button>' : '') + '<button class="btn sm sec bad" data-cta="eliminar">🗑 Eliminar</button></div>';
   const t0 = tareas[0];
   const vencP = t0 ? (t0.limite && t0.limite < hoy()) : abierta && abierta.proxima ? (abierta.fechaProx && abierta.fechaProx < hoy()) : true;
   html += '<div class="nextc' + (vencP ? ' bad' : '') + '"><div class="tx"><small>Próximo paso</small>' + (t0 ? '<b>' + esc(t0.tarea) + '</b><span>' + (t0.limite ? (t0.limite < hoy() ? 'Venció ' : '') + fmtLong(t0.limite) : 'sin fecha') + '</span>' : abierta && abierta.proxima ? '<b>' + esc(abierta.proxima) + '</b><span>' + (abierta.fechaProx ? (abierta.fechaProx < hoy() ? 'Venció ' : '') + fmtLong(abierta.fechaProx) : '') + ' · de la negociación</span>' : '<b>Sin próximo paso</b><span>Agenda un seguimiento para no perder a este contacto</span>') + '</div>' + (t0 ? '<button class="btn sm" id="ct_done">✓ Hecho</button>' : '<button class="btn sm" id="ct_seg">Agendar</button>') + '</div>';
@@ -2673,6 +2673,7 @@ function openCto(c, opt){
     const a = b.dataset.cta;
     if (a === 'chat') return irAlChat(c.id);
     if (a === 'ia') return analizarAhora(c.id, b);
+    if (a === 'perdida') return openPerdida(abierta, { volver: () => openCto(contactoPorId(c.id) || c) });
     accionContactos(a, [c.id], () => { if (a === 'eliminar' || a === 'archivar') { closeSheet(); render(); } else { const n2 = contactoPorId(c.id); if (n2) openCto(n2); } });
   });
   $('#ct_tk').onclick = () => openAdd({ texto: 'Seguimiento ' + nombre + ' mañana', notas: c.telefono ? '📞 ' + c.telefono : '' });
@@ -2693,7 +2694,7 @@ function ctoTab(c, tab){
     box.querySelectorAll('[data-impc]').forEach(b => b.onclick = () => openImportar({ contacto: b.dataset.impc }));
   } else if (tab === 'actividad'){
     const inter = ((S.base && S.base.interacciones) || []).filter(i => i.id === c.id);
-    const icTl = t => /agente|idea/i.test(t) ? '🧠' : /whatsapp|chat/i.test(t) ? '💬' : /correo/i.test(t) ? '✉️' : /reuni/i.test(t) ? '📅' : /tarea/i.test(t) ? '✅' : /negoci|venta/i.test(t) ? '🤝' : '📝';
+    const icTl = t => /perdida/i.test(t) ? '❌' : /agente|idea/i.test(t) ? '🧠' : /whatsapp|chat/i.test(t) ? '💬' : /correo/i.test(t) ? '✉️' : /reuni/i.test(t) ? '📅' : /tarea/i.test(t) ? '✅' : /negoci|venta/i.test(t) ? '🤝' : '📝';
     box.innerHTML = '<div class="smart" style="margin-bottom:10px"><input type="text" id="c_nota" placeholder="Anotar algo (vino a la tienda, pidió precio…)" autocomplete="off"><button class="mic" id="c_nota_ok" aria-label="Anotar">＋</button></div>' +
       (inter.length ? '<div class="wl">' + inter.slice(0, 50).map(i => '<div class="tl"><span class="ic">' + icTl(i.tipo) + '</span><div class="grow"><div style="font-size:14px;font-weight:600;line-height:1.4">' + esc(i.detalle) + '</div><div class="hint" style="margin:2px 0 0">' + esc(i.tipo) + ' · ' + (i.fecha ? fmtRel(i.fecha) : '') + (i.link ? ' · <a href="' + esc(i.link) + '" target="_blank" style="color:var(--accent-ink)">abrir</a>' : '') + '</div></div></div>').join('') + '</div>' : '<div class="empty">Aquí aparecen los mensajes, correos, notas y reuniones.</div>');
     const anotar = async () => { const tx = $('#c_nota').value.trim(); if (!tx) return; $('#c_nota_ok').disabled = true;
@@ -4076,6 +4077,7 @@ async function aplicarCambioNegocio(a){
   m.el.querySelector('[data-ok]').onclick = async e => {
     e.target.disabled = true;
     try {
+      if (C.etapa === 'Perdida' && n.estado !== 'Perdida'){ if (a.detalle) await apiX('negocioNota', { id: n.id, texto: a.detalle, tipo: '📝 Nota' }); m.cerrar(); return openPerdida(n, { motivo: C.motivo, volver: () => closeSheet() }); }
       if (filas) await apiX('negocio', { negocio: Object.assign({ id: n.id }, C) });
       if (a.detalle) await apiX('negocioNota', { id: n.id, texto: a.detalle, tipo: '📝 Nota' });
       m.cerrar(); toast('✓ Negociación actualizada'); await loadNeg(true); S.base = null; render();
@@ -4813,7 +4815,7 @@ function dealTab(n, a, tab){
     box.querySelectorAll('[data-ct]').forEach(b => b.onclick = () => openIdea((S.cont || []).find(x => x.id === b.dataset.ct)));
   } else if (tab === 'actividad'){
     const I = a.I.slice().reverse();
-    const icTl = t => /agente|idea/i.test(t) ? '🧠' : /whatsapp|chat/i.test(t) ? '💬' : /correo/i.test(t) ? '✉️' : /reuni/i.test(t) ? '📅' : /tarea|acci/i.test(t) ? '✅' : /venta/i.test(t) ? '🏆' : /negoci|etapa/i.test(t) ? '🔀' : '📝';
+    const icTl = t => /perdida/i.test(t) ? '❌' : /agente|idea/i.test(t) ? '🧠' : /whatsapp|chat/i.test(t) ? '💬' : /correo/i.test(t) ? '✉️' : /reuni/i.test(t) ? '📅' : /tarea|acci/i.test(t) ? '✅' : /venta/i.test(t) ? '🏆' : /negoci|etapa/i.test(t) ? '🔀' : '📝';
     box.innerHTML = '<div class="smart" style="margin-bottom:10px"><input type="text" id="ng_nota" placeholder="Escribe una nota rápida (pidió cuotas, viene el sábado…)" autocomplete="off"><button class="mic" id="ng_nota_ok" aria-label="Guardar nota">＋</button></div>' +
       (I.length ? '<div class="wl">' + I.slice(0, 40).map(i => '<div class="tl"><span class="ic">' + icTl(i.tipo) + '</span><div class="grow"><div style="font-size:14px;font-weight:600;line-height:1.4">' + esc(i.detalle) + '</div><div class="hint" style="margin:2px 0 0">' + esc(i.tipo) + ' · ' + (i.fecha ? fmtRel(i.fecha) : '') + '</div></div></div>').join('') + '</div>' : '<div class="empty">Aquí aparecen las notas, mensajes, correos y cambios de etapa.</div>');
     const nota = () => { const t = $('#ng_nota').value.trim(); if (!t) return; $('#ng_nota_ok').disabled = true; negRegistrar(n, '📝 Nota', t); };
@@ -4912,19 +4914,63 @@ function openGanada(n){
   $('#gw1').onclick = () => openAdd({ texto: 'Llamar a ' + nom + ' para ver cómo le va con ' + (n.producto || 'su bici') + ' en 7 días', notas: negTag(n) });
   $('#gw2').onclick = () => openAdd({ texto: 'Ofrecer primera mantención a ' + nom + ' ' + addDays(hoy(), 60).split('-').reverse().slice(0, 2).join('/'), notas: negTag(n) });
 }
-function openPerdida(n){
-  sheet('<h3>❌ Marcar como perdida</h3><div class="hint">' + esc(n.titulo) + '. Saber por qué se pierden las ventas es lo que más ayuda a vender mejor.</div><label class="l">Motivo</label>' + pills('pd_m', MOTIVOS.map(x => ({ v: x, t: x })), '') +
-    '<label class="l">Comentario (opcional)</label><input type="text" id="pd_c" placeholder="Ej.: compró una Trek usada"><div class="btns"><button class="btn sec" id="pd_no">Cancelar</button><button class="btn" id="pd_ok" style="background:#F04461">Marcar perdida</button></div>');
-  bindPills('pd_m');
-  $('#pd_no').onclick = () => openNegocio(n);
+// Cierre por pérdida: un solo lugar para avisar que la venta se cayó. Cancela las tareas y los eventos que colgaban de ella,
+// apaga la idea de respuesta del agente (y evita que la reabra), etiqueta al cliente y agenda el reintento si quieres.
+const REINTENTO_MOTIVO = { 'Precio': 6, 'Compró en otro lado': 12, 'No respondió': 3, 'Postergó la compra': 3, 'Sin stock': 1, 'Otro': 6 };
+function fmtAnio(f){ return fmt(f) + (String(f).slice(0, 4) !== hoy().slice(0, 4) ? ' de ' + String(f).slice(0, 4) : ''); }
+function sumarMeses(f, m){ const d = new Date(f + 'T12:00:00'); d.setMonth(d.getMonth() + m); return d.toISOString().slice(0, 10); }
+function tareasDeNegocio(n){
+  const c = contactoPorId(n.contacto), ids = new Set();
+  const L = S.data.tareas.filter(t => !t.hecho && (String(t.notas || '').includes(n.id) || (n.contacto && String(t.notas || '').includes('[' + n.contacto + ']'))));
+  (c ? tareasDe(c).filter(t => !t.hecho) : []).forEach(t => { if (!L.includes(t)) L.push(t); });
+  // No toca la postventa de compras anteriores ni tareas de otra negociación del mismo cliente.
+  const otra = t => { const m = String(t.notas || '').match(/\((N-[a-z0-9]+)\)/i); return /Postventa/.test(t.notas || '') || (m && m[1] !== n.id); };
+  return L.filter(t => { const k = t.row + '|' + t.tarea; if (ids.has(k) || otra(t)) return false; ids.add(k); return true; }).sort(ordenar);
+}
+function openPerdida(n, opt){
+  opt = opt || {};
+  const c = contactoPorId(n.contacto), nom = c ? (c.nombre || c.telefono || 'el cliente') : 'el cliente', nuevo = extNivel() >= 32;
+  const T = tareasDeNegocio(n);
+  let meses = null, mesesAMano = false, eventos = [];
+  sheet('<h3>❌ Venta perdida</h3><div class="hint">' + esc(n.titulo) + '. Al confirmar, la app ordena todo lo que colgaba de esta venta. Saber por qué se pierden es lo que más ayuda a vender mejor.</div>' +
+    '<label class="l">Motivo</label>' + pills('pd_m', MOTIVOS.map(x => ({ v: x, t: x })), opt.motivo && MOTIVOS.includes(opt.motivo) ? opt.motivo : '') +
+    '<label class="l">Comentario (opcional)</label><input type="text" id="pd_c" placeholder="Ej.: compró una Trek usada" value="' + esc(opt.motivo && !MOTIVOS.includes(opt.motivo) ? opt.motivo : '') + '">' +
+    '<label class="l">¿Cuándo volver a intentarlo?</label><div class="seg" id="pd_r" style="flex-wrap:wrap;gap:6px">' + [[0, 'No volver'], [1, '1 mes'], [3, '3 meses'], [6, '6 meses'], [12, '1 año']].map(x => '<button type="button" class="pill" data-pr="' + x[0] + '">' + x[1] + '</button>').join('') + '</div><div class="hint" id="pd_rh" style="margin-top:4px">Se elige solo según el motivo; puedes cambiarlo.</div>' +
+    '<div class="card" style="margin-top:12px"><b>Lo que se cierra</b>' +
+      '<div class="hint" style="margin:6px 0 4px">✅ Tareas pendientes de esta venta (se cancelan las marcadas)</div>' +
+      (T.length ? T.map((t, i) => '<label class="row" style="gap:8px;padding:4px 0;align-items:flex-start"><input type="checkbox" data-pt="' + i + '" checked><span style="font-size:14px">' + esc(t.tarea) + (t.limite ? ' <span class="hint">· ' + fmtRel(t.limite) + '</span>' : '') + '</span></label>').join('') : '<div class="wsub">Ninguna.</div>') +
+      '<div class="hint" style="margin:10px 0 4px">📅 Próximos eventos en tu calendario con ' + esc(nom) + '</div><div id="pd_ev">' + (nuevo ? '<div class="wsub">Buscando…</div>' : '<div class="wsub">Con la versión nueva del script se buscan y borran aquí.</div>') + '</div>' +
+      '<div class="hint" style="margin-top:10px">Además: ' + (nuevo ? 'se apaga la «idea de respuesta» del agente y no reabre la venta salvo que ' + esc(String(nom).split(' ')[0]) + ' vuelva a escribir; queda la etiqueta «Venta perdida» y la nota en su historial; ' : '') + 'los tableros cuentan la pérdida con su motivo.</div></div>' +
+    '<div class="btns"><button class="btn sec" id="pd_no">Cancelar</button><button class="btn" id="pd_ok" style="background:#F04461">Confirmar venta perdida</button></div>');
+  const pintarR = () => { $$('[data-pr]').forEach(b => b.classList.toggle('on', meses !== null && +b.dataset.pr === meses)); const h = $('#pd_rh'); if (h) h.textContent = meses ? 'Te quedará una tarea «♻️ Retomar a ' + nom + '» el ' + fmtAnio(sumarMeses(hoy(), meses)) + '.' : meses === 0 ? 'No se agenda reintento.' : 'Se elige solo según el motivo; puedes cambiarlo.'; };
+  $$('[data-pr]').forEach(b => b.onclick = () => { meses = +b.dataset.pr; mesesAMano = true; pintarR(); });
+  const alMotivo = () => { const m = val('pd_m'); if (m && !mesesAMano){ meses = REINTENTO_MOTIVO[m] != null ? REINTENTO_MOTIVO[m] : 6; pintarR(); } };
+  bindPills('pd_m', alMotivo);
+  alMotivo();
+  if (nuevo && n.contacto) apiX('eventosContacto', { id: n.contacto }).then(r => {
+    eventos = (r && r.eventos) || []; const box = $('#pd_ev'); if (!box) return;
+    box.innerHTML = eventos.length ? eventos.map((e, i) => { const ok = !e.recurrente && e.editable !== false; return '<label class="row" style="gap:8px;padding:4px 0;align-items:flex-start"><input type="checkbox" data-pe="' + i + '"' + (ok ? ' checked' : ' disabled') + '><span style="font-size:14px">' + esc(e.titulo) + ' <span class="hint">· ' + fmt(e.fecha) + (e.inicio ? ' ' + esc(e.inicio) : '') + ' · ' + esc(e.calendario) + (ok ? '' : e.recurrente ? ' · se repite: bórralo en tu calendario' : ' · calendario de otra persona') + '</span></span></label>'; }).join('') : '<div class="wsub">Ninguno.</div>';
+  }).catch(() => { const box = $('#pd_ev'); if (box) box.innerHTML = '<div class="wsub">No pude revisar el calendario.</div>'; });
+  $('#pd_no').onclick = () => opt.volver ? opt.volver() : openNegocio(n);
   $('#pd_ok').onclick = async () => {
     const m = val('pd_m'); if (!m){ toast('Elige un motivo'); return; }
-    $('#pd_ok').disabled = true;
+    const com = $('#pd_c').value.trim(), motivo = m + (com ? ' · ' + com : '');
+    const tSel = [...$$('[data-pt]')].filter(x => x.checked).map(x => T[+x.dataset.pt]), eSel = [...$$('[data-pe]')].filter(x => x.checked).map(x => eventos[+x.dataset.pe]);
+    const reintento = meses ? sumarMeses(hoy(), meses) : '';
+    closeSheet(); toast('Cerrando la venta en segundo plano…');
     try {
-      const com = $('#pd_c').value.trim();
-      await apiX('negocio', { negocio: { id: n.id, etapa: 'Perdida', motivo: m + (com ? ' · ' + com : '') } });
-      toast('Marcada perdida. ¡A la próxima! 💪'); closeSheet(); await Promise.all([loadNeg(true), loadBase(true)]); render();
-    } catch(e){ $('#pd_ok').disabled = false; toast('No se pudo: ' + e.message); }
+      let borradas = 0;
+      for (const t of tSel.slice().sort((x, y) => (y.row || 0) - (x.row || 0))){ try { await api('delete', { row: t.row, tarea: t.tarea }); borradas++; } catch(e){} }
+      let r = {};
+      if (nuevo) r = await apiX('perderNegocio', { id: n.id, motivo, reintento, tareas: borradas, eventos: eSel.map(e => ({ cal: e.cal, id: e.id, titulo: e.titulo })) });
+      else {
+        await apiX('negocio', { negocio: { id: n.id, etapa: 'Perdida', motivo, proxima: reintento ? '♻️ Retomar el contacto' : '', fechaProx: reintento } });
+        if (reintento) await api('add', { tarea: { tarea: '♻️ Retomar a ' + nom + ': ¿sigue buscando ' + (n.producto || 'bici') + '?', area: 'Trabajo', categoria: 'Ventas', proyecto: '', limite: reintento, urgente: 'No', importante: 'Sí', tamano: 'Pequeña', notas: '⏰ 10:00 · ♻️ Reintento · ' + negTag(n), estado: 'Pendiente' } }).catch(() => {});
+      }
+      await Promise.all([load(), loadNeg(true), loadBase(true)]); render();
+      const partes = [borradas ? borradas + (borradas === 1 ? ' tarea cancelada' : ' tareas canceladas') : '', r.eventos ? r.eventos + (r.eventos === 1 ? ' evento borrado' : ' eventos borrados') : '', reintento ? 'reintento el ' + fmtAnio(reintento) : ''].filter(Boolean);
+      aviso('❌ Venta perdida registrada' + (partes.length ? ': ' + partes.join(', ') : '') + '. ¡A la próxima! 💪' + (r.errores && r.errores.length ? ' Revisa a mano: ' + r.errores.join('; ') : ''), 'Ver', () => { const n2 = negocios().find(x => x.id === n.id); if (n2) openNegocio(n2); });
+    } catch(e){ toast('No se pudo cerrar la venta: ' + e.message); }
   };
 }
 // Métricas del tablero: pipeline, pronóstico ponderado, tasa de cierre, ciclo de venta, ticket y conversión por etapa.
@@ -5207,7 +5253,7 @@ function openNegocio(n, opt){
   const a = nuevo ? null : analizar(n), e = etapaDe(n), C = contactos().slice().sort((x, y) => String(x.nombre).localeCompare(String(y.nombre)));
   const R = nuevo ? [] : recomendaciones(n, a);
   const I = nuevo ? [] : a.I.slice().reverse();
-  const icTl = t => /agente|idea/i.test(t) ? '🧠' : /whatsapp/i.test(t) ? '💬' : /correo/i.test(t) ? '✉️' : /reuni/i.test(t) ? '📅' : /tarea|acci/i.test(t) ? '✅' : /venta/i.test(t) ? '🏆' : /negoci/i.test(t) ? '🤝' : String(t || '').match(/\p{Extended_Pictographic}/u) ? String(t).match(/\p{Extended_Pictographic}/u)[0] : '📝';
+  const icTl = t => /perdida/i.test(t) ? '❌' : /agente|idea/i.test(t) ? '🧠' : /whatsapp/i.test(t) ? '💬' : /correo/i.test(t) ? '✉️' : /reuni/i.test(t) ? '📅' : /tarea|acci/i.test(t) ? '✅' : /venta/i.test(t) ? '🏆' : /negoci/i.test(t) ? '🤝' : String(t || '').match(/\p{Extended_Pictographic}/u) ? String(t).match(/\p{Extended_Pictographic}/u)[0] : '📝';
   const campos = '<label class="l">Negociación</label><input type="text" id="ng_t" value="' + esc(n.titulo) + '" placeholder="Ej.: Juan Pérez – Turbo Levo">' +
     '<label class="l">Cliente</label><select id="ng_c"><option value="">— sin contacto —</option>' + C.map(c => '<option value="' + esc(c.id) + '"' + (c.id === n.contacto ? ' selected' : '') + '>' + esc(c.nombre || c.email) + (c.empresa ? ' · ' + esc(c.empresa) : '') + '</option>').join('') + '</select>' +
     '<label class="l">Producto / interés</label><input type="text" id="ng_p" value="' + esc(n.producto) + '" placeholder="Ej.: Turbo Levo Comp talla M">' +
@@ -7213,7 +7259,7 @@ function chatsHTML(){
   const lista = L.slice(0, max).map(({ x, c }) => '<div class="chi' + (S.chatSel === x.id ? ' on' : '') + '" data-chi="' + esc(x.id) + '">' + avatar(c, 40) + '<div class="grow"><b>' + esc(c.nombre || c.telefono || x.id) + '</b><div class="sn">' + (x.yo ? '✓ ' : '') + esc(x.tx || '') + '</div></div><span class="hr">' + esc(chHora(x.f)) + (!x.yo && x.f && diffDays(x.f.slice(0, 10), hoy()) <= 7 ? '<i class="chdot" title="Te escribió y falta tu respuesta"></i>' : '') + '</span></div>').join('');
   return '<div class="chl' + (sel ? ' sel' : '') + '"><div class="chl-l"><div class="chq"><input type="text" id="chq" placeholder="🔎 Buscar chat, nombre o mensaje" value="' + esc(S.chq || '') + '"><div class="row" style="gap:8px;margin-top:8px;align-items:center"><span class="wsub" style="flex:1">' + L.length + ' conversaciones</span><button class="btn sm ' + (S.chPend ? '' : 'sec') + '" id="chPend" title="El cliente escribió último (30 días)">⏳ Sin responder</button><button class="btn sm sec" id="chArch">' + (S.chArch ? 'Ocultar archivados' : 'Ver archivados') + '</button><button class="btn sm sec" id="chRefL">↻</button></div></div>' +
     '<div class="chl-list">' + (lista || '<div class="empty">Sin conversaciones' + (S.chatsErr ? ' (' + esc(S.chatsErr) + ')' : '') + '</div>') + (L.length > max ? '<div class="btns" style="padding:10px"><button class="btn sm sec" id="chMas">Ver más (' + (L.length - max) + ')</button></div>' : '') + '</div></div>' +
-    '<div class="chl-r">' + (sel ? '<div class="chh"><button class="btn sm sec chback" id="chBack">‹</button>' + avatar(sel.c, 40) + '<div class="grow"><b>' + esc(sel.c.nombre || sel.c.telefono) + '</b><div class="wsub">' + esc([sel.c.tipo, sel.c.telefono].filter(Boolean).join(' · ')) + '</div></div>' + (telWA(sel.c) ? '<a class="btn sm sec" href="https://wa.me/' + esc(telWA(sel.c)) + '" target="_blank">💬 WhatsApp</a>' : '') + (contactoPorId(sel.x.id) ? '<button class="btn sm sec" id="chFicha">Ver ficha</button><button class="btn sm sec" id="chNeg">＋ Negocio</button><button class="btn sm sec" id="chTar">＋ Tarea</button>' + (iaDisponible() ? '<button class="btn sm sec" id="chIA">🧠 Analizar</button>' : '') : '') + '</div><div id="chPane" data-modo="pane"></div>' : '<div class="empty">Elige una conversación para leerla.</div>') + '</div></div>';
+    '<div class="chl-r">' + (sel ? '<div class="chh"><button class="btn sm sec chback" id="chBack">‹</button>' + avatar(sel.c, 40) + '<div class="grow"><b>' + esc(sel.c.nombre || sel.c.telefono) + '</b><div class="wsub">' + esc([sel.c.tipo, sel.c.telefono].filter(Boolean).join(' · ')) + '</div></div>' + (telWA(sel.c) ? '<a class="btn sm sec" href="https://wa.me/' + esc(telWA(sel.c)) + '" target="_blank">💬 WhatsApp</a>' : '') + (contactoPorId(sel.x.id) ? '<button class="btn sm sec" id="chFicha">Ver ficha</button><button class="btn sm sec" id="chNeg">' + (negocios().some(n => n.contacto === sel.x.id && n.estado === 'Abierta') ? '🤝 Negocio' : '＋ Negocio') + '</button>' + (negocios().some(n => n.contacto === sel.x.id && n.estado === 'Abierta') ? '<button class="btn sm sec" id="chPer">❌ Perdida</button>' : '') + '<button class="btn sm sec" id="chTar">＋ Tarea</button>' + (iaDisponible() ? '<button class="btn sm sec" id="chIA">🧠 Analizar</button>' : '') : '') + '</div><div id="chPane" data-modo="pane"></div>' : '<div class="empty">Elige una conversación para leerla.</div>') + '</div></div>';
 }
 function bindChats(){
   const q = $('#chq'); if (q) q.oninput = () => { S.chq = q.value; const pos = q.selectionStart; viewBase(); const q2 = $('#chq'); q2.focus(); q2.setSelectionRange(pos, pos); };
@@ -7225,6 +7271,7 @@ function bindChats(){
   const bk = $('#chBack'); if (bk) bk.onclick = () => { S.chatSel = null; viewBase(); };
   const fi = $('#chFicha'); if (fi) fi.onclick = () => openCto(contactoPorId(S.chatSel));
   const cnN = $('#chNeg'); if (cnN) cnN.onclick = () => { const ab = negocios().find(n => n.contacto === S.chatSel && n.estado === 'Abierta'); ab ? openNegocio(ab) : openNegocio(null, { contacto: S.chatSel }); };
+  const cnP = $('#chPer'); if (cnP) cnP.onclick = () => { const ab = negocios().find(n => n.contacto === S.chatSel && n.estado === 'Abierta'); if (ab) openPerdida(ab, { volver: () => closeSheet() }); };
   const cnT = $('#chTar'); if (cnT) cnT.onclick = () => { const c = contactoPorId(S.chatSel); openAdd({ texto: 'Seguimiento ' + (c.nombre || c.telefono) + ' mañana', notas: c.telefono ? '📞 ' + c.telefono : '' }); };
   const cnI = $('#chIA'); if (cnI) cnI.onclick = () => analizarAhora(S.chatSel, cnI);
   const pane = $('#chPane');

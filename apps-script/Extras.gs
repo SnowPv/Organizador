@@ -15,8 +15,8 @@
  * Para actualizar este archivo más adelante: reemplaza todo su contenido y repite los dos pasos anteriores.
  */
 
-const EX_VERSION = '2026-11-30';
-const EX_NIVEL = 31;      // la app lo usa para saber qué funciones tiene este script
+const EX_VERSION = '2026-12-05';
+const EX_NIVEL = 32;      // la app lo usa para saber qué funciones tiene este script
 const EX_HOJA = 'Tareas';
 const EX_PRIMERA = 4;
 const EX_ULTIMA = 400;
@@ -131,6 +131,8 @@ function app_extra_(p) {
     case 'negocios':   return ex_leerNegocios_();
     case 'negocio':    return ex_guardarNegocio_(p.negocio || {});
     case 'negocioNota': return ex_notaNegocio_(p);
+    case 'eventosContacto': return ex_eventosContacto_(p);
+    case 'perderNegocio': return ex_perderNegocio_(p);
     case 'whatsapp': { // de a un aviso a la vez (el historial llega en muchas partes seguidas); si está ocupado, Meta reintenta
       const lk = LockService.getScriptLock();
       if (!lk.tryLock(20000)) return { ok: false, error: 'ocupado, reintentar' };
@@ -654,6 +656,84 @@ function ex_postventa_(r, fechaVenta) {
     app_agregar_({ tarea: { tarea: x[1], area: 'Trabajo', categoria: 'Ventas', proyecto: '', limite: f, urgente: x[2], importante: 'Sí', tamano: 'Pequeña', notas: '⏰ 10:00' + ref, estado: 'Pendiente' } });
   });
   hechas.push(id); props.setProperty('EX_POSTVENTA', JSON.stringify(hechas.slice(-500)));
+}
+
+/* ---------- Cierre por pérdida: una venta que se cae ordena todo lo que colgaba de ella ---------- */
+// Próximos eventos de tus calendarios que nombran al cliente (nombre y apellido, o su teléfono). No incluye el
+// calendario de recordatorios: esos eventos son tus tareas y se borran solos al borrar la tarea.
+function ex_eventosContacto_(p) {
+  const tz = ex_tz_(), id = String(p.id || '');
+  const c = ex_filasContactos_(ex_baseHojas_().cs).find(function (r) { return String(r[0]) === id; });
+  if (!c) return { ok: true, eventos: [] };
+  const claves = [], nom = ex_norm_(c[2]).trim(), tel = String(c[5] || '').replace(/\D/g, '').slice(-8);
+  if (nom.indexOf(' ') > 0) claves.push(nom);
+  if (String(c[3] || '').trim().length >= 3) claves.push(ex_norm_(c[3]).trim());
+  if (tel.length === 8) claves.push(tel);
+  if (!claves.length) return { ok: true, eventos: [] };
+  const propio = PropertiesService.getScriptProperties().getProperty('EX_CAL_ID'), ini = new Date(), fin = new Date(ini.getTime() + 180 * 86400000), out = [];
+  CalendarApp.getAllCalendars().forEach(function (cal) {
+    const cid = cal.getId();
+    if (cid === propio || cal.isHidden() || /#holiday@|#contacts@|addressbook#/.test(cid)) return;
+    let editable = true; try { editable = cal.isOwnedByMe(); } catch (x) {}
+    cal.getEvents(ini, fin).forEach(function (e) {
+      const tx = ex_norm_(e.getTitle() + ' ' + e.getDescription() + ' ' + e.getLocation()), txd = tx.replace(/[\s.-]/g, '');
+      if (!claves.some(function (k) { return /^\d+$/.test(k) ? txd.indexOf(k) >= 0 : new RegExp('(^|[^a-z0-9])' + k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '([^a-z0-9]|$)').test(tx); })) return;
+      const a = e.getStartTime(), td = e.isAllDayEvent();
+      out.push({ cal: cid, id: e.getId(), titulo: e.getTitle() || '(sin título)', fecha: Utilities.formatDate(a, tz, 'yyyy-MM-dd'), inicio: td ? '' : Utilities.formatDate(a, tz, 'HH:mm'), calendario: cal.getName(), recurrente: e.isRecurringEvent(), editable: editable });
+    });
+  });
+  out.sort(function (x, y) { return (x.fecha + x.inicio).localeCompare(y.fecha + y.inicio); });
+  return { ok: true, eventos: out.slice(0, 20) };
+}
+
+// Marca la negociación como perdida y deja todo en orden: borra los eventos elegidos, etiqueta al cliente,
+// deja la nota en su historial (eso apaga la «idea de respuesta» del agente) y agenda el reintento si lo pediste.
+// Las tareas ya llegan borradas desde la app; aquí se sincroniza el calendario de recordatorios para quitar sus eventos.
+function ex_perderNegocio_(p) {
+  const r = ex_filasNeg_(ex_hojaNeg_()).find(function (x) { return String(x[0]) === String(p.id || ''); });
+  if (!r) throw new Error('no encontré la negociación');
+  const motivo = String(p.motivo || '').trim() || 'Otro', reintento = /^\d{4}-\d{2}-\d{2}$/.test(String(p.reintento || '')) ? p.reintento : '';
+  ex_guardarNegocio_({ id: r[0], etapa: 'Perdida', motivo: motivo, proxima: reintento ? '♻️ Retomar el contacto' : '', fechaProx: reintento });
+  const res = { ok: true, eventos: 0, errores: [] };
+  (p.eventos || []).slice(0, 20).forEach(function (x) {
+    try {
+      const cal = CalendarApp.getCalendarById(String(x.cal)), e = cal && cal.getEventById(String(x.id));
+      if (!e) return;
+      if (e.isRecurringEvent()) { res.errores.push(e.getTitle() + ' (se repite: bórralo en tu calendario)'); return; }
+      e.deleteEvent(); res.eventos++;
+    } catch (err) { res.errores.push(String(x.titulo || x.id) + ': ' + err.message); }
+  });
+  const contacto = String(r[2] || '');
+  if (contacto) {
+    const b = ex_baseHojas_(), cf = ex_filasContactos_(b.cs), i = cf.findIndex(function (x) { return String(x[0]) === contacto; });
+    if (i >= 0 && p.etiquetar !== false) {
+      const tags = String(cf[i][6] || '').split(',').map(function (t) { return t.trim(); }).filter(String);
+      if (!tags.some(function (t) { return ex_norm_(t) === 'venta perdida'; })) { tags.push('Venta perdida'); b.cs.getRange(i + 2, 7).setValue(tags.slice(-12).join(', ')); }
+    }
+    const det = [res.eventos ? res.eventos + (res.eventos === 1 ? ' evento borrado' : ' eventos borrados') : '', Number(p.tareas) ? p.tareas + (Number(p.tareas) === 1 ? ' tarea cancelada' : ' tareas canceladas') : '', reintento ? 'reintentar el ' + reintento : 'sin reintento'].filter(String).join(' · ');
+    b.is.appendRow([new Date(), contacto, '❌ Venta perdida', String(r[1]) + ' · ' + motivo + (det ? ' · ' + det : ''), '', 'lost:' + r[0] + ':' + Date.now()]);
+    ex_recalcular_(b.cs, b.is);
+    if (reintento && typeof app_agregar_ === 'function') {
+      const nombre = (cf[i] && cf[i][2]) || String(r[1]);
+      app_agregar_({ tarea: { tarea: '♻️ Retomar a ' + nombre + ': ¿sigue buscando ' + String(r[5] || 'bici') + '? (se perdió por: ' + motivo.split(' · ')[0] + ')', area: 'Trabajo', categoria: 'Ventas', proyecto: '', limite: reintento, urgente: 'No', importante: 'Sí', tamano: 'Pequeña', notas: '⏰ 10:00 · ♻️ Reintento · ' + nombre + ' [' + contacto + '] (' + r[0] + ')', estado: 'Pendiente' } });
+      res.reintento = reintento;
+    }
+  }
+  try { ex_sincCalendario_(); } catch (e) { console.log('sinc: ' + e.message); }
+  return res;
+}
+
+// Última negociación perdida del contacto en los últimos 180 días: el agente no la reabre si el cliente no ha vuelto a escribir.
+function ex_perdidaReciente_(id) {
+  const tz = ex_tz_(), lim = ex_ymd_(new Date(Date.now() - 180 * 86400000), tz);
+  let mejor = null;
+  ex_filasNeg_(ex_hojaNeg_()).forEach(function (r) {
+    if (String(r[2]) !== String(id) || r[10] !== 'Perdida') return;
+    const h = String(r[13] || '').split('|').filter(function (x) { return /:Perdida$/.test(x); }).pop();
+    const f = h ? h.slice(0, 10) : (r[14] instanceof Date ? ex_ymd_(r[14], tz) : '');
+    if (f && f >= lim && (!mejor || f > mejor.fecha)) mejor = { fecha: f, titulo: String(r[1]), motivo: String(r[11] || '') };
+  });
+  return mejor;
 }
 
 // Registra una actividad (llamada, visita, nota…) en la negociación y en el historial del contacto.
@@ -2032,6 +2112,7 @@ function ex_contextoAgente_(id, opt) {
   const otras = (ni > 0 ? b.is.getRange(2, 1, ni, 4).getValues() : []).filter(function (r) { return String(r[1]) === id && !/whatsapp|agente/i.test(r[2]); })
     .sort(function (x, y) { return x[0] - y[0]; }).slice(-15).map(function (r) { return '[' + fmt(r[0]) + '] ' + r[2] + ': ' + r[3]; });
   const neg = ex_filasNeg_(ex_hojaNeg_()).filter(function (r) { return String(r[2]) === id && r[10] === 'Abierta'; })[0];
+  const perdida = neg ? null : ex_perdidaReciente_(id);
   const tareas = ex_hoja_().getRange(EX_PRIMERA, 1, EX_ULTIMA - EX_PRIMERA + 1, 15).getValues()
     .filter(function (r) { return r[1] && r[0] !== true && String(r[14]).indexOf(id) >= 0; }).map(function (r) { return '- ' + r[1] + (r[9] instanceof Date ? ' (' + ex_ymd_(r[9], tz) + ')' : ''); });
   const contexto = [
@@ -2039,12 +2120,13 @@ function ex_contextoAgente_(id, opt) {
     opt.pipeline ? 'MODO DEPURACIÓN: este contacto está guardado en el teléfono y tuvo una conversación de ida y vuelta. Si se habló de comprar un producto o un servicio del taller, crea la negociación aunque la conversación sea antigua (si ya compró o desistió, deja la etapa más avanzada que corresponda y explícalo en el resumen). Si no se habló de comprar nada, negociación «ninguna». No crees tareas.' : opt.masivo ? 'MODO HISTORIAL: este chat se importó como historial junto a muchos otros. No crees tareas. Negociación solo si hay intención real y el cliente escribió en los últimos ' + EX_PERF_DIAS_NEG + ' días.' : '',
     '', 'CONTACTO: ' + JSON.stringify({ nombre: c[2], tipo: c[1], empresa: c[3], email: c[4], telefono: String(c[5] || ''), etiquetas: c[6], notas: c[7] }),
     '', 'NEGOCIACIÓN ABIERTA: ' + (neg ? JSON.stringify({ titulo: neg[1], etapa: neg[3], valor: neg[4], producto: neg[5], proxima_accion: neg[8], notas: neg[12] }) : 'ninguna'),
+    perdida ? 'VENTA PERDIDA RECIENTE: «' + perdida.titulo + '» se marcó perdida el ' + perdida.fecha + ' (' + (perdida.motivo || 'sin motivo') + '). No propongas reabrirla ni escribirle salvo que el cliente haya vuelto a escribir después de esa fecha con una necesidad nueva.' : '',
     '', 'TAREAS ABIERTAS CON ESTE CONTACTO:', tareas.length ? tareas.join('\n') : '(ninguna)',
     '', 'OTRAS INTERACCIONES:', otras.length ? otras.join('\n') : '(ninguna)',
     '', 'CONVERSACIÓN DE WHATSAPP (más antigua primero):', chat.length ? chat.join('\n') : '(sin mensajes)'
   ].join('\n');
   const stock = ex_bsaleParaAgente_(chat.slice(-60).join(' ') + ' ' + (neg ? neg[5] : '') + ' ' + c[6]);
-  return { contexto: stock ? contexto + '\n\nSTOCK EN BSALE (consultado ahora, productos que se mencionan):\n' + stock : contexto, c: c, neg: neg, filasWa: filasWa, chatTexto: filasWa.filter(function (r) { return r[1] !== 'Enviado'; }).map(function (r) { return r[4]; }).join(' ') };
+  return { contexto: stock ? contexto + '\n\nSTOCK EN BSALE (consultado ahora, productos que se mencionan):\n' + stock : contexto, c: c, neg: neg, perdida: perdida, filasWa: filasWa, chatTexto: filasWa.filter(function (r) { return r[1] !== 'Enviado'; }).map(function (r) { return r[4]; }).join(' ') };
 }
 
 // Analiza la conversación de un contacto y aplica los cambios al CRM (desde la app: ya corre con el Sheet tomado).
@@ -2082,10 +2164,17 @@ function ex_aplicarAgente_(id, ctx, a, opt) {
   let negId = ctx.neg ? String(ctx.neg[0]) : '';
   // Regla de negociaciones: solo con intención real de compra o servicio y si el cliente escribió en los últimos 60 días.
   const intencionVenta = ['compra_bici', 'upgrade_componentes', 'servicio_taller', 'repuesto_accesorio'].indexOf(pf.intencion) >= 0;
-  const abrir = opt.pipeline ? ['proveedor', 'marca', 'personal', 'spam'].indexOf(pf.relacion) < 0 && (n.accion === 'crear' || intencionVenta)
+  let abrir = opt.pipeline ? ['proveedor', 'marca', 'personal', 'spam'].indexOf(pf.relacion) < 0 && (n.accion === 'crear' || intencionVenta)
     : met.diasCliente <= EX_PERF_DIAS_NEG && ['proveedor', 'marca', 'personal', 'spam'].indexOf(pf.relacion) < 0 && (intencionVenta || !a.perfil) && (sc.prob >= 35 || pf.fuerza_intencion === 'alta' || (!opt.masivo && n.accion === 'crear'));
   if (opt.pipeline && abrir && n.accion !== 'crear') { n.accion = 'crear'; n.etapa = 'Contactado'; }
   if (opt.pipeline && (n.etapa === 'Ganada' || n.etapa === 'Perdida')) { a.proxima_accion = { texto: '🧠 Confirmar: ¿' + (n.etapa === 'Ganada' ? 'compró? → marcar Ganada' : 'se perdió? → marcar Perdida'), fecha: ex_hoyYmd_(tz) }; n.etapa = 'Negociación'; }
+  // Venta perdida hace poco y el cliente no ha vuelto a escribir: no se reabre, ni se le sugiere responder ni se crean tareas.
+  const perdida = ctx.neg ? null : (ctx.perdida !== undefined ? ctx.perdida : ex_perdidaReciente_(id));
+  const sigueCerrada = !!perdida && !(met.ultimaCliente && met.ultimaCliente > perdida.fecha);
+  if (sigueCerrada) {
+    if (abrir || n.accion === 'crear') cambios.push('negociación no reabierta (se perdió el ' + perdida.fecha + ' y el cliente no ha vuelto a escribir)');
+    abrir = false; n.accion = 'ninguna'; a.esperando_respuesta = false; a.tareas = [];
+  }
   if (!ctx.neg && n.accion === 'crear' && !abrir) cambios.push('negociación no abierta (' + (met.diasCliente > EX_PERF_DIAS_NEG ? 'conversación de hace más de ' + EX_PERF_DIAS_NEG + ' días' : 'poca intención de compra') + ')');
   // En historial, si los puntajes muestran una venta probable aunque la IA no lo propuso, igual se abre (en "Contactado").
   if (!ctx.neg && abrir && n.accion !== 'crear' && opt.masivo && sc.prob >= 50) { n.accion = 'crear'; if (etapas.indexOf(n.etapa) < 0) n.etapa = 'Contactado'; }
@@ -2105,7 +2194,7 @@ function ex_aplicarAgente_(id, ctx, a, opt) {
     if (Object.keys(upd).length > 1) ex_guardarNegocio_(upd);
   }
   // Depuración: si no se habló de comprar nada (y no es proveedor ni del equipo), el contacto se archiva.
-  if (opt.pipeline && !negId && ['Proveedor', 'Institución', 'Equipo'].indexOf(String(ac.tipo || c[1])) < 0) {
+  if (opt.pipeline && !negId && !perdida && ['Proveedor', 'Institución', 'Equipo'].indexOf(String(ac.tipo || c[1])) < 0) {
     b.cs.getRange(i + 2, 2).setValue('Archivado'); cambios.push('archivado: sin conversación de compra');
     ex_logDepuracion_([[id, ac.nombre || c[2], 'sin conversación de compra (agente)', c[1], new Date()]]);
   }

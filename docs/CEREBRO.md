@@ -268,3 +268,16 @@ El buscador de Compras interpreta lo que escribes («pastillas para Levo 4», «
 ## Estudio: menos fotos pedidas
 
 El director creativo recibe el inventario de tu archivo de fotos (con la descripción de la IA) y el stock real de Bsale. Diseña con lo que existe: tus fotos, las oficiales de Specialized y stock para paisajes; acepta fotos coherentes aunque no sean exactas (nota 5 o más) y pide como máximo una foto por pieza. Las láminas sin foto se diseñan como texto, lista o dato.
+
+## Venta perdida (cierre por pérdida)
+
+Un solo lugar para avisar que una negociación se cayó: **❌ Perdida** en la negociación (también al arrastrarla en el pipeline, en el repaso rápido, en la ficha del contacto, en el panel de Chats y cuando el Copiloto propone marcarla perdida). Al confirmar:
+
+- **Tareas**: se listan las pendientes de esa venta (las que llevan su código N-…, el `[id]` del contacto o su nombre) y se cancelan las marcadas. No toca la postventa de compras anteriores ni tareas de otra negociación.
+- **Calendario**: el script busca los próximos 180 días de eventos que nombran al cliente (nombre y apellido, empresa o teléfono) y borra los marcados. Los que se repiten o son de calendarios ajenos se avisan para borrarlos a mano. Los recordatorios de tareas se van solos al borrar la tarea.
+- **Agente**: se apaga la «idea de respuesta» y el cliente sale de «Esperan respuesta». Durante 180 días el agente no reabre la venta ni crea tareas salvo que el cliente vuelva a escribir después de la pérdida (entonces sí es una oportunidad nueva).
+- **Cliente**: etiqueta «Venta perdida» y nota «❌ Venta perdida» en su historial con el resumen.
+- **Reintento**: se sugiere según el motivo (Sin stock 1 mes, No respondió/Postergó 3, Precio/Otro 6, Compró en otro lado 12) y deja la tarea «♻️ Retomar a …» y la próxima acción en la negociación.
+- **Tableros**: tasa de cierre, motivos de pérdida y pronóstico se recalculan solos con el estado «Perdida».
+
+Ops del script (nivel 32): `eventosContacto` y `perderNegocio`.
