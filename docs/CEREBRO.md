@@ -253,3 +253,18 @@ Cada 10 minutos la IA (Claude Haiku, ~US$0,0005 por foto) mira las fotos sin des
 ## Pestaña Chats
 
 **Contactos → 💬 Chats** muestra todas las conversaciones de WhatsApp como en el teléfono: la más reciente arriba, con el último mensaje y la hora. Al tocar una se abre la conversación completa (en el computador, al lado; en el celular, a pantalla completa con «‹» para volver), con botones para abrir WhatsApp, ver la ficha y clasificar al contacto. Hay buscador por nombre, número o texto del mensaje, y un botón para ver también los archivados.
+
+## Selección múltiple y acciones rápidas en Contactos
+
+- **Lista:** cada contacto tiene una casilla a la izquierda (y una arriba para marcar todos los del filtro). Con contactos marcados aparece una barra: Archivar, Desarchivar, Etiquetar, Mover a grupo (tipo) y Eliminar. Los botones 🗄️ Archivar y ↩️ Desarchivar también están junto a 🧹 Depurar. Todo corre en segundo plano.
+- **Ficha:** sobre «Próximo paso» hay botones pequeños: 💬 Ver chat, 🏷️ Etiquetar, 🗂️ Grupo, 🗄️ Archivar/↩️ Desarchivar, 🧠 Analizar y 🗑 Eliminar. Las flechas ‹ › arriba pasan al contacto anterior o siguiente (orden alfabético de la lista que estás viendo).
+- **Depurar** se revisa en segundo plano: puedes cerrar la ventana y te avisa cuando está.
+- **Chats:** botón «⏳ Sin responder» (el cliente escribió último) y punto verde en los que te escribieron en la última semana; desde la conversación puedes crear negocio o tarea, o pedir al agente que la analice. Desde una negociación, «💬 Ver chat».
+
+## Agente comprador (Compras)
+
+El buscador de Compras interpreta lo que escribes («pastillas para Levo 4», «lubricante para barro»), busca con varias consultas en los catálogos de todos los proveedores y de Specialized, cruza con tu stock, la rotación en Bsale, los clientes que lo pidieron y las promociones vigentes, y recomienda qué comprar, a quién y cuántas unidades. Cada recomendación tiene «＋ Tarea de pedido». La búsqueda simple aparece al tiro debajo. En «Ventas y rotación → Reponer pronto», el botón «🧠 Proveedores» lanza esta búsqueda.
+
+## Estudio: menos fotos pedidas
+
+El director creativo recibe el inventario de tu archivo de fotos (con la descripción de la IA) y el stock real de Bsale. Diseña con lo que existe: tus fotos, las oficiales de Specialized y stock para paisajes; acepta fotos coherentes aunque no sean exactas (nota 5 o más) y pide como máximo una foto por pieza. Las láminas sin foto se diseñan como texto, lista o dato.

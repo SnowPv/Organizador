@@ -1484,7 +1484,7 @@ body:has(.selbar) .fab,body:has(.selbar) .fab2{display:none}
 .chi:hover{background:var(--bg)}.chi.on{background:var(--accent-soft)}
 .chi .grow{min-width:0}.chi b{display:block;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .chi .sn{font-size:12.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.chi .hr{font-size:11.5px;color:var(--muted);align-self:flex-start;white-space:nowrap}
+.chi .hr{font-size:11.5px;color:var(--muted);align-self:flex-start;white-space:nowrap;display:flex;flex-direction:column;align-items:flex-end;gap:6px}.chdot{width:10px;height:10px;border-radius:50%;background:var(--ok);display:block}
 .chl-r{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px;min-height:300px}
 .chl-r .chatw{max-height:calc(100vh - 330px)}
 .chh{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center;margin-bottom:8px}.chh .grow{min-width:0;flex:1 1 150px}.chh b{font-size:15px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.chh .wsub{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -4775,7 +4775,7 @@ function openDeal(n, opt){
   if (a.abierta){
     html += '<div class="stepper">' + ETAPAS.map((x, i) => '<button class="' + (i === idx ? 'on' : i < idx ? 'ok' : '') + '" data-ngk="' + esc(x.k) + '" title="Mover a ' + esc(x.k) + '">' + x.corto + '</button>').join('') + '</div>' +
       '<div class="shint">Etapa actual: <b>' + esc(n.etapa) + '</b> · ' + a.dEtapa + ' días en esta etapa. Toca otra etapa para moverla.</div>' +
-      '<div class="dact"><button id="dx_act">' + icon('note') + 'Registrar actividad</button><button id="dx_prox">' + icon('arrow') + 'Próximo paso</button><button class="win" id="ng_win">' + icon('trophy') + 'Ganada</button><button class="lose" id="ng_lose">' + icon('x') + 'Perdida</button></div>';
+      '<div class="dact">' + (c && extNivel() >= 28 ? '<button id="dx_chat">💬 Ver chat</button>' : '') + '<button id="dx_act">' + icon('note') + 'Registrar actividad</button><button id="dx_prox">' + icon('arrow') + 'Próximo paso</button><button class="win" id="ng_win">' + icon('trophy') + 'Ganada</button><button class="lose" id="ng_lose">' + icon('x') + 'Perdida</button></div>';
     const vencido = a.proxVencida || a.sinResponder != null || !n.proxima;
     html += '<div class="nextc' + (vencido ? ' bad' : '') + '"><div class="tx"><small>Próximo paso</small>' + (n.proxima ? '<b>' + esc(n.proxima) + '</b><span>' + (n.fechaProx ? (a.proxVencida ? 'Venció ' : '') + fmtLong(n.fechaProx) : 'sin fecha') + '</span>' : '<b>Sin próximo paso</b><span>Defínelo: los negocios sin siguiente paso son los que se pierden</span>') +
       (a.sinResponder != null ? '<span style="display:block">⚡ El cliente escribió ' + (a.sinResponder ? 'hace ' + a.sinResponder + ' d' : 'hoy') + ' y no hay respuesta</span>' : '') + '</div>' +
@@ -4790,7 +4790,7 @@ function openDeal(n, opt){
   $$('[data-dtab]').forEach(b => b.onclick = () => { S.dtab = b.dataset.dtab; $$('[data-dtab]').forEach(x => x.classList.toggle('on', x === b)); dealTab(n, a, b.dataset.dtab); });
   $$('[data-ngk]').forEach(b => b.onclick = () => moverEtapa(n, b.dataset.ngk));
   const on = (id, f) => { const x = $('#' + id); if (x) x.onclick = f; };
-  on('dx_act', () => openActividad(n)); on('dx_prox', () => openProximo(n)); on('dx_prox2', () => openProximo(n));
+  on('dx_act', () => openActividad(n)); on('dx_prox', () => openProximo(n)); on('dx_chat', () => irAlChat(c.id)); on('dx_prox2', () => openProximo(n));
   on('ng_win', () => moverEtapa(n, 'Ganada')); on('ng_lose', () => openPerdida(n)); on('ng_reopen', () => moverEtapa(n, 'Negociación'));
   on('dx_done', async () => { const b = $('#dx_done'); b.disabled = true; try { await apiX('negocioNota', { id: n.id, texto: '✅ ' + n.proxima, tipo: '✅ Acción' }); await apiX('negocio', { negocio: { id: n.id, proxima: '', fechaProx: '' } }); await loadNeg(true); toast('✓ Registrado. ¿Cuál es el siguiente paso?'); const n2 = negocios().find(x => x.id === n.id); openDeal(n2); openProximo(n2); } catch(e){ b.disabled = false; toast('No se pudo: ' + e.message); } });
 }
@@ -7184,24 +7184,28 @@ function chatsLista(){
   const todosC = (S.base && S.base.contactos) || [], cm = {}; todosC.forEach(c => { cm[c.id] = c; });
   const q = norm(S.chq || '');
   return (S.chats || []).map(x => ({ x, c: cm[x.id] || { id: x.id, nombre: x.nom || x.tel, telefono: x.tel, tipo: 'Por clasificar' } }))
-    .filter(({ x, c }) => c.tipo !== 'Ignorar' && (S.chArch || c.tipo !== 'Archivado') && (!q || norm([c.nombre, c.telefono, x.tx].join(' ')).includes(q)));
+    .filter(({ x, c }) => c.tipo !== 'Ignorar' && (S.chArch || c.tipo !== 'Archivado') && (!S.chPend || (!x.yo && diffDays(x.f.slice(0, 10), hoy()) <= 30)) && (!q || norm([c.nombre, c.telefono, x.tx].join(' ')).includes(q)));
 }
 function chatsHTML(){
   if (!S.chats){ loadChats().then(() => { if (S.tab === 'base' && S.bv === 'chats') viewBase(); }); return '<div class="empty"><span class="spin"></span>Cargando conversaciones…</div>'; }
   const L = chatsLista(), max = S.chMax || 200, sel = S.chatSel && L.find(y => y.x.id === S.chatSel);
-  const lista = L.slice(0, max).map(({ x, c }) => '<div class="chi' + (S.chatSel === x.id ? ' on' : '') + '" data-chi="' + esc(x.id) + '">' + avatar(c, 40) + '<div class="grow"><b>' + esc(c.nombre || c.telefono || x.id) + '</b><div class="sn">' + (x.yo ? '✓ ' : '') + esc(x.tx || '') + '</div></div><span class="hr">' + esc(chHora(x.f)) + '</span></div>').join('');
-  return '<div class="chl' + (sel ? ' sel' : '') + '"><div class="chl-l"><div class="chq"><input type="text" id="chq" placeholder="🔎 Buscar chat, nombre o mensaje" value="' + esc(S.chq || '') + '"><div class="row" style="gap:8px;margin-top:8px;align-items:center"><span class="wsub" style="flex:1">' + L.length + ' conversaciones</span><button class="btn sm sec" id="chArch">' + (S.chArch ? 'Ocultar archivados' : 'Ver archivados') + '</button><button class="btn sm sec" id="chRefL">↻</button></div></div>' +
+  const lista = L.slice(0, max).map(({ x, c }) => '<div class="chi' + (S.chatSel === x.id ? ' on' : '') + '" data-chi="' + esc(x.id) + '">' + avatar(c, 40) + '<div class="grow"><b>' + esc(c.nombre || c.telefono || x.id) + '</b><div class="sn">' + (x.yo ? '✓ ' : '') + esc(x.tx || '') + '</div></div><span class="hr">' + esc(chHora(x.f)) + (!x.yo && x.f && diffDays(x.f.slice(0, 10), hoy()) <= 7 ? '<i class="chdot" title="Te escribió y falta tu respuesta"></i>' : '') + '</span></div>').join('');
+  return '<div class="chl' + (sel ? ' sel' : '') + '"><div class="chl-l"><div class="chq"><input type="text" id="chq" placeholder="🔎 Buscar chat, nombre o mensaje" value="' + esc(S.chq || '') + '"><div class="row" style="gap:8px;margin-top:8px;align-items:center"><span class="wsub" style="flex:1">' + L.length + ' conversaciones</span><button class="btn sm ' + (S.chPend ? '' : 'sec') + '" id="chPend" title="El cliente escribió último (30 días)">⏳ Sin responder</button><button class="btn sm sec" id="chArch">' + (S.chArch ? 'Ocultar archivados' : 'Ver archivados') + '</button><button class="btn sm sec" id="chRefL">↻</button></div></div>' +
     '<div class="chl-list">' + (lista || '<div class="empty">Sin conversaciones' + (S.chatsErr ? ' (' + esc(S.chatsErr) + ')' : '') + '</div>') + (L.length > max ? '<div class="btns" style="padding:10px"><button class="btn sm sec" id="chMas">Ver más (' + (L.length - max) + ')</button></div>' : '') + '</div></div>' +
-    '<div class="chl-r">' + (sel ? '<div class="chh"><button class="btn sm sec chback" id="chBack">‹</button>' + avatar(sel.c, 40) + '<div class="grow"><b>' + esc(sel.c.nombre || sel.c.telefono) + '</b><div class="wsub">' + esc([sel.c.tipo, sel.c.telefono].filter(Boolean).join(' · ')) + '</div></div>' + (telWA(sel.c) ? '<a class="btn sm sec" href="https://wa.me/' + esc(telWA(sel.c)) + '" target="_blank">💬 WhatsApp</a>' : '') + (contactoPorId(sel.x.id) ? '<button class="btn sm sec" id="chFicha">Ver ficha</button>' : '') + '</div><div id="chPane" data-modo="pane"></div>' : '<div class="empty">Elige una conversación para leerla.</div>') + '</div></div>';
+    '<div class="chl-r">' + (sel ? '<div class="chh"><button class="btn sm sec chback" id="chBack">‹</button>' + avatar(sel.c, 40) + '<div class="grow"><b>' + esc(sel.c.nombre || sel.c.telefono) + '</b><div class="wsub">' + esc([sel.c.tipo, sel.c.telefono].filter(Boolean).join(' · ')) + '</div></div>' + (telWA(sel.c) ? '<a class="btn sm sec" href="https://wa.me/' + esc(telWA(sel.c)) + '" target="_blank">💬 WhatsApp</a>' : '') + (contactoPorId(sel.x.id) ? '<button class="btn sm sec" id="chFicha">Ver ficha</button><button class="btn sm sec" id="chNeg">＋ Negocio</button><button class="btn sm sec" id="chTar">＋ Tarea</button>' + (iaDisponible() ? '<button class="btn sm sec" id="chIA">🧠 Analizar</button>' : '') : '') + '</div><div id="chPane" data-modo="pane"></div>' : '<div class="empty">Elige una conversación para leerla.</div>') + '</div></div>';
 }
 function bindChats(){
   const q = $('#chq'); if (q) q.oninput = () => { S.chq = q.value; const pos = q.selectionStart; viewBase(); const q2 = $('#chq'); q2.focus(); q2.setSelectionRange(pos, pos); };
   $$('[data-chi]').forEach(b => b.onclick = () => { S.chatSel = b.dataset.chi; viewBase(); if (!ANCHO()){ const t = $('.btabs'); if (t) t.scrollIntoView(); } });
   const ar = $('#chArch'); if (ar) ar.onclick = () => { S.chArch = !S.chArch; viewBase(); };
+  const pe = $('#chPend'); if (pe) pe.onclick = () => { S.chPend = !S.chPend; viewBase(); };
   const rf = $('#chRefL'); if (rf) rf.onclick = async () => { rf.disabled = true; await loadChats(true); viewBase(); };
   const mas = $('#chMas'); if (mas) mas.onclick = () => { S.chMax = (S.chMax || 200) + 300; viewBase(); };
   const bk = $('#chBack'); if (bk) bk.onclick = () => { S.chatSel = null; viewBase(); };
   const fi = $('#chFicha'); if (fi) fi.onclick = () => openCto(contactoPorId(S.chatSel));
+  const cnN = $('#chNeg'); if (cnN) cnN.onclick = () => { const ab = negocios().find(n => n.contacto === S.chatSel && n.estado === 'Abierta'); ab ? openNegocio(ab) : openNegocio(null, { contacto: S.chatSel }); };
+  const cnT = $('#chTar'); if (cnT) cnT.onclick = () => { const c = contactoPorId(S.chatSel); openAdd({ texto: 'Seguimiento ' + (c.nombre || c.telefono) + ' mañana', notas: c.telefono ? '📞 ' + c.telefono : '' }); };
+  const cnI = $('#chIA'); if (cnI) cnI.onclick = () => analizarAhora(S.chatSel, cnI);
   const pane = $('#chPane');
   if (pane && S.chatSel){ const it = chatsLista().find(y => y.x.id === S.chatSel); if (it) chatTab(it.c, pane); }
 }
@@ -7228,7 +7232,7 @@ async function chatTab(c, box, forzar){
     html += '<div class="chatw" id="chatw">' + L.map(m => { const d = dia(m.f), sep = d !== ult ? '<div class="dsep">' + esc(diaTxt(d)) + '</div>' : ''; ult = d; const med = /^\[[a-z_]+\]$/i.test(m.t); return sep + '<div class="bub' + (m.yo ? ' yo' : '') + (med ? ' med' : '') + '">' + esc(med ? ({ image: '📷 Foto', audio: '🎤 Audio', voice: '🎤 Audio', video: '🎬 Video', document: '📄 Documento', sticker: '🙂 Sticker', location: '📍 Ubicación', contacts: '👤 Contacto', media_placeholder: '📎 Archivo', multimedia: '📎 Archivo' }[m.t.slice(1, -1)] || '📎 ' + m.t.slice(1, -1)) : m.t) + '<small>' + esc(hora(m.f)) + (m.yo ? ' · tienda' : '') + '</small></div>'; }).join('') + '</div>';
   }
   // Clasificar rápido después de leer.
-  html += '<div class="chatbar"><b>Clasificar:</b>' + ['Cliente', 'Proveedor', 'Institución', 'Equipo', 'Otro', 'Ignorar'].map(t => '<button class="pill' + (c.tipo === t ? ' on' : '') + '" data-chtipo="' + t + '">' + (TIPO_IC[t] || '') + ' ' + t + '</button>').join('') + '</div>';
+  html += '<div class="chatbar"><b>Clasificar:</b>' + ['Cliente', 'Proveedor', 'Institución', 'Equipo', 'Otro', 'Archivado', 'Ignorar'].map(t => '<button class="pill' + (c.tipo === t ? ' on' : '') + '" data-chtipo="' + t + '">' + (TIPO_IC[t] || '') + ' ' + t + '</button>').join('') + '</div>';
   box.innerHTML = html;
   const w = $('#chatw'); if (w) w.scrollTop = w.scrollHeight;
   $('#chRef').onclick = () => chatTab(c, box, true);
@@ -7348,7 +7352,7 @@ function ventasHTML(){
   const lista = (L, f) => L.length ? '<div class="wl">' + L.map(f).join('') + '</div>' : '<div class="wsub">Nada por ahora ✓</div>';
   h += '<div class="bsv-g">';
   h += '<div class="w"><div class="wh">' + icon('trophy') + 'Lo más vendido · 30 días</div>' + lista((r.top30 || []).slice(0, 10), (x, i) => '<div class="it"><span class="dot" style="background:var(--s' + (i < 3 ? 5 : 3) + ')"></span><div class="tx">' + esc(x.producto) + '<small>' + x.unidades + ' u · ' + clpCorto(x.monto) + '</small></div></div>') + '</div>';
-  h += '<div class="w"><div class="wh">' + icon('box') + 'Reponer pronto<span class="wsub" style="margin-left:auto">stock para ≤ 30 días</span></div>' + lista((r.reponer || []).slice(0, 10), x => '<div class="it" data-bsr="' + esc(x.producto) + '"><span class="dot" style="background:' + (x.cobertura_dias <= 10 ? 'var(--bad)' : 'var(--warn)') + '"></span><div class="tx">' + esc(x.producto) + '<small>' + x.stock + ' en stock · se venden ' + x.vendidas90 + ' cada 90 días · alcanza ~' + x.cobertura_dias + ' días</small></div><button class="btn sm sec">＋ Pedido</button></div>') + '</div>';
+  h += '<div class="w"><div class="wh">' + icon('box') + 'Reponer pronto<span class="wsub" style="margin-left:auto">stock para ≤ 30 días</span></div>' + lista((r.reponer || []).slice(0, 10), x => '<div class="it" data-bsr="' + esc(x.producto) + '"><span class="dot" style="background:' + (x.cobertura_dias <= 10 ? 'var(--bad)' : 'var(--warn)') + '"></span><div class="tx">' + esc(x.producto) + '<small>' + x.stock + ' en stock · se venden ' + x.vendidas90 + ' cada 90 días · alcanza ~' + x.cobertura_dias + ' días</small></div><button class="btn sm sec">＋ Pedido</button>' + (extNivel() >= 31 && iaDisponible() ? '<button class="btn sm sec" data-bsq="' + esc(x.producto) + '">🧠 Proveedores</button>' : '') + '</div>') + '</div>';
   h += '<div class="w"><div class="wh">' + icon('clock') + 'Stock quieto<span class="wsub" style="margin-left:auto">sin ventas en 90 días</span></div>' + lista((r.quietos || []).slice(0, 10), x => '<div class="it"><span class="dot" style="background:var(--s1)"></span><div class="tx">' + esc(x.producto) + '<small>' + x.stock + ' en stock' + (x.ultima_venta ? ' · última venta ' + esc(fmtRel(x.ultima_venta)) : ' · sin ventas registradas') + '</small></div></div>') + '<div class="hint">Ideas: muéstralo en la tienda y en contenido de asesoría, ofrécelo a clientes a los que les sirve o úsalo en salidas y test rides. Sin descuentos.</div></div>';
   h += '<div class="w"><div class="wh">' + icon('users') + 'Mejores clientes · 12 meses</div>' + lista((r.clientes || []).slice(0, 10), x => '<div class="it"><span class="dot" style="background:var(--ok)"></span><div class="tx">' + esc(x.nombre) + '<small>' + clpCorto(x.total) + ' · ' + x.compras + ' compras · última ' + esc(fmtRel(x.ultima)) + '</small></div></div>') + '</div>';
   h += '</div><div class="btns" style="margin-top:6px"><button class="btn sm sec" id="bsvSinc">↻ Actualizar ventas</button></div>';
@@ -7357,6 +7361,7 @@ function ventasHTML(){
 function bindVentas(){
   const b = $('#bsvSinc'); if (b) b.onclick = async () => { b.disabled = true; b.innerHTML = '<span class="spin"></span>Copiando…'; await loadBsv(true); render(); };
   $$('[data-bsr]').forEach(x => x.querySelector('button').onclick = () => pensarTarea('Hacer pedido para reponer ' + x.dataset.bsr + ' (se está acabando según las ventas de Bsale)'));
+  $$('[data-bsq]').forEach(b => b.onclick = e => { e.stopPropagation(); S.cpQ = b.dataset.bsq; S.cpTab = S.cpTab || 'ventas'; comprasIA(b.dataset.bsq); render(); setTimeout(() => { const x = $('#cpIA'); if (x) x.scrollIntoView({ behavior: 'smooth' }); }, 300); });
 }
 // Compras en Bsale de un contacto (en su ficha).
 async function comprasBsale(c, box){
