@@ -294,4 +294,6 @@ Las tres cuentan como venta ganada en los tableros, con la **fecha del pago** (n
 
 El agente ya no abre una negociación nueva cuando un cliente con una venta ganada en los últimos 120 días escribe por el saldo, el pedido, la entrega o la garantía: actualiza el próximo paso de esa venta. Si pide otro producto distinto, sí abre una nueva. En la pestaña Datos de cada negociación hay un botón para eliminar duplicados.
 
-Ops del script (nivel 33): `negocioBorrar`; `negocio` acepta `entrega` y `fechaGanada`.
+Las negociaciones abiertas que ya duplicaban una venta ganada (mismo cliente, o el mismo nombre guardado dos veces con casi el mismo producto) se unen solas: al abrir la app (una vez por sesión) y en la revisión periódica del script. Queda la nota «🔗 Negociación unida» en el historial del cliente.
+
+Ops del script (nivel 33–34): `negocioBorrar`, `unirDuplicados`; `negocio` acepta `entrega` y `fechaGanada`.

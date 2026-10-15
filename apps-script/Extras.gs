@@ -15,8 +15,8 @@
  * Para actualizar este archivo más adelante: reemplaza todo su contenido y repite los dos pasos anteriores.
  */
 
-const EX_VERSION = '2026-12-08';
-const EX_NIVEL = 33;      // la app lo usa para saber qué funciones tiene este script
+const EX_VERSION = '2026-12-09';
+const EX_NIVEL = 34;      // la app lo usa para saber qué funciones tiene este script
 const EX_HOJA = 'Tareas';
 const EX_PRIMERA = 4;
 const EX_ULTIMA = 400;
@@ -134,6 +134,11 @@ function app_extra_(p) {
     case 'eventosContacto': return ex_eventosContacto_(p);
     case 'perderNegocio': return ex_perderNegocio_(p);
     case 'negocioBorrar': return ex_borrarNegocio_(p);
+    case 'unirDuplicados': {
+      const lk = LockService.getScriptLock();
+      if (!lk.tryLock(20000)) return { ok: true, unidas: [], ocupado: true };
+      try { return ex_unirDuplicados_(p); } finally { lk.releaseLock(); }
+    }
     case 'whatsapp': { // de a un aviso a la vez (el historial llega en muchas partes seguidas); si está ocupado, Meta reintenta
       const lk = LockService.getScriptLock();
       if (!lk.tryLock(20000)) return { ok: false, error: 'ocupado, reintentar' };
@@ -669,6 +674,44 @@ function ex_avanzarPostventa_() {
     const h = String(r[13] || '').split('|').filter(function (x) { return /:Entregada$/.test(x); }).pop();
     if (h && h.slice(0, 10) <= lim) ex_guardarNegocio_({ id: r[0], etapa: 'Postventa', fechaEtapa: hoy });
   });
+}
+
+// Une las negociaciones abiertas que duplican una venta ganada del mismo cliente (el agente las abría cuando el cliente
+// escribía por el saldo o la entrega). Se borra la abierta; su próximo paso pasa a la ganada si aún está en seguimiento.
+function ex_unirDuplicados_(p) {
+  p = p || {};
+  const sh = ex_hojaNeg_(), filas = ex_filasNeg_(sh), tz = ex_tz_(), lim = ex_ymd_(new Date(Date.now() - 120 * 86400000), tz), out = [], borrar = [];
+  const fGanada = function (r) { const h = String(r[13] || '').split('|').filter(function (x) { return /:Ganada$/.test(x); }).pop(); return h ? h.slice(0, 10) : (r[14] instanceof Date ? ex_ymd_(r[14], tz) : ''); };
+  const creada = function (r) { return r[6] instanceof Date ? ex_ymd_(r[6], tz) : String(r[6] || '').slice(0, 10); };
+  // El mismo cliente a veces quedó guardado dos veces (desde el teléfono y desde WhatsApp): se reconoce por el nombre.
+  const nombres = {}; ex_filasContactos_(ex_baseHojas_().cs).forEach(function (c) { nombres[String(c[0])] = ex_norm_(c[2]).replace(/[^a-z ]/g, ' ').trim().split(/\s+/).filter(String); });
+  const mismaPersona = function (a, b) { const x = nombres[a] || [], y = nombres[b] || []; if (!x.length || !y.length || x[0] !== y[0] || x[0].length < 3) return false; return x.length < 2 || y.length < 2 || x[1] === y[1]; };
+  filas.forEach(function (o, i) {
+    if (o[10] !== 'Abierta' || !o[2]) return;
+    let g = filas.filter(function (r) { return r !== o && String(r[2]) === String(o[2]) && r[10] === 'Ganada' && fGanada(r) >= lim; })
+      .sort(function (x, y) { return fGanada(y).localeCompare(fGanada(x)); })[0];
+    // Otro contacto con el mismo nombre y casi el mismo producto: es la misma venta.
+    if (!g) g = filas.filter(function (r) { return r !== o && r[2] && String(r[2]) !== String(o[2]) && r[10] === 'Ganada' && fGanada(r) >= lim && mismaPersona(String(o[2]), String(r[2])) && String(o[5] || '').trim() && ex_parecido_(o[5] + ' ' + o[1], r[5] + ' ' + r[1]) >= 0.5; })[0];
+    else {
+      // Solo si se abrió después de la venta y no es claramente otro producto.
+      if (creada(o) && creada(g) && creada(o) < creada(g)) return;
+      const sinProducto = !String(o[5] || '').trim() && !(Number(o[4]) > 0);
+      if (!sinProducto && ex_parecido_(o[5] + ' ' + o[1], g[5] + ' ' + g[1]) < 0.25) return;
+    }
+    if (!g) return;
+    out.push({ id: String(o[0]), titulo: String(o[1]), con: String(g[0]), conTitulo: String(g[1]) });
+    if (p.aplicar === false) return;
+    const gi = filas.indexOf(g);
+    if (o[8] && g[3] === 'Ganada' && !(g[14] instanceof Date && o[14] instanceof Date && g[14] > o[14])) { sh.getRange(gi + 2, 9, 1, 2).setValues([[o[8], o[9] || '']]); }
+    borrar.push(i + 2);
+  });
+  if (borrar.length) {
+    borrar.sort(function (a, b) { return b - a; }).forEach(function (f) { sh.deleteRow(f); });
+    const b = ex_baseHojas_();
+    out.forEach(function (x) { const g = filas.find(function (r) { return String(r[0]) === x.con; }); b.is.appendRow([new Date(), String(g[2]), '🔗 Negociación unida', '«' + x.titulo + '» era la misma venta que «' + x.conTitulo + '» (ganada): se unió.', '', 'dup:' + x.id + ':' + Date.now()]); });
+    ex_recalcular_(b.cs, b.is);
+  }
+  return { ok: true, unidas: out };
 }
 
 // Borra una negociación (por ejemplo, una duplicada). Queda anotado en el historial del contacto.
@@ -4011,7 +4054,7 @@ function ex_tareaHoraria() {
 function ex_tareaBase() {
   if (!ex_cuentaVigente_()) return;
   ex_conLock_(ex_escanearBase_);
-  try { ex_avanzarPostventa_(); } catch (e) { console.log('postventa: ' + e.message); }
+  try { ex_avanzarPostventa_(); ex_conLock_(ex_unirDuplicados_); } catch (e) { console.log('postventa: ' + e.message); }
   if (ex_bsaleToken_()) { try { ex_bsaleCatalogo_(); ex_bsaleSincStock_(); } catch (e) { console.log('Bsale: ' + e.message); } }   // catálogo y stock (arribos, stock crítico)
   const pr = PropertiesService.getScriptProperties();
   if (pr.getProperty('IG_TOKEN')) {
