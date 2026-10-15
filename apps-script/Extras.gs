@@ -15,8 +15,8 @@
  * Para actualizar este archivo más adelante: reemplaza todo su contenido y repite los dos pasos anteriores.
  */
 
-const EX_VERSION = '2026-11-27';
-const EX_NIVEL = 30;      // la app lo usa para saber qué funciones tiene este script
+const EX_VERSION = '2026-11-28';
+const EX_NIVEL = 31;      // la app lo usa para saber qué funciones tiene este script
 const EX_HOJA = 'Tareas';
 const EX_PRIMERA = 4;
 const EX_ULTIMA = 400;
@@ -115,6 +115,7 @@ function app_extra_(p) {
     case 'contacto':   return ex_guardarContacto_(p.contacto || {});
     case 'chat':       return ex_chat_(p);
     case 'chats':      return ex_chats_(p);
+    case 'comprasIA':  return ex_comprasIA_(p);
     case 'contactosLote': {
       const lk = LockService.getScriptLock();
       if (!lk.tryLock(30000)) throw new Error('El script está ocupado. Intenta en un minuto.');
@@ -3652,6 +3653,59 @@ function ex_tareaIA_(p) {
   if (!plan) throw new Error('el agente no alcanzó a terminar; inténtalo de nuevo');
   return { ok: true, plan: plan, fuentes: Object.keys(fuentes), modelo: modelo };
 }
+/* ---------- Buscador inteligente de Compras ---------- */
+// Interpreta lo que escribes (aunque sea vago: «lubricante para barro», «pastillas para Levo 4», «casco enduro talla M»),
+// busca con varias consultas en los catálogos de todos los proveedores y Specialized, cruza con el stock y las ventas de
+// la tienda y con los clientes que lo pidieron, y entrega recomendaciones ordenadas.
+const EX_COM_SISTEMA = [
+  'Eres el comprador experto de Blackline Puerto Varas (tienda Specialized con taller en Puerto Varas, Chile). Gustavo escribe en el buscador de Compras lo que necesita, a veces vago o con errores. Tu trabajo: entender qué busca de verdad, buscar en todos los catálogos y recomendar qué conviene comprar y a quién.',
+  'Cómo trabajar:',
+  '1) Interpreta la búsqueda: producto, compatibilidad (modelo de bici, estándar, medida, talla), uso (barro, lluvia, enduro, ruta) y temporada en Puerto Varas. Si es ambigua, cubre las interpretaciones más probables.',
+  '2) Busca con buscar_en_proveedores usando VARIAS consultas: sinónimos en español e inglés, marcas que lo fabrican, SKU o nombres comerciales (por ejemplo: «pastillas» → brake pads, Shimano, SRAM, Galfer; «lubricante barro» → wet lube, Muc-Off, Finish Line). Para productos Specialized usa buscar_producto o ficha_specialized_en_vivo.',
+  '3) Cruza con la tienda: stock_tienda (si ya hay stock no conviene comprar mucho), ventas_tienda (rotación de los últimos 90 días), clientes_interesados (quién lo pidió: demanda real) y oportunidades_compra / correos_proveedores (promociones vigentes).',
+  '4) Recomienda 3 a 8 opciones ordenadas por conveniencia: compatibilidad, disponibilidad, costo para Blackline (costo_blackline cuando exista; si no, precio web menos el descuento del proveedor), margen y rotación. Di cuántas unidades sugieres pedir y por qué.',
+  'Reglas: usa solo datos que devuelvan las herramientas; no inventes precios, stock ni SKUs. Si algo no aparece en ningún catálogo, dilo y sugiere a qué proveedor preguntar. Precios en pesos chilenos. Política de marca: la tienda no vende con descuentos ni Cyber; las promociones de proveedores sirven para comprar mejor y vender a precio normal. Español de Chile, directo. Cuando termines, llama a entregar_busqueda.'
+].join('\n');
+const EX_COM_FINAL = { name: 'entregar_busqueda', description: 'Entrega el resultado final de la búsqueda.', strict: true, input_schema: { type: 'object', additionalProperties: false, required: ['interpretacion', 'recomendaciones', 'no_encontrado', 'siguiente_paso'], properties: {
+  interpretacion: { type: 'string', description: 'Qué entendiste que busca, en una frase' },
+  recomendaciones: { type: 'array', items: { type: 'object', additionalProperties: false, required: ['producto', 'proveedor', 'precio_web', 'costo', 'disponible', 'url', 'motivo', 'prioridad', 'stock_tienda', 'unidades_sugeridas'], properties: {
+    producto: { type: 'string' }, proveedor: { type: 'string' }, precio_web: { type: 'number' }, costo: { type: 'number', description: 'Costo estimado para Blackline; 0 si no se sabe' },
+    disponible: { type: 'string' }, url: { type: 'string' }, motivo: { type: 'string', description: 'Por qué conviene (compatibilidad, margen, rotación, clientes que lo piden)' },
+    prioridad: { type: 'string', enum: ['alta', 'media', 'baja'] }, stock_tienda: { type: 'string', description: 'Lo que hay hoy en la tienda de este producto o similar' }, unidades_sugeridas: { type: 'integer' } } } },
+  no_encontrado: { type: 'string', description: 'Lo que no apareció en ningún catálogo y a quién preguntar; vacío si todo apareció' },
+  siguiente_paso: { type: 'string', description: 'La acción concreta que recomiendas (por ejemplo, armar pedido a Outside con X e Y)' } } } };
+const EX_COM_TOOLS = ['buscar_en_proveedores', 'buscar_producto', 'ficha_specialized_en_vivo', 'stock_tienda', 'ventas_tienda', 'clientes_interesados', 'oportunidades_compra', 'correos_proveedores'];
+function ex_comprasIA_(p) {
+  const pr = PropertiesService.getScriptProperties(), clave = pr.getProperty('ANTHROPIC_API_KEY'); if (!clave) throw new Error('falta ANTHROPIC_API_KEY en las propiedades del script');
+  const q = String(p.q || '').trim(); if (!q) throw new Error('escribe qué buscas');
+  const modelo = pr.getProperty('COMPRAS_MODELO') || pr.getProperty('TAREAS_MODELO') || EX_TAR_MODELO, haiku = /haiku/.test(modelo);
+  const tools = EX_COP_TOOLS.filter(function (t) { return EX_COM_TOOLS.indexOf(t.name) >= 0; }).concat([Object.assign({}, EX_COM_FINAL, { cache_control: { type: 'ephemeral' } })]);
+  const conf = ex_proveedoresConf_().map(function (x) { return x.nombre + ' (' + x.marcas + ', descuento ' + x.desc + '%' + (x.iva ? ', precios ' + x.iva : '') + ')'; }).join('; ');
+  const messages = [{ role: 'user', content: 'Hoy es ' + ex_hoyYmd_(ex_tz_()) + '. Proveedores configurados: ' + conf + '.\nBúsqueda de Gustavo: «' + q.slice(0, 500) + '»' }], estado = { acciones: [], usadas: {} };
+  let res = null; const fuentes = {};
+  for (let paso = 0; paso < 9 && !res; paso++) {
+    const cuerpo = { model: modelo, max_tokens: 12000, output_config: { effort: 'medium' }, system: [{ type: 'text', text: EX_COM_SISTEMA, cache_control: { type: 'ephemeral' } }], tools: tools, messages: messages };
+    const headers = { 'x-api-key': clave, 'anthropic-version': '2023-06-01' };
+    if (!haiku) { cuerpo.fallbacks = 'default'; headers['anthropic-beta'] = 'server-side-fallback-2026-07-01'; }
+    const r = UrlFetchApp.fetch('https://api.anthropic.com/v1/messages', { method: 'post', contentType: 'application/json', muteHttpExceptions: true, payload: JSON.stringify(cuerpo), headers: headers });
+    const j = JSON.parse(r.getContentText() || '{}');
+    if (r.getResponseCode() !== 200) throw new Error('Claude respondió ' + r.getResponseCode() + ': ' + ((j.error && j.error.message) || '').slice(0, 200));
+    messages.push({ role: 'assistant', content: j.content });
+    if (j.stop_reason === 'pause_turn') continue;
+    const usos = (j.content || []).filter(function (c) { return c.type === 'tool_use'; });
+    if (!usos.length) { messages.push({ role: 'user', content: 'Entrega el resultado con entregar_busqueda.' }); continue; }
+    const out = usos.map(function (tu) {
+      if (tu.name === 'entregar_busqueda') { res = tu.input; return { type: 'tool_result', tool_use_id: tu.id, content: 'Recibido.' }; }
+      fuentes[tu.name] = (fuentes[tu.name] || 0) + 1;
+      try { return { type: 'tool_result', tool_use_id: tu.id, content: String(ex_copHerramienta_(tu.name, tu.input || {}, estado)) }; }
+      catch (e) { return { type: 'tool_result', tool_use_id: tu.id, content: 'Error: ' + e.message, is_error: true }; }
+    });
+    if (!res) messages.push({ role: 'user', content: paso >= 6 ? out.concat([{ type: 'text', text: 'Ya tienes suficiente: entrega el resultado con entregar_busqueda.' }]) : out });
+  }
+  if (!res) throw new Error('el agente no alcanzó a terminar; inténtalo de nuevo');
+  return { ok: true, r: res, fuentes: fuentes, modelo: modelo };
+}
+
 // Crea un evento en el calendario principal (lo usa el agente de tareas cuando Gustavo lo aprueba).
 function ex_eventoCrear_(p) {
   const tz = ex_tz_(), e = p.evento || {};
