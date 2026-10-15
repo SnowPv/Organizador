@@ -15,8 +15,8 @@
  * Para actualizar este archivo más adelante: reemplaza todo su contenido y repite los dos pasos anteriores.
  */
 
-const EX_VERSION = '2026-11-26';
-const EX_NIVEL = 29;      // la app lo usa para saber qué funciones tiene este script
+const EX_VERSION = '2026-11-27';
+const EX_NIVEL = 30;      // la app lo usa para saber qué funciones tiene este script
 const EX_HOJA = 'Tareas';
 const EX_PRIMERA = 4;
 const EX_ULTIMA = 400;
@@ -1526,7 +1526,8 @@ const EX_EST_FOTOS = [
   '- Descarta fotos sin relación con ciclismo o con el tema (banderas, comida, personas posando sin bici, interiores sin bicis, textos, logos de otras marcas, memes).',
   '- Prefiere, en este orden: fotos propias de la tienda (Instagram o banco de Drive) que calcen; fotos oficiales de producto Specialized cuando se habla de un modelo; material oficial de Specialized University; y fotos de stock solo para paisajes o ambiente genérico.',
   '- Evita repetir la misma foto en dos láminas. La portada necesita la foto más potente.',
-  '- Para cada lámina devuelve el id elegido y una nota de 0 a 10. Si ninguna candidata llega a 7, devuelve id vacío y escribe en pedido una indicación concreta para que Gustavo la saque o la grabe (qué bici, ángulo, lugar, luz y formato vertical), por ejemplo: «Foto vertical de una Turbo Levo en el sendero del Pichijuán, lado del motor, luz de tarde».'
+  '- Para cada lámina devuelve el id elegido y una nota de 0 a 10 (7 o más: calza bien; 5 a 6: sirve y es coherente con el tema aunque no sea exacta). Prefiere usar una foto de 5 o 6 antes que dejar la lámina sin foto: Gustavo no tiene tiempo de sacar fotos para cada pieza.',
+  '- Solo si ninguna candidata llega a 5, devuelve id vacío. En pedido escribe una indicación concreta (qué bici, ángulo, lugar, luz, formato vertical) SOLO para la lámina más importante sin foto (normalmente la portada); en las demás deja pedido vacío: esas láminas se diseñarán sin foto.'
 ].join('\n');
 const EX_EST_ESQUEMA = { type: 'object', additionalProperties: false, required: ['laminas'], properties: { laminas: { type: 'array', items: { type: 'object', additionalProperties: false, required: ['i', 'id', 'nota', 'motivo', 'pedido'], properties: {
   i: { type: 'integer' }, id: { type: 'string' }, nota: { type: 'integer' }, motivo: { type: 'string' }, pedido: { type: 'string' } } } } } };
@@ -1754,6 +1755,8 @@ const EX_AS_SISTEMA = {
     '- Carrusel: 5 a 8 láminas. La primera es un gancho fuerte (portada con foto); luego valor concreto (consejos, comparación, guía de talla, datos, mitos y realidades); la última invita a actuar (cta). Historias: 3 a 5, verticales, más directas; la última invita a escribir al WhatsApp.',
     '- Texto en láminas: títulos cortos (máximo 7 palabras), textos de máximo 30 palabras, listas de 3 a 5 ítems de máximo 8 palabras. Nada de párrafos largos. Español de Chile, cercano y experto, sin exageraciones ni promesas vacías.',
     '- Usa los layouts disponibles: portada (foto de fondo + título grande), texto (fondo de color + título + texto), lista (título + ítems numerados), comparativa (dos columnas con título A y B y filas en items con el formato "A | B"), dato (un número o cifra grande + texto, sobre foto), foto (foto protagonista con un título breve), cta (llamado a la acción final). En historias usa portada, texto, pregunta (una pregunta grande para responder por mensaje) y cta.',
+    '- FOTOS CON LO QUE EXISTE: diseña la pieza alrededor de fotos que ya hay. Se te entrega el INVENTARIO DE FOTOS DE LA TIENDA (descripciones reales de su archivo); además existen fotos oficiales de Specialized de cada modelo y fotos de stock para paisajes. Elige escenas que aparezcan en el inventario o fotos oficiales del modelo; no inventes escenas que habría que salir a fotografiar. Máximo UNA lámina por pieza puede necesitar una foto nueva, y solo si es clave (márcala con fuente propia y descríbela muy concreta). Las demás láminas usan fotos disponibles o layouts sin foto (texto, lista, comparativa, dato con fondo de color): una buena lámina de texto es mejor que esperar una foto.',
+    '- STOCK: si se entrega STOCK EN BSALE HOY, los productos protagonistas deben tener stock (o decirse «a pedido»). Nunca armes una pieza sobre un modelo sin stock como si estuviera disponible.',
     '- Para cada lámina con foto describe con precisión qué foto buscar: tipo de bici (e-MTB con motor y batería visibles, MTB, gravel, ruta, urbana), modelo si corresponde, escena (sendero, taller, lago, volcán, detalle de componente), acción y luz; palabras clave en español e inglés; y la fuente preferida: propia (fotos de la tienda en su Instagram o su banco de Drive: clientes, taller, salidas), producto (foto oficial de Specialized del modelo nombrado), video (material oficial de Specialized University) o stock (solo paisajes o ambiente genérico). Usa foto solo donde aporte: en láminas de datos o listas puede ir sin foto. Nunca pidas fotos de personas específicas.',
     '- Calidad profesional: cada pieza enseña algo útil y verdadero (datos reales del producto, consejos de taller probados, la realidad del clima local), con un gancho que haga detenerse, y está pensada para que la gente la guarde y la comparta. Apóyate en el CONOCIMIENTO MTB y la BIBLIOTECA que se te entregan; no inventes especificaciones.',
     '- Nunca inventes precios, promociones ni stock que no estén en los datos. Si hay stock en los datos puedes mencionarlo.',
@@ -1839,11 +1842,37 @@ function ex_parecido_(a, b) {
   const comunes = A.filter(function (w) { return B.indexOf(w) >= 0; }).length;
   return Math.max(comunes / (A.length + B.length - comunes), comunes >= 3 ? comunes / Math.min(A.length, B.length) * 0.9 : 0);
 }
+// Lo que hay en la tienda hoy (bicis y productos con stock en Bsale, agrupados por modelo), para que el contenido
+// muestre lo que se puede vender y no pida fotos de productos que no están.
+function ex_stockDestacado_() {
+  if (!ex_bsaleToken_()) return '';
+  try {
+    const sh = SpreadsheetApp.getActive().getSheetByName(EX_HOJA_BSTOCK); if (!sh || sh.getLastRow() < 2) return '';
+    const st = {}; sh.getRange(2, 1, sh.getLastRow() - 1, 2).getValues().forEach(function (r) { if (+r[1] > 0) st[String(r[0])] = +r[1]; });
+    const por = {};
+    ex_bsaleCatalogo_().forEach(function (v) { const n = st[v.id]; if (!n) return; const g = por[v.prod] = por[v.prod] || { nombre: v.producto, u: 0, var: [] }; g.u += n; if (v.variante && g.var.length < 6) g.var.push(v.variante); });
+    const bici = /levo|kenevo|vado|como|creo|tero|turbo|stumpjumper|status|enduro|epic|chisel|rockhopper|fuse|tarmac|roubaix|aethos|allez|diverge|crux|sirrus|riprock|jett|hotrock|s-works/i;
+    const L = Object.keys(por).map(function (k) { return por[k]; }).sort(function (a, b) { return (bici.test(b.nombre) - bici.test(a.nombre)) || b.u - a.u; }).slice(0, 45);
+    return L.length ? 'STOCK EN BSALE HOY (lo que se puede mostrar y vender; las bicis primero):\n' + L.map(function (g) { return '- ' + g.nombre + ': ' + g.u + ' u' + (g.var.length ? ' (' + g.var.join(', ') + ')' : ''); }).join('\n') : '';
+  } catch (e) { return ''; }
+}
+// Inventario de fotos con descripción (hoja «Fotos»), resumido para que el director creativo diseñe con lo que existe.
+function ex_inventarioFotos_(max) {
+  try {
+    const sh = SpreadsheetApp.getActive().getSheetByName('Fotos'); if (!sh || sh.getLastRow() < 2) return '';
+    const v = sh.getRange(2, 1, sh.getLastRow() - 1, 6).getValues().filter(function (r) { return r[4] && r[4] !== '(sin vista previa)'; });
+    if (!v.length) return '';
+    const L = v.slice(-Math.min(v.length, max || 160)).map(function (r) { return '- ' + String(r[4]).slice(0, 110) + (r[5] ? ' [' + String(r[5]).slice(0, 60) + ']' : ''); });
+    return 'INVENTARIO DE FOTOS DE LA TIENDA (' + v.length + ' fotos descritas; muestra):\n' + L.join('\n');
+  } catch (e) { return ''; }
+}
+
 function ex_asistente_(p) {
   const modo = ['semana', 'contenido', 'tareas', 'redes', 'insights', 'pieza'].indexOf(p.modo) >= 0 ? p.modo : 'dia';
   const ctx = String(p.contexto || '').slice(0, 40000);
   if (!ctx) throw new Error('sin contexto');
-  const extra = (modo === 'pieza' || modo === 'contenido' || modo === 'redes') ? '\n\n' + EX_EST_MTB + '\n\n' + ex_bibliotecaContexto_() : '';
+  let extra = (modo === 'pieza' || modo === 'contenido' || modo === 'redes') ? '\n\n' + EX_EST_MTB + '\n\n' + ex_bibliotecaContexto_() : '';
+  if (modo === 'pieza' || modo === 'contenido') extra += '\n\n' + [ex_stockDestacado_(), modo === 'pieza' ? ex_inventarioFotos_(160) : ''].filter(String).join('\n\n');
   return { ok: true, modo: modo, r: ex_llamarClaude_(ctx + extra, EX_AS_SISTEMA[modo], EX_AS_ESQUEMA[modo]) };
 }
 
