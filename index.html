@@ -386,6 +386,16 @@ nav.bottom button span .ico{width:21px;height:21px}
 .wgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px;align-items:start}
 .w{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;min-width:0}
 .w.span2{grid-column:span 2}
+/* Inicio en mosaico: cada módulo ocupa solo la altura que necesita y los huecos se rellenan (filas de 2 px). */
+@media (min-width:561px){.wgrid.mas{grid-auto-rows:2px;row-gap:0;grid-auto-flow:row dense;align-items:start}}
+.pipe-w .pipe-cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:18px;align-items:start}
+.pipe-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
+.pipe-kpis div{background:var(--soft);border-radius:12px;padding:8px 10px;min-width:0}
+.pipe-kpis small{display:block;font-size:11px;font-weight:700;color:var(--muted);line-height:1.25}
+.pipe-kpis b{font-size:17px;font-variant-numeric:tabular-nums}
+.pipe-top .it .tx small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+.pipe-top .kv2{font-weight:800;font-size:13px;white-space:nowrap;margin-left:auto;padding-left:8px}
+@media (max-width:760px){.pipe-w .pipe-cols{grid-template-columns:minmax(0,1fr)}.pipe-kpis b{font-size:15px}}
 @media (max-width:560px){.wgrid{grid-template-columns:1fr 1fr;gap:10px}.w{padding:14px;grid-column:1/-1}.w.half{grid-column:auto}.w.half .hbar{grid-template-columns:auto 1fr;}.w.half .hbar b{display:none}header.top h1{font-size:21px}}
 .wh{display:flex;align-items:center;gap:8px;margin:0 0 12px;font-weight:700;font-size:14.5px}
 .wh .ico{color:var(--muted)}
@@ -1620,7 +1630,7 @@ async function api(action, extra){
 function apiX(op, extra){ return api('extra', Object.assign({ op }, extra || {})); }
 // Nivel 2 del script Extras: recordatorios y base de contactos. Nivel 3: la base solo usa contacto@blacklinechile.cl. Nivel 4: eventos de varios días.
 function extNivel(){ return S.extInactivo ? 0 : (S.ext && S.ext.nivel) || 1; }
-const APP_VER = 'v47', NIVEL_ULTIMO = 34;
+const APP_VER = 'v48', NIVEL_ULTIMO = 34;
 function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < NIVEL_ULTIMO; }
 let sincTimer = null;
 // Después de cambiar tareas, el script actualiza los recordatorios del calendario (en segundo plano).
@@ -1893,7 +1903,7 @@ function viewInicio(){
   if (extNivel() >= 13 && !S.leadsCanal && !S._leadsPend){ S._leadsPend = 1; loadLeads().then(() => { S._leadsPend = 0; if (S.tab === 'inicio' && !$('.pop-bg')) render(); }); }
   html += planStrip() + kpiRow();
   const rad = senales();
-  html += '<div class="wgrid">';
+  html += '<div class="wgrid mas">';
   // 1. Tareas de hoy (anillo: avance del día contra lo planificado)
   html += '<div class="w" data-w="hoy"><div class="wh">' + icon('check') + 'Tareas de hoy<button class="go" data-go="hoy">Ver</button></div><div class="wring"><div class="rg">' + ringSVG(totalHoy ? hechas.length / totalHoy : 0, 86) + '<b>' + hechas.length + '/' + totalHoy + '<small>hechas</small></b></div>' +
     '<div class="leg"><div><i style="background:var(--bad)"></i>Vencidas<b>' + venc.length + '</b></div><div><i style="background:var(--accent)"></i>Para hoy<b>' + lista.length + '</b></div><div><i style="background:var(--s2)"></i>En curso<b>' + enCurso.length + '</b></div></div></div></div>';
@@ -1901,9 +1911,15 @@ function viewInicio(){
   const hayNeg = extNivel() >= 5 && S.neg; let atenH = '';
   if (hayNeg){
     const m = metricasNeg(), A = abiertos(), maxV = Math.max(1, ...ETAPAS.map(e => A.filter(n => n.etapa === e.k).reduce((s, n) => s + (n.valor || 0), 0)));
-    html += '<div class="w half" data-w="pipe"><div class="wh">' + icon('chart') + 'Pipeline' + ib('pipeline') + '<button class="go" data-go="negocios">Ver</button></div><div class="wbig">' + clpCorto(m.abiertoV) + '</div><div class="wsub" data-info="ponderado">Pronóstico ' + clpCorto(m.ponderado) + ib('ponderado') + '</div>' +
+    // Pipeline en grande: embudo a la izquierda; a la derecha ventas del mes, cierre, entregas pendientes y lo más cerca de cerrar.
+    const porEntregar = negocios().filter(n => n.etapa === 'Ganada' && diffDays(fechaCierre(n), hoy()) <= 120);
+    const top = m.an.slice().sort((x, y) => (y.n.valor || 0) * y.a.prob - (x.n.valor || 0) * x.a.prob).slice(0, 4);
+    html += '<div class="w span2 pipe-w" data-w="pipe"><div class="wh">' + icon('chart') + 'Pipeline' + ib('pipeline') + '<button class="go" data-go="negocios">Ver</button></div><div class="pipe-cols"><div>' +
+      '<div class="wbig">' + clpCorto(m.abiertoV) + '</div><div class="wsub" data-info="ponderado">Pronóstico ' + clpCorto(m.ponderado) + ib('ponderado') + '</div>' +
       (() => { const seg = ETAPAS.map((e, i) => { const v = A.filter(n => n.etapa === e.k).reduce((s, n) => s + (n.valor || 0), 0); return { l: e.corto, v, t: v ? clpCorto(v) : '–', c: SEQ[i] }; }); void maxV;
-        return '<div class="pipe-dn">' + donutSVG(seg, 104, A.length, A.length === 1 ? 'abierto' : 'abiertos') + legHTML(seg) + '</div>'; })() + '</div>';
+        return '<div class="pipe-dn">' + donutSVG(seg, 104, A.length, A.length === 1 ? 'abierto' : 'abiertos') + legHTML(seg) + '</div>'; })() + '</div>' +
+      '<div><div class="pipe-kpis"><div><small>Ventas del mes</small><b>' + clpCorto(m.gMesV) + '</b></div><div><small>Cierre 90 d</small><b>' + (m.tasa == null ? '–' : Math.round(m.tasa * 100) + '%') + '</b></div><div data-gonf="ganadas"><small>Por entregar</small><b>' + porEntregar.length + '</b></div></div>' +
+      '<div class="hint" style="margin:2px 0 4px">Más cerca de cerrar</div><div class="wl pipe-top">' + (top.length ? top.map(x => '<div class="it" data-neg="' + esc(x.n.id) + '"><span class="dot" style="background:' + x.a.e.c + '"></span><div class="tx">' + esc(x.a.c ? (x.a.c.nombre || x.a.c.email) : x.n.titulo) + '<small>' + esc(x.n.etapa + (x.n.proxima ? ' · ' + x.n.proxima : '')) + '</small></div><span class="kv2">' + (x.n.valor ? clpCorto(x.n.valor) : '') + '</span></div>').join('') : '<div class="wsub">Sin negociaciones abiertas.</div>') + '</div></div></div></div>';
     // 3. Negocios que requieren atención
     const an = m.an, aten = an.filter(x => requiereAtencion(x.a)).sort((x, y) => y.a.prioridad - x.a.prioridad);
     atenH = '<div class="w" data-w="aten"><div class="wh">' + icon('bolt') + 'Requieren atención' + ib('atencion') + '<button class="go" data-gonf="atencion">Ver</button></div><div class="wbig">' + aten.length + ' <span style="font-size:14px;color:var(--muted);font-weight:600">de ' + an.length + ' abiertos</span></div>' +
@@ -1914,15 +1930,16 @@ function viewInicio(){
   if (S.base){
     const C = contactos(), tipos = [['Cliente', 'Clientes'], ['Proveedor', 'Proveedores'], ['Por clasificar', 'Por clasificar']], maxC = Math.max(1, ...tipos.map(t => C.filter(c => c.tipo === t[0]).length));
     const esperan = C.filter(c => agenteDe(c.id).idea).length;
-    html += '<div class="w half" data-w="ctos"><div class="wh">' + icon('users') + 'Contactos<button class="go" data-go="base">Ver</button></div><div class="wbig">' + C.length + '</div><div class="wsub">' + (esperan ? esperan + ' esperan tu respuesta' : 'en tu base') + '</div>' +
+    html += '<div class="w" data-w="ctos"><div class="wh">' + icon('users') + 'Contactos<button class="go" data-go="base">Ver</button></div><div class="wbig">' + C.length + '</div><div class="wsub">' + (esperan ? esperan + ' esperan tu respuesta' : 'en tu base') + '</div>' +
       '<div class="hbar">' + tipos.map((t, i) => { const n = C.filter(c => c.tipo === t[0]).length; return '<span>' + t[1] + '</span><div class="tr"><i style="width:' + n / maxC * 100 + '%;background:' + ['var(--s4)', 'var(--s3)', 'var(--s1)'][i] + '"></i></div><b>' + n + '</b>'; }).join('') + '</div></div>';
   }
   html += atenH;
   // 5. Mis tareas (cola de acción)
   const foco = enfoque(5);
   html += '<div class="w span2"><div class="wh">' + icon('target') + 'Mis próximas tareas' + ib('enfoque') + '<button class="go" data-go="hoy">Ver todas</button></div>' + (foco.length ? foco.map(x => taskHTML(x.t, { why: x.why, play: true, compact: true })).join('') : '<div class="empty">Nada urgente. Buen momento para planificar 🌤️</div>') + '</div>';
-  // 6. Agenda de hoy
+  // 6. Agenda de hoy y avisos para el equipo
   html += agendaW();
+  if (extNivel() >= 14) html += avisosW();
   // 7. Actividad 14 días (barras contra la meta)
   const dias = (S.data.dias || []).slice(-14), meta = metaDiaria(), maxD = Math.max(meta, ...dias.map(d => d.completadas || 0), 1);
   html += '<div class="w" data-w="act"><div class="wh">' + icon('chart') + 'Tareas completadas · 14 días<button class="go" id="statsBtn">Más</button></div><div class="bars"><u style="bottom:' + (meta / maxD * 100) + '%" title="Meta diaria"></u>' +
@@ -1933,7 +1950,7 @@ function viewInicio(){
   // Instagram (si está conectado)
   if (igActivo() && S.ig){
     const m = igMetricas(), D = m.D.slice(-14), mx = Math.max(1, ...D.map(d => +d.alcance || 0)), sig = (S.cont || []).filter(x => x.fecha >= h && x.estado === 'Planificado').sort((a, b) => a.fecha.localeCompare(b.fecha))[0];
-    html += '<div class="w" data-w="ig"><div class="wh">' + icon('camera') + 'Instagram<button class="go" data-go="redes">Ver</button></div><div class="wbig">' + (m.seg != null ? m.seg.toLocaleString('es-CL') : '–') + ' <span style="font-size:13px;color:var(--muted);font-weight:600">seguidores' + (m.dSeg != null ? ' · ' + (m.dSeg >= 0 ? '+' : '') + m.dSeg + ' en 28 d' : '') + '</span></div>' +
+    html += '<div class="w span2" data-w="ig" data-flex="1"><div class="wh">' + icon('camera') + 'Instagram<button class="go" data-go="redes">Ver</button></div><div class="wbig">' + (m.seg != null ? m.seg.toLocaleString('es-CL') : '–') + ' <span style="font-size:13px;color:var(--muted);font-weight:600">seguidores' + (m.dSeg != null ? ' · ' + (m.dSeg >= 0 ? '+' : '') + m.dSeg + ' en 28 d' : '') + '</span></div>' +
       '<div class="bars" style="height:50px">' + D.map(d => '<i style="height:' + ((+d.alcance || 0) / mx * 100) + '%" data-t="' + esc(fmt(d.fecha)) + ': ' + (+d.alcance || 0) + '"></i>').join('') + '</div><div class="wsub">Alcance diario · 14 días</div>' +
       '<div class="wl" style="margin-top:8px"><div class="it" data-go="redes"><span class="dot" style="background:var(--accent)"></span><div class="tx">' + (sig ? esc(sig.tema) + '<small>' + esc(fmt(sig.fecha)) + ' · ' + esc(sig.formato) + '</small>' : 'Sin contenido planificado<small>Genera tu calendario con el asistente</small>') + '</div></div></div></div>';
   }
@@ -1942,7 +1959,7 @@ function viewInicio(){
   void metaSem;
     '<div class="leg"><div data-info="racha"><i style="background:var(--warn)"></i>Racha<b>' + (indicador('Racha') || 0) + ' d</b></div><div data-info="puntos"><i style="background:var(--accent)"></i>Puntos<b>' + (ind['Puntos totales'] || 0) + '</b></div><div data-info="nivel"><i style="background:var(--ok)"></i>Nivel<b>' + esc(ind['Nombre del nivel'] || '–') + '</b></div></div></div></div>';
   html += '</div>';
-  if (rad.length) html += '<div class="rd-sec"><div class="rd-t">' + icon('bolt') + ' Radar <small>cruces entre tus fuentes: clientes, stock, Specialized, clima y agenda</small></div>' + radarHTML(rad.slice(0, 6)) + '</div>';
+  if (rad.length) html += '<div class="rd-sec" id="rdSec"><div class="rd-t">' + icon('bolt') + ' Radar <small>cruces entre tus fuentes: clientes, stock, Specialized, clima y agenda</small></div>' + radarHTML(rad.slice(0, 8)) + '</div>';
   html += zonaExterna();
   $('#view').innerHTML = html;
   bindTasks($('#view'));
@@ -1958,6 +1975,7 @@ function viewInicio(){
   const bl = $('#bloqBtn2'); if (bl) bl.onclick = openBloqueo;
   bindAsistente();
   bindCmd($('#view')); bindRadar($('#view'), rad); bindExterno($('#view'));
+  mosaico($('#view'));
   $$('[data-kgo]').forEach(b => b.onclick = () => { if (b.dataset.kgo === 'semana'){ S.per = 'mes'; S.perOff = 0; } go(b.dataset.kgo); });
   if ($('#psWx')) $('#psWx').onclick = abrirClima;
   if ($('#extTg')) $('#extTg').onclick = () => { LS.extOff = LS.extOff === '1' ? '0' : '1'; render(); };
@@ -1966,6 +1984,22 @@ function viewInicio(){
   // Cada lunes, la primera vez que abres la app, aparece el plan de la semana.
   if (pd(h).getDay() === 1 && LS.planVisto !== h && S.base && (S.neg || extNivel() < 5) && !$('.pop-bg')){ LS.planVisto = h; setTimeout(openPlanSemana, 400); }
 }
+// Mosaico: cada módulo toma las filas que necesita según su alto real; con «dense» los más chicos rellenan los huecos.
+// En el celular (una o dos columnas) se deja el orden normal. Se recalcula solo cuando un módulo cambia de alto.
+function mosaico(root){
+  const grids = [...root.querySelectorAll('.wgrid.mas')];
+  if (S._mosRO) S._mosRO.disconnect();
+  if (!window.ResizeObserver || innerWidth <= 560){ grids.forEach(g => [...g.children].forEach(el => el.style.gridRowEnd = '')); return; }
+  const fila = el => { const g = el.parentNode, gap = parseFloat(getComputedStyle(g).columnGap) || 14; el.style.gridRowEnd = 'span ' + Math.ceil((el.getBoundingClientRect().height + gap) / 2); };
+  // Los módulos «flexibles» ocupan 2 columnas solo si la grilla tiene un número par de columnas (así no dejan huecos).
+  grids.forEach(g => { const cols = getComputedStyle(g).gridTemplateColumns.split(' ').length; g.querySelectorAll(':scope > [data-flex]').forEach(el => el.classList.toggle('span2', cols % 2 === 0)); });
+  S._mosRO = new ResizeObserver(E => E.forEach(e => fila(e.target)));
+  grids.forEach(g => [...g.children].forEach(el => { fila(el); S._mosRO.observe(el); }));
+  // El radar muestra filas completas: tantas tarjetas como quepan en filas enteras.
+  const rd = root.querySelector('#rdSec .rd');
+  if (rd && innerWidth > 760){ const cols = getComputedStyle(rd).gridTemplateColumns.split(' ').length, C = [...rd.children], n = C.length >= cols ? C.length - C.length % cols : C.length; C.forEach((c, i) => c.style.display = i < n ? '' : 'none'); }
+}
+addEventListener('resize', () => { clearTimeout(S._mosT); S._mosT = setTimeout(() => { if (S.tab === 'inicio' && $('#view')) mosaico($('#view')); }, 200); });
 function agendaW(){
   const g = S.google, h = hoy();
   if (!g) return '<div class="w"><div class="wh">' + icon('cal') + 'Agenda de hoy</div><div class="wsub"><span class="spin"></span>Revisando tu calendario…</div></div>';
@@ -4376,7 +4410,7 @@ function kpiRow(){
 function zonaExterna(){
   const off = LS.extOff === '1';
   return '<div class="extz' + (off ? ' off' : '') + '"><div class="extz-h"><span class="extz-k">' + icon('note') + ' Complementario</span><small>Clima, Specialized, noticias y avisos: información de contexto, no de foco.</small><button class="btn sm sec" id="extTg">' + (off ? 'Mostrar' : 'Ocultar') + '</button></div>' +
-    (off ? '' : '<div class="wgrid">' + climaW().replace('w wx-card', 'w wx-card span2') + spzW() + noticiasW(4) + avisosW() + '</div>') + '</div>';
+    (off ? '' : '<div class="wgrid mas">' + climaW().replace('w wx-card', 'w wx-card span2') + spzW().replace('class="w', 'class="w span2') + noticiasW(4).replace('class="w', 'class="w span2') + (extNivel() >= 14 ? '' : avisosW()) + '</div>') + '</div>';
 }
 
 /* ---------- Calendario: mes y año, con estadísticas de todas las áreas ---------- */
