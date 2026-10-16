@@ -9,6 +9,8 @@
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
 <title>Organizador</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
   /* Sistema de diseño sobrio: fondo gris claro, tarjetas blancas, un solo acento azul; los colores de estado solo para alertas */
@@ -25,7 +27,7 @@
   color-scheme:light;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,Inter,Arial,sans-serif;font-size:16px;-webkit-font-smoothing:antialiased}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,Arial,sans-serif;font-feature-settings:"cv11","ss01","ss03";font-size:16px;-webkit-font-smoothing:antialiased}
 body{padding-top:env(safe-area-inset-top);padding-bottom:calc(92px + env(safe-area-inset-bottom))}
 main{padding-bottom:24px;display:block}
 button,input,select,textarea{font:inherit;color:inherit}
@@ -1770,10 +1772,10 @@ body:has(.selbar) .fab,body:has(.selbar) .fab2{display:none}
 @media (min-width:1000px){.hdr-cop{display:inline-flex}.fab2{display:none!important}}
 .pp2{display:grid;grid-template-columns:auto minmax(0,1fr);gap:20px;align-items:center;flex:1;min-height:0}
 .pp2-dn .dn-c b{font-size:22px}.pp2-dn .dn-c small{font-size:11px}
-.pp2-r{display:flex;flex-direction:column;gap:12px;min-width:0}
+.pp2-r{display:flex;flex-direction:column;gap:8px;min-width:0}
 .pp2-r .pp-k{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.pp2-r .pp-k span{min-width:0}
 .pp2-l{display:flex;flex-direction:column;gap:2px}
-.pp2-i{all:unset;box-sizing:border-box;cursor:pointer;display:grid;grid-template-columns:10px minmax(0,1fr) 28px 72px 38px;align-items:center;gap:8px;padding:6px 8px;margin:0 -8px;border-radius:10px;font-size:13px}
+.pp2-i{all:unset;box-sizing:border-box;cursor:pointer;display:grid;grid-template-columns:10px minmax(0,1fr) 28px 72px 38px;align-items:center;gap:8px;padding:4px 8px;margin:0 -8px;border-radius:10px;font-size:13px}
 .pp2-i:hover,.pp2-i:focus-visible{background:var(--soft)}
 .pp2-i i{width:10px;height:10px;border-radius:3px}.pp2-i span{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pp2-i em{font-style:normal;font-size:11.5px;font-weight:700;color:var(--muted);text-align:center;background:var(--soft);border-radius:999px;padding:1px 0}
@@ -1812,6 +1814,41 @@ header.top h1{letter-spacing:-.025em}
 .kcard .kp{all:unset;font-size:12px;font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums;flex:none;cursor:help}
 .kcard .pr{border:0!important;padding:0!important;background:none!important;box-shadow:none!important;border-radius:0!important;margin-top:2px!important}
 .kcard{border-left-width:3px}
+.pp3{margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
+.pp3-k{display:flex;align-items:baseline;justify-content:space-between;font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
+.pp3-k span{text-transform:none;letter-spacing:0;font-size:12px;font-weight:600}.pp3-k b{color:var(--ink)}
+.pp3-g{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.pp3-c{all:unset;box-sizing:border-box;cursor:pointer;display:flex;flex-direction:column;gap:3px;background:var(--soft);border-radius:14px;padding:10px 12px;min-width:0;transition:background .15s,transform .15s}
+.pp3-c:hover{background:#E9EEF5;transform:translateY(-1px)}
+.pp3-t{display:flex;align-items:center;gap:6px;min-width:0}.pp3-t b{font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1}
+.pp3-t em{font-style:normal;font-size:11px;font-weight:800;color:var(--ink);background:var(--card);box-shadow:inset 0 0 0 2px var(--c);border-radius:999px;padding:1px 7px;flex:none}
+.pp3-v{font-size:12px;font-weight:700}
+.pp3-c small{font-size:11.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.pp3-c small.bad{color:#C4283F}
+.home.fit .pp2{min-height:0}
+@media (max-width:760px){.pp3-g{grid-template-columns:1fr}}
+/* ===== Acabado premium ===== */
+body{background:radial-gradient(1100px 520px at 78% -8%,#E6EFFB 0%,rgba(230,239,251,0) 62%),radial-gradient(800px 420px at 10% 110%,#EEF2F8 0%,rgba(238,242,248,0) 60%),var(--bg);background-attachment:fixed}
+header.top{background:transparent!important}
+.hm-big,.hh-v,.dt-big,.wbig,.hm-rc b,.pp2-i b,.pp-k b,.yr-now b{font-variant-numeric:tabular-nums;letter-spacing:-.035em}
+.hm{transition:box-shadow .2s,transform .2s}
+.hm:not(.hm-hero):not(.hm-postit):hover{box-shadow:0 2px 4px rgba(16,24,40,.05),0 18px 40px -20px rgba(16,24,40,.28)}
+.hm-h{font-size:13.5px}.hm-ic{border-radius:11px}
+.btn{border-radius:12px;font-weight:700;letter-spacing:-.005em}
+.btn.sec{background:var(--card);border:1px solid rgba(16,24,40,.08);box-shadow:0 1px 2px rgba(16,24,40,.05)}
+.btn.sec:hover{border-color:rgba(42,120,214,.3);background:#FBFCFE}
+.btn:not(.sec):not(.bad){box-shadow:0 1px 2px rgba(16,24,40,.08),0 6px 16px -8px rgba(42,120,214,.55)}
+.icon-btn{border:1px solid rgba(16,24,40,.06);box-shadow:0 1px 2px rgba(16,24,40,.05)}
+.quick{border:1px solid rgba(16,24,40,.07)!important;box-shadow:0 1px 2px rgba(16,24,40,.04),0 8px 24px -16px rgba(16,24,40,.2)!important}
+@media (min-width:1000px){
+  nav.bottom{background:rgba(255,255,255,.82);backdrop-filter:blur(14px);border-right:1px solid rgba(16,24,40,.06)}
+  nav.bottom button{position:relative;color:#3B4456;font-weight:600}
+  nav.bottom button span{color:#5B6475}
+  nav.bottom button.on{background:linear-gradient(90deg,var(--accent-soft),rgba(234,242,252,.35));color:var(--accent-ink)}
+  nav.bottom button.on::before{content:"";position:absolute;left:-14px;top:9px;bottom:9px;width:4px;border-radius:0 4px 4px 0;background:var(--accent)}
+  nav.bottom button.on span{background:var(--card);color:var(--accent);box-shadow:0 1px 2px rgba(16,24,40,.08),0 4px 10px -6px rgba(42,120,214,.5)}
+  nav.bottom .brand{padding-bottom:26px}
+  header.top h1{font-size:30px;font-weight:800}
+}
 </style>
 
 
@@ -1909,7 +1946,7 @@ async function api(action, extra){
 function apiX(op, extra){ return api('extra', Object.assign({ op }, extra || {})); }
 // Nivel 2 del script Extras: recordatorios y base de contactos. Nivel 3: la base solo usa contacto@blacklinechile.cl. Nivel 4: eventos de varios días.
 function extNivel(){ return S.extInactivo ? 0 : (S.ext && S.ext.nivel) || 1; }
-const APP_VER = 'v51', NIVEL_ULTIMO = 37;
+const APP_VER = 'v52', NIVEL_ULTIMO = 37;
 function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < NIVEL_ULTIMO; }
 let sincTimer = null;
 // Después de cambiar tareas, el script actualiza los recordatorios del calendario (en segundo plano).
@@ -2469,9 +2506,12 @@ function pipelineHome(m){
   const A = abiertos(), seg = ETAPAS.map((e, i) => { const L = A.filter(n => n.etapa === e.k); return { e, k: e.k, l: e.corto, n: L.length, v: L.reduce((s, n) => s + (n.valor || 0), 0), c: SEQ[i] }; });
   const tot = seg.reduce((s, x) => s + x.v, 0) || 1, porEntregar = negocios().filter(n => n.etapa === 'Ganada' && diffDays(fechaCierre(n), hoy()) <= 120);
   return '<div class="hm a-pipe"><div class="hm-h"><span class="hm-ic t-blue">' + icon('chart') + '</span>Pipeline<span class="hm-n">' + A.length + ' abiertas</span><button class="hm-go" data-go="negocios" aria-label="Ir a Negocios">›</button></div>' +
-    '<div class="pp2"><div class="pp2-dn">' + donutSVG(seg.map(x => ({ l: x.e.k, v: x.v, t: clpCorto(x.v), c: x.c })), 196, clpCorto(m.abiertoV), 'en juego') + '</div>' +
+    '<div class="pp2"><div class="pp2-dn">' + donutSVG(seg.map(x => ({ l: x.e.k, v: x.v, t: clpCorto(x.v), c: x.c })), 166, clpCorto(m.abiertoV), 'en juego', 28) + '</div>' +
     '<div class="pp2-r"><div class="pp-k"><span><small>Pronóstico</small><b>' + clpCorto(m.ponderado) + '</b></span><span><small>Cierre 90 d</small><b>' + (m.tasa == null ? '–' : Math.round(m.tasa * 100) + '%') + '</b></span><span data-gonf="ganadas" role="button"><small>Por entregar</small><b>' + porEntregar.length + '</b></span></div>' +
-      '<div class="pp2-l">' + seg.map(x => '<button class="pp2-i" data-etapa="' + esc(x.k) + '"><i style="background:' + x.c + '"></i><span>' + esc(x.e.k) + '</span><em>' + x.n + '</em><b>' + (x.v ? clpCorto(x.v) : '–') + '</b><small>' + Math.round(x.v / tot * 100) + '%</small></button>').join('') + '</div></div></div></div>';
+      '<div class="pp2-l">' + seg.map(x => '<button class="pp2-i" data-etapa="' + esc(x.k) + '"><i style="background:' + x.c + '"></i><span>' + esc(x.e.k) + '</span><em>' + x.n + '</em><b>' + (x.v ? clpCorto(x.v) : '–') + '</b><small>' + Math.round(x.v / tot * 100) + '%</small></button>').join('') + '</div></div></div>' +
+    // Más cerca de cerrar: las 3 con mayor valor ponderado (valor × probabilidad), con su próximo paso.
+    (() => { const top = m.an.slice().sort((a, b) => (b.n.valor || 0) * b.a.prob - (a.n.valor || 0) * a.a.prob).slice(0, 3); if (!top.length) return '';
+      return '<div class="pp3"><div class="pp3-k">Más cerca de cerrar<span>ganado este mes <b>' + clpCorto(m.gMesV) + '</b></span></div><div class="pp3-g">' + top.map(x => { const c = x.a.c, nom = c ? (c.nombre || c.email) : x.n.titulo; return '<button class="pp3-c" data-neg="' + esc(x.n.id) + '"><span class="pp3-t"><b>' + esc(nom) + '</b><em style="--c:' + x.a.e.c + '">' + Math.round(x.a.prob * 100) + '%</em></span><span class="pp3-v">' + (x.n.valor ? clpCorto(x.n.valor) : '–') + ' · ' + esc(x.n.etapa) + '</span><small' + (x.a.proxVencida ? ' class="bad"' : '') + '>' + esc(x.n.proxima ? x.n.proxima : 'Sin próximo paso') + '</small></button>'; }).join('') + '</div></div>'; })() + '</div>';
 }
 // Mosaico: cada módulo toma las filas que necesita según su alto real; con «dense» los más chicos rellenan los huecos.
 // En el celular (una o dos columnas) se deja el orden normal. Se recalcula solo cuando un módulo cambia de alto.
@@ -7450,8 +7490,8 @@ if (!LS.url || !LS.token) { render(); showSetup(); } else { render(); load(); re
 // Colores por categoría (orden fijo, validados para daltonismo). «Otras» siempre en gris.
 const CATC = ['#2a78d6', '#eb6834', '#1baf7a', '#eda100', '#6250d6'], OTRAC = '#98A2B3';
 // Torta (dona) en SVG: cada tramo con un espacio de 2 px y su detalle al pasar el mouse.
-function donutSVG(seg, size, centro, sub){
-  size = size || 108; const r = size / 2 - 9, w = 15, c = 2 * Math.PI * r, m = size / 2, L = seg.filter(x => x.v > 0), tot = L.reduce((s, x) => s + x.v, 0);
+function donutSVG(seg, size, centro, sub, grosor){
+  size = size || 108; const w = grosor || 15, r = size / 2 - Math.max(9, w / 2 + 2), c = 2 * Math.PI * r, m = size / 2, L = seg.filter(x => x.v > 0), tot = L.reduce((s, x) => s + x.v, 0);
   const gap = L.length > 1 ? 2 : 0; let off = 0, arcs = '';
   L.forEach(x => { const len = x.v / tot * c, d = Math.max(.8, len - gap);
     arcs += '<circle cx="' + m + '" cy="' + m + '" r="' + r + '" fill="none" stroke="' + x.c + '" stroke-width="' + w + '" stroke-dasharray="' + d.toFixed(1) + ' ' + (c - d).toFixed(1) + '" stroke-dashoffset="' + (-off).toFixed(1) + '" transform="rotate(-90 ' + m + ' ' + m + ')"><title>' + esc(x.l) + ': ' + esc(String(x.t != null ? x.t : x.v)) + ' (' + Math.round(x.v / tot * 100) + '%)</title></circle>';
