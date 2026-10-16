@@ -1849,6 +1849,84 @@ header.top{background:transparent!important}
   nav.bottom .brand{padding-bottom:26px}
   header.top h1{font-size:30px;font-weight:800}
 }
+/* ===== Diseño nuevo (propuesta 2026): solo se activa con body.ui2 ===== */
+.nb-sec{display:none}
+@media (min-width:1000px){
+  .ui2 nav.bottom .nb-sec{display:block;font-size:10.5px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:#98A2B3;padding:14px 12px 4px}
+  .ui2 nav.bottom .brand + .nb-sec{padding-top:0}
+  .ui2 nav.bottom button{padding:5px 10px;font-size:14px}
+  .ui2 nav.bottom button span{width:30px;height:30px}
+}
+/* Resumen de cada pestaña: aviso breve + 4 tarjetas KPI con la misma anatomía */
+.ui2 .dsh2{margin:0 0 18px}
+.d2-now{display:flex;align-items:center;gap:10px;padding:2px 2px 0;font-size:14px;color:var(--ink);min-height:30px}
+.d2-now > i{flex:none;width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)}
+.d2-now.bad > i{background:var(--bad);box-shadow:0 0 0 4px #FDE8EA}.d2-now.warn > i{background:var(--warn);box-shadow:0 0 0 4px #FDF1DC}.d2-now.ok > i{background:var(--ok);box-shadow:0 0 0 4px #E3F6EE}
+.d2-now > span{flex:1;min-width:0;line-height:1.4}
+.d2-tg{border:0;background:none;color:var(--muted);font-weight:700;font-size:12.5px;cursor:pointer;padding:6px 8px;border-radius:8px;flex:none}
+.d2-tg:hover{background:var(--soft);color:var(--ink)}
+.d2-g{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-top:12px}
+@media (max-width:1200px){.d2-g{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){.d2-g{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:12px;margin:12px -16px 0;padding:0 16px 6px;scrollbar-width:none}.d2-g::-webkit-scrollbar{display:none}.d2-g > .k2{flex:0 0 86%;scroll-snap-align:start}.h-prop{display:none}}
+.k2{background:var(--card);border-radius:20px;border:1px solid rgba(16,24,40,.06);box-shadow:0 1px 2px rgba(16,24,40,.04),0 10px 30px -18px rgba(16,24,40,.22);padding:16px 18px 14px;display:flex;flex-direction:column;min-width:0;transition:box-shadow .2s,transform .2s}
+.k2.go{cursor:pointer}.k2.go:hover{box-shadow:0 2px 4px rgba(16,24,40,.06),0 18px 40px -20px rgba(16,24,40,.3);transform:translateY(-1px)}
+.k2-l{display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;color:var(--muted)}
+.k2-l > span:first-child{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.k2-go{margin-left:auto;font-size:12px;font-weight:700;color:var(--accent-ink);opacity:0;transition:opacity .15s;white-space:nowrap}
+.k2:hover .k2-go,.k2:focus-visible .k2-go{opacity:1}
+.k2-h{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 10px;margin:8px 0 12px}
+.k2-v{font-size:30px;font-weight:800;letter-spacing:-.035em;line-height:1.05;font-variant-numeric:tabular-nums}
+.k2-v small{font-size:13px;font-weight:600;color:var(--muted);letter-spacing:0;margin-left:2px}
+.k2-v.bad{color:#C4283F}.k2-v.ok{color:#0E8A5C}
+.k2-d{font-size:12px;font-weight:700;color:var(--muted);background:var(--soft);border-radius:999px;padding:3px 9px;white-space:nowrap}
+.k2-d.up{color:#0E8A5C;background:#E3F6EE}.k2-d.down{color:#C4283F;background:#FDE8EA}
+.k2-viz{margin-top:auto}
+.k2-stack{display:flex;gap:3px;height:12px;border-radius:99px;overflow:hidden}
+.k2-stack i{display:block;min-width:4px}
+.k2-chips{display:flex;flex-wrap:wrap;gap:4px 12px;margin-top:10px;font-size:12px;color:var(--muted);font-weight:600}
+.k2-chips span{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}.k2-chips b{color:var(--ink);font-variant-numeric:tabular-nums}
+.k2-chips i{width:8px;height:8px;border-radius:3px}
+.k2-prog{height:10px;border-radius:99px;background:var(--soft);overflow:hidden}.k2-prog i{display:block;height:100%;border-radius:99px}
+.k2-li{display:flex;flex-direction:column;gap:5px;margin-top:10px;font-size:12.5px;color:var(--muted)}
+.k2-li div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.k2-li b{color:var(--ink)}
+.k2-f{margin-top:12px;padding-top:10px;border-top:1px solid var(--line);font-size:12px;color:var(--muted);font-weight:600;line-height:1.4}
+.k2-f b{color:var(--ink)}
+.k2 .bars.dsb{height:64px}.k2 .bars.dsb i{border-radius:5px 5px 2px 2px;background:#C9D8EE}.k2 .bars.dsb i.hit{background:linear-gradient(180deg,var(--accent),#1B57A6)}
+.k2 .bx{font-size:11px;margin-top:4px}
+.k2 .hbar{font-size:12px}
+/* Encabezados y pestañas internas más limpios */
+.ui2 .btabs .tabs{background:rgba(16,24,40,.04);border-radius:14px;padding:4px;gap:2px;border:0}
+.ui2 .btabs .tabs button{border-radius:10px;border:0!important;box-shadow:none!important;padding:8px 14px}
+.ui2 .btabs .tabs button.on{background:var(--card);box-shadow:0 1px 2px rgba(16,24,40,.08),0 4px 10px -6px rgba(16,24,40,.25)!important;color:var(--ink)}
+.ui2 .filters .pill,.ui2 .tviews .pill{border-radius:999px}
+.ui2 .hint{color:#7A8494}
+/* Tablero de negocios: columnas más limpias */
+.ui2 .kcol{background:rgba(16,24,40,.035);border:0;border-radius:18px}
+.ui2 .kcol-h{background:transparent!important;border:0!important;box-shadow:none!important;padding:12px 12px 6px}
+.ui2 .kcol-h b{font-size:13px}
+.ui2 .kcol-h small{font-size:11.5px}
+.ui2 .kcard{border:1px solid rgba(16,24,40,.06);box-shadow:0 1px 2px rgba(16,24,40,.05);border-radius:14px}
+.ui2 .kcard:hover{box-shadow:0 2px 4px rgba(16,24,40,.06),0 12px 24px -16px rgba(16,24,40,.3)}
+.k2-cols{position:relative;display:flex;align-items:flex-end;gap:6px;height:84px}
+.k2-cols span{flex:1;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:4px;min-width:0}
+.k2-cols i{display:block;width:100%;max-width:34px;border-radius:6px 6px 2px 2px;background:#C9D8EE}
+.k2-cols i.hi{background:linear-gradient(180deg,var(--accent),#1B57A6)}
+.k2-cols em{font-style:normal;font-size:10.5px;font-weight:700;color:var(--muted);text-transform:capitalize;height:14px;line-height:14px}
+.k2-cols u{position:absolute;left:0;right:0;border-top:1.5px dashed #9AA6B8;text-decoration:none}
+.k2h b{display:flex;align-items:center;justify-content:space-between}.k2h b > span:first-child{display:flex;align-items:center;gap:8px}
+.kdot{width:9px;height:9px;border-radius:50%;flex:none}
+.kn{font-size:11.5px;font-weight:800;color:var(--muted);background:var(--card);border-radius:999px;padding:1px 8px}
+.h-prop{color:#8A93A3;font-weight:500}
+.ui2 .hy-hl .pl-h p{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;max-width:820px}
+.ui2 .hy-hl .pl-h p:hover{-webkit-line-clamp:unset}
+.mas-an{margin:14px 0}
+.mas-an > summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid rgba(16,24,40,.06);box-shadow:0 1px 2px rgba(16,24,40,.04),0 10px 30px -20px rgba(16,24,40,.22);border-radius:18px;padding:14px 18px;margin-bottom:14px}
+.mas-an > summary::-webkit-details-marker{display:none}
+.mas-an > summary span{display:flex;align-items:center;gap:8px;font-weight:800;font-size:14.5px}
+.mas-an > summary span .ico{width:16px;height:16px;padding:7px;box-sizing:content-box;border-radius:10px;background:var(--accent-soft);color:var(--accent-ink)}
+.mas-an > summary small{color:var(--muted);font-size:12.5px;flex:1}
+.mas-an > summary::after{content:"Mostrar ▾";font-size:12.5px;font-weight:700;color:var(--accent-ink);flex:none}
+.mas-an[open] > summary::after{content:"Ocultar ▴"}
 </style>
 
 
@@ -1873,15 +1951,18 @@ header.top{background:transparent!important}
 <button class="focus-pill" id="focusPill" hidden></button>
 <nav class="bottom">
   <div class="brand"><img src="icon-192.png" alt=""><div>Organizador<small>Blackline Puerto Varas</small></div></div>
+  <div class="nb-sec">Día a día</div>
   <button data-tab="inicio"><span data-ic="home"></span>Inicio</button>
   <button data-tab="hoy"><span data-ic="sun"></span>Hoy</button>
   <button data-tab="tareas"><span data-ic="check"></span>Tareas</button>
   <button data-tab="semana" class="nb2"><span data-ic="cal"></span>Calendario</button>
-  <button data-tab="compras" class="nb2"><span data-ic="box"></span>Compras</button>
+  <div class="nb-sec">Ventas</div>
   <button data-tab="negocios"><span data-ic="deal"></span>Negocios</button>
-  <button data-tab="proy" class="nb2"><span data-ic="flag"></span>Proyectos</button>
   <button data-tab="base"><span data-ic="users"></span>Contactos</button>
+  <button data-tab="compras" class="nb2"><span data-ic="box"></span>Compras</button>
+  <div class="nb-sec">Marca</div>
   <button data-tab="redes" class="nb2"><span data-ic="camera"></span>Redes</button>
+  <button data-tab="proy" class="nb2"><span data-ic="flag"></span>Proyectos</button>
   <button class="nb-mas" id="nbMas" aria-label="Más secciones"><span>•••</span>Más</button>
 </nav>
 <div id="layer"></div>
@@ -1891,6 +1972,11 @@ header.top{background:transparent!important}
 const $ = s => document.querySelector(s);
 const $$ = s => document.querySelectorAll(s);
 const LS = window.localStorage;
+// Diseño de la interfaz: «nuevo» (propuesta 2026) o «clásico». Se cambia en ⚙️ Ajustes.
+document.body.classList.toggle('ui2', LS.ui !== 'clasico');
+const UI2 = () => document.body.classList.contains('ui2');
+// Para qué sirve cada pestaña, en una línea (para que cualquiera del equipo entienda dónde está).
+const PROPOSITO = { hoy: 'Lo que hay que hacer hoy, en orden', tareas: 'Todas tus tareas y pendientes', semana: 'Agenda, entregas y eventos del mes', compras: 'Proveedores, stock y ventas de Bsale', negocios: 'Tus ventas en curso, de la primera consulta a la postventa', proy: 'Iniciativas largas y su avance', base: 'Clientes, proveedores y chats de WhatsApp', redes: 'Instagram, contenido y estudio de diseño' };
 let S = { data: null, tab: (/[?&]tab=(hoy|tareas|negocios|base|redes|semana|proy|compras)\b/.exec(location.search) || [])[1] || 'inicio', filtro: 'todas', q: '', verHechas: false, vista: LS.vista || 'lista', offline: false, busy: false, google: null, googleBusy: false, googleAt: 0, ext: null, extInactivo: false, base: null, baseAt: 0, bf: 'todos', bq: '', mutado: false, subH: 'habitos', neg: null, negAt: 0, nv: LS.nv2 || '', nf: 'abiertas', nq: '' };
 let deferredInstall = null;
 
@@ -1946,7 +2032,7 @@ async function api(action, extra){
 function apiX(op, extra){ return api('extra', Object.assign({ op }, extra || {})); }
 // Nivel 2 del script Extras: recordatorios y base de contactos. Nivel 3: la base solo usa contacto@blacklinechile.cl. Nivel 4: eventos de varios días.
 function extNivel(){ return S.extInactivo ? 0 : (S.ext && S.ext.nivel) || 1; }
-const APP_VER = 'v52', NIVEL_ULTIMO = 37;
+const APP_VER = 'v53', NIVEL_ULTIMO = 37;
 function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < NIVEL_ULTIMO; }
 let sincTimer = null;
 // Después de cambiar tareas, el script actualiza los recordatorios del calendario (en segundo plano).
@@ -2024,7 +2110,7 @@ async function updateTask(t, cambios){
 const TITLES = { inicio: 'Inicio', hoy: 'Hoy', tareas: 'Tareas', habitos: 'Hábitos', semana: 'Calendario', proy: 'Proyectos', base: 'Contactos', redes: 'Redes sociales', negocios: 'Negociaciones', compras: 'Compras y proveedores' };
 function head(){
   $('#hTitle').innerHTML = (S.tab === 'inicio' && S.data ? saludoTxt() : TITLES[S.tab]) + (S.offline ? '<span class="chip-off">sin conexión</span>' : '');
-  $('#hSub').innerHTML = S.busy ? '<span class="spin"></span>Actualizando…' : fmtLong(hoy());
+  $('#hSub').innerHTML = S.busy ? '<span class="spin"></span>Actualizando…' : fmtLong(hoy()) + (UI2() && PROPOSITO[S.tab] ? '<span class="h-prop"> · ' + PROPOSITO[S.tab] + '</span>' : '');
   $$('nav.bottom button').forEach(b => b.classList.toggle('on', b.dataset.tab === S.tab || (b.id === 'nbMas' && ['semana', 'compras', 'proy', 'redes'].includes(S.tab))));
   const hb = $('nav.bottom [data-tab=hoy]'); if (hb){ let n = 0; try { n = pendientesHoyN(); } catch(e){} let x = hb.querySelector('.nb'); if (!x){ x = document.createElement('i'); x.className = 'nb'; hb.appendChild(x); } x.textContent = n > 99 ? '99+' : n; x.style.display = n ? '' : 'none'; }
 }
@@ -3452,7 +3538,8 @@ function redesResumen(){
   const R = igRecomendaciones(a);
   if (iaDisponible() && extNivel() >= 14) html += insightsHTML('redes');
   else html += R.length ? '<div class="w rd-recs" style="margin-bottom:14px"><div class="wh">' + icon('spark') + 'Señales en tus datos<span class="r"><button class="btn sm sec" data-rt2="estrategia">Estrategia con IA</button></span></div><div class="recs">' + R.slice(0, 6).map(x => '<div class="rec' + (x.mal ? ' mal' : '') + '">' + icon(x.ic) + '<div><b>' + esc(x.t) + '</b><span>' + esc(x.d) + '</span></div></div>').join('') + '</div></div>' : '';
-  return html + '<div class="cols2"><div>' + izq + '</div><div>' + der + '</div></div>';
+  const det = '<div class="cols2"><div>' + izq + '</div><div>' + der + '</div></div>';
+  return html + (UI2() ? '<details class="mas-an"' + (LS.anRedes === '1' ? ' open' : '') + ' ontoggle="LS.anRedes = this.open ? \'1\' : \'0\'"><summary><span>' + icon('chart') + ' Análisis detallado</span><small>Alcance diario, constancia, cuándo publicar, formatos, temas y mejores publicaciones</small></summary>' + det + '</details>' : det);
 }
 
 /* --- Contenido: calendario semanal, banco de ideas y resultados de lo publicado --- */
@@ -5718,7 +5805,7 @@ function pipelineHTML(){
         .filter(x => !q || norm([x.n.titulo, x.n.producto, x.n.notas, x.a.c && x.a.c.nombre].join(' ')).includes(q));
     }
     const v = C.reduce((s, x) => s + (x.n.valor || 0), 0);
-    return '<div class="kcol" data-k="' + esc(e.k) + '" style="--c:' + e.c + '"><div class="kcol-h"><b><span>' + e.ic + ' ' + esc(e.t || e.k) + '</span><span>' + C.length + '</span></b><small>' + clp(v) + (i < ETAPAS.length ? ' · ' + Math.round(e.p * 100) + '% base' + ib('prob') : e.k === 'Ganada' ? ' · pagadas, por entregar' : e.k === 'Entregada' ? ' · primera semana' : e.k === 'Postventa' ? ' · hasta 90 días' : '') + '</small></div>' +
+    return '<div class="kcol" data-k="' + esc(e.k) + '" style="--c:' + e.c + '">' + (UI2() ? '<div class="kcol-h k2h"><b><span><i class="kdot" style="background:' + e.c + '"></i>' + esc(e.t || e.k) + '</span><span class="kn">' + C.length + '</span></b><small>' + (v ? clpCorto(v) : '$0') + (i < ETAPAS.length ? ' · prob. ' + Math.round(e.p * 100) + '%' : e.k === 'Ganada' ? ' · por entregar' : e.k === 'Entregada' ? ' · 1ª semana' : e.k === 'Postventa' ? ' · 90 días' : '') + '</small></div>' : '<div class="kcol-h"><b><span>' + e.ic + ' ' + esc(e.t || e.k) + '</span><span>' + C.length + '</span></b><small>' + clp(v) + (i < ETAPAS.length ? ' · ' + Math.round(e.p * 100) + '% base' + ib('prob') : e.k === 'Ganada' ? ' · pagadas, por entregar' : e.k === 'Entregada' ? ' · primera semana' : e.k === 'Postventa' ? ' · hasta 90 días' : '') + '</small></div>') +
       '<div class="kcards">' + (C.length ? C.map(x => kcardHTML(x.n, x.a, { drag: dk, mv: i < ETAPAS.length || e.k === 'Ganada' || e.k === 'Entregada' })).join('') : '<div class="hint" style="text-align:center;padding:14px 0">Sin negocios</div>') + '</div></div>';
   }).join('') + '</div><div class="hint">' + (dk ? 'Arrastra una tarjeta a otra columna para cambiar su etapa. ' : 'Desliza hacia el lado para ver todas las etapas. ') + 'Borde rojo = requiere atención. Toca cualquier número o ⓘ para saber qué significa.</div>';
 }
@@ -6239,9 +6326,10 @@ function segmentosHTML(){
   html += '<div class="w" style="margin-bottom:14px"><div class="wh">Ciclo de vida <span class="wsub" style="margin:0 0 0 auto">' + tot + ' perfiles</span></div><div class="stack big">' + ord.map(k => '<i data-sg="ciclo|' + k + '" style="width:' + (C[k] / tot * 100) + '%;background:' + CICLO[k].c + '" title="' + esc(CICLO[k].t) + ': ' + C[k] + '"></i>').join('') + '</div>' +
     '<div class="stack-lg">' + ord.map(k => '<button data-sg="ciclo|' + k + '"><i style="background:' + CICLO[k].c + '"></i>' + esc(CICLO[k].t) + ' <b class="num">' + C[k] + '</b></button>').join('') + '</div></div>';
   html += '<div class="lab2" style="margin:4px 2px 8px">Listas inteligentes</div><div class="vint">' + VISTAS_INT.map(v => { const n = P.filter(v.f).length; return '<button class="vi' + (n ? '' : ' cero') + '" data-sg="vista|' + v.k + '">' + icon(v.ic) + '<span>' + esc(v.t) + '</span><b class="num">' + n + '</b></button>'; }).join('') + '</div>';
-  html += statsBaseHTML();
-  html += '<div class="seg-grid">' + barrasHTML('Disciplina', 'disciplinas', cnt(pf => pf.p.disciplinas || []), L_DISC) + barrasHTML('Gama', 'gama', cnt(pf => pf.p.gama || 'desconocido'), L_GAMA) +
+  // Diseño nuevo: el análisis detallado queda plegado (se abre con un toque) para que el resumen se lea de un vistazo.
+  const det = statsBaseHTML() + '<div class="seg-grid">' + barrasHTML('Disciplina', 'disciplinas', cnt(pf => pf.p.disciplinas || []), L_DISC) + barrasHTML('Gama', 'gama', cnt(pf => pf.p.gama || 'desconocido'), L_GAMA) +
     barrasHTML('Experiencia', 'experiencia', cnt(pf => pf.p.experiencia || 'desconocido'), L_EXP) + barrasHTML('Frecuencia de consulta', 'frecuencia', cnt(frecDe), L_FREC) + '</div>';
+  html += UI2() ? '<details class="mas-an"' + (LS.anBase === '1' ? ' open' : '') + ' ontoggle="LS.anBase = this.open ? \'1\' : \'0\'"><summary><span>' + icon('chart') + ' Análisis detallado</span><small>Conversaciones, horarios, tiempo de respuesta, origen, disciplina, gama y quién compra</small></summary>' + det + '</details>' : det;
   return html;
 }
 function opsHTML(){
@@ -7447,6 +7535,7 @@ function showSettings(){
   sheet('<h3>⚙️ Ajustes</h3><div class="hint">Conectado a tu Sheet del organizador.</div>' +
     (S.ext && !S.ext.waHist && extNivel() >= 24 ? '<div class="card"><b>💬 Historial de WhatsApp</b><div class="hint">Todavía no llega el historial. Al conectar el número con «compartir historial», Meta lo envía por partes durante las primeras 24 horas y aquí verás el avance.</div></div>' : '') +
     (S.ext && S.ext.waHist ? '<div class="card"><b>💬 Historial de WhatsApp</b><div class="hint">' + (S.ext.waHist.rechazado ? 'No se compartió el historial al conectar el número (' + esc(S.ext.waHist.rechazado) + '). Para recibirlo hay que desconectar y volver a conectar el número aceptando «compartir historial».' : 'Recibidos ' + (S.ext.waHist.mensajes || 0).toLocaleString('es-CL') + ' mensajes de ' + (S.ext.waHist.chats || 0) + ' chats' + (S.ext.waHist.fases ? ' · avance por etapa: ' + Object.keys(S.ext.waHist.fases).sort().map(f => ['último día', 'hasta 90 días', 'hasta 180 días'][+f] + ' ' + S.ext.waHist.fases[f] + '%').join(', ') : S.ext.waHist.progreso != null ? ' · avance ' + S.ext.waHist.progreso + '%' : '') + ' · último envío ' + esc(haceTxt(String(S.ext.waHist.ultimo || '').slice(0, 10))) + '. El agente arma el perfil de cada contacto en modo masivo (sin tareas ni negocios antiguos).') + '</div></div>' : '') +
+    '<div class="card"><b>🎨 Diseño de la interfaz</b><div class="hint">El diseño nuevo ordena la app en secciones, con resúmenes más simples. El clásico es el anterior. No cambia ningún dato.</div><div class="seg" style="margin-top:10px"><button type="button" class="pill' + (LS.ui !== 'clasico' ? ' on' : '') + '" data-ui="nuevo">Nuevo</button><button type="button" class="pill' + (LS.ui === 'clasico' ? ' on' : '') + '" data-ui="clasico">Clásico</button></div></div>' +
     '<div class="card"><b>🔢 Versiones</b><div class="hint">App: ' + esc(APP_VER) + ' · Script: ' + (S.extInactivo ? 'funciones extra no activadas' : 'versión ' + esc((S.ext && S.ext.version) || '?') + ' (nivel ' + extNivel() + ')') + (extNivel() < NIVEL_ULTIMO ? ' · <b style="color:var(--bad-ink)">hay una versión nueva del script</b>: pega el Extras.gs nuevo y crea una Nueva versión de la implementación.' : ' · al día ✓') + '</div></div>' +
     (deferredInstall ? '<div class="btns"><button class="btn" id="s_inst">📲 Instalar app en este dispositivo</button></div>' : '') +
     '<div class="card"><b>🧠 Cerebro y fuentes</b><div class="hint">' + (extNivel() >= 16 ? 'Activo ✓ Cada mañana a las 7:00 el agente cruza todas tus fuentes y arma el plan del día. El Copiloto (botón ✨ abajo a la derecha, o la tecla /) responde con tus datos. Specialized Chile se lee solo cada hora.' : 'Actualiza el script para activar el plan del día, el Copiloto, Specialized Chile, noticias y avisos.') + '</div><div class="btns" style="margin-top:8px"><button class="btn sm sec" id="s_fz">📊 Fuentes de información</button>' + (extNivel() >= 16 ? '<button class="btn sm sec" id="s_av">📣 Avisos</button>' : '') + '</div></div>' +
@@ -7462,6 +7551,7 @@ function showSettings(){
   $('#s_g').onclick = () => g && !g.inactivo ? openSugerencias() : showExtrasSetup();
   const fz = $('#s_fz'); if (fz) fz.onclick = () => { closeSheet(); abrirFuentes(); };
   const sav = $('#s_av'); if (sav) sav.onclick = () => { closeSheet(); abrirAvisos(); };
+  $$('[data-ui]').forEach(b => b.onclick = () => { LS.ui = b.dataset.ui; document.body.classList.toggle('ui2', LS.ui !== 'clasico'); closeSheet(); render(); toast(LS.ui === 'clasico' ? 'Diseño clásico' : 'Diseño nuevo'); });
   const ss2 = $('#s_sinc'); if (ss2) ss2.onclick = async () => { ss2.disabled = true; try { const r = await apiX('sinc'); toast('📅 ' + r.creados + ' nuevos · ' + r.actualizados + ' actualizados · ' + r.borrados + ' borrados'); } catch(e){ toast('No se pudo: ' + e.message); } ss2.disabled = false; };
   const su = $('#s_upd'); if (su) su.onclick = showExtrasUpdate;
   const sim = $('#s_imp'); if (sim) sim.onclick = () => openImportar();
@@ -7515,8 +7605,27 @@ function hbarsHTML(L){
   const mx = Math.max(1, ...L.map(x => x.v || 0));
   return '<div class="hbar">' + L.map(x => '<span title="' + esc(x.l) + '">' + esc(x.l) + '</span><div class="tr"><i style="width:' + Math.max(x.v ? 4 : 0, (x.v || 0) / mx * 100) + '%;background:' + (x.c || 'var(--s4)') + '"></i></div><b>' + esc(String(x.t != null ? x.t : x.v)) + '</b>').join('') + '</div>';
 }
+// Diseño nuevo: todas las tarjetas del resumen con la misma anatomía (etiqueta · cifra · comparación · gráfico · pie).
+function stackHTML(seg){
+  const L = seg.filter(x => (x.v || 0) > 0), tot = L.reduce((s, x) => s + x.v, 0) || 1;
+  return '<div class="k2-stack">' + (L.length ? L.map(x => '<i style="flex:' + (x.v / tot).toFixed(4) + ';background:' + x.c + '" title="' + esc(x.l + ': ' + (x.t != null ? x.t : x.v)) + '"></i>').join('') : '<i style="flex:1;background:var(--soft)"></i>') + '</div>' +
+    '<div class="k2-chips">' + seg.filter(x => (x.v || 0) > 0).slice(0, 4).map(x => '<span><i style="background:' + x.c + '"></i>' + esc(x.l) + ' <b>' + esc(String(x.t != null ? x.t : x.v)) + '</b></span>').join('') + '</div>';
+}
+function tileHTML2(x, i){
+  const big = (v, sub, tono) => '<div class="k2-v' + (tono ? ' ' + tono : '') + '">' + v + (sub ? '<small>' + sub + '</small>' : '') + '</div>';
+  let head = '', viz = '';
+  if (x.k === 'donut'){ head = big(x.centro, x.sub ? ' ' + x.sub : ''); viz = stackHTML(x.seg); }
+  else if (x.k === 'ring'){ head = big(x.centro, x.sub ? ' ' + x.sub : ''); viz = '<div class="k2-prog"><i style="width:' + Math.round(Math.min(1, x.p || 0) * 100) + '%;background:' + (x.color || 'var(--accent)') + '"></i></div>' + (x.leg ? '<div class="k2-chips">' + x.leg.map(l => '<span><i style="background:' + l.c + '"></i>' + esc(l.l) + ' <b>' + esc(String(l.t != null ? l.t : l.v)) + '</b></span>').join('') + '</div>' : ''); }
+  else if (x.k === 'bars'){ head = big(x.v, x.sub); const mx = Math.max(1, x.meta || 0, ...x.vals.map(y => y.v || 0)); viz = '<div class="k2-cols">' + (x.meta ? '<u style="bottom:calc(' + (x.meta / mx * 72).toFixed(1) + '% + 18px)"></u>' : '') + x.vals.map(y => '<span title="' + esc(y.tip || String(y.v)) + '"><i class="' + (y.hi ? 'hi' : '') + '" style="height:' + (Math.max(4, (y.v || 0) / mx * 100) * .72).toFixed(1) + '%' + (y.c ? ';background:' + y.c : '') + '"></i><em>' + esc(String(y.lab || '').slice(0, 3)) + '</em></span>').join('') + '</div>'; }
+  else if (x.k === 'hbars'){ head = big(x.v, x.sub); viz = hbarsHTML(x.vals.slice(0, 4)); }
+  else { head = big(x.v, x.sub, x.tono); viz = (x.meter != null ? '<div class="k2-prog"><i style="width:' + Math.round(Math.min(1, x.meter) * 100) + '%;background:' + (x.mc || 'var(--accent)') + '"></i></div>' : '') + (x.list && x.list.length ? '<div class="k2-li">' + x.list.map(l => '<div>' + l + '</div>').join('') + '</div>' : ''); }
+  const delta = x.delta ? '<span class="k2-d ' + (x.delta.dir || '') + '">' + (x.delta.dir === 'up' ? '▲ ' : x.delta.dir === 'down' ? '▼ ' : '') + esc(x.delta.tx) + '</span>' : '';
+  return '<div class="k2' + (x.go ? ' go' : '') + '"' + (x.go ? ' data-dgo="' + i + '" role="button" tabindex="0"' : '') + '><div class="k2-l"><span>' + esc(x.l) + '</span>' + (x.q ? '<button class="dt-i" data-q="' + esc(String(x.q).replace(/<[^>]+>/g, '')) + '" aria-label="Qué significa">i</button>' : '') + (x.go ? '<span class="k2-go">Ver ›</span>' : '') + '</div>' +
+    '<div class="k2-h">' + head + delta + '</div><div class="k2-viz">' + viz + '</div>' + (x.foot ? '<div class="k2-f">' + x.foot + '</div>' : '') + '</div>';
+}
 // Una tarjeta del resumen: título, gráfico, el número y «qué significa».
 function tileHTML(x, i){
+  if (UI2()) return tileHTML2(x, i);
   let viz = '';
   if (x.k === 'donut') viz = '<div class="dt-dn">' + donutSVG(x.seg, 100, x.centro, x.sub) + legHTML(x.seg) + '</div>';
   else if (x.k === 'ring') viz = '<div class="dt-dn">' + ringDn(x.p, x.centro, x.sub, x.color) + (x.leg ? legHTML(x.leg) : '') + '</div>';
@@ -7536,6 +7645,8 @@ function popInfo(btn, txt){
 }
 function dashHTML(tab, d){
   const off = LS['dsh_' + tab] === '0', tiles = d.tiles.filter(Boolean);
+  if (UI2()) return '<section class="dsh dsh2' + (off ? ' off' : '') + '">' + (d.head ? '<div class="d2-now ' + (d.head.tono || '') + '"><i></i><span>' + d.head.tx + '</span><button class="d2-tg" data-dshtg>' + (off ? 'Ver resumen' : 'Ocultar resumen') + '</button></div>' : '<div class="d2-now"><span></span><button class="d2-tg" data-dshtg>' + (off ? 'Ver resumen' : 'Ocultar resumen') + '</button></div>') +
+    (off ? '' : '<div class="d2-g">' + tiles.map(tileHTML).join('') + '</div>') + '</section>';
   return '<section class="dsh' + (off ? ' off' : '') + '"><div class="dsh-h"><span class="dsh-ic">' + icon(d.ic) + '</span><div class="grow"><b>' + esc(d.t) + '</b></div><button class="btn sm sec" data-dshtg>' + (off ? 'Ver resumen' : 'Ocultar') + '</button></div>' +
     (d.head ? '<div class="dsh-now ' + (d.head.tono || '') + '"><i></i><span>' + d.head.tx + '</span></div>' : '') +
     (off ? '' : '<div class="dsh-g">' + tiles.map(tileHTML).join('') + '</div>') + '</section>';
@@ -7628,12 +7739,15 @@ function dashNeg(){
   const seg = ETAPAS.map((e, i) => { const v = A.filter(n => n.etapa === e.k).reduce((s, n) => s + (n.valor || 0), 0); return { l: e.corto, v, t: v ? clpCorto(v) : '–', c: SEQ[i] }; });
   return { ic: 'deal', t: 'Resumen de ventas', intro: 'Cuánto hay en juego, en qué etapa está cada venta y cuáles necesitan un empujón.',
     head: aten.length ? { tono: 'bad', tx: '<b>' + plural(aten.length, 'negocio pide', 'negocios piden') + ' atención.</b> El más urgente: ' + esc(aten[0].a.c ? (aten[0].a.c.nombre || aten[0].n.titulo) : aten[0].n.titulo) + ' (' + esc(motivoAlerta(aten[0].n, aten[0].a)) + ').' } : { tono: 'ok', tx: '<b>Todos los negocios al día.</b> Buen momento para buscar clientes nuevos.' },
-    tiles: [
-      { k: 'donut', l: 'Pipeline por etapa', centro: clpCorto(m.abiertoV), sub: plural(A.length, 'abierto', 'abiertos'), seg, q: 'Valor de los negocios abiertos en cada etapa. Mientras más oscuro, más cerca del cierre.' },
-      { k: 'ring', l: 'Tasa de cierre', p: m.tasa || 0, centro: m.tasa == null ? '–' : Math.round(m.tasa * 100) + '%', sub: '90 días', color: 'var(--ok)', leg: [{ l: 'Ganadas', v: m.g90, c: 'var(--ok)' }, { l: 'Perdidas', v: m.p90, c: 'var(--bad)' }], q: 'De cada 10 negocios que terminan, cuántos ganas.' },
-      { k: 'bars', l: 'Ganado por mes', v: clpCorto(m.gMesV), sub: ' este mes', vals: m.meses.map((x, i) => ({ v: x.v, lab: x.nom, tip: x.nom + ': ' + clpCorto(x.v), hi: i === m.meses.length - 1 })), q: 'Ventas cerradas en los últimos 6 meses. Pronóstico de lo abierto: ' + clpCorto(m.ponderado) + '.' },
-      { k: 'num', l: 'Requieren atención', v: aten.length, tono: aten.length ? 'bad' : 'ok', sub: ' de ' + A.length, meter: A.length ? aten.length / A.length : 0, mc: 'var(--bad)', list: aten.slice(0, 2).map(x => esc(x.n.titulo)), q: 'Clientes sin respuesta, pasos vencidos o negocios quietos hace días.', go: () => { S.nf = 'atencion'; S.nv = 'lista'; viewNegocios(); } }
-    ] };
+    tiles: (() => {
+      const mv = m.meses.map(x => x.v), prev = mv.length > 1 ? mv[mv.length - 2] : 0, dPct = prev ? (m.gMesV - prev) / prev : null;
+      const mot = Object.entries(m.motivos).sort((a, b) => b[1] - a[1])[0], enRiesgo = aten.reduce((s, x) => s + (x.n.valor || 0), 0);
+      return [
+        { k: 'donut', l: 'Pipeline abierto', centro: clpCorto(m.abiertoV), sub: plural(A.length, 'negocio', 'negocios'), seg, delta: { tx: 'pronóstico ' + clpCorto(m.ponderado) }, foot: 'Ticket promedio <b>' + (m.ticket ? clpCorto(m.ticket) : '–') + '</b> · ' + m.estancadas.length + ' estancados', q: 'Valor de los negocios abiertos en cada etapa. El pronóstico pondera cada uno por su probabilidad de cierre.', go: () => { S.nf = 'abiertas'; S.nv = 'pipeline'; viewNegocios(); } },
+        { k: 'bars', l: 'Ganado este mes', v: clpCorto(m.gMesV), sub: ' · ' + plural(m.gMes.length, 'venta', 'ventas'), delta: dPct == null ? null : { tx: Math.round(Math.abs(dPct) * 100) + '% vs. mes anterior', dir: dPct >= 0 ? 'up' : 'down' }, vals: m.meses.map((x, i) => ({ v: x.v, lab: x.nom, tip: x.nom + ': ' + clpCorto(x.v), hi: i === m.meses.length - 1 })), foot: 'Ciclo de venta <b>' + (m.ciclo != null ? m.ciclo + ' días' : '–') + '</b> · total 6 meses <b>' + clpCorto(mv.reduce((s, x) => s + x, 0)) + '</b>', q: 'Ventas cerradas (ganadas) por mes, según la fecha de pago.', go: () => { S.nf = 'ganadas'; S.nv = 'lista'; viewNegocios(); } },
+        { k: 'ring', l: 'Tasa de cierre · 90 días', p: m.tasa || 0, centro: m.tasa == null ? '–' : Math.round(m.tasa * 100) + '%', sub: m.g90 + m.p90 ? ' de ' + (m.g90 + m.p90) + ' cerradas' : '', color: 'var(--ok)', leg: [{ l: 'Ganadas', v: m.g90, c: 'var(--ok)' }, { l: 'Perdidas', v: m.p90, c: 'var(--bad)' }], foot: mot ? 'Motivo de pérdida más común: <b>' + esc(mot[0]) + '</b> (' + mot[1] + ')' : 'Sin pérdidas registradas', q: 'De cada 10 negocios que terminan, cuántos ganas.', go: () => { S.nf = 'perdidas'; S.nv = 'lista'; viewNegocios(); } },
+        { k: 'num', l: 'Requieren atención', v: aten.length, tono: aten.length ? 'bad' : 'ok', sub: ' de ' + A.length, delta: aten.length ? { tx: clpCorto(enRiesgo) + ' en juego', dir: 'down' } : null, meter: A.length ? aten.length / A.length : 0, mc: 'var(--bad)', list: aten.slice(0, 3).map(x => '<b>' + esc(x.a.c ? (x.a.c.nombre || x.n.titulo) : x.n.titulo) + '</b> · ' + esc(motivoAlerta(x.n, x.a))), q: 'Clientes sin respuesta, pasos vencidos o negocios quietos hace días.', go: () => { S.nf = 'atencion'; S.nv = 'lista'; viewNegocios(); } }
+      ]; })() };
 }
 function dashProy(){
   const P = S.data.proyectos || []; if (!P.length) return null;

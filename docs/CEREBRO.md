@@ -329,3 +329,13 @@ Se quitaron del Inicio: sugerencias del asistente, mis próximas tareas, el rada
 - **Ventas → Compras**: «Ver ventas y rotación ›» en la tarjeta de ventas.
 - **Bsale → Pipeline (automático)**: si quien compró (boleta o factura de los últimos 4 días) tiene una negociación abierta, el próximo paso pasa a «🧾 Compró en Bsale (…): ¿marcar Ganada?» y la compra queda en su historial. No se marca sola.
 - Clima de yr.no también en Hoy. Estilo de tarjetas unificado en todas las pestañas.
+
+
+## Diseño nuevo (propuesta, app v53) — se cambia en ⚙️ Ajustes → Diseño de la interfaz
+
+Solo cambia la interfaz; los datos y funciones son los mismos. Con «Clásico» se vuelve al diseño anterior.
+- Barra lateral agrupada: Día a día (Inicio, Hoy, Tareas, Calendario) · Ventas (Negocios, Contactos, Compras) · Marca (Redes, Proyectos).
+- Bajo el título de cada pestaña, una línea que explica para qué sirve.
+- Resumen de cada pestaña: una línea de aviso + 4 tarjetas con la misma anatomía (etiqueta · cifra · comparación · gráfico · pie). Las explicaciones están en la «i».
+- Negocios: Pipeline abierto (barra por etapa, pronóstico, ticket, estancados) · Ganado este mes (barras por mes, % vs mes anterior, ciclo de venta) · Tasa de cierre 90 días (ganadas/perdidas, motivo de pérdida más común) · Requieren atención (monto en juego y los 3 más urgentes). Tablero de columnas más limpio.
+- Contactos y Redes: el análisis detallado queda plegado («Mostrar ▾»), se recuerda abierto/cerrado.
