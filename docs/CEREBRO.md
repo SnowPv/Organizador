@@ -297,3 +297,14 @@ El agente ya no abre una negociación nueva cuando un cliente con una venta gana
 Las negociaciones abiertas que ya duplicaban una venta ganada (mismo cliente, o el mismo nombre guardado dos veces con casi el mismo producto) se unen solas: al abrir la app (una vez por sesión) y en la revisión periódica del script. Queda la nota «🔗 Negociación unida» en el historial del cliente.
 
 Ops del script (nivel 33–34): `negocioBorrar`, `unirDuplicados`; `negocio` acepta `entrega` y `fechaGanada`.
+
+## Inicio (diseño)
+
+El Inicio es un tablero tipo «bento» con módulos de distinto tamaño y forma:
+
+- **Ventas del mes** (tarjeta principal, oscura): total del mes desde Bsale, comparación con el mes anterior a la misma fecha, barra de avance contra la meta (o contra el mes anterior completo si no hay meta) con la marca del ritmo necesario, gráfico acumulado día a día contra el mes anterior, y hoy/semana/proyección. La meta se fija tocando «Fijar meta» (se guarda en el script, propiedad `EX_META_VENTAS`, op `metaVentas`). Sin Bsale usa las negociaciones ganadas.
+- **Avisos de la tienda** como post-it amarillo, siempre a la vista.
+- Tareas de hoy (anillo + constancia de 2 semanas), Agenda (línea de tiempo y próximos días), Requieren atención, Pipeline (embudo por etapa), Contactos e Instagram.
+- Complementario: clima y noticias.
+
+Se quitaron del Inicio: sugerencias del asistente, mis próximas tareas, el radar y Specialized Chile (siguen en Hoy, Tareas y Compras).

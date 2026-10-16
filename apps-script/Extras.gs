@@ -15,8 +15,8 @@
  * Para actualizar este archivo más adelante: reemplaza todo su contenido y repite los dos pasos anteriores.
  */
 
-const EX_VERSION = '2026-12-09';
-const EX_NIVEL = 34;      // la app lo usa para saber qué funciones tiene este script
+const EX_VERSION = '2026-12-12';
+const EX_NIVEL = 35;      // la app lo usa para saber qué funciones tiene este script
 const EX_HOJA = 'Tareas';
 const EX_PRIMERA = 4;
 const EX_ULTIMA = 400;
@@ -134,6 +134,7 @@ function app_extra_(p) {
     case 'eventosContacto': return ex_eventosContacto_(p);
     case 'perderNegocio': return ex_perderNegocio_(p);
     case 'negocioBorrar': return ex_borrarNegocio_(p);
+    case 'metaVentas': { const v = Math.max(0, Math.round(Number(p.valor) || 0)); PropertiesService.getScriptProperties().setProperty('EX_META_VENTAS', String(v)); return { ok: true, meta: v }; }
     case 'unirDuplicados': {
       const lk = LockService.getScriptLock();
       if (!lk.tryLock(20000)) return { ok: true, unidas: [], ocupado: true };
@@ -2769,6 +2770,9 @@ function ex_bsaleVentasResumen_() {
     meses: mk.map(function (k) { const d = Object.keys(docsMes[k] || {}).length; return { mes: k, total: Math.round(meses[k]), docs: d, ticket: d ? Math.round(meses[k] / d) : 0 }; }),
     hoy: Math.round(dias[hoy] || 0), semana: Math.round(sumDias(lunes, hoy)), mes: Math.round(meses[mesAct] || 0), mes_anterior: Math.round(meses[mesAnt] || 0), mismo_mes_anio_anterior: Math.round(meses[anioAnt] || 0),
     mes_anterior_a_la_fecha: Math.round(sumDias(mesAnt + '-01', mesAnt + '-' + hoy.slice(8))),
+    // Venta de cada día del mes actual y del anterior (para el gráfico acumulado del Inicio).
+    dias_mes: (function () { const o = []; for (let d = 1; d <= 31; d++) { const dd = ('0' + d).slice(-2); o.push([Math.round(dias[mesAct + '-' + dd] || 0), Math.round(dias[mesAnt + '-' + dd] || 0)]); } return o; })(),
+    mes_actual: mesAct, mes_previo: mesAnt,
     top30: Object.keys(prod).map(function (k) { return prod[k]; }).filter(function (p) { return p.m30 > 0; }).sort(function (a, b) { return b.m30 - a.m30; }).slice(0, 15).map(function (p) { return { producto: p.producto, unidades: p.u30, monto: Math.round(p.m30) }; }),
     top90u: Object.keys(prod).map(function (k) { return prod[k]; }).filter(function (p) { return p.u90 > 0; }).sort(function (a, b) { return b.u90 - a.u90; }).slice(0, 15).map(function (p) { return { producto: p.producto, unidades: p.u90, monto: Math.round(p.m90) }; }),
     reponer: rot.filter(function (x) { return x.cobertura_dias != null && x.cobertura_dias <= 30; }).sort(function (a, b) { return a.cobertura_dias - b.cobertura_dias; }).slice(0, 15),
@@ -2795,7 +2799,8 @@ function ex_bsaleVentas_(p) {
   if (!ex_bsaleToken_()) return { ok: true, activo: false };
   if (p.sinc) ex_bsaleVentasSinc_(200000);
   if (p.cliente) return { ok: true, activo: true, compras: ex_bsaleCompras_(p.cliente) };
-  return ex_bsaleVentasResumen_();
+  const res = ex_bsaleVentasResumen_(); res.meta = Number(PropertiesService.getScriptProperties().getProperty('EX_META_VENTAS')) || 0;   // meta de ventas del mes (la fija Gustavo en el Inicio)
+  return res;
 }
 // Texto para el Copiloto, el agente de tareas y el Cerebro.
 function ex_bsaleVentasTexto_(consulta, dias) {
