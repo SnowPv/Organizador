@@ -2029,10 +2029,18 @@ async function api(action, extra){
   if (!j.ok) throw new Error(j.error || 'error');
   return j;
 }
-function apiX(op, extra){ return api('extra', Object.assign({ op }, extra || {})); }
+// Si el script está ocupado (otra tarea tiene el candado), se reintenta solo un par de veces antes de mostrar el error.
+// Es seguro reintentar: cuando falla el candado, la consulta todavía no se ejecutó.
+async function apiX(op, extra){
+  const esperas = [3000, 7000];
+  for (let k = 0; ; k++){
+    try { return await api('extra', Object.assign({ op }, extra || {})); }
+    catch(e){ if (k >= esperas.length || !/bloqueo|lock timeout|lock/i.test(String(e && e.message))) throw e; await new Promise(r => setTimeout(r, esperas[k])); }
+  }
+}
 // Nivel 2 del script Extras: recordatorios y base de contactos. Nivel 3: la base solo usa contacto@blacklinechile.cl. Nivel 4: eventos de varios días.
 function extNivel(){ return S.extInactivo ? 0 : (S.ext && S.ext.nivel) || 1; }
-const APP_VER = 'v54', NIVEL_ULTIMO = 37;
+const APP_VER = 'v55', NIVEL_ULTIMO = 38;
 function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < NIVEL_ULTIMO; }
 let sincTimer = null;
 // Después de cambiar tareas, el script actualiza los recordatorios del calendario (en segundo plano).
@@ -2491,7 +2499,7 @@ function noticiasHome(){
 // Texto corto de lo que trae la versión nueva del script (el banner de actualización del Inicio).
 function novedadScript(){
   const n = extNivel();
-  return n >= 36 ? 'Cuando un cliente con negociación abierta compra en Bsale, la app te propone marcarla como ganada.' : n >= 35 ? 'Ventas del mes igual que en Bsale (solo boletas y facturas, menos notas de crédito) y noticias con foto de portada.' : n >= 34 ? 'Meta y gráfico de ventas del mes en el Inicio, con el avance diario desde Bsale.' : n >= 33 ? 'Une sola las negociaciones duplicadas de una venta ganada.' : n >= 32 ? 'Etapas después del pago: seguimiento, entrega y postventa.' : n >= 31 ? 'Venta perdida: cierra tareas, eventos y la idea de respuesta del agente.' : 'Funciones nuevas para el Organizador.';
+  return n >= 37 ? 'Las tareas automáticas ya no bloquean la app (por ejemplo, la lectura de ventas de Bsale).' : n >= 36 ? 'Cuando un cliente con negociación abierta compra en Bsale, la app te propone marcarla como ganada.' : n >= 35 ? 'Ventas del mes igual que en Bsale (solo boletas y facturas, menos notas de crédito) y noticias con foto de portada.' : n >= 34 ? 'Meta y gráfico de ventas del mes en el Inicio, con el avance diario desde Bsale.' : n >= 33 ? 'Une sola las negociaciones duplicadas de una venta ganada.' : n >= 32 ? 'Etapas después del pago: seguimiento, entrega y postventa.' : n >= 31 ? 'Venta perdida: cierra tareas, eventos y la idea de respuesta del agente.' : 'Funciones nuevas para el Organizador.';
 }
 
 /* ---------- Ventas del mes: avance diario acumulado contra el mes anterior y la meta ---------- */

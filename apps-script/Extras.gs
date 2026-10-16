@@ -15,8 +15,8 @@
  * Para actualizar este archivo más adelante: reemplaza todo su contenido y repite los dos pasos anteriores.
  */
 
-const EX_VERSION = '2026-12-18';
-const EX_NIVEL = 37;      // la app lo usa para saber qué funciones tiene este script
+const EX_VERSION = '2026-12-19';
+const EX_NIVEL = 38;      // la app lo usa para saber qué funciones tiene este script
 const EX_HOJA = 'Tareas';
 const EX_PRIMERA = 4;
 const EX_ULTIMA = 400;
@@ -119,12 +119,12 @@ function app_extra_(p) {
     case 'contactosLote': {
       const lk = LockService.getScriptLock();
       if (!lk.tryLock(30000)) throw new Error('El script está ocupado. Intenta en un minuto.');
-      try { return ex_contactosLote_(p); } finally { lk.releaseLock(); }
+      try { return ex_conDocLock_(function () { return ex_contactosLote_(p); }); } finally { lk.releaseLock(); }
     }
     case 'depurar': {
       const lk = LockService.getScriptLock();
       if (!lk.tryLock(30000)) throw new Error('El script está ocupado (llegando mensajes). Intenta en un minuto.');
-      try { return ex_depurar_(p); } finally { lk.releaseLock(); }
+      try { return ex_conDocLock_(function () { return ex_depurar_(p); }); } finally { lk.releaseLock(); }
     }
     case 'nota':       return ex_nota_(p);
     case 'escanear':   return ex_escanearBase_();
@@ -138,7 +138,7 @@ function app_extra_(p) {
     case 'unirDuplicados': {
       const lk = LockService.getScriptLock();
       if (!lk.tryLock(20000)) return { ok: true, unidas: [], ocupado: true };
-      try { return ex_unirDuplicados_(p); } finally { lk.releaseLock(); }
+      try { return ex_conDocLock_(function () { return ex_unirDuplicados_(p); }); } finally { lk.releaseLock(); }
     }
     case 'whatsapp': { // de a un aviso a la vez (el historial llega en muchas partes seguidas); si está ocupado, Meta reintenta
       const lk = LockService.getScriptLock();
@@ -4086,10 +4086,18 @@ function ex_instalarTriggers_() {
   ScriptApp.newTrigger('ex_tareaHoraria').timeBased().everyHours(1).create();
   ScriptApp.newTrigger('ex_tareaBase').timeBased().everyHours(6).create();
 }
+// Las tareas de fondo (correo, calendario, agentes, fotos) usan el candado del DOCUMENTO, no el del script:
+// así nunca dejan a la app esperando (la app usa el candado del script en cada consulta). Entre ellas igual
+// se turnan, y las acciones de la app que borran o mueven filas también toman este candado (ex_conDocLock_).
 function ex_conLock_(fn) {
-  const lock = LockService.getScriptLock();
+  const lock = LockService.getDocumentLock() || LockService.getScriptLock();
   if (!lock.tryLock(30000)) return;
   try { fn(); } finally { lock.releaseLock(); }
+}
+function ex_conDocLock_(fn) {
+  const lock = LockService.getDocumentLock();
+  if (lock && !lock.tryLock(25000)) throw new Error('Hay una tarea automática trabajando en la planilla. Intenta en un minuto.');
+  try { return fn(); } finally { if (lock) lock.releaseLock(); }
 }
 function ex_tareaHoraria() {
   if (!ex_cuentaVigente_()) return;
