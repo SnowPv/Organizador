@@ -2032,7 +2032,7 @@ async function api(action, extra){
 function apiX(op, extra){ return api('extra', Object.assign({ op }, extra || {})); }
 // Nivel 2 del script Extras: recordatorios y base de contactos. Nivel 3: la base solo usa contacto@blacklinechile.cl. Nivel 4: eventos de varios días.
 function extNivel(){ return S.extInactivo ? 0 : (S.ext && S.ext.nivel) || 1; }
-const APP_VER = 'v53', NIVEL_ULTIMO = 37;
+const APP_VER = 'v54', NIVEL_ULTIMO = 37;
 function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < NIVEL_ULTIMO; }
 let sincTimer = null;
 // Después de cambiar tareas, el script actualiza los recordatorios del calendario (en segundo plano).
@@ -2416,6 +2416,7 @@ function viewInicio(){
   const bl = $('#bloqBtn2'); if (bl) bl.onclick = openBloqueo;
   const mt = $('#hmMeta'); if (mt) mt.onclick = editarMetaVentas;
   const hg = $('#hhGo'); if (hg) hg.onclick = () => { S.cpTab = 'ventas'; go('compras'); };
+  const hr = $('#hhRetry'); if (hr) hr.onclick = () => { S.bsv = null; hr.disabled = true; loadBsv().then(() => { if (S.tab === 'inicio') render(); }); };
   bindVentasHero($('#view'));
   bindAsistente();
   bindCmd($('#view')); bindExterno($('#view'));
@@ -2499,10 +2500,12 @@ function ventasMes(){
   const dim = new Date(y, mo, 0).getDate(), dimAnt = new Date(y, mo - 1, 0).getDate(), pm = iso(new Date(y, mo - 2, 1)).slice(0, 7);
   const r = S.bsv && !S.bsv.error ? S.bsv : null;
   let act = null, ant = null, fuente = '', meta = 0, hoyV = null, semV = null, total = null, antFecha = null;
+  // Con Bsale conectado, la venta del mes sale solo de Bsale: si aún no llega (o falló), se avisa en vez de usar otra fuente.
+  if (bsvListo() && !(r && r.activo && !r.vacio)) return { espera: true, error: S.bsv && S.bsv.error, vacio: r && r.vacio, nombre: MESES_L[mo - 1] };
   if (r && r.dias_mes){ act = r.dias_mes.map(x => +x[0] || 0); ant = r.dias_mes.map(x => +x[1] || 0); fuente = 'Bsale'; meta = +r.meta || 0; hoyV = r.hoy; semV = r.semana; }
   else if (r && r.activo && r.mes != null){ total = +r.mes || 0; antFecha = +r.mes_anterior_a_la_fecha || 0; fuente = 'Bsale'; hoyV = r.hoy; semV = r.semana; meta = +LS.metaVentas || 0; }
   else if (S.neg){
-    act = Array(31).fill(0); ant = Array(31).fill(0); fuente = 'negociaciones ganadas'; meta = +LS.metaVentas || 0;
+    act = Array(31).fill(0); ant = Array(31).fill(0); fuente = 'negociaciones ganadas (Bsale no conectado)'; meta = +LS.metaVentas || 0;
     negocios().filter(n => n.estado === 'Ganada').forEach(n => { const f = fechaCierre(n); if (f.slice(0, 7) === mes) act[+f.slice(8) - 1] += n.valor || 0; else if (f.slice(0, 7) === pm) ant[+f.slice(8) - 1] += n.valor || 0; });
     hoyV = act[dia - 1];
   } else return null;
@@ -2514,6 +2517,7 @@ function ventasMes(){
 }
 function ventasHeroHTML(){
   const v = ventasMes();
+  if (v && v.espera) return '<div class="hm a-ventas hm-hero"><div class="hh-k">' + icon('trophy') + 'Ventas de ' + esc(v.nombre) + '</div><div class="hh-empty">' + (v.error ? 'No pude leer las ventas de Bsale (' + esc(v.error) + ').<br><button class="btn sm" id="hhRetry" style="margin-top:12px">Reintentar</button>' : v.vacio ? 'Las ventas de Bsale todavía se están copiando (primera sincronización).' : '<span class="spin"></span> Leyendo las ventas de Bsale…') + '</div></div>';
   if (!v) return '<div class="hm a-ventas hm-hero"><div class="hh-k">' + icon('trophy') + 'Ventas del mes</div><div class="hh-empty">Conecta Bsale (⚙️ Ajustes) para ver aquí cómo van las ventas del mes, día a día.</div></div>';
   const pct = v.ref ? v.total / v.ref : 0, ritmo = v.dia / v.dim, d = v.antFecha ? (v.total - v.antFecha) / v.antFecha : null;
   const chips = [v.hoyV != null ? '<span>Hoy <b>' + clpCorto(v.hoyV) + '</b></span>' : '', v.semV != null ? '<span>Semana <b>' + clpCorto(v.semV) + '</b></span>' : '', '<span>Proyección <b>' + clpCorto(v.proy) + '</b></span>'].join('');
@@ -8128,7 +8132,9 @@ async function loadBsv(forzar){
   if (!bsvListo()) return null;
   if (!forzar && S.bsv && Date.now() - (S.bsvAt || 0) < 10 * 60000) return S.bsv;
   if (S._bsvPend) return S._bsvPend;
-  S._bsvPend = apiX('bsaleVentas', forzar ? { sinc: true } : {}).then(r => { S.bsv = r; S.bsvAt = Date.now(); S._bsvPend = null; return r; }).catch(e => { S._bsvPend = null; S.bsv = { error: e.message }; return null; });
+  // Mientras llega la respuesta se muestra lo último que se leyó de Bsale (guardado en el equipo), nunca otra fuente.
+  if (!S.bsv){ const c = lsGet('bsvCache', null); if (c && c.r && c.r.activo){ S.bsv = c.r; S.bsvAt = 0; } }
+  S._bsvPend = apiX('bsaleVentas', forzar ? { sinc: true } : {}).then(r => { S.bsv = r; S.bsvAt = Date.now(); S._bsvPend = null; if (r && r.activo && !r.vacio) lsSet('bsvCache', { r, t: Date.now() }); return r; }).catch(e => { S._bsvPend = null; if (!S.bsv || S.bsv.error) S.bsv = { error: e.message }; return null; });
   return S._bsvPend;
 }
 const mesCorto = k => MESES_C[+k.slice(5, 7) - 1].slice(0, 3) + (k.slice(5, 7) === '01' ? ' ' + k.slice(2, 4) : '');
