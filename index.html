@@ -1538,16 +1538,16 @@ body:has(.selbar) .fab,body:has(.selbar) .fab2{display:none}
 .ta-it input{width:70px;flex:none;text-align:center;padding:9px 6px}
 .ta-op{display:flex;flex-direction:column;gap:2px;padding:8px 0;border-top:1px solid var(--line);font-size:14px}.ta-op:first-of-type{border-top:0;padding-top:0}.ta-op span{color:var(--ink);font-size:13px;line-height:1.4}.ta-op small{color:var(--muted);font-size:12px}
 .btn.ia{background:linear-gradient(135deg,#2A78D6,#6250d6)}
-/* ===== Inicio: bento moderno ===== */
-.bento{grid-template-columns:repeat(12,minmax(0,1fr));gap:16px;align-items:stretch;margin-bottom:16px;grid-auto-flow:row dense}
-.bento > .c7{grid-column:span 7}
-.td-g{display:grid;grid-template-columns:176px 1fr;gap:18px;align-items:end}
-.tl-h em{display:block;font-style:normal;font-size:10.5px;text-transform:capitalize}
-.td-c{min-width:0}.td-c .hm-bars{height:120px;cursor:pointer}
-@media (max-width:640px){.td-g{grid-template-columns:1fr}.td-c .hm-bars{height:80px}}
-.bento > .c3{grid-column:span 3}.bento > .c4{grid-column:span 4}.bento > .c5{grid-column:span 5}.bento > .c6{grid-column:span 6}.bento > .c8{grid-column:span 8}
-@media (max-width:1180px){.bento{grid-template-columns:repeat(6,minmax(0,1fr))}.bento > .c3,.bento > .c4{grid-column:span 3}.bento > .c5,.bento > .c6,.bento > .c7,.bento > .c8,.bento > .hm-ig{grid-column:span 6}}
-@media (max-width:640px){.bento{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.bento > *{grid-column:1/-1!important}.bento > .hm-half{grid-column:span 1!important}}
+/* ===== Inicio: tablero en dos filas ===== */
+.home{display:grid;gap:16px;grid-template-columns:repeat(20,minmax(0,1fr));margin-bottom:26px}
+.a-ventas{grid-column:span 10}.a-avisos{grid-column:span 4}.a-pipe{grid-column:span 6}
+.a-tasks{grid-column:span 3}.a-agenda{grid-column:span 5}.a-aten{grid-column:span 4}.a-ig{grid-column:span 4}.a-ctos{grid-column:span 4}
+.home:not(:has(.a-ig)) .a-ctos{grid-column:span 8}.home:not(:has(.a-aten)) .a-agenda{grid-column:span 9}
+.home.fit{grid-template-rows:minmax(0,1.1fr) minmax(0,1fr)}
+.home.fit > .hm{min-height:0;overflow:hidden;display:flex;flex-direction:column}
+@media (max-width:1599px){.home-plan .ps-foco{display:none}}
+@media (max-width:1599px){.home{grid-template-columns:repeat(6,minmax(0,1fr))}.a-ventas{grid-column:span 6}.a-avisos{grid-column:span 2}.a-pipe{grid-column:span 4}.a-tasks{grid-column:span 2}.a-agenda{grid-column:span 4}.a-aten,.a-ig{grid-column:span 3}.a-ctos,.home:not(:has(.a-ig)) .a-ctos{grid-column:span 6}}
+@media (max-width:760px){.home{grid-template-columns:minmax(0,1fr);gap:12px}.home > *{grid-column:1/-1!important}}
 .hm{position:relative;background:var(--card);border-radius:22px;padding:16px 18px;min-width:0;box-shadow:0 1px 2px rgba(16,24,40,.04),0 10px 30px -18px rgba(16,24,40,.22);border:1px solid rgba(16,24,40,.04)}
 .hm-h{display:flex;align-items:center;gap:10px;font-weight:800;font-size:14px;letter-spacing:-.01em;margin-bottom:12px}
 .hm-ic{width:30px;height:30px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex:none}
@@ -1697,6 +1697,77 @@ body:has(.selbar) .fab,body:has(.selbar) .fab2{display:none}
 .dt-i:hover{opacity:1;color:var(--accent-ink)}
 .qpop{position:absolute;z-index:60;background:#16213A;color:#fff;font-size:12.5px;line-height:1.45;border-radius:12px;padding:10px 12px;box-shadow:0 14px 30px -12px rgba(0,0,0,.45)}
 @media (max-width:760px){.ihead{flex-wrap:nowrap}.ihead .quick{flex:1;min-width:0}.ihead #planBtn{font-size:0;gap:0;padding:0;width:52px;height:52px;flex:none;justify-content:center;border-radius:16px}.ihead #planBtn .ico{width:20px;height:20px}}
+/* Inicio v2: piezas internas */
+.home.fit .hm-hero{padding:18px 22px 14px}
+.home.fit .hh-chart{flex:1;height:auto;min-height:70px}
+.hh-x{position:relative;height:14px;margin:2px 2px 0;font-size:10.5px;color:rgba(255,255,255,.45);font-weight:700}
+.hh-x span{position:absolute;transform:translateX(-50%)}.hh-x span:first-child{transform:none}
+.hh-bot{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:10px;flex-wrap:wrap}
+.hh-bot .hh-chips{margin:0}.hh-bot .hh-leg{margin:0}
+.hm-hero .hh-src{right:22px;top:auto;bottom:auto;position:static;text-align:right;margin-top:6px}
+.home.fit .hh-v{font-size:38px}.home.fit .hh-prog{margin:12px 0 2px}
+.home.fit .hm-postit{padding:20px 16px 12px}
+.home.fit .pi-n{flex:1;min-height:0;overflow:hidden}
+.home.fit .tl{flex:1;min-height:0;overflow:hidden}
+.home.fit .hm-people{flex:1;min-height:0;overflow:hidden}
+.home.fit .hm-spark{flex:1;min-height:40px}.home.fit .hm-spark .spk{height:100%}
+.home.fit .pp-fun{flex:1;justify-content:space-evenly}
+.tk-top{display:flex;align-items:center;gap:12px}
+.hm-ring.sm{width:92px;height:92px;margin:0;flex:none}.hm-ring.sm .hm-rc b{font-size:22px}.hm-ring.sm .hm-rc b small{font-size:12px}.hm-ring.sm .hm-rc span{font-size:9.5px}
+.tk-n{display:flex;flex-direction:column;gap:5px;flex:1;min-width:0}
+.tk-n span{display:flex;align-items:baseline;gap:6px;font-size:11.5px;font-weight:700;color:var(--muted)}
+.tk-n b{font-size:16px;color:var(--ink);min-width:22px;text-align:right;font-variant-numeric:tabular-nums}
+.tk-n .bad,.tk-n .bad b{color:#C4283F}
+.hm-tasks .hm-bars{height:64px;margin-top:12px;cursor:pointer}
+.home.fit .hm-tasks .hm-bars{flex:1;height:auto;min-height:36px}
+.hm-p{padding:6px 8px}.hm-av{width:30px;height:30px;font-size:11px}
+/* widget de clima (yr.no) */
+.yr{all:unset;box-sizing:border-box;cursor:pointer;flex:none;display:flex;align-items:center;gap:14px;background:linear-gradient(135deg,#EEF5FF,#F7FAFF);border:1px solid #DCE8F8;border-radius:16px;padding:6px 14px 6px 10px}
+.yr:hover{border-color:#BBD3F2}
+.yr-now{display:flex;align-items:center;gap:4px}.yr-now b{font-size:26px;font-weight:800;letter-spacing:-.03em}
+.yr-tx{display:flex;flex-direction:column;line-height:1.25;min-width:0}
+.yr-tx b{font-size:13px}.yr-tx small{font-size:11.5px;color:var(--muted);font-weight:600;display:flex;align-items:center;gap:3px;white-space:nowrap}
+.yr-tx small .ico{width:11px;height:11px;color:#3B82F6}
+.yr-hs{display:flex;gap:4px;border-left:1px solid #DCE8F8;padding-left:12px}
+.yr-hs > span{display:flex;flex-direction:column;align-items:center;gap:1px;min-width:38px}
+.yr-hs small{font-size:10.5px;font-weight:700;color:var(--muted)}.yr-hs b{font-size:12.5px}
+.yr-man{border-left:1px dashed #C9D9EE;padding-left:6px;margin-left:2px}
+.home-plan .pstrip{align-items:center}
+@media (max-width:1100px){.yr-hs{display:none}}
+@media (max-width:640px){.yr{padding:6px 10px;gap:8px}.yr-tx small:last-child{display:none}}
+/* noticias con portada */
+.nh{margin:6px 0 30px}
+.nh-h{display:flex;align-items:center;gap:10px;margin:0 2px 12px}
+.nh-h span{display:flex;align-items:center;gap:8px;font-weight:800;font-size:15px}.nh-h span .ico{width:17px;height:17px;color:var(--muted)}
+.nh-h small{font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;background:var(--soft);padding:3px 8px;border-radius:999px}
+.nh-h .btn{margin-left:auto}
+.nh-g{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.nh-c{display:flex;flex-direction:column;background:var(--card);border-radius:18px;overflow:hidden;text-decoration:none;color:var(--ink);box-shadow:0 1px 2px rgba(16,24,40,.04),0 10px 30px -18px rgba(16,24,40,.22);transition:transform .15s,box-shadow .15s}
+.nh-c:hover{transform:translateY(-2px);box-shadow:0 2px 4px rgba(16,24,40,.06),0 16px 34px -18px rgba(16,24,40,.3)}
+.nh-img{position:relative;aspect-ratio:16/9;background:linear-gradient(135deg,#E7EDF6,#F3F6FA);display:block}
+.nh-img img{width:100%;height:100%;object-fit:cover;display:block}
+.nh-ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#A7B2C3}.nh-ph .ico{width:30px;height:30px}
+.nh-img em{position:absolute;left:10px;top:10px;font-style:normal;font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;background:rgba(255,255,255,.92);color:var(--ink);padding:3px 8px;border-radius:999px}
+.nh-img em.hi{background:#16213A;color:#fff}.nh-img em.bad{background:#C4283F;color:#fff}
+.nh-b{padding:12px 14px 14px;display:flex;flex-direction:column;gap:6px}
+.nh-b b{font-size:14px;line-height:1.35;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.nh-b small{font-size:12px;color:var(--muted);font-weight:600}
+@media (max-width:1100px){.nh-g{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){.nh-g{grid-template-columns:1fr 1fr;gap:10px}.nh-b b{font-size:13px}}
+.tl-h em{display:block;font-style:normal;font-size:10.5px;text-transform:capitalize}
+.hm-mini{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px}
+.hm-mini span{background:var(--soft);border-radius:10px;padding:6px 8px;min-width:0}
+.hm-mini small{display:block;font-size:10px;font-weight:700;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.hm-mini b{font-size:14px}
+.hm-spark{max-height:110px}
+.home.fit .a-ig .hm-spark{margin-top:auto}
+.hm-wk{display:flex;align-items:flex-end;gap:5px;height:60px;margin-top:auto;padding-top:12px}
+.hm-wk i{flex:1;background:#C9D8EE;border-radius:4px 4px 2px 2px}.hm-wk i:last-child{background:var(--s4)}
+.home.fit .hm-wk{flex:1;max-height:110px}
+.hm-foot{margin-top:auto;padding-top:10px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted);font-weight:600}.hm-foot b{color:var(--ink)}
+.home.fit .hm-tasks .hm-bars{max-height:120px;margin-top:auto}
+.hdr-cop{display:none;height:40px;border-radius:13px;padding:0 14px;gap:6px;align-items:center;font-weight:800}
+.hdr-cop .ico{width:16px;height:16px;color:var(--accent-ink)}
+@media (min-width:1000px){.hdr-cop{display:inline-flex}.fab2{display:none!important}}
 </style>
 
 
@@ -1707,6 +1778,7 @@ body:has(.selbar) .fab,body:has(.selbar) .fab2{display:none}
   <header class="top">
     <div><h1 id="hTitle">Organizador</h1><small id="hSub"></small></div>
     <div class="row" style="gap:8px">
+      <button class="btn sec hdr-cop" id="btnCop" title="Abrir el Copiloto"></button>
       <button class="icon-btn hdr-add" id="btnAdd" title="Agregar tarea" aria-label="Agregar tarea">＋</button>
       <button class="icon-btn" id="btnRefresh" title="Actualizar">↻</button>
       <button class="icon-btn" id="btnSettings" title="Ajustes">⚙️</button>
@@ -1792,7 +1864,7 @@ async function api(action, extra){
 function apiX(op, extra){ return api('extra', Object.assign({ op }, extra || {})); }
 // Nivel 2 del script Extras: recordatorios y base de contactos. Nivel 3: la base solo usa contacto@blacklinechile.cl. Nivel 4: eventos de varios días.
 function extNivel(){ return S.extInactivo ? 0 : (S.ext && S.ext.nivel) || 1; }
-const APP_VER = 'v49', NIVEL_ULTIMO = 35;
+const APP_VER = 'v50', NIVEL_ULTIMO = 36;
 function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < NIVEL_ULTIMO; }
 let sincTimer = null;
 // Después de cambiar tareas, el script actualiza los recordatorios del calendario (en segundo plano).
@@ -1883,6 +1955,7 @@ $('#nbMas').onclick = () => {
   md.el.querySelectorAll('[data-mt]').forEach(b => b.onclick = () => { md.cerrar(); go(b.dataset.mt); });
 };
 $('#btnAdd').onclick = () => openAdd();
+$('#btnCop').onclick = () => $('#copFab').click();
 // Fotos que no cargan (producto sin imagen, enlace caído): se muestra un recuadro neutro en vez del ícono roto del navegador.
 const IMG_VACIA = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><rect width="48" height="48" rx="10" fill="#EEF2F7"/><g fill="none" stroke="#A7B2C3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="15" cy="30" r="6"/><circle cx="33" cy="30" r="6"/><path d="M15 30l6-10h8l4 10M21 20l-2-4h-3M29 20l-3 10"/></g></svg>');
 document.addEventListener('error', e => { const t = e.target; if (t && t.tagName === 'IMG' && !t.dataset.vacia){ t.dataset.vacia = '1'; t.src = IMG_VACIA; } }, true);
@@ -1895,6 +1968,7 @@ document.addEventListener('keydown', e => { if ((e.key === 'k' && (e.metaKey || 
 function render(){
   head();
   const cf = $('#copFab'); if (cf && !cf.innerHTML) cf.innerHTML = icon('spark') + '<span>Copiloto</span>';
+  const hc = $('#btnCop'); if (hc && !hc.innerHTML) hc.innerHTML = icon('spark') + ' Copiloto';
   if (!S.data){ $('#view').innerHTML = '<div class="empty"><span class="spin"></span>Cargando…</div>'; return; }
   ({ inicio: viewInicio, hoy: viewHoy, tareas: viewTareas, habitos: () => S.subH === 'semana' ? viewSemana() : viewHabitos(), semana: () => S.per && S.per !== 'semana' ? viewPeriodo() : viewSemana(), proy: viewProy, base: viewBase, negocios: viewNegocios, redes: viewRedes, compras: viewCompras })[S.tab]();
   focusPill(); imxPill();
@@ -2074,49 +2148,50 @@ function viewInicio(){
   if (necesitaActualizar()) html += '<div class="hm-upd"><div class="grow"><b>Nueva versión del script</b><span>' + esc(novedadScript()) + '</span></div><button class="btn sm" id="updBtn">Actualizar</button></div>';
   if (extNivel() >= 13 && !S.leadsCanal && !S._leadsPend){ S._leadsPend = 1; loadLeads().then(() => { S._leadsPend = 0; if (S.tab === 'inicio' && !$('.pop-bg')) render(); }); }
   if (bsvListo() && !S.bsv && !S._bsvPend) loadBsv().then(() => { if (S.tab === 'inicio' && !$('.pop-bg')) render(); });
+  if (!S.yr && !S._yrPend){ S._yrPend = 1; loadYr().then(() => { S._yrPend = 0; if (S.tab === 'inicio' && !$('.pop-bg')) render(); }); }
   html += '<div class="home-plan">' + planStrip() + '</div>';
   const hayNeg = extNivel() >= 5 && S.neg, hayIg = igActivo() && S.ig;
-  html += '<div class="wgrid bento home">';
-  // 1. Ventas del mes (la tarjeta principal)
+  // Dos filas que entran en una pantalla de computador: ventas · avisos · pipeline / tareas · agenda · atención · Instagram · contactos.
+  html += '<div class="home" id="home">';
   html += ventasHeroHTML();
-  // 2. Avisos de la tienda: un post-it que siempre está a la vista
   html += postitHTML();
-  // 3. Tu día: avance de las tareas de hoy y constancia de las últimas 2 semanas
+  html += hayNeg ? pipelineHome(metricasNeg()) : '<div class="hm a-pipe"><div class="hm-h"><span class="hm-ic t-blue">' + icon('chart') + '</span>Pipeline</div><div class="hm-sub">Activa las negociaciones con la versión nueva del script.</div></div>';
+  // Tareas de hoy (compacto: anillo, cifras y la constancia de 2 semanas)
   const dias = (S.data.dias || []).slice(-14), meta = metaDiaria(), maxD = Math.max(meta, ...dias.map(d => d.completadas || 0), 1), racha = indicador('Racha') || 0;
-  html += '<div class="hm c5 hm-tasks" data-w="hoy"><div class="hm-h"><span class="hm-ic t-green">' + icon('check') + '</span>Tareas de hoy<span class="hm-n">' + racha + ' d de racha</span><button class="hm-go" data-go="hoy" aria-label="Ir a Hoy">›</button></div>' +
-    '<div class="td-g"><div><div class="hm-ring">' + ringSVG(totalHoy ? hechas.length / totalHoy : 0, 116, 'url(#hmGrad)').replace('</svg>', '<defs><linearGradient id="hmGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#12A06B"/><stop offset="1" stop-color="#2A78D6"/></linearGradient></defs></svg>') +
+  html += '<div class="hm a-tasks hm-tasks" data-w="hoy"><div class="hm-h"><span class="hm-ic t-green">' + icon('check') + '</span>Tareas de hoy<button class="hm-go" data-go="hoy" aria-label="Ir a Hoy">›</button></div>' +
+    '<div class="tk-top"><div class="hm-ring sm">' + ringSVG(totalHoy ? hechas.length / totalHoy : 0, 92, 'url(#hmGrad)').replace('</svg>', '<defs><linearGradient id="hmGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#12A06B"/><stop offset="1" stop-color="#2A78D6"/></linearGradient></defs></svg>') +
       '<div class="hm-rc"><b>' + hechas.length + '<small>/' + totalHoy + '</small></b><span>hechas</span></div></div>' +
-      '<div class="hm-pills"><span class="' + (venc.length ? 'bad' : '') + '"><b>' + venc.length + '</b>vencidas</span><span><b>' + lista.length + '</b>para hoy</span><span><b>' + enCurso.length + '</b>en curso</span></div></div>' +
-    '<div class="td-c"><div class="hm-bars" id="statsBtn" role="button" title="Ver estadísticas"><u style="bottom:' + (meta / maxD * 100) + '%"></u>' + dias.map(d => '<i class="' + ((d.completadas || 0) >= meta ? 'hit' : '') + '" style="height:' + Math.max(3, (d.completadas || 0) / maxD * 100) + '%" data-t="' + esc(fmt(d.fecha)) + ': ' + (d.completadas || 0) + '"></i>').join('') + '</div>' +
-      '<div class="hm-cap">Hechas por día · 2 semanas · meta ' + meta + '</div></div></div></div>';
-  // 4. Agenda de hoy (línea de tiempo)
-  html += agendaHome(hayNeg ? 'c3' : 'c7');
-  // 5. Negocios que requieren atención
+      '<div class="tk-n"><span class="' + (venc.length ? 'bad' : '') + '"><b>' + venc.length + '</b>vencidas</span><span><b>' + lista.length + '</b>para hoy</span><span><b>' + enCurso.length + '</b>en curso</span></div></div>' +
+    '<div class="hm-bars" id="statsBtn" role="button" title="Tareas hechas por día · meta ' + meta + '"><u style="bottom:' + (meta / maxD * 100) + '%"></u>' + dias.map(d => '<i class="' + ((d.completadas || 0) >= meta ? 'hit' : '') + '" style="height:' + Math.max(4, (d.completadas || 0) / maxD * 100) + '%" data-t="' + esc(fmt(d.fecha)) + ': ' + (d.completadas || 0) + '"></i>').join('') + '</div>' +
+    '<div class="hm-cap">2 semanas · racha ' + racha + ' d</div></div>';
+  html += agendaHome('a-agenda');
+  // Requieren atención (filas compactas)
   if (hayNeg){
-    const m = metricasNeg(), aten = m.an.filter(x => requiereAtencion(x.a)).sort((x, y) => y.a.prioridad - x.a.prioridad);
-    html += '<div class="hm c4"><div class="hm-h"><span class="hm-ic t-red">' + icon('bolt') + '</span>Requieren atención<span class="hm-n bad">' + aten.length + '</span><button class="hm-go" data-gonf="atencion" aria-label="Ver negocios que requieren atención">›</button></div>' +
-      (aten.length ? '<div class="hm-people">' + aten.slice(0, 4).map(x => { const c = x.a.c, nom = c ? (c.nombre || c.email) : x.n.titulo; return '<div class="hm-p" data-neg="' + esc(x.n.id) + '"><span class="hm-av">' + esc(iniciales(nom)) + '</span><div class="tx"><b>' + esc(nom) + '</b><small>' + esc(motivoAlerta(x.n, x.a)) + '</small></div>' + (x.n.valor ? '<span class="hm-v">' + clpCorto(x.n.valor) + '</span>' : '') + '</div>'; }).join('') + '</div>' : '<div class="hm-ok">' + icon('check') + 'Todo al día</div>') + '</div>';
-    // 6. Pipeline: embudo por etapa + lo que falta entregar
-    html += pipelineHome(m);
+    const an = metricasNeg().an, aten = an.filter(x => requiereAtencion(x.a)).sort((x, y) => y.a.prioridad - x.a.prioridad);
+    html += '<div class="hm a-aten"><div class="hm-h"><span class="hm-ic t-red">' + icon('bolt') + '</span>Requieren atención<span class="hm-n bad">' + aten.length + '</span><button class="hm-go" data-gonf="atencion" aria-label="Ver negocios que requieren atención">›</button></div>' +
+      (aten.length ? '<div class="hm-people">' + aten.slice(0, 6).map(x => { const c = x.a.c, nom = c ? (c.nombre || c.email) : x.n.titulo; return '<div class="hm-p" data-neg="' + esc(x.n.id) + '"><span class="hm-av">' + esc(iniciales(nom)) + '</span><div class="tx"><b>' + esc(nom) + '</b><small>' + esc(motivoAlerta(x.n, x.a)) + '</small></div>' + (x.n.valor ? '<span class="hm-v">' + clpCorto(x.n.valor) + '</span>' : '') + '</div>'; }).join('') + '</div><div class="hm-foot">En juego <b>' + clpCorto(aten.reduce((s, x) => s + (x.n.valor || 0), 0)) + '</b> en ' + aten.length + (aten.length === 1 ? ' negocio' : ' negocios') + '</div>' : '<div class="hm-ok">' + icon('check') + 'Todo al día</div>') + '</div>';
   }
-  // 7. Contactos
+  // Instagram
+  if (hayIg){
+    const m = igMetricas(), D = m.D.slice(-28).map(d => +d.alcance || 0), alc = D.reduce((s, x) => s + x, 0);
+    html += '<div class="hm a-ig"><div class="hm-h"><span class="hm-ic t-pink">' + icon('camera') + '</span>Instagram<button class="hm-go" data-go="redes" aria-label="Ir a Redes">›</button></div><div class="hm-big">' + (m.seg != null ? m.seg.toLocaleString('es-CL') : '–') + '</div>' +
+      '<div class="hm-sub">seguidores' + (m.dSeg != null ? ' · <b class="' + (m.dSeg >= 0 ? 'up' : 'down') + '">' + (m.dSeg >= 0 ? '+' : '') + m.dSeg + '</b> en 28 días' : '') + '</div>' +
+      '<div class="hm-mini"><span><small>Alcance 28 d</small><b>' + clpCorto(alc).replace('$', '') + '</b></span><span><small>Interacciones</small><b>' + clpCorto(m.inter || 0).replace('$', '') + '</b></span><span><small>Tasa</small><b>' + (m.tasa != null ? (m.tasa * 100).toFixed(1).replace('.', ',') + '%' : '–') + '</b></span></div>' +
+      '<div class="hm-spark">' + sparkSVG(D, 220, 54, '#D9467A') + '</div><div class="hm-cap">Alcance diario · 28 días</div></div>';
+  }
+  // Contactos
   if (S.base){
     const C = contactos(), tipos = [['Cliente', 'Clientes', 'var(--s4)'], ['Proveedor', 'Proveedores', '#F59E0B'], ['Por clasificar', 'Por clasificar', 'var(--s1)']], esp = esperanRespuesta().length;
     const n = tipos.map(t => C.filter(c => c.tipo === t[0]).length), tot = n.reduce((s, x) => s + x, 0) || 1;
-    html += '<div class="hm ' + (hayIg ? 'c3 hm-half' : 'c6') + '"><div class="hm-h"><span class="hm-ic t-blue">' + icon('users') + '</span>Contactos<button class="hm-go" data-go="base" aria-label="Ir a Contactos">›</button></div><div class="hm-big">' + C.length.toLocaleString('es-CL') + '</div>' +
+    html += '<div class="hm a-ctos"><div class="hm-h"><span class="hm-ic t-blue">' + icon('users') + '</span>Contactos<button class="hm-go" data-go="base" aria-label="Ir a Contactos">›</button></div><div class="hm-big">' + C.length.toLocaleString('es-CL') + '</div>' +
       (esp ? '<button class="hm-chip bad" data-bgo="esperan">' + esp + (esp === 1 ? ' espera' : ' esperan') + ' respuesta</button>' : '<span class="hm-chip ok">Nadie esperando</span>') +
       '<div class="hm-stack">' + tipos.map((t, i) => '<i style="flex:' + n[i] / tot + ';background:' + t[2] + '" title="' + esc(t[1] + ': ' + n[i]) + '"></i>').join('') + '</div>' +
-      '<div class="hm-leg">' + tipos.map((t, i) => '<span><i style="background:' + t[2] + '"></i>' + t[1] + ' <b>' + n[i] + '</b></span>').join('') + '</div></div>';
-  }
-  // 8. Instagram
-  if (hayIg){
-    const m = igMetricas(), D = m.D.slice(-28).map(d => +d.alcance || 0);
-    html += '<div class="hm c3 hm-half hm-ig"><div class="hm-h"><span class="hm-ic t-pink">' + icon('camera') + '</span>Instagram<button class="hm-go" data-go="redes" aria-label="Ir a Redes">›</button></div><div class="hm-big">' + (m.seg != null ? m.seg.toLocaleString('es-CL') : '–') + '</div>' +
-      '<div class="hm-sub">seguidores' + (m.dSeg != null ? ' · <b class="' + (m.dSeg >= 0 ? 'up' : 'down') + '">' + (m.dSeg >= 0 ? '+' : '') + m.dSeg + '</b> en 28 días' : '') + '</div>' +
-      '<div class="hm-spark">' + sparkSVG(D, 220, 54, '#D9467A') + '</div><div class="hm-cap">Alcance diario · 28 días</div></div>';
+      '<div class="hm-leg">' + tipos.map((t, i) => '<span><i style="background:' + t[2] + '"></i>' + t[1] + ' <b>' + n[i] + '</b></span>').join('') + '</div>' +
+      (() => { const sem = [7, 6, 5, 4, 3, 2, 1, 0].map(k => C.filter(c => { if (!c.creado) return false; const d = diffDays(String(c.creado).slice(0, 10), h); return d >= k * 7 && d < (k + 1) * 7; }).length), mx = Math.max(1, ...sem);
+        return '<div class="hm-wk">' + sem.map((v, i) => '<i style="height:' + Math.max(6, v / mx * 100) + '%" title="' + (i === 7 ? 'Esta semana' : 'Hace ' + (7 - i) + ' sem.') + ': ' + v + ' nuevos"></i>').join('') + '</div><div class="hm-cap">Nuevos por semana · ' + sem[7] + ' esta semana</div>'; })() + '</div>';
   }
   html += '</div>';
-  html += zonaExterna();
+  html += noticiasHome();
   $('#view').innerHTML = html;
   bindTasks($('#view'));
   $$('[data-go]').forEach(b => b.onclick = e => { e.stopPropagation(); go(b.dataset.go); });
@@ -2126,7 +2201,7 @@ function viewInicio(){
   $('#qa').onclick = () => openAdd();
   $('#planBtn').onclick = openPlanSemana;
   $('#statsBtn').onclick = () => modal('Estadísticas y logros', statsHTML(), { wide: true });
-  const w1 = $('[data-w="hoy"]'); if (w1) w1.onclick = e => { if (!e.target.closest('button')) openTareasHoy(); };
+  const w1 = $('[data-w="hoy"]'); if (w1) w1.onclick = e => { if (!e.target.closest('button') && !e.target.closest('#statsBtn')) openTareasHoy(); };
   const ub = $('#updBtn'); if (ub) ub.onclick = showExtrasUpdate;
   const sg = $('#sugBtn'); if (sg) sg.onclick = openSugerencias;
   const bl = $('#bloqBtn2'); if (bl) bl.onclick = openBloqueo;
@@ -2139,14 +2214,64 @@ function viewInicio(){
   if ($('#extTg')) $('#extTg').onclick = () => { LS.extOff = LS.extOff === '1' ? '0' : '1'; render(); };
   $('#prodBtn').onclick = () => abrirProducto();
   $('#fzBtn').onclick = abrirFuentes;
-  mosaico($('#view'));
+  ajustarHome();
   // Cada lunes, la primera vez que abres la app, aparece el plan de la semana.
   if (pd(h).getDay() === 1 && LS.planVisto !== h && S.base && (S.neg || extNivel() < 5) && !$('.pop-bg')){ LS.planVisto = h; setTimeout(openPlanSemana, 400); }
+}
+// En pantallas de computador las dos filas ocupan justo el alto disponible: todo se ve sin bajar.
+function ajustarHome(){
+  const el = $('#home'); if (!el) return;
+  const ok = innerWidth >= 1600 && innerHeight >= 760;
+  el.classList.toggle('fit', ok);
+  if (!ok){ el.style.height = ''; return; }
+  const top = el.getBoundingClientRect().top + scrollY;
+  el.style.height = Math.max(600, innerHeight - top - 18) + 'px';
+}
+addEventListener('resize', () => { clearTimeout(S._ajT); S._ajT = setTimeout(() => { if (S.tab === 'inicio') ajustarHome(); }, 150); });
+
+/* ---------- Clima de yr.no (Instituto Meteorológico de Noruega) para el widget del Inicio ---------- */
+const YR_URL = 'https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=-41.32&lon=-72.98';
+const YR_TX = { clearsky: 'Despejado', fair: 'Poco nuboso', partlycloudy: 'Parcial nublado', cloudy: 'Nublado', fog: 'Niebla', lightrain: 'Lluvia débil', rain: 'Lluvia', heavyrain: 'Lluvia fuerte', lightrainshowers: 'Chubascos débiles', rainshowers: 'Chubascos', heavyrainshowers: 'Chubascos fuertes', lightsleet: 'Aguanieve', sleet: 'Aguanieve', heavysleet: 'Aguanieve', lightsnow: 'Nieve débil', snow: 'Nieve', heavysnow: 'Nieve fuerte', lightsnowshowers: 'Nieve', snowshowers: 'Nieve', heavysnowshowers: 'Nieve', sleetshowers: 'Aguanieve' };
+function yrBase(sym){ return String(sym || '').replace(/_(day|night|polartwilight)$/, '').replace(/andthunder$/, 'thunder'); }
+function yrCode(sym){
+  const b = yrBase(sym);
+  if (/thunder/.test(b)) return 95;
+  return { clearsky: 0, fair: 1, partlycloudy: 2, cloudy: 3, fog: 45, lightrain: 61, rain: 63, heavyrain: 65, lightrainshowers: 80, rainshowers: 81, heavyrainshowers: 82 }[b] != null ? { clearsky: 0, fair: 1, partlycloudy: 2, cloudy: 3, fog: 45, lightrain: 61, rain: 63, heavyrain: 65, lightrainshowers: 80, rainshowers: 81, heavyrainshowers: 82 }[b] : /sleet/.test(b) ? 66 : /snow/.test(b) ? 73 : 3;
+}
+function yrResumen(j){
+  const ts = (j && j.properties && j.properties.timeseries) || []; if (!ts.length) return null;
+  const P = ts.map(t => { const d = new Date(t.time), n1 = t.data.next_1_hours, n6 = t.data.next_6_hours, i = t.data.instant.details; return { d, f: iso(d), h: d.getHours(), t: i.air_temperature, w: (i.wind_speed || 0) * 3.6, sym: (n1 || n6 || {}).summary ? (n1 || n6).summary.symbol_code : '', mm: n1 ? +n1.details.precipitation_amount || 0 : null }; });
+  const h = hoy(), man = addDays(h, 1), c = P[0];
+  const dia = f => { const L = P.filter(x => x.f === f); if (!L.length) return null; const mid = L.find(x => x.h >= 12 && x.h <= 15) || L[Math.floor(L.length / 2)]; return { min: Math.min(...L.map(x => x.t)), max: Math.max(...L.map(x => x.t)), mm: L.reduce((s, x) => s + (x.mm || 0), 0), sym: mid.sym }; };
+  const horas = P.slice(1).filter((x, k) => x.mm != null && k % 3 === 2).slice(0, 4).map(x => ({ h: x.h, t: x.t, sym: x.sym }));
+  return { t: c.t, w: c.w, sym: c.sym, mm: c.mm || 0, hoy: dia(h), man: dia(man), horas, act: (j.properties.meta || {}).updated_at || '' };
+}
+async function loadYr(forzar){
+  if (!forzar && S.yr && Date.now() - (S.yrAt || 0) < 30 * 60000) return;
+  try { const r = await fetch(YR_URL); if (!r.ok) throw new Error(r.status); S.yr = yrResumen(await r.json()); S.yrAt = Date.now(); lsSet('yrCache', { d: S.yr, t: S.yrAt }); }
+  catch(e){ if (!S.yr){ const c = lsGet('yrCache', null); if (c){ S.yr = c.d; S.yrAt = c.t; } } }
+}
+const mm1 = v => (Math.round(v * 10) / 10).toLocaleString('es-CL');
+function yrWidget(){
+  const y = S.yr; if (!y) return '';
+  return '<button class="yr" id="psWx" title="Pronóstico de yr.no para Puerto Varas"><span class="yr-now">' + wxIcon(yrCode(y.sym), 40) + '<b>' + Math.round(y.t) + '°</b></span>' +
+    '<span class="yr-tx"><b>' + esc(YR_TX[yrBase(y.sym)] || (/thunder/.test(y.sym) ? 'Tormenta' : '')) + '</b>' + (y.hoy ? '<small>Máx ' + Math.round(y.hoy.max) + '° · mín ' + Math.round(y.hoy.min) + '°</small>' : '') + '<small>' + icon('drop') + mm1(y.hoy ? y.hoy.mm : y.mm) + ' mm hoy · ' + Math.round(y.w) + ' km/h</small></span>' +
+    '<span class="yr-hs">' + y.horas.map(x => '<span><small>' + x.h + 'h</small>' + wxIcon(yrCode(x.sym), 22) + '<b>' + Math.round(x.t) + '°</b></span>').join('') +
+      (y.man ? '<span class="yr-man"><small>Mañana</small>' + wxIcon(yrCode(y.man.sym), 22) + '<b>' + Math.round(y.man.max) + '°</b></span>' : '') + '</span></button>';
+}
+
+/* ---------- Noticias (complementario, debajo del tablero): tarjetas con imagen de portada ---------- */
+function noticiasHome(){
+  const L = noticias().slice(0, 8);
+  if (!L.length) return '';
+  return '<section class="nh"><div class="nh-h"><span>' + icon('note') + ' Noticias del mundo bike</span><small>Complementario</small>' + (noticias().length > 8 ? '<button class="btn sm sec" id="ntAll">Ver todas</button>' : '') + '</div><div class="nh-g">' +
+    L.map(x => '<a class="nh-c" href="' + esc(x.link) + '" target="_blank" rel="noopener"><span class="nh-img">' + (x.img ? '<img src="' + esc(x.img) + '" alt="" loading="lazy" referrerpolicy="no-referrer">' : '<span class="nh-ph">' + icon('note') + '</span>') + (x.tipo ? '<em class="' + (x.tipo === 'lanzamiento' || x.tipo === 'specialized' ? 'hi' : x.tipo === 'seguridad' ? 'bad' : '') + '">' + esc(NT_TIPO[x.tipo] || x.tipo) + '</em>' : '') + '</span>' +
+      '<span class="nh-b"><b>' + esc(x.titulo) + '</b><small>' + esc(x.fuente || '') + (x.fecha ? ' · ' + esc(fmtRel(x.fecha.slice(0, 10))) : '') + '</small></span></a>').join('') + '</div></section>';
 }
 // Texto corto de lo que trae la versión nueva del script (el banner de actualización del Inicio).
 function novedadScript(){
   const n = extNivel();
-  return n >= 34 ? 'Meta y gráfico de ventas del mes en el Inicio, con el avance diario desde Bsale.' : n >= 33 ? 'Une sola las negociaciones duplicadas de una venta ganada.' : n >= 32 ? 'Etapas después del pago: seguimiento, entrega y postventa.' : n >= 31 ? 'Venta perdida: cierra tareas, eventos y la idea de respuesta del agente.' : 'Funciones nuevas para el Organizador.';
+  return n >= 35 ? 'Ventas del mes igual que en Bsale (solo boletas y facturas, menos notas de crédito) y noticias con foto de portada.' : n >= 34 ? 'Meta y gráfico de ventas del mes en el Inicio, con el avance diario desde Bsale.' : n >= 33 ? 'Une sola las negociaciones duplicadas de una venta ganada.' : n >= 32 ? 'Etapas después del pago: seguimiento, entrega y postventa.' : n >= 31 ? 'Venta perdida: cierra tareas, eventos y la idea de respuesta del agente.' : 'Funciones nuevas para el Organizador.';
 }
 
 /* ---------- Ventas del mes: avance diario acumulado contra el mes anterior y la meta ---------- */
@@ -2170,17 +2295,18 @@ function ventasMes(){
 }
 function ventasHeroHTML(){
   const v = ventasMes();
-  if (!v) return '<div class="hm c8 hm-hero"><div class="hh-k">' + icon('trophy') + 'Ventas del mes</div><div class="hh-empty">Conecta Bsale (⚙️ Ajustes) para ver aquí cómo van las ventas del mes, día a día.</div></div>';
+  if (!v) return '<div class="hm a-ventas hm-hero"><div class="hh-k">' + icon('trophy') + 'Ventas del mes</div><div class="hh-empty">Conecta Bsale (⚙️ Ajustes) para ver aquí cómo van las ventas del mes, día a día.</div></div>';
   const pct = v.ref ? v.total / v.ref : 0, ritmo = v.dia / v.dim, d = v.antFecha ? (v.total - v.antFecha) / v.antFecha : null;
   const chips = [v.hoyV != null ? '<span>Hoy <b>' + clpCorto(v.hoyV) + '</b></span>' : '', v.semV != null ? '<span>Semana <b>' + clpCorto(v.semV) + '</b></span>' : '', '<span>Proyección <b>' + clpCorto(v.proy) + '</b></span>'].join('');
-  return '<div class="hm c8 hm-hero"><div class="hh-top"><div><div class="hh-k">' + icon('trophy') + 'Ventas de ' + esc(v.nombre) + '</div>' +
+  return '<div class="hm a-ventas hm-hero"><div class="hh-top"><div><div class="hh-k">' + icon('trophy') + 'Ventas de ' + esc(v.nombre) + '</div>' +
       '<div class="hh-v">' + clp(v.total) + '</div>' +
       '<div class="hh-d">' + (d != null && isFinite(d) ? '<span class="' + (d >= 0 ? 'up' : 'down') + '">' + (d >= 0 ? '▲' : '▼') + ' ' + Math.round(Math.abs(d) * 100) + '%</span> vs. el mes anterior a la fecha' : 'Día ' + v.dia + ' de ' + v.dim) + '</div></div>' +
       '<button class="hh-meta" id="hmMeta" title="Fijar la meta de ventas del mes"><small>' + (v.refMeta ? 'Meta del mes' : 'Fijar meta') + '</small><b>' + (v.refMeta ? clpCorto(v.meta) : '＋') + '</b></button></div>' +
     '<div class="hh-prog"><div class="hh-bar"><i style="width:' + Math.min(100, pct * 100).toFixed(1) + '%"></i><u style="left:' + (ritmo * 100).toFixed(1) + '%" title="Dónde deberías ir hoy para llegar"></u></div>' +
       '<div class="hh-pl"><b>' + Math.round(pct * 100) + '%</b> ' + (v.refMeta ? 'de la meta' : 'del mes anterior completo (' + clpCorto(v.antTotal) + ')') + '<span>la marca blanca es el ritmo para llegar</span></div></div>' +
-    (v.cA ? '<div class="hh-chart" id="hhChart">' + ventasSVG(v) + '<div class="hh-tip" id="hhTip" hidden></div></div><div class="hh-leg"><span><i></i>' + esc(v.nombre) + '</span><span><i class="ant"></i>Mes anterior</span>' + (v.refMeta ? '<span><i class="mt"></i>Meta</span>' : '') + '</div>' : '') +
-    '<div class="hh-chips">' + chips + '</div><div class="hh-src">Fuente: ' + esc(v.fuente) + '</div></div>';
+    (v.cA ? '<div class="hh-chart" id="hhChart">' + ventasSVG(v) + '<div class="hh-tip" id="hhTip" hidden></div></div><div class="hh-x">' + [1, 8, 15, 22, 29].filter(d => d <= v.dim).map(d => '<span style="left:' + ((d - 1) / (v.dim - 1) * 100).toFixed(1) + '%">' + d + '</span>').join('') + '</div>' : '') +
+    '<div class="hh-bot"><div class="hh-chips">' + chips + '</div>' + (v.cA ? '<div class="hh-leg"><span><i></i>' + esc(v.nombre) + '</span><span><i class="ant"></i>Mes anterior</span>' + (v.refMeta ? '<span><i class="mt"></i>Meta</span>' : '') + '</div>' : '') + '</div>' +
+    '<div class="hh-src" title="Boletas y facturas, menos notas de crédito">Fuente: ' + esc(v.fuente === 'Bsale' ? 'Bsale · boletas y facturas' : v.fuente) + '</div></div>';
 }
 // Acumulado del mes (línea con área) contra el acumulado del mes anterior (punteada) y la meta (línea fina). Un solo eje.
 function ventasSVG(v){
@@ -2221,7 +2347,7 @@ function editarMetaVentas(){
 // Avisos como post-it: lo importante del equipo, siempre a la vista.
 function postitHTML(){
   const L = avisos().slice(0, 4), puede = extNivel() >= 16;
-  return '<div class="hm c4 hm-postit"><span class="pi-tape"></span><div class="pi-h">' + icon('flag') + 'Avisos de la tienda' + (puede ? '<button class="pi-add" id="avNew" aria-label="Nuevo aviso">＋</button>' : '') + '</div>' +
+  return '<div class="hm a-avisos hm-postit"><span class="pi-tape"></span><div class="pi-h">' + icon('flag') + 'Avisos de la tienda' + (puede ? '<button class="pi-add" id="avNew" aria-label="Nuevo aviso">＋</button>' : '') + '</div>' +
     (L.length ? '<div class="pi-n">' + L.map(a => { const f = a.fecha || '', im = a.importancia || 'normal'; return '<button class="pi-it ' + im + '" data-av="' + esc(a.id) + '"><span class="pi-d">' + (f ? '<b>' + pd(f).getDate() + '</b>' + MESES[pd(f).getMonth()] : '•') + '</span><span class="pi-t"><b>' + esc(a.titulo) + '</b>' + (a.detalle ? '<small>' + esc(a.detalle) + '</small>' : '') + '</span></button>'; }).join('') + '</div>' +
       (avisos().length > 4 ? '<button class="pi-more" id="avAll">Ver los ' + avisos().length + ' avisos</button>' : '')
       : '<div class="pi-empty">' + (puede ? 'Sin avisos. Anota llegadas, eventos o lo que el equipo no debe olvidar.' : 'Con la versión nueva del script puedes dejar avisos para el equipo.') + '</div>') + '</div>';
@@ -2231,7 +2357,7 @@ function agendaHome(ancho){
   const cl = 'hm ' + (ancho || 'c3'), g = S.google, h = hoy(), cab = '<div class="hm-h"><span class="hm-ic t-violet">' + icon('cal') + '</span>Agenda de hoy<button class="hm-go" id="bloqBtn2" aria-label="Agregar evento">＋</button></div>';
   if (!g) return '<div class="' + cl + '">' + cab + '<div class="hm-sub"><span class="spin"></span>Revisando tu calendario…</div></div>';
   if (g.inactivo) return '<div class="' + cl + '">' + cab + '<div class="hm-sub">Conecta tu calendario en ⚙️ Ajustes.</div></div>';
-  const ahora = new Date().toTimeString().slice(0, 5), E = (g.eventos || []), ev = E.filter(e => e.fecha === h), man = E.filter(e => e.fecha > h && e.fecha <= addDays(h, 6)).slice(0, ev.length ? 2 : 3), n = sugerencias().length;
+  const ahora = new Date().toTimeString().slice(0, 5), E = (g.eventos || []), ev = E.filter(e => e.fecha === h), man = E.filter(e => e.fecha > h && e.fecha <= addDays(h, 6)).slice(0, ev.length ? 3 : 5), n = sugerencias().length;
   const it = (e, dim) => { const now = !dim && !e.todoElDia && e.inicio <= ahora && e.fin > ahora, past = !dim && !e.todoElDia && e.fin && e.fin <= ahora; return '<div class="tl-i' + (now ? ' now' : '') + (past ? ' past' : '') + (dim ? ' dim' : '') + '"><span class="tl-h">' + (dim ? '<em>' + esc(DIAS[pd(e.fecha).getDay()] + ' ' + pd(e.fecha).getDate()) + '</em>' : '') + (e.todoElDia ? 'Día' : esc(e.inicio)) + '</span><span class="tl-dot" style="--c:' + esc(e.color || 'var(--s3)') + '"></span><span class="tl-t"><b>' + esc(e.titulo) + '</b>' + (e.lugar ? '<small>' + esc(e.lugar) + '</small>' : '') + '</span></div>'; };
   return '<div class="' + cl + '">' + cab + '<div class="tl">' + (ev.length ? ev.slice(0, 5).map(e => it(e)).join('') : '<div class="hm-ok">' + icon('check') + 'Día libre de reuniones</div>') + (man.length ? '<div class="tl-k">Próximos días</div>' + man.map(e => it(e, true)).join('') : '') + '</div>' +
     (n ? '<button class="hm-link" id="sugBtn">' + n + (n === 1 ? ' sugerencia' : ' sugerencias') + ' para agendar ›</button>' : '') + '</div>';
@@ -2240,7 +2366,7 @@ function agendaHome(ancho){
 function pipelineHome(m){
   const A = abiertos(), seg = ETAPAS.map((e, i) => { const L = A.filter(n => n.etapa === e.k); return { e, n: L.length, v: L.reduce((s, n) => s + (n.valor || 0), 0), c: SEQ[i] }; });
   const mx = Math.max(1, ...seg.map(x => x.v)), porEntregar = negocios().filter(n => n.etapa === 'Ganada' && diffDays(fechaCierre(n), hoy()) <= 120);
-  return '<div class="hm c6"><div class="hm-h"><span class="hm-ic t-blue">' + icon('chart') + '</span>Pipeline<button class="hm-go" data-go="negocios" aria-label="Ir a Negocios">›</button></div>' +
+  return '<div class="hm a-pipe"><div class="hm-h"><span class="hm-ic t-blue">' + icon('chart') + '</span>Pipeline<button class="hm-go" data-go="negocios" aria-label="Ir a Negocios">›</button></div>' +
     '<div class="pp-top"><div><div class="hm-big">' + clpCorto(m.abiertoV) + '</div><div class="hm-sub">' + A.length + ' abiertas · pronóstico ' + clpCorto(m.ponderado) + '</div></div>' +
       '<div class="pp-k"><span><small>Cierre 90 d</small><b>' + (m.tasa == null ? '–' : Math.round(m.tasa * 100) + '%') + '</b></span><span data-gonf="ganadas"><small>Por entregar</small><b>' + porEntregar.length + '</b></span></div></div>' +
     '<div class="pp-fun">' + seg.map(x => '<div class="pp-r"><span class="pp-l"><i style="background:' + x.c + '"></i>' + esc(x.e.k) + '</span><div class="pp-b"><i style="width:' + Math.max(x.v ? 4 : 0, x.v / mx * 100).toFixed(1) + '%;background:' + x.c + '"></i></div><span class="pp-v">' + (x.v ? clpCorto(x.v) : '–') + '<small>' + x.n + '</small></span></div>').join('') + '</div></div>';
@@ -4113,7 +4239,7 @@ async function loadGlobal(forzar){
   if (!LS.url || S.globalBusy) return;
   if (!forzar && S.global && Date.now() - (S.globalAt || 0) < 15 * 60000) return;
   S.globalBusy = 1;
-  const p = [loadClima(forzar)];
+  const p = [loadClima(forzar), loadYr(forzar)];
   if (extNivel() >= 16) p.push(apiX('global').then(g => { S.global = g; S.globalAt = Date.now(); lsSet('globalCache', g); }).catch(() => {}));
   await Promise.all(p);
   S.globalBusy = 0;
@@ -4634,7 +4760,7 @@ function deltaTag(a, b, inverso, sufijo){
 }
 function planStrip(){
   const pl = cerebroPlan(), c = climaDatos(), d = diaClima(hoy()), cur = c && c.current;
-  const wx = cur && d ? '<button class="ps-wx" id="psWx" title="Clima en Puerto Varas">' + wxIcon(cur.weather_code, 28) + '<b>' + Math.round(cur.temperature_2m) + '°</b><span>' + icon('drop') + d.prob + '%</span></button>' : '';
+  const wx = S.yr ? yrWidget() : cur && d ? '<button class="ps-wx" id="psWx" title="Clima en Puerto Varas">' + wxIcon(cur.weather_code, 28) + '<b>' + Math.round(cur.temperature_2m) + '°</b><span>' + icon('drop') + d.prob + '%</span></button>' : '';
   let txt;
   if (pl){ const H = focoHechos(); txt = '<button class="ps-main" id="plAbrir"><span class="ps-k">' + icon('spark') + 'Plan del agente</span><b>' + esc(pl.titular) + '</b></button><div class="ps-foco">' + (pl.foco || []).slice(0, 3).map((f, i) => '<button class="ps-f' + (H.includes(i) ? ' ok' : '') + '" data-pf="' + i + '" title="' + esc(f) + '"><span>' + (H.includes(i) ? icon('check') : i + 1) + '</span><em>' + esc(f) + '</em></button>').join('') + '</div>'; }
   else txt = '<div class="ps-main"><span class="ps-k">' + icon('spark') + 'Plan del agente</span><b>' + (extNivel() >= 16 ? (iaDisponible() ? 'Tu plan de hoy aún no está listo' : 'Falta la clave de Claude') : 'Actualiza el script para activarlo') + '</b></div>' + (extNivel() >= 16 && iaDisponible() ? '<button class="btn sm" id="plGen">' + icon('spark') + ' Generar</button>' : extNivel() < 16 ? '<button class="btn sm" id="updBtn2">Actualizar</button>' : '');

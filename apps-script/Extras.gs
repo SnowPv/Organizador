@@ -15,8 +15,8 @@
  * Para actualizar este archivo más adelante: reemplaza todo su contenido y repite los dos pasos anteriores.
  */
 
-const EX_VERSION = '2026-12-12';
-const EX_NIVEL = 35;      // la app lo usa para saber qué funciones tiene este script
+const EX_VERSION = '2026-12-15';
+const EX_NIVEL = 36;      // la app lo usa para saber qué funciones tiene este script
 const EX_HOJA = 'Tareas';
 const EX_PRIMERA = 4;
 const EX_ULTIMA = 400;
@@ -2731,7 +2731,7 @@ function ex_bsaleVentasSinc_(maxMs) {
     if (fin || (st.total != null && st.offset >= st.total)) { st.listo = true; break; }
   }
   pr.setProperty('EX_BSV_ESTADO', JSON.stringify(st));
-  if (nuevos) CacheService.getScriptCache().remove('bsv_res');
+  if (nuevos) CacheService.getScriptCache().remove('bsv_res2');
   return { ok: true, nuevos: nuevos, listo: !!st.listo, avance: st.total ? Math.min(100, Math.round(st.offset / st.total * 100)) : null };
 }
 // Ejecútala a mano (▶) para traer el historial de una vez; si no alcanza, sigue sola cada hora.
@@ -2741,9 +2741,13 @@ function ex_bsvFilas_() {
   return sh.getRange(2, 1, sh.getLastRow() - 1, EX_CAB_BSV.length).getValues().filter(function (r) { return r[0] instanceof Date; });
 }
 // Resumen para la app y los agentes: ventas por mes, períodos, top productos, rotación y productos quietos, mejores clientes.
+// Venta real = lo boleteado: boletas y facturas, menos notas de crédito (como el «Ventas del mes» del inicio de Bsale).
+// No suman notas de venta, cotizaciones, guías de despacho, pedidos web ni órdenes de servicio técnico (ahí no se emite boleta,
+// o la boleta llega después y se contaría dos veces).
+function ex_bsvEsVenta_(tipo) { const t = ex_norm_(tipo); return /boleta|factura|credito/.test(t) && !/guia|cotiza|nota de venta|pedido/.test(t); }
 function ex_bsaleVentasResumen_() {
-  const cache = CacheService.getScriptCache(), c0 = cache.get('bsv_res'); if (c0) return JSON.parse(c0);
-  const F = ex_bsvFilas_(), tz = ex_tz_(), hoy = ex_hoyYmd_(tz), ms = function (d) { return Date.parse(hoy) - d * 86400000; };
+  const cache = CacheService.getScriptCache(), c0 = cache.get('bsv_res2'); if (c0) return JSON.parse(c0);
+  const F = ex_bsvFilas_().filter(function (r) { return ex_bsvEsVenta_(r[2]); }), tz = ex_tz_(), hoy = ex_hoyYmd_(tz), ms = function (d) { return Date.parse(hoy) - d * 86400000; };
   if (!F.length) return { ok: true, activo: !!ex_bsaleToken_(), vacio: true, estado: JSON.parse(PropertiesService.getScriptProperties().getProperty('EX_BSV_ESTADO') || 'null') };
   const meses = {}, docsMes = {}, prod = {}, cli = {}, dias = {}, ult = {};
   F.forEach(function (r) {
@@ -2779,7 +2783,7 @@ function ex_bsaleVentasResumen_() {
     quietos: rot.filter(function (x) { return !x.vendidas90; }).sort(function (a, b) { return b.stock - a.stock; }).slice(0, 20),
     clientes: Object.keys(cli).map(function (k) { const c = cli[k]; return { nombre: c.nombre, email: c.email, telefono: c.telefono, total: Math.round(c.total), compras: Object.keys(c.docs).length, ultima: c.ultima }; }).sort(function (a, b) { return b.total - a.total; }).slice(0, 15),
     estado: JSON.parse(PropertiesService.getScriptProperties().getProperty('EX_BSV_ESTADO') || 'null') };
-  try { cache.put('bsv_res', JSON.stringify(res), 1800); } catch (e) {}
+  try { cache.put('bsv_res2', JSON.stringify(res), 1800); } catch (e) {}
   return res;
 }
 // Compras de un cliente (por email, teléfono, RUT o nombre), para su ficha y para los agentes.
@@ -3406,7 +3410,9 @@ function ex_rssItems_(xml, fuente) {
   const tag = function (s, t) { const x = new RegExp('<' + t + '[^>]*>([\\s\\S]*?)<\\/' + t + '>').exec(s); return x ? x[1].replace(/<!\[CDATA\[|\]\]>/g, '').trim() : ''; };
   const limpio = function (s) { return s.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/<[^>]+>/g, ' ').replace(/&#0?39;|&#x27;/g, "'").replace(/&amp;/g, '&').replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').trim(); };
   while ((m = re.exec(xml)) && items.length < 25) {
-    const s = m[1], desc = tag(s, 'description'), img = /<img[^>]+src="([^"]+)"/.exec(desc.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"'));
+    const s = m[1], desc = tag(s, 'description'), html = (desc + ' ' + tag(s, 'content:encoded')).replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"');
+    // Imagen de portada: media:content / media:thumbnail / enclosure del feed, o la primera foto del texto.
+    const img = /<media:(?:content|thumbnail)[^>]+url="([^"]+)"/.exec(s) || /<enclosure[^>]+url="([^"]+\.(?:jpe?g|png|webp)[^"]*)"/i.exec(s) || /<img[^>]+src="([^"]+)"/.exec(html);
     const fecha = Date.parse(tag(s, 'pubDate'));
     items.push({ fuente: fuente, titulo: limpio(tag(s, 'title')), link: limpio(tag(s, 'link')), fecha: isNaN(fecha) ? '' : new Date(fecha).toISOString(), resumen: limpio(desc).slice(0, 240), img: img ? img[1] : '' });
   }
@@ -3418,7 +3424,7 @@ const EX_NOT_ESQUEMA = { type: 'object', additionalProperties: false, required: 
   tipo: { type: 'string', enum: ['lanzamiento', 'specialized', 'ebike', 'tendencia', 'competencia', 'seguridad', 'industria', 'carrera', 'local'] }, relevancia: { type: 'integer', enum: [1, 2, 3] } } } } } };
 function ex_noticias_(forzar) {
   const pr = PropertiesService.getScriptProperties(), guardado = JSON.parse(pr.getProperty('NOTICIAS') || 'null');
-  if (!forzar && guardado && Date.now() - Date.parse(guardado.fecha) < 6 * 3600000) return guardado;
+  if (!forzar && guardado && guardado.v === 2 && Date.now() - Date.parse(guardado.fecha) < 6 * 3600000) return guardado;   // v2: con imagen de portada
   const rs = UrlFetchApp.fetchAll(EX_NOT_FUENTES.map(function (f) { return { url: f[1], muteHttpExceptions: true, followRedirects: true }; }));
   let todos = [];
   rs.forEach(function (r, k) { if (r.getResponseCode() === 200) todos = todos.concat(ex_rssItems_(r.getContentText(), EX_NOT_FUENTES[k][0]).slice(0, k < 2 ? 20 : 12)); });
@@ -3433,9 +3439,26 @@ function ex_noticias_(forzar) {
     } catch (e) { console.log('Noticias IA: ' + e.message); }
   }
   if (!items.length) items = todos.filter(function (x) { return /specialized|levo|kenevo|vado|e-?bike|emtb|launch|lanz/i.test(x.titulo + ' ' + x.resumen); }).concat(todos).filter(function (x, i, a) { return a.indexOf(x) === i; }).slice(0, 6);
-  const out = { fecha: new Date().toISOString(), items: items, total: todos.length };
-  pr.setProperty('NOTICIAS', JSON.stringify(out).slice(0, 8500));
+  ex_portadasNoticias_(items);
+  items.forEach(function (x) { x.resumen = String(x.resumen || '').slice(0, 160); });
+  const out = { v: 2, fecha: new Date().toISOString(), items: items, total: todos.length };
+  let txt = JSON.stringify(out); while (txt.length > 8800 && out.items.length > 3) { out.items.pop(); txt = JSON.stringify(out); }
+  pr.setProperty('NOTICIAS', txt);
   return out;
+}
+
+// Las noticias sin foto en el feed toman la imagen de portada de la propia nota (og:image), como cuando se comparte un link.
+function ex_portadasNoticias_(items) {
+  const sin = items.filter(function (x) { return !x.img && /^https?:/.test(x.link) && !/news\.google\./.test(x.link); }).slice(0, 8);
+  if (!sin.length) return;
+  try {
+    const rs = UrlFetchApp.fetchAll(sin.map(function (x) { return { url: x.link, muteHttpExceptions: true, followRedirects: true, headers: { 'User-Agent': 'Mozilla/5.0 (compatible; OrganizadorBlackline/1.0)' } }; }));
+    rs.forEach(function (r, i) {
+      if (r.getResponseCode() !== 200) return;
+      const h = r.getContentText().slice(0, 60000), m = /<meta[^>]+(?:property|name)=["'](?:og:image|twitter:image)["'][^>]+content=["']([^"']+)["']/i.exec(h) || /<meta[^>]+content=["']([^"']+)["'][^>]+(?:property|name)=["'](?:og:image|twitter:image)["']/i.exec(h);
+      if (m && /^https?:/.test(m[1]) && !/logo|gstatic|favicon/i.test(m[1])) sin[i].img = m[1].replace(/&amp;/g, '&');
+    });
+  } catch (e) { console.log('portadas: ' + e.message); }
 }
 
 /* ---------- avisos internos de la tienda (los ve todo el equipo al abrir la app) ---------- */

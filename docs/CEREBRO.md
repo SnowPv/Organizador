@@ -298,7 +298,18 @@ Las negociaciones abiertas que ya duplicaban una venta ganada (mismo cliente, o 
 
 Ops del script (nivel 33–34): `negocioBorrar`, `unirDuplicados`; `negocio` acepta `entrega` y `fechaGanada`.
 
-## Inicio (diseño)
+## Inicio (diseño v2, pensado para 1920×1080)
+
+En pantallas de computador (≥1600 px de ancho y ≥760 de alto) el tablero ocupa exactamente el alto disponible, en dos filas, sin bajar:
+1. Ventas del mes (50 %) · Avisos post-it (20 %) · Pipeline (30 %).
+2. Tareas de hoy · Agenda · Requieren atención · Instagram · Contactos.
+Debajo, como complemento, las noticias en tarjetas con imagen de portada (del feed o de la imagen og:image de la nota).
+
+- **Ventas**: solo lo boleteado, igual que «Ventas del mes» en Bsale: boletas y facturas menos notas de crédito. No suman notas de venta, cotizaciones, guías de despacho, pedidos web ni servicio técnico (`ex_bsvEsVenta_`).
+- **Clima**: el widget de la franja del plan usa el pronóstico de yr.no (api.met.no): temperatura, máx/mín, lluvia en mm, viento, las próximas horas y mañana. Tocarlo abre el detalle.
+- El Copiloto en computador está en el encabezado (botón «Copiloto»), sin botón flotante.
+
+## Inicio (diseño v1)
 
 El Inicio es un tablero tipo «bento» con módulos de distinto tamaño y forma:
 
