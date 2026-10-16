@@ -15,8 +15,8 @@
  * Para actualizar este archivo más adelante: reemplaza todo su contenido y repite los dos pasos anteriores.
  */
 
-const EX_VERSION = '2026-12-15';
-const EX_NIVEL = 36;      // la app lo usa para saber qué funciones tiene este script
+const EX_VERSION = '2026-12-18';
+const EX_NIVEL = 37;      // la app lo usa para saber qué funciones tiene este script
 const EX_HOJA = 'Tareas';
 const EX_PRIMERA = 4;
 const EX_ULTIMA = 400;
@@ -2703,7 +2703,7 @@ function ex_bsaleVentasSinc_(maxMs) {
   const sh = ex_hojaCab_(EX_HOJA_BSV, EX_CAB_BSV), n = sh.getLastRow() - 1, vistos = {};
   (n > 0 ? sh.getRange(2, 2, n, 1).getValues() : []).forEach(function (r) { vistos[String(r[0])] = 1; });
   const cat = {}; try { ex_bsaleCatalogo_Leer_().forEach(function (v) { cat[v.id] = v; }); } catch (e) {}
-  let nuevos = 0;
+  let nuevos = 0; const ventasNuevas = [];
   const base = '/documents.json?expand=' + encodeURIComponent('[details,client,document_type]') + '&emissiondaterange=' + encodeURIComponent('[' + st.desde + ',' + st.hasta + ']');
   while (Date.now() - t0 < lim) {
     const rutas = []; for (let k = 0; k < 4; k++) rutas.push(base + '&limit=50&offset=' + (st.offset + k * 50));
@@ -2718,6 +2718,7 @@ function ex_bsaleVentasSinc_(maxMs) {
         const tipo = (d.document_type && d.document_type.name) || '', nc = d.document_type && (+d.document_type.isCreditNote === 1 || /cr[eé]dito/i.test(tipo)), sg = nc ? -1 : 1;
         const c = d.client || {}, cn = [c.firstName, c.lastName].filter(Boolean).join(' ') || c.company || '';
         const fecha = new Date((+d.emissionDate || 0) * 1000);
+        if (!nc && ex_bsvEsVenta_(tipo) && Date.now() - fecha.getTime() < 4 * 86400000) ventasNuevas.push({ id: id, tipo: tipo, num: d.number || '', total: +d.totalAmount || 0, email: String(c.email || '').toLowerCase(), tel: String(c.phone || '').replace(/\D/g, '').slice(-8), nombre: cn, fecha: fecha });
         const det = (d.details && d.details.items) || [];
         if (!det.length) { filas.push([fecha, id, tipo, d.number || '', c.id || '', cn, c.email || '', String(c.phone || ''), c.code || '', '', '(sin detalle)', '', '', 0, sg * (+d.totalAmount || 0), sg * (+d.netAmount || 0)]); return; }
         det.forEach(function (it) {
@@ -2732,7 +2733,29 @@ function ex_bsaleVentasSinc_(maxMs) {
   }
   pr.setProperty('EX_BSV_ESTADO', JSON.stringify(st));
   if (nuevos) CacheService.getScriptCache().remove('bsv_res2');
+  if (ventasNuevas.length) { try { ex_cruceVentasNegocios_(ventasNuevas); } catch (e) { console.log('cruce ventas: ' + e.message); } }
   return { ok: true, nuevos: nuevos, listo: !!st.listo, avance: st.total ? Math.min(100, Math.round(st.offset / st.total * 100)) : null };
+}
+// Cruce Bsale ↔ Pipeline: si quien compró (boleta o factura de los últimos días) tiene una negociación abierta, se deja
+// como próximo paso confirmar la venta (no se marca sola: lo confirmas tú) y la compra queda en el historial del cliente.
+function ex_cruceVentasNegocios_(ventas) {
+  const pr = PropertiesService.getScriptProperties(), hechos = JSON.parse(pr.getProperty('EX_CRUCE_BSV') || '[]');
+  const b = ex_baseHojas_(), cs = ex_filasContactos_(b.cs), negs = ex_filasNeg_(ex_hojaNeg_()).filter(function (r) { return r[10] === 'Abierta'; });
+  const porEmail = {}, porTel = {};
+  cs.forEach(function (c) { if (c[4]) porEmail[String(c[4]).toLowerCase()] = c; const t = String(c[5] || '').replace(/\D/g, '').slice(-8); if (t.length === 8) porTel[t] = c; });
+  let n = 0;
+  ventas.forEach(function (v) {
+    if (hechos.indexOf(v.id) >= 0) return;
+    const c = (v.email && porEmail[v.email]) || (v.tel.length === 8 && porTel[v.tel]); if (!c) return;
+    hechos.push(v.id);
+    const id = String(c[0]), neg = negs.filter(function (r) { return String(r[2]) === id; })[0], monto = '$' + Math.round(v.total).toLocaleString('es-CL');
+    b.is.appendRow([new Date(), id, '🧾 Compra en Bsale', v.tipo.replace(/ T$/, '') + ' N° ' + v.num + ' · ' + monto, '', 'bsv:' + v.id]);
+    if (neg) { ex_guardarNegocio_({ id: neg[0], proxima: '🧾 Compró en Bsale (' + v.tipo.replace(/ ELECTR[ÓO]NICA.*$/i, '').toLowerCase() + ' N° ' + v.num + ', ' + monto + '): ¿marcar Ganada?', fechaProx: ex_hoyYmd_(ex_tz_()) }); }
+    n++;
+  });
+  if (n) ex_recalcular_(b.cs, b.is);
+  pr.setProperty('EX_CRUCE_BSV', JSON.stringify(hechos.slice(-500)));
+  return n;
 }
 // Ejecútala a mano (▶) para traer el historial de una vez; si no alcanza, sigue sola cada hora.
 function sincronizarVentasBsale() { const r = ex_bsaleVentasSinc_(330000); Logger.log(JSON.stringify(r)); }

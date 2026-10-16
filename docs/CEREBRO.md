@@ -319,3 +319,13 @@ El Inicio es un tablero tipo «bento» con módulos de distinto tamaño y forma:
 - Complementario: clima y noticias.
 
 Se quitaron del Inicio: sugerencias del asistente, mis próximas tareas, el radar y Specialized Chile (siguen en Hoy, Tareas y Compras).
+
+## Conexiones y automatizaciones (nivel 37, app v51)
+
+- **Buscador global** (Ctrl+K o ⌕ en el encabezado): contactos, negocios, tareas, avisos y secciones; Enter abre; la última opción le pasa la búsqueda al Copiloto.
+- **Tareas ↔ Negocios ↔ Contactos**: las tareas que vienen de una negociación o un cliente muestran chips «🤝 negocio» / «👤 cliente» que los abren.
+- **Agenda ↔ Contactos**: los eventos que nombran a un cliente abren su ficha.
+- **Pipeline del Inicio**: torta por etapa; cada etapa abre Negocios filtrado por esa etapa (chip «Etapa: … ✕»).
+- **Ventas → Compras**: «Ver ventas y rotación ›» en la tarjeta de ventas.
+- **Bsale → Pipeline (automático)**: si quien compró (boleta o factura de los últimos 4 días) tiene una negociación abierta, el próximo paso pasa a «🧾 Compró en Bsale (…): ¿marcar Ganada?» y la compra queda en su historial. No se marca sola.
+- Clima de yr.no también en Hoy. Estilo de tarjetas unificado en todas las pestañas.
