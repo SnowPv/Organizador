@@ -1987,6 +1987,103 @@ header.top{background:transparent!important}
 .gd ul{margin:0;padding-left:18px;color:#3B4456;line-height:1.65;font-size:14px}
 .gd-nav{display:flex;justify-content:space-between;gap:8px;margin-top:6px}
 #btnGuia{font-weight:800;font-size:16px}
+/* ===== Ingreso (Admin / Piso de venta) ===== */
+body.en-login > .wrap, body.en-login > nav.bottom, body.en-login > .fab, body.en-login > .fab2{visibility:hidden}
+#login{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;background:radial-gradient(900px 500px at 85% -10%,rgba(97,152,223,.55),rgba(97,152,223,0) 65%),linear-gradient(150deg,#0E1A31 0%,#16305C 55%,#1F4F96 100%);overflow:auto}
+.lg-card{width:100%;max-width:420px;background:#fff;border-radius:24px;padding:28px 26px 22px;box-shadow:0 30px 60px -30px rgba(0,0,0,.55)}
+.lg-brand{display:flex;align-items:center;gap:10px;margin-bottom:18px}.lg-brand img{width:40px;height:40px;border-radius:12px}.lg-brand b{display:block;font-size:15px}.lg-brand small{display:block;font-size:12px;color:var(--muted)}
+.lg-card h2{margin:0;font-size:24px;letter-spacing:-.03em}.lg-card > p{margin:4px 0 16px;color:var(--muted);font-size:14px}
+.lg-roles{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.lg-roles button{all:unset;box-sizing:border-box;cursor:pointer;border:1.5px solid var(--line);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:2px;transition:border-color .15s,box-shadow .15s,background .15s}
+.lg-roles button:hover{border-color:rgba(42,120,214,.4)}
+.lg-roles button.on{border-color:var(--accent);background:var(--accent-soft);box-shadow:0 0 0 3px rgba(42,120,214,.15)}
+.lg-roles button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.lg-ri{font-size:22px;margin-bottom:4px}.lg-roles b{font-size:14.5px}.lg-roles small{font-size:12px;color:var(--muted)}
+.lg-pw{display:flex;gap:8px}.lg-pw input{flex:1;font-size:17px}.lg-pw button{border:1px solid var(--line);background:var(--soft);border-radius:12px;padding:0 12px;font:inherit;font-size:13px;font-weight:700;color:#344054;cursor:pointer}
+.lg-err{min-height:20px;color:var(--bad-ink);font-size:13px;font-weight:600;margin:8px 0 4px}
+.lg-btn{width:100%;justify-content:center;padding:13px;font-size:15.5px}
+.lg-foot{margin-top:14px;font-size:12px;color:var(--muted);line-height:1.45;text-align:center}
+/* Piso de venta: pestañas de gestión ocultas (el servidor igual bloquea sus datos) */
+body.piso nav.bottom [data-tab=inicio],body.piso nav.bottom [data-tab=compras],body.piso nav.bottom [data-tab=cerebro],body.piso nav.bottom .nb-ia{display:none!important}
+/* ===== Hoy del Piso de venta ===== */
+.pv-prev{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:#FFF8E6;border:1px solid #F5D98B;color:#7A5200;border-radius:14px;padding:10px 14px;margin-bottom:14px;font-size:13.5px}.pv-prev .btn{margin-left:auto}
+.pv-hero{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:20px;align-items:center;background:radial-gradient(520px 260px at 100% 0%,rgba(18,160,107,.16),rgba(18,160,107,0) 70%),linear-gradient(120deg,#FFFFFF 0%,#F3F8FE 100%);border:var(--bd-card);box-shadow:var(--sh-card);border-radius:24px;padding:22px 24px}
+.pv-hl{min-width:0}.pv-hr{min-width:0}.pv-hr .hy-wx{min-width:0;max-width:100%;overflow:hidden}
+.pv-k{font-size:12px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--accent-ink)}
+.pv-hero h2{margin:4px 0 4px;font-size:28px;font-weight:800;letter-spacing:-.035em}
+.pv-hero p{margin:0;font-size:15px;color:#3B4456}
+.pv-ha{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.pv-hr{display:flex;align-items:center;gap:16px}
+.pv-hr .hy-wx{cursor:pointer}
+.pv-ring{position:relative;display:flex;align-items:center;gap:10px}.pv-ring > div{display:flex;flex-direction:column}.pv-ring b{font-size:24px;font-weight:800;letter-spacing:-.03em;font-variant-numeric:tabular-nums}.pv-ring b small{font-size:14px;color:var(--muted);font-weight:700}.pv-ring span{font-size:12px;color:var(--muted)}
+.pv-lbl{font-size:11.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:22px 2px 10px}
+.pv-steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.pv-s{all:unset;box-sizing:border-box;cursor:pointer;position:relative;display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto;column-gap:12px;align-items:center;background:var(--card);border:var(--bd-card);box-shadow:var(--sh-card);border-radius:20px;padding:16px 40px 16px 16px;transition:transform .15s,box-shadow .15s;min-width:0}
+.pv-s:hover{transform:translateY(-2px);box-shadow:0 2px 4px rgba(16,24,40,.05),0 18px 36px -20px rgba(16,24,40,.32)}
+.pv-s:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.pv-si{grid-row:1/3;width:48px;height:48px;border-radius:15px;display:flex;align-items:center;justify-content:center;font-size:23px;background:var(--soft)}
+.pv-sn{font-size:26px;font-weight:800;letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums;display:flex;align-items:baseline;gap:8px}
+.pv-st{position:absolute;left:76px;top:16px;font-size:12px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.pv-s .pv-sn{margin-top:16px}
+.pv-ss{font-size:12.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.pv-s > .ico{position:absolute;right:14px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:#98A2B3}
+.pv-s.bad .pv-si{background:#FDE8EA}.pv-s.bad .pv-sn{color:var(--bad-ink)}
+.pv-s.warn .pv-si{background:#FDF1DC}.pv-s.warn .pv-sn{color:var(--warn-ink)}
+.pv-s.info .pv-si{background:var(--accent-soft)}.pv-s.info .pv-sn{color:var(--accent-ink)}
+.pv-s.ok .pv-si{background:#E3F6EE}.pv-s.ok .pv-sn{color:var(--ok-ink)}
+.pv-g{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:18px}
+.pv-t{background:var(--card);border:var(--bd-card);box-shadow:var(--sh-card);border-radius:var(--r-card);padding:16px 18px;min-width:0;display:flex;flex-direction:column;gap:10px}
+.pv-pi{margin:0;transform:none}
+.pv-h{display:flex;align-items:center;gap:8px}.pv-h > .ico{width:16px;height:16px;padding:7px;border-radius:10px;background:var(--accent-soft);color:var(--accent-ink);box-sizing:content-box;flex:none}
+.pv-h b{font-size:14.5px;letter-spacing:-.01em;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pv-c{font-size:12px;font-weight:800;background:var(--soft);color:#475467;border-radius:999px;padding:2px 9px}.pv-c.bad{background:#FDE8EA;color:var(--bad-ink)}
+.pv-x,.pv-nav button{all:unset;cursor:pointer;width:28px;height:28px;border-radius:9px;display:inline-flex;align-items:center;justify-content:center;color:#475467;font-weight:800;font-size:16px}
+.pv-x:hover,.pv-nav button:hover{background:var(--soft)}
+.pv-nav{display:flex;gap:2px}
+.pv-cg{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px}
+.pv-cw span{font-size:10.5px;font-weight:800;color:#98A2B3;text-align:center;padding:2px 0}
+.pv-cg button{all:unset;cursor:pointer;box-sizing:border-box;height:38px;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums;transition:background .12s}
+.pv-cg button:hover{background:var(--soft)}.pv-cg button.pas{color:#98A2B3}
+.pv-cg button.hoy{background:var(--accent);color:#fff;box-shadow:0 6px 14px -8px rgba(42,120,214,.8)}
+.pv-cg button em{display:flex;gap:2px;height:5px;margin-top:2px}
+.pv-cg i,.pv-leg i{width:5px;height:5px;border-radius:50%;display:inline-block}
+.pv-cg i.e,.pv-leg i.e{background:#7A5AF8}.pv-cg i.t,.pv-leg i.t{background:var(--ok)}.pv-cg i.r,.pv-leg i.r{background:#D9467A}
+.pv-cg button.hoy i{background:#fff}
+.pv-leg{display:flex;gap:12px;flex-wrap:wrap;font-size:11.5px;color:var(--muted)}.pv-leg span{display:inline-flex;align-items:center;gap:5px}
+.pv-bar{height:6px;border-radius:6px;background:var(--soft);overflow:hidden}.pv-bar i{display:block;height:100%;border-radius:6px;background:linear-gradient(90deg,var(--ok),#34C38F);transition:width .3s}
+.pv-rl{display:flex;flex-direction:column;gap:2px}
+.pv-ri{display:flex;align-items:center;gap:10px;padding:5px 4px;border-radius:10px;font-size:13.5px;color:#344054}
+.pv-ri:hover{background:#FAFBFC}.pv-ri span{flex:1;min-width:0;line-height:1.35}
+.pv-ri.ok span{color:#98A2B3;text-decoration:line-through}
+.pv-ck{all:unset;cursor:pointer;flex:none;width:20px;height:20px;border-radius:7px;border:1.5px solid #C7CDD6;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;color:#fff}
+.pv-ri.ok .pv-ck{background:var(--ok);border-color:var(--ok)}
+.pv-ck:focus-visible,.pv-go:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.pv-go{all:unset;cursor:pointer;flex:none;width:24px;height:24px;border-radius:7px;display:flex;align-items:center;justify-content:center;color:var(--accent-ink)}.pv-go .ico{width:14px;height:14px}.pv-go:hover{background:var(--accent-soft)}
+.pv-pl,.pv-nl,.pv-wl{display:flex;flex-direction:column;gap:6px}
+.pv-p,.pv-n,.pv-w{all:unset;box-sizing:border-box;cursor:pointer;display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:12px;background:#FAFBFC;transition:background .12s;min-width:0}
+.pv-p:hover,.pv-n:hover,.pv-w:hover{background:#EEF3FA}
+.pv-av{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#BFD5F2,#6198DF);color:#fff;font-weight:800;font-size:12.5px;display:flex;align-items:center;justify-content:center;flex:none}
+.pv-pt,.pv-wt{min-width:0;flex:1}.pv-pt b,.pv-n b,.pv-wt{display:block;font-size:13.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pv-pt small,.pv-n small,.pv-wt small{display:block;font-size:12px;color:var(--muted);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pv-n{flex-direction:column;align-items:flex-start;gap:1px}.pv-n b,.pv-n small{max-width:100%}
+.pv-wd{flex:none;width:42px;text-align:center;font-size:10.5px;font-weight:800;text-transform:uppercase;color:var(--muted);line-height:1.1}.pv-wd b{display:block;font-size:18px;color:var(--ink);letter-spacing:-.02em}
+.pv-dn{display:flex;align-items:center;gap:14px}.pv-dc{flex:none}
+.pv-dlg{display:flex;flex-direction:column;gap:2px;flex:1;min-width:0}
+.pv-dlg button{all:unset;cursor:pointer;display:flex;align-items:center;gap:8px;font-size:13px;padding:3px 6px;border-radius:8px}.pv-dlg button:hover{background:var(--soft)}
+.pv-dlg i{width:9px;height:9px;border-radius:3px;flex:none}.pv-dlg b{margin-left:auto;font-variant-numeric:tabular-nums}
+.pv-ok{display:flex;align-items:center;gap:8px;font-size:13.5px;color:var(--ok-ink);background:#F0FAF5;border-radius:12px;padding:10px 12px}.pv-ok .ico{width:16px;height:16px}
+.pv-more{all:unset;cursor:pointer;font-size:13px;font-weight:700;color:var(--accent-ink);padding:4px 2px}.pv-more:hover{text-decoration:underline}
+.pv-tk .task{margin:0}
+.pv-dk{font-size:11px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin:10px 0 4px}
+.pv-ig{display:flex;align-items:center;justify-content:space-between;gap:10px}.pv-ig b{display:block;font-size:24px;font-weight:800;letter-spacing:-.03em}.pv-ig small{font-size:12px;color:var(--muted)}.pv-ig em{font-style:normal;font-weight:800}.pv-ig em.up{color:var(--ok-ink)}.pv-ig em.down{color:var(--bad-ink)}
+.pv-ct{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.pv-ct button{all:unset;cursor:pointer;box-sizing:border-box;background:#FAFBFC;border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:1px;transition:background .12s}.pv-ct button:hover{background:#EEF3FA}
+.pv-ct b{font-size:20px;font-weight:800;letter-spacing:-.03em;font-variant-numeric:tabular-nums}.pv-ct small{font-size:11.5px;color:var(--muted)}.pv-ct button.warn b{color:var(--warn-ink)}
+.pv-wk{display:flex;align-items:flex-end;gap:5px;height:56px}.pv-wk i{flex:1;border-radius:5px 5px 2px 2px;background:var(--s2)}.pv-wk i:last-child{background:var(--accent)}
+.pv-cap{font-size:11.5px;color:var(--muted)}
+.pv-dl{display:flex;gap:12px;padding:8px 0;border-bottom:1px solid var(--line);font-size:14px}.pv-dl small{display:block;color:var(--muted);font-size:12.5px}.pv-dh{flex:none;width:76px;font-weight:700;color:var(--accent-ink);font-size:13px}
+@media (max-width:1200px){.pv-g{grid-template-columns:repeat(2,minmax(0,1fr))}.pv-steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:720px){.pv-ha .btn{flex:1 1 140px;justify-content:center}.pv-ha .btn:first-child{flex-basis:100%}.pv-hr{flex-wrap:wrap}.pv-hr .hy-wx{flex:1 1 100%;white-space:normal}.pv-g{grid-template-columns:1fr}.pv-hero{grid-template-columns:1fr;padding:18px}.pv-hero h2{font-size:23px}.pv-hr{justify-content:space-between}.pv-steps{gap:10px}.pv-s{padding:14px 30px 14px 12px}.pv-si{width:40px;height:40px;font-size:19px}.pv-st{left:64px;top:14px;font-size:11px}.pv-sn{font-size:22px}.pv-s > .ico{right:8px}}
 </style>
 
 
@@ -2024,7 +2121,7 @@ header.top{background:transparent!important}
   <div class="nb-sec">Marca</div>
   <button data-tab="redes" class="nb2"><span data-ic="camera"></span>Redes</button>
   <button data-tab="proy" class="nb2"><span data-ic="flag"></span>Proyectos</button>
-  <div class="nb-sec">Inteligencia</div>
+  <div class="nb-sec nb-ia">Inteligencia</div>
   <button data-tab="cerebro" class="nb2"><span data-ic="brain"></span>Cerebro</button>
   <button class="nb-mas" id="nbMas" aria-label="Más secciones"><span>•••</span>Más</button>
 </nav>
@@ -2041,6 +2138,8 @@ const UI2 = () => document.body.classList.contains('ui2');
 // Para qué sirve cada pestaña, en una línea (para que cualquiera del equipo entienda dónde está).
 const PROPOSITO = { hoy: 'Lo que hay que hacer hoy, en orden', tareas: 'Todas tus tareas y pendientes', semana: 'Agenda, entregas y eventos del mes', compras: 'Proveedores, stock y ventas de Bsale', negocios: 'Tus ventas en curso, de la primera consulta a la postventa', proy: 'Iniciativas largas y su avance', base: 'Clientes, proveedores y chats de WhatsApp', redes: 'Instagram, contenido y estudio de diseño', cerebro: 'Un solo cerebro con skills: qué hace solo, qué hace cuando lo pides y cuánto gasta' };
 let S = { data: null, tab: (/[?&]tab=(hoy|tareas|negocios|base|redes|semana|proy|compras)\b/.exec(location.search) || [])[1] || 'inicio', filtro: 'todas', q: '', verHechas: false, vista: LS.vista || 'lista', offline: false, busy: false, google: null, googleBusy: false, googleAt: 0, ext: null, extInactivo: false, base: null, baseAt: 0, bf: 'todos', bq: '', mutado: false, subH: 'habitos', neg: null, negAt: 0, nv: LS.nv2 || '', nf: 'abiertas', nq: '' };
+// Cuenta Piso de venta: parte en Hoy y sin las pestañas de gestión.
+if (LS.rol === 'piso'){ document.body.classList.add('piso'); if (['inicio', 'compras', 'cerebro'].includes(S.tab)) S.tab = 'hoy'; }
 let deferredInstall = null;
 
 /* ---------- utilidades ---------- */
@@ -2086,10 +2185,16 @@ function habIc(n){ const k = norm(n); const m = HAB_IC.find(x => k.includes(x[0]
 const OPS_CAMBIO = ['subtareas', 'repetir', 'siguiente'];
 async function api(action, extra){
   if (['add', 'update', 'toggle', 'delete'].includes(action) || (action === 'extra' && OPS_CAMBIO.includes(extra && extra.op))) S.mutado = true;
-  const res = await fetch(LS.url, { method: 'POST', body: JSON.stringify(Object.assign({ token: LS.token, action }, extra || {})) });
+  const res = await fetch(LS.url, { method: 'POST', body: JSON.stringify(Object.assign({ token: LS.token, action, ses: LS.ses || '' }, extra || {})) });
   const txt = await res.text();
   let j; try { j = JSON.parse(txt); } catch(e){ throw new Error('respuesta'); }
-  if (!j.ok) throw new Error(j.error || 'error');
+  if (!j.ok){
+    const m = String(j.error || 'error');
+    if (j.sesion === false || /^(\[extra\] )?SESION/.test(m)) sesionVencida();
+    throw new Error(m.replace(/^(\[extra\] )?(SESION|PERMISO): /, ''));
+  }
+  // Piso de venta: las tareas personales del Admin no se muestran.
+  if (action === 'state' && LS.rol === 'piso' && Array.isArray(j.tareas)) j.tareas = j.tareas.filter(t => t.area !== 'Personal');
   return j;
 }
 // Si el script está ocupado (otra tarea tiene el candado), se reintenta solo un par de veces antes de mostrar el error.
@@ -2103,7 +2208,7 @@ async function apiX(op, extra){
 }
 // Nivel 2 del script Extras: recordatorios y base de contactos. Nivel 3: la base solo usa contacto@blacklinechile.cl. Nivel 4: eventos de varios días.
 function extNivel(){ return S.extInactivo ? 0 : (S.ext && S.ext.nivel) || 1; }
-const APP_VER = 'v56', NIVEL_ULTIMO = 39;
+const APP_VER = 'v57', NIVEL_ULTIMO = 40;
 function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < NIVEL_ULTIMO; }
 let sincTimer = null;
 // Después de cambiar tareas, el script actualiza los recordatorios del calendario (en segundo plano).
@@ -2185,11 +2290,11 @@ function head(){
   $$('nav.bottom button').forEach(b => b.classList.toggle('on', b.dataset.tab === S.tab || (b.id === 'nbMas' && ['semana', 'compras', 'proy', 'redes', 'cerebro'].includes(S.tab))));
   const hb = $('nav.bottom [data-tab=hoy]'); if (hb){ let n = 0; try { n = pendientesHoyN(); } catch(e){} let x = hb.querySelector('.nb'); if (!x){ x = document.createElement('i'); x.className = 'nb'; hb.appendChild(x); } x.textContent = n > 99 ? '99+' : n; x.style.display = n ? '' : 'none'; }
 }
-function go(tab){ $$('.qpop').forEach(x => x.remove()); S.tab = tab; render(); window.scrollTo(0, 0); }
+function go(tab){ $$('.qpop').forEach(x => x.remove()); if (!tabPermitida(tab)) tab = 'hoy'; S.tab = tab; render(); window.scrollTo(0, 0); }
 $$('nav.bottom button[data-tab]').forEach(b => b.onclick = () => go(b.dataset.tab));
 // Celular: la barra muestra las 5 secciones del día a día; el resto queda en «Más».
 $('#nbMas').onclick = () => {
-  const L = [['semana', 'cal', 'Calendario'], ['compras', 'box', 'Compras'], ['proy', 'flag', 'Proyectos'], ['redes', 'camera', 'Redes'], ['cerebro', 'brain', 'Cerebro']];
+  const L = [['semana', 'cal', 'Calendario'], ['compras', 'box', 'Compras'], ['proy', 'flag', 'Proyectos'], ['redes', 'camera', 'Redes'], ['cerebro', 'brain', 'Cerebro']].filter(x => tabPermitida(x[0]));
   const md = modal('Más secciones', '<div class="mas-g">' + L.map(x => '<button data-mt="' + x[0] + '" class="' + (S.tab === x[0] ? 'on' : '') + '">' + icon(x[1]) + '<span>' + x[2] + '</span></button>').join('') + '</div>');
   md.el.querySelectorAll('[data-mt]').forEach(b => b.onclick = () => { md.cerrar(); go(b.dataset.mt); });
 };
@@ -2199,7 +2304,7 @@ $('#btnGuia').onclick = () => openGuia();
 // Buscador global: Ctrl+K (o ⌘K) desde cualquier pestaña.
 addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k'){ e.preventDefault(); openBuscar(); } });
 function openBuscar(){
-  const SECC = [['inicio', 'Inicio'], ['hoy', 'Hoy'], ['tareas', 'Tareas'], ['semana', 'Calendario'], ['compras', 'Compras'], ['negocios', 'Negocios'], ['proy', 'Proyectos'], ['base', 'Contactos'], ['redes', 'Redes'], ['cerebro', 'Cerebro']];
+  const SECC = [['inicio', 'Inicio'], ['hoy', 'Hoy'], ['tareas', 'Tareas'], ['semana', 'Calendario'], ['compras', 'Compras'], ['negocios', 'Negocios'], ['proy', 'Proyectos'], ['base', 'Contactos'], ['redes', 'Redes'], ['cerebro', 'Cerebro']].filter(x => tabPermitida(x[0]));
   const md = modal('Buscar', '<input type="search" id="gb_q" placeholder="Cliente, tarea, negocio, aviso o sección…" autocomplete="off" style="width:100%;font-size:17px"><div id="gb_r" class="gb-r"></div><div class="hint" style="margin:8px 0 0">↑ ↓ para moverte · Enter para abrir · Ctrl+K desde cualquier pestaña</div>', { wide: true });
   const q = md.el.querySelector('#gb_q'), box = md.el.querySelector('#gb_r'); let R = [], sel = 0;
   const abrir = r => { md.cerrar(); r.fn(); };
@@ -2240,8 +2345,8 @@ function render(){
   const cf = $('#copFab'); if (cf && !cf.innerHTML) cf.innerHTML = icon('spark') + '<span>Cerebro</span>';
   const hc = $('#btnCop'); if (hc && !hc.innerHTML) hc.innerHTML = icon('spark') + ' Cerebro';
   if (!S.data){ $('#view').innerHTML = '<div class="empty"><span class="spin"></span>Cargando…</div>'; return; }
-  ({ inicio: viewInicio, hoy: viewHoy, tareas: viewTareas, habitos: () => S.subH === 'semana' ? viewSemana() : viewHabitos(), semana: () => S.per && S.per !== 'semana' ? viewPeriodo() : viewSemana(), proy: viewProy, base: viewBase, negocios: viewNegocios, redes: viewRedes, compras: viewCompras, cerebro: viewCerebro })[S.tab]();
-  if (!S.guiaAuto){ S.guiaAuto = 1; let v = '1'; try { v = LS.guiaVista; } catch(e){} if (!v) setTimeout(() => { if (!$('.pop-bg')) openGuia(); }, 900); }
+  ({ inicio: viewInicio, hoy: () => esPiso() || S.vistaPiso ? viewHoyPiso() : viewHoy(), tareas: viewTareas, habitos: () => S.subH === 'semana' ? viewSemana() : viewHabitos(), semana: () => S.per && S.per !== 'semana' ? viewPeriodo() : viewSemana(), proy: viewProy, base: viewBase, negocios: viewNegocios, redes: viewRedes, compras: viewCompras, cerebro: viewCerebro })[S.tab]();
+  if (!S.guiaAuto){ S.guiaAuto = 1; let v = '1'; try { v = LS[esPiso() ? 'guiaVistaP' : 'guiaVista']; } catch(e){} if (!v) setTimeout(() => { if (!$('.pop-bg')) openGuia(); }, 900); }
   focusPill(); imxPill();
 }
 
@@ -2565,7 +2670,7 @@ function noticiasHome(){
 // Texto corto de lo que trae la versión nueva del script (el banner de actualización del Inicio).
 function novedadScript(){
   const n = extNivel();
-  return n >= 39 ? 'La app ahora tiene un solo Cerebro con 9 skills (en vez de agentes sueltos): mira qué hace solo, cuánto gasta y paúsalo en la pestaña Cerebro.' : n >= 37 ? 'Las tareas automáticas ya no bloquean la app (por ejemplo, la lectura de ventas de Bsale).' : n >= 36 ? 'Cuando un cliente con negociación abierta compra en Bsale, la app te propone marcarla como ganada.' : n >= 35 ? 'Ventas del mes igual que en Bsale (solo boletas y facturas, menos notas de crédito) y noticias con foto de portada.' : n >= 34 ? 'Meta y gráfico de ventas del mes en el Inicio, con el avance diario desde Bsale.' : n >= 33 ? 'Une sola las negociaciones duplicadas de una venta ganada.' : n >= 32 ? 'Etapas después del pago: seguimiento, entrega y postventa.' : n >= 31 ? 'Venta perdida: cierra tareas, eventos y la idea de respuesta del Cerebro.' : 'Funciones nuevas para el Organizador.';
+  return n >= 40 ? 'Ahora hay dos cuentas con contraseña: Admin (todo, como siempre) y Piso de venta (parte en un Hoy nuevo, sin cifras de la tienda). Créalas en ⚙️ Ajustes → Usuarios.' : n >= 39 ? 'La app ahora tiene un solo Cerebro con 9 skills (en vez de agentes sueltos): mira qué hace solo, cuánto gasta y paúsalo en la pestaña Cerebro.' : n >= 37 ? 'Las tareas automáticas ya no bloquean la app (por ejemplo, la lectura de ventas de Bsale).' : n >= 36 ? 'Cuando un cliente con negociación abierta compra en Bsale, la app te propone marcarla como ganada.' : n >= 35 ? 'Ventas del mes igual que en Bsale (solo boletas y facturas, menos notas de crédito) y noticias con foto de portada.' : n >= 34 ? 'Meta y gráfico de ventas del mes en el Inicio, con el avance diario desde Bsale.' : n >= 33 ? 'Une sola las negociaciones duplicadas de una venta ganada.' : n >= 32 ? 'Etapas después del pago: seguimiento, entrega y postventa.' : n >= 31 ? 'Venta perdida: cierra tareas, eventos y la idea de respuesta del Cerebro.' : 'Funciones nuevas para el Organizador.';
 }
 
 /* ---------- Ventas del mes: avance diario acumulado contra el mes anterior y la meta ---------- */
@@ -2643,7 +2748,7 @@ function editarMetaVentas(){
 }
 // Avisos como post-it: lo importante del equipo, siempre a la vista.
 function postitHTML(){
-  const L = avisos().slice(0, 4), puede = extNivel() >= 16;
+  const L = avisos().slice(0, 4), puede = extNivel() >= 16 && !esPiso();
   return '<div class="hm a-avisos hm-postit"><span class="pi-tape"></span><div class="pi-h">' + icon('flag') + 'Avisos de la tienda' + (puede ? '<button class="pi-add" id="avNew" aria-label="Nuevo aviso">＋</button>' : '') + '</div>' +
     (L.length ? '<div class="pi-n">' + L.map(a => { const f = a.fecha || '', im = a.importancia || 'normal'; return '<button class="pi-it ' + im + '" data-av="' + esc(a.id) + '"><span class="pi-d">' + (f ? '<b>' + pd(f).getDate() + '</b>' + MESES[pd(f).getMonth()] : '•') + '</span><span class="pi-t"><b>' + esc(a.titulo) + '</b>' + (a.detalle ? '<small>' + esc(a.detalle) + '</small>' : '') + '</span></button>'; }).join('') + '</div>' +
       (avisos().length > 4 ? '<button class="pi-more" id="avAll">Ver los ' + avisos().length + ' avisos</button>' : '')
@@ -4925,6 +5030,226 @@ function abrirProducto(q){
   if (/^\d{6,8}$/.test(String(q || ''))) ficha({ id: String(q), nombre: '', detalle: [] }); else if (q) buscar(); else setTimeout(() => inp.focus(), 80);
 }
 
+/* ---------- Usuarios: Admin y Piso de Venta ----------
+   La sesión la firma el servidor; aquí solo se guarda y se envía en cada consulta. El servidor decide
+   qué puede ver cada cuenta: esconder pestañas en la app es comodidad, no seguridad. */
+const TABS_SOLO_ADMIN = ['inicio', 'compras', 'cerebro'];
+const LS_CONSERVAR = ['url', 'token', 'ui', 'usrActivos', 'rolUlt', 'guiaVista', 'guiaVistaP', 'waTienda', 'vista', 'extOff', 'rutinaItems', 'rutina', 'respondidos', 'respHoy'];
+function rol(){ return LS.rol === 'piso' ? 'piso' : 'admin'; }
+function esPiso(){ return rol() === 'piso'; }
+function tabPermitida(t){ return !esPiso() || TABS_SOLO_ADMIN.indexOf(t) < 0; }
+function limpiarDatosLocales(){ try { Object.keys(LS).forEach(k => { if (LS_CONSERVAR.indexOf(k) < 0) LS.removeItem(k); }); } catch(e){} }
+function sesionVencida(){
+  if (!LS.ses && $('#login')) return;
+  try { LS.removeItem('ses'); LS.usrActivos = '1'; } catch(e){}
+  pantallaLogin('Tu sesión terminó. Vuelve a ingresar.');
+}
+function cerrarSesion(){ limpiarDatosLocales(); try { LS.removeItem('ses'); LS.removeItem('rol'); LS.usrActivos = '1'; } catch(e){} location.reload(); }
+function pantallaLogin(msg){
+  if ($('#login')) { if (msg) $('#lgE').textContent = msg; return; }
+  $$('.pop-bg').forEach(x => x.remove()); try { closeSheet(); } catch(e){}
+  let r = LS.rolUlt === 'admin' ? 'admin' : 'piso';
+  const d = document.createElement('div'); d.id = 'login'; d.setAttribute('role', 'dialog'); d.setAttribute('aria-label', 'Ingresar');
+  d.innerHTML = '<div class="lg-card"><div class="lg-brand"><img src="icon-192.png" alt=""><div><b>Organizador</b><small>Blackline Puerto Varas</small></div></div>' +
+    '<h2>Hola de nuevo</h2><p>Elige tu cuenta y escribe la contraseña.</p>' +
+    '<div class="lg-roles" role="radiogroup" aria-label="Cuenta">' +
+      '<button type="button" role="radio" data-r="piso"><span class="lg-ri">🛍️</span><b>Piso de venta</b><small>Equipo de tienda</small></button>' +
+      '<button type="button" role="radio" data-r="admin"><span class="lg-ri">🔑</span><b>Admin</b><small>Gestión completa</small></button></div>' +
+    '<form id="lgF" autocomplete="on"><input type="text" name="username" id="lgU" autocomplete="username" hidden><label class="l" for="lgP">Contraseña</label>' +
+      '<div class="lg-pw"><input type="password" id="lgP" autocomplete="current-password" required><button type="button" id="lgVer" aria-label="Mostrar contraseña">Ver</button></div>' +
+      '<div class="lg-err" id="lgE" role="alert">' + esc(msg || '') + '</div><button class="btn lg-btn" id="lgB">Ingresar</button></form>' +
+    '<div class="lg-foot">La sesión queda abierta 14 días en Piso de venta y 30 en Admin. ¿Olvidaste la contraseña? Pídesela al Admin.</div></div>';
+  document.body.appendChild(d); document.body.classList.add('en-login');
+  const pintar = () => { d.querySelectorAll('[data-r]').forEach(b => { const on = b.dataset.r === r; b.classList.toggle('on', on); b.setAttribute('aria-checked', on); }); $('#lgU').value = r === 'piso' ? 'Piso de venta' : 'Admin'; };
+  d.querySelectorAll('[data-r]').forEach(b => b.onclick = () => { r = b.dataset.r; pintar(); $('#lgP').focus(); });
+  $('#lgVer').onclick = () => { const p = $('#lgP'); p.type = p.type === 'password' ? 'text' : 'password'; $('#lgVer').textContent = p.type === 'password' ? 'Ver' : 'Ocultar'; };
+  $('#lgF').onsubmit = async e => {
+    e.preventDefault(); const b = $('#lgB'), clave = $('#lgP').value; if (!clave) return;
+    b.disabled = true; b.textContent = 'Revisando…'; $('#lgE').textContent = '';
+    try {
+      const j = await api('extra', { op: 'login', usuario: r, clave });
+      if (j.abierto){ LS.removeItem('usrActivos'); location.reload(); return; }
+      if (LS.rol !== j.rol) limpiarDatosLocales();
+      LS.ses = j.ses; LS.rol = j.rol; LS.rolUlt = j.rol; LS.usrActivos = '1';
+      location.reload();
+    } catch(err){ b.disabled = false; b.textContent = 'Ingresar'; $('#lgE').textContent = err.message === 'respuesta' ? 'No pude conectar. Revisa tu internet.' : err.message; $('#lgP').select(); }
+  };
+  pintar(); setTimeout(() => $('#lgP').focus(), 50);
+}
+// Ajustes → Usuarios (solo Admin): crear, cambiar o desactivar las contraseñas.
+function usuariosCardHTML(){
+  if (extNivel() < 40) return '<div class="card"><b>👥 Usuarios</b><div class="hint">Actualiza el script para crear las cuentas Admin y Piso de venta con contraseña.</div></div>';
+  const on = !!(S.ext && S.ext.usuarios);
+  return '<div class="card"><b>👥 Usuarios y contraseñas</b><div class="hint">' + (on ? 'Activos ✓ · Estás como <b>Admin</b>. El Piso de venta parte en Hoy y no ve Inicio, Compras, el Cerebro ni las cifras de ventas de la tienda.' : 'Crea dos cuentas: <b>Admin</b> (todo, como ahora) y <b>Piso de venta</b> (parte en Hoy, sin Inicio ni cifras de ventas). Mientras no las crees, la app funciona como siempre.') + '</div>' +
+    '<div class="btns" style="margin-top:8px">' + (on ? '<button class="btn sm sec" id="u_ca">🔑 Clave Admin</button><button class="btn sm sec" id="u_cp">🛍️ Clave Piso de venta</button><button class="btn sm sec" id="u_ver">👀 Ver Hoy del Piso</button><button class="btn sm sec" id="u_out">Cerrar sesión</button><button class="btn sm sec" id="u_off">Desactivar cuentas</button>' : '<button class="btn sm" id="u_on">Crear las cuentas</button>') + '</div></div>';
+}
+function bindUsuariosCard(){
+  const f = (id, fn) => { const b = $('#' + id); if (b) b.onclick = fn; };
+  f('u_on', () => formClaves(true)); f('u_ca', () => formClaves(false, 'admin')); f('u_cp', () => formClaves(false, 'piso'));
+  f('u_ver', () => { closeSheet(); S.vistaPiso = true; go('hoy'); });
+  f('u_out', () => { if (confirm('¿Cerrar la sesión en este dispositivo?')) cerrarSesion(); });
+  f('u_off', async () => { if (!confirm('Se borran las dos contraseñas y la app vuelve a abrirse sin ingresar. ¿Seguro?')) return; try { await apiX('usuariosConf', { desactivar: true }); LS.removeItem('ses'); LS.removeItem('rol'); LS.removeItem('usrActivos'); toast('Cuentas desactivadas'); location.reload(); } catch(e){ toast(e.message); } });
+}
+function formClaves(nuevo, solo){
+  const campo = (id, t, sub) => '<label class="l" for="' + id + '">' + t + '</label><input type="password" id="' + id + '" autocomplete="new-password" minlength="6" placeholder="Mínimo 6 caracteres">' + (sub ? '<div class="hint" style="margin:4px 0 0">' + sub + '</div>' : '');
+  const md = modal(nuevo ? 'Crear las cuentas' : solo === 'admin' ? 'Cambiar la clave Admin' : 'Cambiar la clave Piso de venta',
+    (nuevo || solo === 'admin' ? campo('uc_a', '🔑 Contraseña Admin', 'Solo para ti. Da acceso a todo.') : '') +
+    (nuevo || solo === 'piso' ? campo('uc_p', '🛍️ Contraseña Piso de venta', 'Para el equipo de tienda. Debe ser distinta a la de Admin.') : '') +
+    '<div class="hint" style="margin-top:10px">' + (nuevo ? 'Anótalas en un lugar seguro. ' : 'Al cambiarla se cierran las sesiones abiertas con la clave anterior. ') + 'No las compartas por chat.</div><div class="btns" style="margin-top:12px"><button class="btn" id="uc_ok">Guardar</button></div>');
+  md.el.querySelector('#uc_ok').onclick = async () => {
+    const a = md.el.querySelector('#uc_a'), p = md.el.querySelector('#uc_p'), x = {};
+    if (a){ if (a.value.length < 6) return toast('La clave Admin debe tener al menos 6 caracteres'); x.admin = a.value; }
+    if (p){ if (p.value && p.value.length < 6) return toast('La clave Piso debe tener al menos 6 caracteres'); if (p.value) x.piso = p.value; if (!nuevo && !p.value) return toast('Escribe la clave nueva'); }
+    if (x.admin && x.piso && x.admin === x.piso) return toast('Usa claves distintas para cada cuenta');
+    const b = md.el.querySelector('#uc_ok'); b.disabled = true; b.textContent = 'Guardando…';
+    try {
+      const j = await apiX('usuariosConf', x);
+      if (j.ses){ LS.ses = j.ses; LS.rol = 'admin'; LS.rolUlt = 'admin'; }
+      LS.usrActivos = '1'; if (S.ext) S.ext.usuarios = true; md.cerrar(); closeSheet();
+      toast(nuevo ? '✅ Cuentas creadas. En los equipos de la tienda, ingresa con «Piso de venta».' : '✅ Clave cambiada');
+    } catch(e){ b.disabled = false; b.textContent = 'Guardar'; toast(e.message); }
+  };
+}
+function ajustesPisoHTML(){
+  return '<h3>⚙️ Ajustes</h3><div class="card"><b>🛍️ Cuenta Piso de venta</b><div class="hint">Ves lo necesario para atender: Hoy, tareas, calendario, negocios, contactos, redes y proyectos. Las cifras de la tienda las ve el Admin.</div></div>' +
+    '<div class="card"><b>❓ ¿Primera vez?</b><div class="hint">La guía explica cada pantalla en un minuto.</div><div class="btns" style="margin-top:8px"><button class="btn sm sec" id="p_gd">Ver la guía</button><button class="btn sm sec" id="p_rt">Editar la rutina diaria</button></div></div>' +
+    '<div class="btns"><button class="btn sec" id="p_out">Cerrar sesión</button></div>';
+}
+
+/* ---------- Hoy del Piso de venta: qué hacer, por dónde partir y el panorama del día, sin cifras de la tienda ---------- */
+const RUTINA_BASE = [
+  ['🔓', 'Abrir: luces, vitrinas, música y bicis de prueba cargadas'], ['💬', 'Responder los WhatsApp que esperan', 'resp'], ['✅', 'Revisar tareas y agenda del día', 'tareas'],
+  ['🧹', 'Ordenar el piso de venta y reponer accesorios'], ['🤝', 'Hacer seguimiento a 3 clientes', 'neg'], ['📸', 'Subir una historia a Instagram', 'redes'],
+  ['📝', 'Anotar en la ficha lo que hablaste con cada cliente', 'base'], ['🔒', 'Cierre: bicis cargando, piso ordenado, luces apagadas']];
+function rutinaItems(){ const L = lsGet('rutinaItems', null); return Array.isArray(L) && L.length ? L : RUTINA_BASE; }
+function rutinaHoy(){ const r = lsGet('rutina', {}); return r.dia === hoy() ? r : { dia: hoy(), ok: [] }; }
+function irRutina(k){ ({ resp: () => { S.bf = 'esperan'; S.bv = 'lista'; go('base'); }, tareas: () => openTareasHoy(), neg: () => { S.nf = 'atencion'; S.nv = 'lista'; go('negocios'); }, redes: () => go('redes'), base: () => go('base') })[k](); }
+function editarRutina(){
+  const md = modal('Rutina diaria', '<div class="hint" style="margin:0 0 8px">Una tarea por línea. Puedes partir con un emoji. Se guarda en este dispositivo.</div><textarea id="rt_t" rows="10" style="width:100%">' + esc(rutinaItems().map(x => x[0] + ' ' + x[1]).join('\n')) + '</textarea><div class="btns"><button class="btn sec" id="rt_r">Volver a la original</button><button class="btn" id="rt_ok">Guardar</button></div>');
+  md.el.querySelector('#rt_ok').onclick = () => {
+    const L = md.el.querySelector('#rt_t').value.split('\n').map(s => s.trim()).filter(Boolean).slice(0, 15).map(s => { const m = s.match(/^(\p{Extended_Pictographic}️?)\s*(.*)$/u), base = RUTINA_BASE.find(b => b[1] === (m ? m[2] : s)); return base || (m ? [m[1], m[2]] : ['•', s]); });
+    lsSet('rutinaItems', L); lsSet('rutina', { dia: hoy(), ok: [] }); md.cerrar(); render();
+  };
+  md.el.querySelector('#rt_r').onclick = () => { try { LS.removeItem('rutinaItems'); } catch(e){} lsSet('rutina', { dia: hoy(), ok: [] }); md.cerrar(); render(); };
+}
+// Lo que pasa un día: eventos, tareas, publicaciones y avisos (para el calendario chico).
+function cosasDelDia(f){
+  const ev = ((S.google && S.google.eventos) || []).filter(e => e.fecha === f);
+  const tk = (S.data ? S.data.tareas : []).filter(t => !t.hecho && t.limite === f);
+  const ct = (S.cont || []).filter(x => x.fecha === f && x.estado !== 'Publicado');
+  const av = avisos().filter(a => a.fecha === f);
+  return { ev, tk, ct, av, n: ev.length + tk.length + ct.length + av.length };
+}
+function abrirDia(f){
+  const c = cosasDelDia(f), sec = (t, html) => html ? '<div class="pv-dk">' + t + '</div>' + html : '';
+  const md = modal(esc(fmtLong(f)),
+    (c.n ? '' : '<div class="empty" style="padding:18px">Nada agendado este día.</div>') +
+    sec('Agenda', c.ev.map(e => '<div class="pv-dl"><span class="pv-dh">' + esc(e.todoElDia ? 'Todo el día' : e.inicio) + '</span><span>' + esc(e.titulo) + (e.lugar ? '<small>' + esc(e.lugar) + '</small>' : '') + '</span></div>').join('')) +
+    sec('Tareas', c.tk.map(t => taskHTML(t)).join('')) +
+    sec('Redes', c.ct.map(x => '<div class="pv-dl"><span class="pv-dh">📸</span><span>' + esc(x.formato + ' · ' + x.tema) + '</span></div>').join('')) +
+    sec('Avisos', c.av.map(a => '<div class="pv-dl"><span class="pv-dh">📌</span><span>' + esc(a.titulo) + '<small>' + esc(a.detalle || '') + '</small></span></div>').join('')) +
+    '<div class="btns" style="margin-top:14px"><button class="btn sm sec" id="dd_t">＋ Tarea para este día</button><button class="btn sm sec" id="dd_c">Abrir calendario</button></div>');
+  bindTasks(md.el);
+  md.el.querySelector('#dd_t').onclick = () => { md.cerrar(); openAdd({ limite: f }); };
+  md.el.querySelector('#dd_c').onclick = () => { md.cerrar(); go('semana'); };
+}
+function miniCalHTML(){
+  const h = hoy(), base = pd(h); base.setDate(1); base.setMonth(base.getMonth() + (S.pvMes || 0));
+  const y = base.getFullYear(), m = base.getMonth(), ini = (new Date(y, m, 1).getDay() + 6) % 7, dias = new Date(y, m + 1, 0).getDate();
+  let c = '';
+  for (let i = 0; i < ini; i++) c += '<span></span>';
+  for (let d = 1; d <= dias; d++){
+    const f = y + '-' + String(m + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0'), x = cosasDelDia(f);
+    const dots = (x.ev.length ? '<i class="e"></i>' : '') + (x.tk.length ? '<i class="t"></i>' : '') + (x.ct.length || x.av.length ? '<i class="r"></i>' : '');
+    c += '<button class="' + (f === h ? 'hoy' : '') + (f < h ? ' pas' : '') + '" data-dia="' + f + '" aria-label="' + esc(fmtLong(f)) + (x.n ? ': ' + x.n + ' cosas' : '') + '">' + d + '<em>' + dots + '</em></button>';
+  }
+  return '<div class="pv-t pv-cal"><div class="pv-h">' + icon('cal') + '<b>' + MESES_L[m].charAt(0).toUpperCase() + MESES_L[m].slice(1) + ' ' + y + '</b><span class="pv-nav"><button id="pvMa" aria-label="Mes anterior">‹</button><button id="pvMs" aria-label="Mes siguiente">›</button></span></div>' +
+    '<div class="pv-cg pv-cw"><span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span><span>D</span></div><div class="pv-cg">' + c + '</div>' +
+    '<div class="pv-leg"><span><i class="e"></i>Agenda</span><span><i class="t"></i>Tareas</span><span><i class="r"></i>Redes y avisos</span></div></div>';
+}
+function viewHoyPiso(){
+  if (!S.hoyCarga){ S.hoyCarga = 1; const p = []; if (!S.neg) p.push(loadNeg(false)); if (!S.base) p.push(loadBase(false)); if (!S.cont && extNivel() >= 11) p.push(loadIG(false)); if (p.length) Promise.all(p.map(x => x && x.catch ? x.catch(() => {}) : x)).then(() => { if (S.tab === 'hoy') render(); }); }
+  if (!S.yr && !S._yrPend && typeof loadYr === 'function'){ S._yrPend = 1; loadYr().then(() => { S._yrPend = 0; if (S.tab === 'hoy' && !$('.pop-bg')) render(); }); }
+  const D = datosHoy(), h = D.h, ahora = new Date().toTimeString().slice(0, 5), hr = new Date().getHours();
+  const rt = rutinaHoy(), RI = rutinaItems(), rOk = RI.filter((x, i) => rt.ok.indexOf(i) >= 0).length;
+  const accT = D.resp.length + D.rh + D.hacer.length + D.hechas.length + RI.length, accH = D.rh + D.hechas.length + rOk;
+  const evF = D.ev.filter(e => e.todoElDia || !e.fin || e.fin > ahora), prox = evF.find(e => !e.todoElDia);
+  const sal = hr < 12 ? 'Buenos días' : hr < 20 ? 'Buenas tardes' : 'Buenas noches';
+  const foco = D.resp.length ? 'Parte respondiendo a ' + plural(D.resp.length, 'cliente', 'clientes') + ' que esperan.' : D.venc.length ? 'Parte por ' + plural(D.venc.length, 'tarea atrasada', 'tareas atrasadas') + '.' : prox ? 'Lo próximo: ' + prox.titulo + ' a las ' + prox.inicio + '.' : D.negs.length ? 'Buen momento para hacer seguimiento a tus clientes.' : 'Día despejado: ordena el piso y prepara contenido.';
+  const paso = (k, n, ic, t, sub, tono) => '<button class="pv-s ' + (n ? tono : 'ok') + '" data-pv="' + k + '"><span class="pv-si">' + ic + '</span><span class="pv-sn">' + n + '</span><span class="pv-st">' + t + '</span><span class="pv-ss">' + sub + '</span>' + icon('arrow') + '</button>';
+  let html = (S.vistaPiso && !esPiso() ? '<div class="pv-prev">👀 Vista previa del <b>Hoy del Piso de venta</b> (tú sigues como Admin).<button class="btn sm sec" id="pvSalir">Volver a mi Hoy</button></div>' : '') +
+    '<section class="pv-hero"><div class="pv-hl"><div class="pv-k">' + esc(fmtLong(h)) + '</div><h2>' + sal + ', equipo</h2><p>' + esc(foco) + '</p>' +
+      '<div class="pv-ha"><button class="btn" id="pvAdd">' + icon('plus') + ' Agregar tarea</button><button class="btn sec" id="pvCop">' + icon('spark') + ' Preguntar al Cerebro</button><button class="btn sec" id="pvGuia">¿Nuevo en la tienda?</button></div></div>' +
+      '<div class="pv-hr">' + hyWx() + '<div class="pv-ring">' + ringSVG(accT ? accH / accT : 0, 96) + '<div><b>' + accH + '<small>/' + accT + '</small></b><span>acciones del día</span></div></div></div></section>' +
+    '<div class="pv-lbl">Empieza por aquí</div><div class="pv-steps">' +
+      paso('resp', D.resp.length, '💬', 'Responder', D.resp.length ? plural(D.resp.length, 'cliente espera', 'clientes esperan') : 'nadie espera', 'bad') +
+      paso('tareas', D.hacer.length, '✅', 'Tareas de hoy', D.venc.length ? D.venc.length + ' atrasadas' : D.hacer.length ? 'para hoy' : 'todo al día', D.venc.length ? 'bad' : 'warn') +
+      paso('neg', D.negs.length, '🤝', 'Seguimientos', D.negs.length ? 'clientes por seguir' : 'todo al día', 'warn') +
+      paso('agenda', evF.length, '📅', 'Agenda', prox ? prox.inicio + ' · ' + esc(prox.titulo).slice(0, 28) : evF.length ? 'todo el día' : 'sin eventos', 'info') + '</div>';
+  // Fila 1: avisos · calendario del mes · rutina
+  html += '<div class="pv-g">' + postitHTML().replace('hm a-avisos hm-postit', 'hm hm-postit pv-pi') + miniCalHTML() +
+    '<div class="pv-t pv-rt"><div class="pv-h">' + icon('check') + '<b>Rutina del día</b><span class="pv-c">' + rOk + '/' + RI.length + '</span><button class="pv-x" id="pvRtE" aria-label="Editar rutina">✎</button></div>' +
+      '<div class="pv-bar"><i style="width:' + (RI.length ? rOk / RI.length * 100 : 0) + '%"></i></div><div class="pv-rl">' +
+      RI.map((x, i) => { const ok = rt.ok.indexOf(i) >= 0; return '<div class="pv-ri' + (ok ? ' ok' : '') + '"><button class="pv-ck" data-rt="' + i + '" aria-pressed="' + ok + '" aria-label="' + esc(x[1]) + '">' + (ok ? '✓' : '') + '</button><span>' + x[0] + ' ' + esc(x[1]) + '</span>' + (x[2] ? '<button class="pv-go" data-rtg="' + x[2] + '" aria-label="Ir">' + icon('arrow') + '</button>' : '') + '</div>'; }).join('') + '</div></div>';
+  // Fila 2: clientes que esperan · seguimientos · tareas
+  const A = S.neg ? abiertos() : [], segE = ETAPAS.map((e, i) => ({ l: e.corto, v: A.filter(n => n.etapa === e.k).length, c: e.c })).filter(x => x.v);
+  html += '<div class="pv-t"><div class="pv-h">' + icon('note') + '<b>Clientes que esperan</b><span class="pv-c' + (D.resp.length ? ' bad' : '') + '">' + D.resp.length + '</span><button class="pv-x" data-pv="resp" aria-label="Ver todos">›</button></div>' +
+      (D.resp.length ? '<div class="pv-pl">' + D.resp.slice(0, 5).map((x, i) => { const nom = x.c.nombre || x.c.email || 'Cliente'; return '<button class="pv-p" data-rsp="' + i + '"><span class="pv-av">' + esc(iniciales(nom)) + '</span><span class="pv-pt"><b>' + esc(nom) + '</b><small>' + esc(String((x.g.idea && (x.g.idea.titulo || x.g.idea.detalle)) || 'Escribió por WhatsApp').slice(0, 70)) + '</small></span></button>'; }).join('') + '</div>' : '<div class="pv-ok">' + icon('check') + (S.base ? 'Nadie espera respuesta' : 'Revisando los chats…') + '</div>') + '</div>';
+  html += '<div class="pv-t"><div class="pv-h">' + icon('deal') + '<b>Seguimientos</b><span class="pv-c">' + A.length + ' abiertos</span><button class="pv-x" data-pv="neg" aria-label="Ver negocios">›</button></div>' +
+      (A.length ? '<div class="pv-dn"><div class="pv-dc">' + donutSVG(segE.map(x => ({ v: x.v, c: x.c, l: x.l })), 112, String(A.length), 'en curso', 16) + '</div><div class="pv-dlg">' + segE.map(x => '<button data-etapa="' + esc(ETAPAS.find(e => e.corto === x.l).k) + '"><i style="background:' + x.c + '"></i>' + esc(x.l) + '<b>' + x.v + '</b></button>').join('') + '</div></div>' +
+        (D.negs.length ? '<div class="pv-nl">' + D.negs.slice(0, 3).map((x, i) => { const nom = x.a.c ? (x.a.c.nombre || x.n.titulo) : x.n.titulo; return '<button class="pv-n" data-ngo="' + i + '"><b>' + esc(nom) + '</b><small>' + esc(motivoAlerta(x.n, x.a) || x.n.proxima || '') + '</small></button>'; }).join('') + '</div>' : '<div class="pv-ok">' + icon('check') + 'Todos con su próximo paso</div>')
+        : '<div class="pv-ok">' + (S.neg ? 'Sin negocios abiertos' : '<span class="spin"></span>Cargando…') + '</div>') + '</div>';
+  const TL = D.top.length ? D.top : D.hacer.slice(0, 3);
+  html += '<div class="pv-t pv-tk"><div class="pv-h">' + icon('target') + '<b>Tareas de hoy</b><span class="pv-c">' + D.hechas.length + '/' + (D.hacer.length + D.hechas.length) + '</span><button class="pv-x" id="pvTkAdd" aria-label="Agregar tarea">＋</button></div>' +
+      (TL.length ? TL.map(t => taskHTML(t)).join('') + (D.hacer.length > TL.length ? '<button class="pv-more" data-pv="tareas">Ver las ' + D.hacer.length + ' tareas</button>' : '') : '<div class="pv-ok">' + icon('check') + 'Sin tareas pendientes para hoy</div>') + '</div>';
+  // Fila 3: agenda de la semana · redes · contactos
+  const sem = []; for (let k = 0; k < 7; k++){ const f = addDays(h, k), x = cosasDelDia(f); if (x.ev.length || x.tk.length) sem.push([f, x]); }
+  html += '<div class="pv-t"><div class="pv-h">' + icon('clock') + '<b>Próximos 7 días</b><button class="pv-x" data-pv="agenda" aria-label="Abrir calendario">›</button></div>' +
+      (sem.length ? '<div class="pv-wl">' + sem.slice(0, 5).map(([f, x]) => '<button class="pv-w" data-dia="' + f + '"><span class="pv-wd"><b>' + pd(f).getDate() + '</b>' + (f === h ? 'Hoy' : DIAS[pd(f).getDay()]) + '</span><span class="pv-wt">' + esc((x.ev[0] && ((x.ev[0].inicio ? x.ev[0].inicio + ' · ' : '') + x.ev[0].titulo)) || x.tk[0].tarea) + '<small>' + [x.ev.length ? plural(x.ev.length, 'evento', 'eventos') : '', x.tk.length ? plural(x.tk.length, 'tarea', 'tareas') : ''].filter(Boolean).join(' · ') + '</small></span></button>').join('') + '</div>' : '<div class="pv-ok">' + icon('check') + 'Semana libre de eventos</div>') + '</div>';
+  const ig = igActivo() && S.ig ? igMetricas() : null, prC = (S.cont || []).filter(x => x.fecha >= h && x.estado !== 'Publicado').sort((a, b) => a.fecha.localeCompare(b.fecha)).slice(0, 3);
+  html += '<div class="pv-t"><div class="pv-h">' + icon('camera') + '<b>Redes</b><button class="pv-x" data-pv="redes" aria-label="Ir a Redes">›</button></div>' +
+      (ig ? '<div class="pv-ig"><div><b>' + (ig.seg != null ? ig.seg.toLocaleString('es-CL') : '–') + '</b><small>seguidores' + (ig.dSeg != null ? ' · <em class="' + (ig.dSeg >= 0 ? 'up' : 'down') + '">' + (ig.dSeg >= 0 ? '+' : '') + ig.dSeg + '</em> en 28 d' : '') + '</small></div>' + sparkSVG(ig.D.slice(-28).map(d => +d.alcance || 0), 130, 40, '#D9467A') + '</div>' : '') +
+      (prC.length ? '<div class="pv-dk">Próximo contenido</div>' + prC.map(x => '<button class="pv-w" data-hct="' + esc(x.id) + '"><span class="pv-wd"><b>' + pd(x.fecha).getDate() + '</b>' + (x.fecha === h ? 'Hoy' : DIAS[pd(x.fecha).getDay()]) + '</span><span class="pv-wt">' + esc(x.tema) + '<small>' + esc(x.formato) + '</small></span></button>').join('') : '<div class="pv-ok">Sin publicaciones planificadas. ¿Una historia hoy?</div>') + '</div>';
+  const C = S.base ? contactos() : [], nuevos = C.filter(c => c.creado && diffDays(String(c.creado).slice(0, 10), h) < 7).length, porC = C.filter(c => c.tipo === 'Por clasificar').length;
+  const wk = [7, 6, 5, 4, 3, 2, 1, 0].map(k => C.filter(c => { if (!c.creado) return false; const d = diffDays(String(c.creado).slice(0, 10), h); return d >= k * 7 && d < (k + 1) * 7; }).length), mx = Math.max(1, ...wk);
+  html += '<div class="pv-t"><div class="pv-h">' + icon('users') + '<b>Contactos</b><button class="pv-x" data-pv="base" aria-label="Ir a Contactos">›</button></div>' +
+      '<div class="pv-ct"><button data-pv="base"><b>' + C.filter(c => c.tipo === 'Cliente').length + '</b><small>clientes</small></button><button data-pv="nuevos"><b>' + nuevos + '</b><small>nuevos esta semana</small></button><button data-pv="clasif" class="' + (porC ? 'warn' : '') + '"><b>' + porC + '</b><small>por clasificar</small></button></div>' +
+      '<div class="pv-wk">' + wk.map((v, i) => '<i style="height:' + Math.max(8, v / mx * 100) + '%" title="' + (i === 7 ? 'Esta semana' : 'Hace ' + (7 - i) + ' sem.') + ': ' + v + '"></i>').join('') + '</div><div class="pv-cap">Clientes nuevos por semana</div></div>';
+  html += '</div>';
+  $('#view').innerHTML = html;
+  const v = $('#view'); bindTasks(v);
+  const ir = { resp: () => irRutina('resp'), tareas: () => openTareasHoy(), neg: () => irRutina('neg'), agenda: () => go('semana'), redes: () => go('redes'), base: () => go('base'),
+    nuevos: () => { S.bf = 'todos'; S.bv = 'lista'; go('base'); }, clasif: () => { S.bf = 'Por clasificar'; S.bv = 'lista'; go('base'); } };
+  v.querySelectorAll('[data-pv]').forEach(b => b.onclick = e => { e.stopPropagation(); (ir[b.dataset.pv] || (() => {}))(); });
+  v.querySelectorAll('[data-dia]').forEach(b => b.onclick = () => abrirDia(b.dataset.dia));
+  v.querySelectorAll('[data-rt]').forEach(b => b.onclick = () => { const i = +b.dataset.rt, r = rutinaHoy(), k = r.ok.indexOf(i); if (k >= 0) r.ok.splice(k, 1); else r.ok.push(i); lsSet('rutina', r); if (r.ok.length === rutinaItems().length) { try { confetti(60); } catch(e){} toast('🎉 Rutina completa'); } viewHoyPiso(); });
+  v.querySelectorAll('[data-rtg]').forEach(b => b.onclick = () => irRutina(b.dataset.rtg));
+  v.querySelectorAll('[data-rsp]').forEach(b => b.onclick = () => openCto(D.resp[+b.dataset.rsp].c, { tab: 'actividad' }));
+  v.querySelectorAll('[data-ngo]').forEach(b => b.onclick = () => openDeal(D.negs[+b.dataset.ngo].n));
+  v.querySelectorAll('[data-etapa]').forEach(b => b.onclick = () => { S.nf = 'abiertas'; S.nv = 'lista'; S.nq = ''; S.netapa = b.dataset.etapa; go('negocios'); });
+  v.querySelectorAll('[data-hct]').forEach(b => b.onclick = () => openIdea((S.cont || []).find(x => x.id === b.dataset.hct)));
+  v.querySelectorAll('.pv-pi [data-av]').forEach(b => b.onclick = () => { const a = avisos().find(x => x.id === b.dataset.av); if (!a) return; if (esPiso()) modal('📌 ' + esc(a.titulo), '<p style="line-height:1.55;margin:0">' + esc(a.detalle || '') + '</p>' + (a.fecha ? '<div class="hint" style="margin-top:10px">' + esc(fmtLong(a.fecha)) + '</div>' : '')); else avisoForm(a); });
+  bindExterno(v);
+  const f = (id, fn) => { const b = $('#' + id); if (b) b.onclick = fn; };
+  f('pvAdd', () => openAdd({ limite: h })); f('pvTkAdd', () => openAdd({ limite: h })); f('pvCop', () => copiloto()); f('pvGuia', () => openGuia());
+  f('pvRtE', editarRutina); f('pvMa', () => { S.pvMes = (S.pvMes || 0) - 1; viewHoyPiso(); }); f('pvMs', () => { S.pvMes = (S.pvMes || 0) + 1; viewHoyPiso(); });
+  f('pvSalir', () => { S.vistaPiso = false; render(); });
+  if ($('.pv-hero .hy-wx')) $('.pv-hero .hy-wx').onclick = abrirClima;
+}
+// Guía para el equipo de tienda (cuenta Piso de venta).
+const GUIA_PISO = [
+  { ic: '👋', t: 'Bienvenido al equipo', p: 'Esta app te dice qué hacer cada día en Blackline Puerto Varas y te deja todo a mano para atender bien a cada cliente.',
+    l: ['<b>Hoy</b>: tu punto de partida, con los pasos del día y la rutina.', '<b>Tareas</b> y <b>Calendario</b>: lo que hay que hacer y cuándo.', '<b>Negocios</b> y <b>Contactos</b>: tus clientes y sus ventas en curso.', '<b>Redes</b> y <b>Proyectos</b>: contenido e iniciativas de la tienda.'] },
+  { ic: '☀️', t: 'Empieza por Hoy', tab: 'hoy', p: 'Arriba tienes 4 pasos, en orden. Tócalos para ver el detalle.',
+    l: ['<b>Responder</b>: clientes que escribieron y esperan respuesta.', '<b>Tareas de hoy</b>: lo pendiente, las atrasadas primero.', '<b>Seguimientos</b>: clientes a los que hay que volver a escribir.', '<b>Agenda</b>: test rides, entregas y reuniones.', 'Marca la <b>Rutina del día</b> a medida que avanzas.'] },
+  { ic: '💬', t: 'Atender a un cliente', tab: 'base', p: 'Cada cliente tiene su ficha con el chat de WhatsApp, lo que compró y sus notas.',
+    l: ['Toca un cliente para ver su ficha y su conversación.', 'Después de hablar con él, deja una nota: así todo el equipo sabe en qué está.', 'Si pregunta por stock, tallas o precios, pregúntale al <b>Cerebro</b> (tecla <b>/</b>).'] },
+  { ic: '🤝', t: 'Hacer avanzar una venta', tab: 'negocios', p: 'Cada venta pasa por etapas: Nuevo → Contactado → Prueba → Cotización → Negociación → Ganada → Entregada → Postventa.',
+    l: ['Toca una venta para moverla de etapa o anotar el próximo paso.', 'Toda venta abierta debe tener un <b>próximo paso con fecha</b>.', 'Si el cliente no compra, márcala como perdida con el motivo.'] },
+  { ic: '⌨️', t: 'Atajos', p: 'Para moverte rápido:',
+    l: ['<b>＋</b>: agregar una tarea (puedes dictarla).', '<b>Ctrl + K</b>: buscar un cliente, una tarea o una sección.', '<b>/</b>: preguntarle al Cerebro.', 'Esta guía está siempre en el botón <b>?</b> de arriba.'] }
+];
+
 /* ---------- Cerebro: un solo cerebro con skills (reemplaza a los agentes sueltos) ---------- */
 const SKILL_NOM = { tareas: 'Planificar tareas', compras: 'Comprador', seguimiento: 'Seguimiento de clientes', plan_dia: 'Plan del día', contenido: 'Planes y contenido', redes: 'Estrategia de redes', semana: 'Plan de la semana' };
 function usd(x){ x = +x || 0; return 'US$ ' + (x >= 10 ? Math.round(x) : x >= 1 ? x.toFixed(1) : x.toFixed(2)).replace('.', ','); }
@@ -4988,7 +5313,7 @@ function viewCerebro(){
 }
 
 /* ---------- Guía de la app: para que cualquiera del equipo la entienda en 1 minuto ---------- */
-const GUIA = [
+const GUIA_ADMIN = [
   { ic: '👋', t: 'Bienvenido al Organizador', p: 'Todo el trabajo de Blackline Puerto Varas en un solo lugar: tareas, clientes, ventas, compras, redes y un Cerebro que te ayuda. El menú está ordenado en cuatro grupos:',
     l: ['<b>Día a día</b>: Inicio, Hoy, Tareas y Calendario.', '<b>Ventas</b>: Negocios, Contactos y Compras.', '<b>Marca</b>: Redes y Proyectos.', '<b>Inteligencia</b>: el Cerebro y sus skills.'] },
   { ic: '☀️', t: 'Día a día', tab: 'hoy', p: 'Empieza por aquí cada mañana.',
@@ -5003,7 +5328,8 @@ const GUIA = [
     l: ['<b>Ctrl + K</b>: buscar clientes, tareas o secciones.', '<b>/</b>: preguntarle al Cerebro.', '<b>＋</b>: agregar una tarea.  <b>↻</b>: actualizar.  <b>⚙️</b>: ajustes.', 'Esta guía siempre está en el botón <b>?</b> de arriba.'] }
 ];
 function openGuia(paso){
-  let k = +paso || 0; try { LS.guiaVista = '1'; } catch(e){}
+  const GUIA = esPiso() ? GUIA_PISO : GUIA_ADMIN;
+  let k = +paso || 0; try { LS[esPiso() ? 'guiaVistaP' : 'guiaVista'] = '1'; } catch(e){}
   const md = modal('Guía de la app', '<div class="gd" id="gd"></div>');
   const pintar = () => {
     const g = GUIA[k], box = md.el.querySelector('#gd');
@@ -7700,8 +8026,9 @@ function showSetup(){
   };
 }
 function showSettings(){
+  if (esPiso()){ sheet(ajustesPisoHTML()); $('#p_gd').onclick = () => { closeSheet(); openGuia(); }; $('#p_rt').onclick = () => { closeSheet(); editarRutina(); }; $('#p_out').onclick = () => { if (confirm('¿Cerrar la sesión en este dispositivo?')) cerrarSesion(); }; return; }
   const g = S.google, gTxt = S.extInactivo || (g && g.inactivo) ? 'No activadas' : !g ? 'Revisando…' : 'Activas ✓ · ' + (g.eventos || []).length + ' eventos · ' + (g.correos || []).length + ' correos' + (g.avisos && g.avisos.length ? ' · ⚠️ ' + g.avisos.join(' · ') : '');
-  sheet('<h3>⚙️ Ajustes</h3><div class="hint">Conectado a tu Sheet del organizador.</div>' +
+  sheet('<h3>⚙️ Ajustes</h3><div class="hint">Conectado a tu Sheet del organizador.</div>' + usuariosCardHTML() +
     (S.ext && !S.ext.waHist && extNivel() >= 24 ? '<div class="card"><b>💬 Historial de WhatsApp</b><div class="hint">Todavía no llega el historial. Al conectar el número con «compartir historial», Meta lo envía por partes durante las primeras 24 horas y aquí verás el avance.</div></div>' : '') +
     (S.ext && S.ext.waHist ? '<div class="card"><b>💬 Historial de WhatsApp</b><div class="hint">' + (S.ext.waHist.rechazado ? 'No se compartió el historial al conectar el número (' + esc(S.ext.waHist.rechazado) + '). Para recibirlo hay que desconectar y volver a conectar el número aceptando «compartir historial».' : 'Recibidos ' + (S.ext.waHist.mensajes || 0).toLocaleString('es-CL') + ' mensajes de ' + (S.ext.waHist.chats || 0) + ' chats' + (S.ext.waHist.fases ? ' · avance por etapa: ' + Object.keys(S.ext.waHist.fases).sort().map(f => ['último día', 'hasta 90 días', 'hasta 180 días'][+f] + ' ' + S.ext.waHist.fases[f] + '%').join(', ') : S.ext.waHist.progreso != null ? ' · avance ' + S.ext.waHist.progreso + '%' : '') + ' · último envío ' + esc(haceTxt(String(S.ext.waHist.ultimo || '').slice(0, 10))) + '. El Cerebro arma el perfil de cada contacto en modo masivo (sin tareas ni negocios antiguos).') + '</div></div>' : '') +
     '<div class="card"><b>🎨 Diseño de la interfaz</b><div class="hint">El diseño nuevo ordena la app en secciones, con resúmenes más simples. El clásico es el anterior. No cambia ningún dato.</div><div class="seg" style="margin-top:10px"><button type="button" class="pill' + (LS.ui !== 'clasico' ? ' on' : '') + '" data-ui="nuevo">Nuevo</button><button type="button" class="pill' + (LS.ui === 'clasico' ? ' on' : '') + '" data-ui="clasico">Clásico</button></div></div>' +
@@ -7719,6 +8046,7 @@ function showSettings(){
   if (deferredInstall) $('#s_inst').onclick = async () => { deferredInstall.prompt(); await deferredInstall.userChoice; deferredInstall = null; closeSheet(); };
   $('#s_g').onclick = () => g && !g.inactivo ? openSugerencias() : showExtrasSetup();
   const fz = $('#s_fz'); if (fz) fz.onclick = () => { closeSheet(); abrirFuentes(); };
+  bindUsuariosCard();
   $('#s_cb').onclick = () => { closeSheet(); go('cerebro'); }; $('#s_gd').onclick = () => { closeSheet(); openGuia(); };
   const sav = $('#s_av'); if (sav) sav.onclick = () => { closeSheet(); abrirAvisos(); };
   $$('[data-ui]').forEach(b => b.onclick = () => { LS.ui = b.dataset.ui; document.body.classList.toggle('ui2', LS.ui !== 'clasico'); closeSheet(); render(); toast(LS.ui === 'clasico' ? 'Diseño clásico' : 'Diseño nuevo'); });
@@ -7744,7 +8072,8 @@ S.ext = lsGet('extCache', null);
 S.base = lsGet('baseCache', null);
 { const c = lsGet('igCache', null); if (c){ S.ig = c.ig; S.cont = c.cont; } }
 S.neg = lsGet('negCache', null);
-if (!LS.url || !LS.token) { render(); showSetup(); } else { render(); load(); revisarCompartido(); }
+if (!LS.url || !LS.token) { render(); showSetup(); } else if (LS.usrActivos === '1' && !LS.ses) { pantallaLogin(); } else { render(); load(); revisarCompartido(); }
+if (LS.usrActivos === '1' && LS.ses){ const bs = $('nav.bottom .brand small'); if (bs) bs.textContent = esPiso() ? 'Piso de venta' : 'Blackline · Admin'; }
 
 /* ---------- Resumen de cada pestaña: qué hay aquí, explicado con gráficos ---------- */
 // Colores por categoría (orden fijo, validados para daltonismo). «Otras» siempre en gris.
@@ -7825,6 +8154,7 @@ const DASH = {
   hoy: dashHoy, tareas: dashTareas, semana: dashCal, compras: dashCompras, negocios: dashNeg, proy: dashProy, base: dashBase, redes: dashRedes
 };
 function ponerDash(tab){
+  if ((esPiso() || S.vistaPiso) && tab === 'hoy') return;
   const v = $('#view'); if (!v || !DASH[tab] || v.querySelector(':scope > .dsh')) return;
   const f = v.firstElementChild; if (!f || (f.classList.contains('empty') && v.children.length === 1)) return;
   const d = DASH[tab](); if (!d) return;
@@ -7904,7 +8234,7 @@ function dashCompras(){
     ] };
 }
 function dashNeg(){
-  if (!S.neg) return null;
+  if (!S.neg || esPiso()) return null;   // el Piso de venta no ve el resumen en pesos
   const m = metricasNeg(), A = abiertos(), aten = m.an.filter(x => requiereAtencion(x.a)).sort((x, y) => y.a.prioridad - x.a.prioridad);
   const seg = ETAPAS.map((e, i) => { const v = A.filter(n => n.etapa === e.k).reduce((s, n) => s + (n.valor || 0), 0); return { l: e.corto, v, t: v ? clpCorto(v) : '–', c: SEQ[i] }; });
   return { ic: 'deal', t: 'Resumen de ventas', intro: 'Cuánto hay en juego, en qué etapa está cada venta y cuáles necesitan un empujón.',

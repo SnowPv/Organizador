@@ -15,8 +15,8 @@
  * Para actualizar este archivo más adelante: reemplaza todo su contenido y repite los dos pasos anteriores.
  */
 
-const EX_VERSION = '2026-12-26';
-const EX_NIVEL = 39;      // la app lo usa para saber qué funciones tiene este script
+const EX_VERSION = '2027-01-02';
+const EX_NIVEL = 40;      // la app lo usa para saber qué funciones tiene este script
 const EX_HOJA = 'Tareas';
 const EX_PRIMERA = 4;
 const EX_ULTIMA = 400;
@@ -102,7 +102,113 @@ function ex_cuentaVigente_() {
   return false;
 }
 
+/* ==================== Usuarios: Admin y Piso de Venta ====================
+   Mientras no haya contraseñas configuradas, la app funciona como siempre (todo es Admin).
+   Al configurarlas (Ajustes → Usuarios), cada consulta debe traer una sesión firmada:
+   - Admin: todo, igual que antes.
+   - Piso de Venta: sin pantalla de Inicio ni datos financieros de la tienda (ventas Bsale, metas, costos y
+     márgenes de proveedores, gasto del Cerebro, planillas de precios). Ve lo de cada cliente para atenderlo.
+   Las contraseñas se guardan como hash con sal (nunca en texto). Si se olvida la de Admin: en Apps Script →
+   Configuración del proyecto → Propiedades del script, borra EX_USUARIOS y vuelve a crearlas desde la app. */
+var EX_ROL = 'admin';
+// Lo único que puede pedir el Piso de Venta (todo lo demás responde «solo Admin»).
+const EX_OPS_PISO = ['extras', 'google', 'subtareas', 'repetir', 'siguiente', 'base', 'contacto', 'chat', 'chats', 'nota', 'negocios', 'negocio', 'negocioNota',
+  'eventosContacto', 'perderNegocio', 'agente', 'bsale', 'instagram', 'contenido', 'perfilCorregir', 'oportunidad', 'leadsCanal', 'specialized', 'noticias', 'clima',
+  'avisos', 'copiloto', 'global', 'tareaIA', 'eventoCrear', 'eventos', 'sesion', 'salir'];
+// Herramientas del Cerebro que muestran números de la tienda o costos: el Piso de Venta no las tiene.
+const EX_TOOLS_SOLO_ADMIN = ['ventas_tienda', 'buscar_en_proveedores', 'oportunidades_compra', 'correos_proveedores', 'buscar_en_planillas', 'buscar_correos'];
+const EX_SES_DIAS = { admin: 30, piso: 14 };
+
+function ex_usuarios_() { try { return JSON.parse(PropertiesService.getScriptProperties().getProperty('EX_USUARIOS') || 'null'); } catch (e) { return null; } }
+function ex_hashClave_(clave, sal) {
+  let h = sal + '|' + clave;
+  for (let i = 0; i < 400; i++) h = Utilities.base64Encode(Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, h + '|' + sal, Utilities.Charset.UTF_8));
+  return h;
+}
+function ex_secretoSes_() {
+  const pr = PropertiesService.getScriptProperties(); let s = pr.getProperty('EX_SES_SECRETO');
+  if (!s) { s = Utilities.getUuid() + Utilities.getUuid(); pr.setProperty('EX_SES_SECRETO', s); }
+  return s;
+}
+function ex_b64_(s) { return Utilities.base64EncodeWebSafe(s, Utilities.Charset.UTF_8).replace(/=+$/, ''); }
+function ex_firmaSes_(b) { return Utilities.base64EncodeWebSafe(Utilities.computeHmacSha256Signature(b, ex_secretoSes_())).replace(/=+$/, ''); }
+function ex_igualSeguro_(a, b) { a = String(a); b = String(b); if (a.length !== b.length) return false; let d = 0; for (let i = 0; i < a.length; i++) d |= a.charCodeAt(i) ^ b.charCodeAt(i); return d === 0; }
+function ex_crearSesion_(rol) {
+  const u = ex_usuarios_(), b = ex_b64_(JSON.stringify({ r: rol, v: u[rol].v, e: Date.now() + EX_SES_DIAS[rol] * 86400000 }));
+  return b + '.' + ex_firmaSes_(b);
+}
+function ex_sesionValida_(t) {
+  const x = String(t || '').split('.'); if (x.length !== 2 || !ex_igualSeguro_(ex_firmaSes_(x[0]), x[1])) return null;
+  let o; try { const b = x[0] + '==='.slice((x[0].length + 3) % 4); o = JSON.parse(Utilities.newBlob(Utilities.base64DecodeWebSafe(b)).getDataAsString()); } catch (e) { return null; }
+  const u = ex_usuarios_();
+  if (!o || !u || !u[o.r] || u[o.r].v !== o.v || !(Date.now() < o.e)) return null;
+  return o;
+}
+function ex_login_(p) {
+  const u = ex_usuarios_(), rol = p.usuario === 'piso' ? 'piso' : 'admin';
+  if (!u) return { ok: true, abierto: true, rol: 'admin' };
+  if (!u[rol]) throw new Error(rol === 'piso' ? 'La cuenta Piso de Venta aún no tiene contraseña (la crea el Admin en Ajustes).' : 'Cuenta no configurada');
+  const c = CacheService.getScriptCache(), k = 'ex_login_' + rol, n = +c.get(k) || 0;
+  if (n >= 6) throw new Error('Demasiados intentos. Espera 10 minutos y vuelve a probar.');
+  if (!ex_igualSeguro_(ex_hashClave_(String(p.clave || ''), u[rol].sal), u[rol].hash)) { c.put(k, String(n + 1), 600); Utilities.sleep(700); throw new Error('Contraseña incorrecta'); }
+  c.remove(k);
+  return { ok: true, rol: rol, ses: ex_crearSesion_(rol), dias: EX_SES_DIAS[rol] };
+}
+// Crear o cambiar contraseñas (solo Admin). Cambiar una cierra las sesiones abiertas de esa cuenta.
+function ex_usuariosConf_(p) {
+  const pr = PropertiesService.getScriptProperties(), u = ex_usuarios_() || {}, nuevo = !u.admin;
+  if (p.desactivar) { pr.deleteProperty('EX_USUARIOS'); return { ok: true, activos: false }; }
+  if (nuevo && !p.admin) throw new Error('Primero crea la contraseña de Admin');
+  ['admin', 'piso'].forEach(function (rol) {
+    if (!p[rol]) return;
+    const c = String(p[rol]);
+    if (c.length < 6) throw new Error('La contraseña debe tener al menos 6 caracteres');
+    const sal = Utilities.getUuid();
+    u[rol] = { sal: sal, hash: ex_hashClave_(c, sal), v: ((u[rol] && u[rol].v) || 0) + 1, f: new Date().toISOString().slice(0, 10) };
+  });
+  if (p.piso && u.admin && ex_igualSeguro_(ex_hashClave_(String(p.piso), u.admin.sal), u.admin.hash)) throw new Error('Usa una contraseña distinta para Piso de Venta');
+  pr.setProperty('EX_USUARIOS', JSON.stringify(u));
+  return { ok: true, activos: true, piso: !!u.piso, ses: (nuevo || p.admin) ? ex_crearSesion_('admin') : '' };
+}
+function ex_usuariosEstado_() { const u = ex_usuarios_(); return { ok: true, activos: !!u, piso: !!(u && u.piso), adminDesde: u && u.admin ? u.admin.f : '', pisoDesde: u && u.piso ? u.piso.f : '' }; }
+// Herramientas del Cerebro según la cuenta.
+function ex_toolsRol_(L) { return EX_ROL === 'piso' ? L.filter(function (t) { return EX_TOOLS_SOLO_ADMIN.indexOf(t.name) < 0; }) : L; }
+// Lo que el Piso de Venta no debe recibir aunque la consulta esté permitida.
+function ex_filtrarPiso_(op, r) {
+  if (!r || typeof r !== 'object') return r;
+  if (op === 'global') { delete r.compras; delete r.cerebro; delete r.fuentes; }
+  if (op === 'google') delete r.correos;
+  if (op === 'extras') { delete r.agente; delete r.waHist; }
+  if (op === 'negocios' && r.metaVentas !== undefined) delete r.metaVentas;
+  return r;
+}
+
+// Puerta de entrada de la app (la llama WebApp). Revisa la sesión y los permisos, y luego ejecuta la consulta.
 function app_extra_(p) {
+  p = p || {};
+  if (p.op === 'login') return ex_login_(p);
+  if (p.op === 'usuariosEstado') return ex_usuariosEstado_();
+  if (p.op === 'whatsapp') { EX_ROL = 'admin'; return ex_ruta_(p); }   // aviso de WhatsApp (viene del servicio de mensajes, no de una persona)
+  const u = ex_usuarios_();
+  EX_ROL = 'admin';
+  if (u) {
+    const s = ex_sesionValida_(p.ses);
+    if (!s) return { ok: false, error: 'SESION: tu sesión terminó, vuelve a ingresar', sesion: false };
+    EX_ROL = s.r;
+  }
+  if (p.op === 'sesion') return { ok: true, rol: EX_ROL, activos: !!u };
+  if (p.op === 'usuariosConf') { if (EX_ROL !== 'admin') return { ok: false, error: 'PERMISO: solo la cuenta Admin' }; return ex_usuariosConf_(p); }
+  if (EX_ROL === 'piso') {
+    const ok = EX_OPS_PISO.indexOf(p.op) >= 0 || (p.op === 'bsaleVentas' && p.cliente);   // compras de UN cliente (para atenderlo), no las ventas de la tienda
+    if (!ok) return { ok: false, error: 'PERMISO: esta función es solo para la cuenta Admin' };
+    if (p.op === 'avisos' && (p.guardar || p.borrar || p.archivar)) return { ok: false, error: 'PERMISO: los avisos los publica el Admin' };
+  }
+  const r = ex_ruta_(p);
+  if (r && typeof r === 'object' && p.op === 'extras') { r.usuarios = !!u; r.rol = EX_ROL; }
+  return EX_ROL === 'piso' ? ex_filtrarPiso_(p.op, r) : r;
+}
+
+function ex_ruta_(p) {
   switch (p.op) {
     case 'extras':     return ex_leer_();
     case 'google':     return app_google_(p);
@@ -3878,10 +3984,10 @@ function ex_copiloto_(p) {
   });
   while (messages.length && messages[0].role !== 'user') messages.shift();
   const estado = { acciones: [], usadas: {} };
-  const tools = EX_COP_TOOLS.map(function (t, i) { return i === EX_COP_TOOLS.length - 1 ? Object.assign({}, t, { cache_control: { type: 'ephemeral' } }) : t; });
+  const propias = ex_toolsRol_(EX_COP_TOOLS), tools = propias.map(function (t, i) { return i === propias.length - 1 ? Object.assign({}, t, { cache_control: { type: 'ephemeral' } }) : t; });
   let texto = '';
   for (let paso = 0; paso < 7; paso++) {
-    const j = ex_claudeMensajes_({ model: modelo, max_tokens: 6000, output_config: { effort: /haiku/.test(modelo) ? 'medium' : 'low' }, system: [{ type: 'text', text: EX_COP_SISTEMA + '\n\n' + ex_skillsIndice_(), cache_control: { type: 'ephemeral' } }], tools: tools, messages: messages });
+    const j = ex_claudeMensajes_({ model: modelo, max_tokens: 6000, output_config: { effort: /haiku/.test(modelo) ? 'medium' : 'low' }, system: [{ type: 'text', text: EX_COP_SISTEMA + '\n\n' + ex_skillsIndice_() + (EX_ROL === 'piso' ? '\n\nCUENTA PISO DE VENTA: quien pregunta es un vendedor del equipo, no Gustavo. No entregues ventas totales de la tienda, metas, márgenes, costos de compra ni gasto; si lo piden, di que eso lo ve el Admin. Sí puedes dar precios de venta al público, stock y el historial de un cliente para atenderlo.' : ''), cache_control: { type: 'ephemeral' } }], tools: tools, messages: messages });
     if (j.stop_reason === 'refusal') { texto = 'No puedo ayudar con eso.'; break; }
     messages.push({ role: 'assistant', content: j.content });
     texto = (j.content || []).filter(function (c) { return c.type === 'text'; }).map(function (c) { return c.text; }).join('\n').trim() || texto;
@@ -3974,8 +4080,8 @@ function ex_tareaIA_(p) {
     'Categorías válidas (área): ' + (cfg.categorias || []).map(function (c) { return c.nombre + ' (' + c.area + ')'; }).join(', ') + '.\n' +
     (p.notas ? 'Notas que ya tenía la tarea: ' + String(p.notas).slice(0, 800) + '\n' : '') +
     'Lo que dictó o escribió Gustavo:\n«' + texto.slice(0, 2000) + '»';
-  const propias = EX_TAR_TOOLS_PROPIAS, deCop = EX_COP_TOOLS.filter(function (t) { return EX_TAR_DE_COP.indexOf(t.name) >= 0; });
-  let tools = deCop.concat(propias.slice(0, 2)).concat([Object.assign({}, propias[2], { cache_control: { type: 'ephemeral' } })]);
+  const propias = EX_TAR_TOOLS_PROPIAS, deCop = ex_toolsRol_(EX_COP_TOOLS.filter(function (t) { return EX_TAR_DE_COP.indexOf(t.name) >= 0; }));
+  let tools = deCop.concat(ex_toolsRol_(propias.slice(0, 2))).concat([Object.assign({}, propias[2], { cache_control: { type: 'ephemeral' } })]);
   const web = { type: haiku ? 'web_search_20250305' : 'web_search_20260209', name: 'web_search', max_uses: 3, user_location: { type: 'approximate', country: 'CL', city: 'Puerto Varas', timezone: 'America/Santiago' } };
   let conWeb = pr.getProperty('TAREAS_WEB') !== 'no';
   const messages = [{ role: 'user', content: pedido }], estado = { acciones: [], usadas: {} };
