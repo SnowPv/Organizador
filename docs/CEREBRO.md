@@ -360,3 +360,9 @@ Antes cada «agente» (Copiloto, agente de ventas, agente de tareas, comprador, 
 - **App**: pantalla de ingreso; el Piso de venta parte en **Hoy** (sin Inicio, Compras ni Cerebro) con un panel propio: 4 pasos para empezar, avisos, calendario del mes, rutina diaria (editable por dispositivo), clientes que esperan, seguimientos por etapa (sin montos), tareas, próximos 7 días, redes y contactos. Las tareas del área «Personal» no se muestran. Guía propia para el equipo. El Admin puede ver el Hoy del Piso desde Ajustes → Usuarios.
 - **Si se olvida la clave Admin**: Apps Script → Configuración del proyecto → Propiedades del script → borrar `EX_USUARIOS` y volver a crearlas desde la app.
 - **Límite conocido**: las acciones propias de WebApp (leer/guardar tareas) solo piden el link y la clave del dispositivo, no la sesión. Las tareas no tienen datos financieros.
+
+## Diseño con menos texto (app v58)
+
+- **Tareas → Tablero** (vista por defecto en el diseño nuevo): columnas Atrasadas · Hoy · Mañana · Esta semana · Después · Sin fecha. Tarjetas compactas con ícono de color por categoría (`CAT_ESTILO`), días de atraso, hora, subtareas, urgencia y avatar del cliente o negociación vinculada. Acciones de un toque: ✓ hecha, ↷ mañana / ↶ hoy (con Deshacer), ▶ foco. Arrastrar una tarjeta a otra columna la reprograma. «＋» en cada columna crea la tarea con esa fecha. Tecla **N** = nueva tarea.
+- Una franja de una línea reemplaza los 4 recuadros de resumen de Tareas: avance de hoy, racha, carga de los próximos 7 días (cada barra abre el día) y pestañas.
+- Contactos: los avisos largos pasan a una fila de indicadores compactos; los 8 indicadores quedan en una sola fila en pantallas grandes. Resúmenes por pestaña más bajos.
