@@ -2145,6 +2145,36 @@ body.piso nav.bottom [data-tab=inicio],body.piso nav.bottom [data-tab=compras],b
 .k2{padding:14px 16px 12px}.k2-h{margin:6px 0 10px}.k2-v{font-size:27px}.k2-cols{height:56px}.k2-f{margin-top:10px;padding-top:8px}
 @media (min-width:1400px){.kstrip.k4:has(+ .kstrip),.kstrip.k4 + .kstrip{display:inline-grid;width:calc(50% - 6px);vertical-align:top;margin-top:14px}.kstrip.k4 + .kstrip{margin-left:12px}}
 .ks1{padding:10px 12px}
+
+/* Portadas de Contactos y Redes (mismo lenguaje que el Hoy del Piso de venta) */
+.pv-hb{display:flex;flex-direction:column;gap:6px}
+.pv-hb button{all:unset;cursor:pointer;display:grid;grid-template-columns:96px 1fr auto;align-items:center;gap:10px;font-size:12.5px;color:#344054;padding:3px 4px;border-radius:8px}
+.pv-hb button:hover{background:var(--soft)}.pv-hb span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pv-hb i{height:10px;border-radius:6px;background:var(--soft);overflow:hidden}.pv-hb u{display:block;height:100%;border-radius:6px;text-decoration:none}
+.pv-hb b{font-variant-numeric:tabular-nums;font-size:12.5px;min-width:28px;text-align:right}
+.pv-li{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.pv-li button{all:unset;cursor:pointer;box-sizing:border-box;display:flex;align-items:center;gap:7px;background:#FAFBFC;border-radius:10px;padding:7px 9px;font-size:12.5px;font-weight:600;color:#344054;min-width:0}
+.pv-li button:hover{background:#EEF3FA}.pv-li .ico{width:14px;height:14px;color:var(--accent-ink);flex:none}.pv-li span{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.pv-li b{font-variant-numeric:tabular-nums}
+.pv-li button.cero{opacity:.5}
+.pv-ct > div{background:#FAFBFC;border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:1px}.pv-ct > div.warn b{color:var(--warn-ink)}
+.pv-ab{display:flex;align-items:flex-end;gap:2px;height:84px}.pv-ab i{flex:1;border-radius:3px 3px 1px 1px;background:var(--s2);min-height:3px}.pv-ab i.pub{background:#D9467A}.pv-ab i:hover{background:var(--s4)}
+.pv-sw{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}
+.pv-sw > div{display:flex;flex-direction:column;align-items:center;gap:4px;background:#FAFBFC;border-radius:12px;padding:8px 2px;min-height:110px}
+.pv-sw > div.hoy{background:var(--accent-soft)}
+.pv-sw small{font-size:10.5px;font-weight:800;text-transform:uppercase;color:var(--muted)}.pv-sw b{font-size:16px;letter-spacing:-.02em}
+.pv-sw button{all:unset;cursor:pointer;width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;background:var(--card);box-shadow:0 1px 2px rgba(16,24,40,.08)}
+.pv-sw button.e-idea{opacity:.65}.pv-sw button.e-publicado{box-shadow:inset 0 0 0 2px var(--ok)}.pv-sw button.e-grabado{box-shadow:inset 0 0 0 2px #F59E0B}
+.pv-sw button.vac{background:none;box-shadow:none;border:1.5px dashed #D0D5DD;color:#98A2B3;font-size:13px;font-weight:800}.pv-sw button:hover{transform:translateY(-1px)}
+.pv-slot{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.pv-slot > div{background:#FAFBFC;border-radius:14px;padding:12px 10px;display:flex;flex-direction:column;align-items:center;gap:2px;text-align:center}
+.pv-slot > div.top{background:linear-gradient(160deg,#FCE9F0,#fff);box-shadow:inset 0 0 0 1.5px rgba(217,70,122,.35)}
+.pv-slot b{font-size:18px;letter-spacing:-.02em}.pv-slot span{font-size:12.5px;color:#344054;font-weight:600}.pv-slot small{font-size:11px;color:var(--muted);font-weight:800}
+.pv-igk{display:flex;flex-direction:column;gap:2px}.pv-igk > b{font-size:28px;font-weight:800;letter-spacing:-.035em}.pv-igk small{font-size:12px;color:var(--muted)}.pv-igk em{font-style:normal;font-weight:800}.pv-igk em.up{color:var(--ok-ink)}.pv-igk em.down{color:var(--bad-ink)}
+a.pv-tp{text-decoration:none;color:inherit;flex-direction:row;align-items:center;gap:10px}.pv-tp > span:first-child{font-size:18px}.pv-tpt{min-width:0;flex:1}.pv-tpt b{display:block;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.pv-tpt small{display:block;font-size:12px;color:var(--muted)}
+.pv-hero .pv-dn{gap:12px}.pv-hero .pv-dlg{min-width:150px}
+.pv-mas{margin-top:18px}
+#view:has(.pv-hero) #igPlan,#view:has(.pv-hero) #bImp2{display:none}
+@media (max-width:720px){.pv-sw{gap:3px}.pv-sw > div{min-height:96px}.pv-sw button{width:26px;height:26px;font-size:13px}.pv-li{grid-template-columns:1fr}.pv-hb button{grid-template-columns:80px 1fr auto}.pv-hero .pv-hr{flex-wrap:wrap;align-items:center;gap:14px}.pv-igk svg{width:120px}}
 </style>
 
 
@@ -2269,7 +2299,7 @@ async function apiX(op, extra){
 }
 // Nivel 2 del script Extras: recordatorios y base de contactos. Nivel 3: la base solo usa contacto@blacklinechile.cl. Nivel 4: eventos de varios días.
 function extNivel(){ return S.extInactivo ? 0 : (S.ext && S.ext.nivel) || 1; }
-const APP_VER = 'v58', NIVEL_ULTIMO = 40;
+const APP_VER = 'v59', NIVEL_ULTIMO = 40;
 function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < NIVEL_ULTIMO; }
 let sincTimer = null;
 // Después de cambiar tareas, el script actualiza los recordatorios del calendario (en segundo plano).
@@ -3430,8 +3460,8 @@ function viewBase(){
     (extNivel() >= 8 ? '<button class="btn sm" id="bImp2">' + icon('users') + ' Importar chats</button>' : '') + '</div>';
   if (vt === 'seg' && extNivel() >= 13 && !S._baseStatsPend && (!S.leadsCanal || (extNivel() >= 14 && !S.igEst))){ S._baseStatsPend = 1; Promise.all([loadLeads(), S.igEst ? null : apiX('igEstrategia').then(e => { S.igEst = e; }).catch(() => {})]).then(() => { S._baseStatsPend = 0; if (S.tab === 'base') render(); }); }
   if (vt !== 'lista'){
-    $('#view').innerHTML = top + (vt === 'seg' ? segmentosHTML() : vt === 'camp' ? campanasHTML() : vt === 'sn' ? sinGuardarHTML() : vt === 'chats' ? chatsHTML() : opsHTML());
-    bindBaseTop(); if (vt === 'camp') bindCampanas(); if (vt === 'sn') bindSinGuardar(); if (vt === 'chats') bindChats();
+    $('#view').innerHTML = top + (vt === 'seg' ? (UI2() ? baseResumenV2() : segmentosHTML()) : vt === 'camp' ? campanasHTML() : vt === 'sn' ? sinGuardarHTML() : vt === 'chats' ? chatsHTML() : opsHTML());
+    bindBaseTop(); if (vt === 'seg' && UI2()) bindBaseResumenV2(); if (vt === 'camp') bindCampanas(); if (vt === 'sn') bindSinGuardar(); if (vt === 'chats') bindChats();
     if (vt === 'ops'){ const L2 = oportunidades(); bindOps($('#view'), L2, () => viewBase()); }
     return;
   }
@@ -3739,15 +3769,112 @@ function viewRedes(){
   const t = S.rtab || (igActivo() ? 'resumen' : 'contenido');
   let html = '<div class="btabs"><div class="tabs">' + tabs.map(x => '<button class="' + (x[0] === t ? 'on' : '') + '" data-rt="' + x[0] + '">' + x[1] + '</button>').join('') + '</div>' +
     (igActivo() ? '<button class="btn sm sec" id="igSinc">↻ Actualizar</button>' : '') + '<button class="btn sm" id="igPlan">' + icon('spark') + ' Planificar contenido</button></div>';
-  html += ({ resumen: redesResumen, contenido: redesContenido, estudio: redesEstudio, audiencia: redesAudiencia, leads: redesLeads, estrategia: redesEstrategia })[t]();
+  html += ({ resumen: UI2() ? redesResumenV2 : redesResumen, contenido: redesContenido, estudio: redesEstudio, audiencia: redesAudiencia, leads: redesLeads, estrategia: redesEstrategia })[t]();
   $('#view').innerHTML = html;
   $$('[data-rt]').forEach(b => b.onclick = () => { S.rtab = b.dataset.rt; viewRedes(); });
   const sb = $('#igSinc'); if (sb) sb.onclick = async e => { const b = e.target.closest('button'); b.disabled = true; b.innerHTML = '<span class="spin"></span>Actualizando…'; try { const r = await apiX('instagram', { sinc: 1 }); S.ig = r; await loadLeads(true); toast('Instagram actualizado ✓'); render(); } catch(err){ b.disabled = false; b.textContent = '↻ Actualizar'; toast('No se pudo: ' + err.message); } };
   $('#igPlan').onclick = () => planContenido();
   bindRedes(t);
+  if (t === 'resumen' && UI2() && igActivo()) bindRedesV2();
 }
 function igConectarHTML(){
   return '<div class="sec rd-con"><div class="wh">' + icon('camera') + 'Conecta tu Instagram</div><p>Con la cuenta conectada verás alcance, qué formatos y horarios funcionan, tu audiencia y cuántos clientes te llegan desde Instagram. Mientras tanto, el calendario, la audiencia de tus chats y los links con código ya funcionan.</p><ol><li>Activa la verificación en dos pasos con una app de autenticación (no SMS).</li><li>Crea la app en developers.facebook.com → Instagram → «API setup with Instagram login» → genera el token.</li><li>Guárdalo como <b>IG_TOKEN</b> en Propiedades del script y ejecuta <b>probarInstagram</b>.</li></ol><a class="btn sm sec" href="https://github.com/SnowPv/Organizador/blob/main/docs/INSTAGRAM.md" target="_blank" style="text-decoration:none">Abrir la guía</a></div>';
+}
+/* ---------- Resúmenes de Contactos y Redes con el estilo del Hoy del Piso de venta ----------
+   Portada con foco del día · 4 pasos para empezar · mosaico de tarjetas que se tocan. El análisis completo
+   de siempre queda plegado al final («Más análisis»): no se pierde nada, solo deja de estar a la vista. */
+function pvPaso(attr, n, ic, t, sub, tono){ return '<button class="pv-s ' + (n ? tono : 'ok') + '" ' + attr + '><span class="pv-si">' + ic + '</span><span class="pv-sn">' + n + '</span><span class="pv-st">' + t + '</span><span class="pv-ss">' + sub + '</span>' + icon('arrow') + '</button>'; }
+function pvTile(ic, t, extra, cuerpo, cls){ return '<div class="pv-t' + (cls ? ' ' + cls : '') + '"><div class="pv-h">' + icon(ic) + '<b>' + t + '</b>' + (extra || '') + '</div>' + cuerpo + '</div>'; }
+function pvBarrasH(L, attr){ const mx = Math.max(1, ...L.map(x => x.v)); return '<div class="pv-hb">' + L.map(x => '<button ' + (attr ? attr(x) : '') + '><span>' + esc(x.l) + '</span><i><u style="width:' + Math.max(4, x.v / mx * 100) + '%;background:' + (x.c || 'var(--s3)') + '"></u></i><b>' + esc(x.t != null ? x.t : x.v) + '</b></button>').join('') + '</div>'; }
+function masAnalisis(clave, html){ return '<details class="mas-an pv-mas"' + (LS[clave] === '1' ? ' open' : '') + ' ontoggle="LS.' + clave + ' = this.open ? \'1\' : \'0\'"><summary><span>' + icon('chart') + ' Más análisis</span><small>Todo el detalle de siempre</small></summary>' + html + '</details>'; }
+
+function baseResumenV2(){
+  const P = perfiles(), C = contactos(), h = hoy(), esp = esperanRespuesta(), ops = oportunidades(), frios = contactosFrios(), sg = sinGuardar();
+  const pend = perfPendientes(), sp0 = extNivel() >= 14 && agenteActivo() && !S.imx ? sinPerfil(false).length : 0;
+  const tipos = [['Cliente', 'Clientes', 'var(--s4)'], ['Proveedor', 'Proveedores', '#F59E0B'], ['Por clasificar', 'Por clasificar', 'var(--s1)']];
+  const nT = tipos.map(t => C.filter(c => c.tipo === t[0]).length), otros = C.length - nT.reduce((s, x) => s + x, 0);
+  const foco = esp.length ? (esp[0].c.nombre || 'Un cliente') + (esp.length > 1 ? ' y ' + plural(esp.length - 1, 'cliente más', 'clientes más') + ' esperan respuesta.' : ' espera tu respuesta.') : ops.length ? 'Tienes ' + plural(ops.length, 'cliente', 'clientes') + ' a quién escribir hoy.' : frios.length ? plural(frios.length, 'cliente lleva', 'clientes llevan') + ' más de 30 días sin hablar contigo.' : 'Tu base está al día.';
+  const bd = baseDatos(), conPerf = Math.round(P.length / Math.max(1, C.length) * 100);
+  let html = '<section class="pv-hero"><div class="pv-hl"><div class="pv-k">Base de clientes</div><h2>' + C.length.toLocaleString('es-CL') + ' contactos</h2><p>' + esc(foco) + '</p>' +
+    '<div class="pv-ha">' + (extNivel() >= 8 ? '<button class="btn" id="b2Imp">' + icon('users') + ' Importar chats</button>' : '') + '<button class="btn sec" data-bv="camp">📣 Campaña</button><button class="btn sec" data-bv="lista">Ver la lista</button></div>' +
+    ((pend || S.imx || sp0) ? '<div class="st-row" style="margin:12px 0 0">' + ((pend || S.imx) ? '<span class="st-c"><span class="spin"></span>Perfilando · <b>' + (S.imx ? (S.imx.listos || S.imx.subidos) + '/' + S.imx.total : pend) + '</b></span>' : '') + (sp0 ? '<span class="st-c warn">' + icon('users') + '<b>' + sp0 + '</b> sin perfil<button class="st-b" id="b2Perf">' + icon('spark') + ' Perfilar</button></span>' : '') + '</div>' : '') + '</div>' +
+    '<div class="pv-hr"><div class="pv-dn">' + donutSVG(tipos.map((t, i) => ({ v: nT[i], c: t[2], l: t[1] })).concat(otros > 0 ? [{ v: otros, c: '#D0D5DD', l: 'Otros' }] : []), 104, String(C.length), 'contactos', 14) +
+      '<div class="pv-dlg">' + tipos.map((t, i) => '<button data-bfj2="' + t[0] + '"><i style="background:' + t[2] + '"></i>' + t[1] + '<b>' + nT[i] + '</b></button>').join('') + '<button data-bfj2="todos"><i style="background:#98A2B3"></i>Con perfil<b>' + conPerf + '%</b></button></div></div></div></section>';
+  html += '<div class="pv-lbl">Empieza por aquí</div><div class="pv-steps">' +
+    pvPaso('data-bfj2="esperan"', esp.length, '💬', 'Responder', esp.length ? plural(esp.length, 'cliente espera', 'clientes esperan') : 'nadie espera', 'bad') +
+    pvPaso('data-bv="ops"', ops.length, '✉️', 'A quién escribir', ops.length ? 'sugerencias del Cerebro' : 'al día', 'warn') +
+    pvPaso('data-bfj2="frios"', frios.length, '🧊', 'Clientes fríos', frios.length ? '+30 días sin hablar' : 'ninguno', 'info') +
+    pvPaso('data-bv="' + (sg.length ? 'sn' : 'lista') + '"', sg.length, '📇', 'Sin guardar', sg.length ? 'falta nombre o correo' : 'todo guardado', 'warn') + '</div>';
+  // Mosaico
+  html += '<div class="pv-g">';
+  html += pvTile('note', 'Esperan respuesta', '<span class="pv-c' + (esp.length ? ' bad' : '') + '">' + esp.length + '</span><button class="pv-x" data-bfj2="esperan" aria-label="Ver todos">›</button>',
+    esp.length ? '<div class="pv-pl">' + esp.slice(0, 5).map(x => { const nom = x.c.nombre || x.c.email || 'Cliente'; return '<button class="pv-p" data-cto2="' + esc(x.c.id) + '"><span class="pv-av">' + esc(iniciales(nom)) + '</span><span class="pv-pt"><b>' + esc(nom) + '</b><small>' + esc(String((x.g.idea && (x.g.idea.titulo || x.g.idea.detalle)) || '').slice(0, 70)) + '</small></span></button>'; }).join('') + '</div>' : '<div class="pv-ok">' + icon('check') + 'Nadie espera respuesta</div>');
+  if (P.length){
+    const cc = {}; P.forEach(pf => { if (pf.ciclo) cc[pf.ciclo] = (cc[pf.ciclo] || 0) + 1; }); const ord = Object.keys(CICLO).filter(k => cc[k]);
+    html += pvTile('target', 'Ciclo de vida', '<span class="pv-c">' + P.length + ' perfiles</span>', '<div class="pv-dn"><div class="pv-dc">' + donutSVG(ord.map(k => ({ v: cc[k], c: CICLO[k].c, l: CICLO[k].t })), 112, String(P.length), 'perfiles', 16) + '</div><div class="pv-dlg">' + ord.slice(0, 6).map(k => '<button data-sg="ciclo|' + k + '"><i style="background:' + CICLO[k].c + '"></i>' + esc(CICLO[k].t) + '<b>' + cc[k] + '</b></button>').join('') + '</div></div>');
+  } else html += pvTile('target', 'Perfiles de clientes', '', '<div class="pv-ok">Importa tus chats y el Cerebro arma la ficha de cada cliente.</div>');
+  html += pvTile('box', 'A quién escribir', '<span class="pv-c">' + ops.length + '</span><button class="pv-x" data-bv="ops" aria-label="Ver todas">›</button>',
+    ops.length ? '<div class="pv-nl">' + ops.slice(0, 4).map(o => '<button class="pv-n" data-bv="ops"><b>' + esc(o.c.nombre || o.c.email) + '</b><small>' + esc(o.titulo) + '</small></button>').join('') + '</div>' : '<div class="pv-ok">' + icon('check') + 'Sin sugerencias por ahora</div>');
+  const wk = [7, 6, 5, 4, 3, 2, 1, 0].map(k => C.filter(c => { if (!c.creado) return false; const d = diffDays(String(c.creado).slice(0, 10), h); return d >= k * 7 && d < (k + 1) * 7; }).length), mx = Math.max(1, ...wk);
+  html += pvTile('users', 'Contactos nuevos', '<span class="pv-c">' + wk[7] + ' esta semana</span>', '<div class="pv-wk">' + wk.map((v, i) => '<i style="height:' + Math.max(8, v / mx * 100) + '%" title="' + (i === 7 ? 'Esta semana' : 'Hace ' + (7 - i) + ' sem.') + ': ' + v + '"></i>').join('') + '</div><div class="pv-cap">Últimas 8 semanas</div>' +
+    (bd.st ? '<div class="pv-ct"><div><b>' + bd.n28 + '</b><small>chats nuevos 4 sem.</small></div><div><b>' + (bd.resp28 != null ? (bd.resp28 < 60 ? Math.round(bd.resp28) + ' min' : (bd.resp28 / 60).toFixed(1).replace('.', ',') + ' h') : '–') + '</b><small>tu tiempo de respuesta</small></div><div class="' + (bd.st.esperan ? 'warn' : '') + '"><b>' + bd.st.esperan + '</b><small>sin respuesta 30 d</small></div></div>' : ''));
+  html += pvTile('spark', 'Listas inteligentes', '', '<div class="pv-li">' + VISTAS_INT.map(v => { const n = P.filter(v.f).length; return '<button class="' + (n ? '' : 'cero') + '" data-sg="vista|' + v.k + '">' + icon(v.ic) + '<span>' + esc(v.t) + '</span><b>' + n + '</b></button>'; }).join('') + '</div>');
+  const dc = {}; P.forEach(pf => [].concat(pf.p.disciplinas || []).forEach(d => { if (d) dc[d] = (dc[d] || 0) + 1; }));
+  const dL = Object.entries(dc).sort((a, b) => b[1] - a[1]).slice(0, 5).map(([k, v]) => ({ k, l: (typeof L_DISC !== 'undefined' && L_DISC[k]) || k, v }));
+  html += pvTile('bolt', 'Qué andan buscando', '', dL.length ? pvBarrasH(dL, x => 'data-sg="disciplinas|' + esc(x.k) + '"') + '<div class="pv-cap">Disciplinas de tus clientes con perfil</div>' : '<div class="pv-ok">Aparece cuando haya perfiles.</div>');
+  html += '</div>';
+  return html + masAnalisis('anBase2', segmentosHTML());
+}
+function bindBaseResumenV2(){
+  const v = $('#view');
+  v.querySelectorAll('[data-cto2]').forEach(b => b.onclick = () => { const c = contactoPorId(b.dataset.cto2); if (c) openCto(c, { tab: 'actividad' }); });
+  const im = $('#b2Imp'); if (im) im.onclick = () => openImportar();
+  const pf = $('#b2Perf'); if (pf) pf.onclick = perfilarExistentes;
+}
+
+function redesResumenV2(){
+  if (!igActivo()) return igConectarHTML();
+  const a = igAnalisis(), m = a.m, h = hoy(), C = (S.cont || []).filter(x => x.estado !== 'Descartado');
+  const hoyC = C.filter(x => x.fecha === h && x.estado !== 'Publicado'), prox7 = C.filter(x => x.fecha > h && x.fecha <= addDays(h, 7) && x.estado !== 'Publicado');
+  const porGrabar = C.filter(x => x.estado === 'Planificado' && x.fecha >= h), ideas = C.filter(x => x.estado === 'Idea'), leads28 = a.leads.hay ? a.leads.ig28.length : 0;
+  const mf = metaFrecuencia(), meta = mf.reels + mf.carruseles + mf.posts, semAct = a.sem.length ? a.sem[a.sem.length - 1].n : 0;
+  const foco = hoyC.length ? 'Hoy toca publicar: ' + hoyC[0].formato + ' · ' + hoyC[0].tema + '.' : !prox7.length ? 'No hay contenido planificado para esta semana.' : semAct < meta ? 'Llevas ' + semAct + ' de ' + meta + ' publicaciones esta semana.' : 'Vas al día con la constancia de la semana.';
+  const D = m.D.slice(-30), alc = D.map(d => +d.alcance || 0);
+  let html = '<section class="pv-hero"><div class="pv-hl"><div class="pv-k">@' + esc(S.ig.usuario || 'instagram') + ' · datos de ' + (S.ig.sinc ? haceTxt(S.ig.sinc.slice(0, 10)) : 'nunca') + '</div><h2>Redes de la tienda</h2><p>' + esc(foco) + '</p>' +
+    '<div class="pv-ha"><button class="btn" id="r2Plan">' + icon('spark') + ' Planificar contenido</button><button class="btn sec" data-rt2="estudio">🎨 Abrir Estudio</button><button class="btn sec" data-rt2="contenido">Calendario</button></div></div>' +
+    '<div class="pv-hr"><div class="pv-igk"><b>' + (m.seg != null ? m.seg.toLocaleString('es-CL') : '–') + '</b><small>seguidores' + (m.dSeg != null ? ' · <em class="' + (m.dSeg >= 0 ? 'up' : 'down') + '">' + (m.dSeg >= 0 ? '+' : '') + m.dSeg + '</em> en 28 d' : '') + '</small>' + sparkSVG(alc, 160, 42, '#D9467A') + '<small>alcance diario · 30 días</small></div>' +
+      '<div class="pv-ring">' + ringSVG(meta ? Math.min(1, semAct / meta) : 0, 96) + '<div><b>' + semAct + '<small>/' + meta + '</small></b><span>publicaciones esta semana</span></div></div></div></section>';
+  html += '<div class="pv-lbl">Empieza por aquí</div><div class="pv-steps">' +
+    pvPaso('data-rt2="contenido"', hoyC.length, '📸', 'Publicar hoy', hoyC.length ? esc(hoyC[0].formato + ' · ' + hoyC[0].tema).slice(0, 34) : 'nada para hoy', 'bad') +
+    pvPaso('data-rt2="contenido"', porGrabar.length, '🎬', 'Por grabar', porGrabar.length ? 'planificadas' : 'nada pendiente', 'warn') +
+    pvPaso('data-rt2="leads"', leads28, '🧲', 'Clientes desde IG', '28 días', 'info') +
+    pvPaso('data-rt2="contenido"', ideas.length, '💡', 'Banco de ideas', ideas.length ? 'listas para planificar' : 'vacío: pide ideas', 'info') + '</div>';
+  html += '<div class="pv-g">';
+  // Alcance
+  const tot = alc.reduce((s, x) => s + x, 0), pubs = new Set(a.P.map(x => String(x.fecha).slice(0, 10))), mxA = Math.max(1, ...alc);
+  html += pvTile('chart', 'Alcance · 30 días', '<span class="pv-c">' + tot.toLocaleString('es-CL') + '</span>', '<div class="pv-ab">' + D.map(d => '<i class="' + (pubs.has(d.fecha) ? 'pub' : '') + '" style="height:' + Math.max(4, (+d.alcance || 0) / mxA * 100) + '%" title="' + esc(fmt(d.fecha)) + ': ' + (+d.alcance || 0).toLocaleString('es-CL') + (pubs.has(d.fecha) ? ' · publicaste' : '') + '"></i>').join('') + '</div><div class="pv-leg"><span><i class="r"></i>día con publicación</span></div>');
+  // Semana de contenido
+  const dias = [0, 1, 2, 3, 4, 5, 6].map(k => addDays(h, k)), icF = f => /reel/i.test(f) ? '🎬' : /carr/i.test(f) ? '🖼️' : /hist/i.test(f) ? '⏱️' : '📷';
+  html += pvTile('cal', 'Próximos 7 días', '<button class="pv-x" data-rt2="contenido" aria-label="Abrir calendario">›</button>', '<div class="pv-sw">' + dias.map(f => { const L = C.filter(x => x.fecha === f); return '<div class="' + (f === h ? 'hoy' : '') + '"><small>' + (f === h ? 'Hoy' : DIAS[pd(f).getDay()]) + '</small><b>' + pd(f).getDate() + '</b>' + (L.length ? L.slice(0, 3).map(x => '<button data-ct2="' + esc(x.id) + '" title="' + esc(x.formato + ' · ' + x.tema + ' (' + x.estado + ')') + '" class="e-' + esc(norm(x.estado)) + '">' + icF(x.formato) + '</button>').join('') : '<button class="vac" id="r2Vac' + f.replace(/-/g, '') + '" data-plan2="1" title="Planificar">＋</button>') + '</div>'; }).join('') + '</div>');
+  // Flujo
+  const est = EST_CT.map((e, i) => ({ l: e, v: C.filter(x => x.estado === e).length, c: ['#98A2B3', 'var(--accent)', '#F59E0B', 'var(--ok)'][i] }));
+  html += pvTile('flag', 'Flujo de contenido', '<span class="pv-c">' + C.length + ' piezas</span>', pvBarrasH(est, () => 'data-rt2="contenido"'));
+  // Qué funciona
+  const F = a.formatos.slice().sort((x, y) => y.alc - x.alc).slice(0, 4).map(x => ({ l: x.k, v: Math.round(x.alc || 0), t: Math.round(x.alc || 0).toLocaleString('es-CL'), c: '#D9467A' }));
+  html += pvTile('target', 'Qué formato funciona', '<span class="pv-c">alcance típico</span>', F.length ? pvBarrasH(F, () => 'data-rt2="estrategia"') : '<div class="pv-ok">Aparece con tus publicaciones.</div>');
+  // Cuándo publicar
+  html += pvTile('clock', 'Cuándo publicar', '', a.mejores.length ? '<div class="pv-slot">' + a.mejores.map((b, i) => '<div class="' + (i ? '' : 'top') + '"><b>' + DIAS_L[b.d].charAt(0).toUpperCase() + DIAS_L[b.d].slice(1, 3) + '</b><span>' + esc(FRANJAS[b.f][0]) + '</span><small>#' + (i + 1) + '</small></div>').join('') + '</div><div class="pv-cap">Franjas con más alcance que tu publicación típica</div>' : '<div class="pv-ok">Se calcula con al menos 2 publicaciones por franja.</div>');
+  // Mejores publicaciones
+  const top = a.P.slice().sort((x, y) => (+y.alcance || 0) - (+x.alcance || 0)).slice(0, 3);
+  html += pvTile('trophy', 'Mejores publicaciones', '<span class="pv-c">90 días</span>', top.length ? '<div class="pv-nl">' + top.map(x => '<a class="pv-n pv-tp" href="' + esc(x.link || '#') + '" target="_blank" rel="noopener"><span>' + icF(x.formato || '') + '</span><span class="pv-tpt"><b>' + esc(String(x.texto || x.formato || 'Publicación').slice(0, 60)) + '</b><small>' + (+x.alcance || 0).toLocaleString('es-CL') + ' de alcance · ' + esc(fmt(String(x.fecha).slice(0, 10))) + '</small></span></a>').join('') + '</div>' : '<div class="pv-ok">Aún no hay publicaciones medidas.</div>');
+  html += '</div>';
+  return html + masAnalisis('anRedes2', redesResumen());
+}
+function bindRedesV2(){
+  const v = $('#view');
+  const p = $('#r2Plan'); if (p) p.onclick = () => planContenido();
+  v.querySelectorAll('[data-plan2]').forEach(b => b.onclick = () => planContenido());
+  v.querySelectorAll('[data-ct2]').forEach(b => b.onclick = () => openIdea((S.cont || []).find(x => x.id === b.dataset.ct2)));
 }
 function redesResumen(){
   if (!igActivo()) return igConectarHTML();
@@ -8319,7 +8446,8 @@ const DASH = {
 };
 function ponerDash(tab){
   if ((esPiso() || S.vistaPiso) && tab === 'hoy') return;
-  if (tab === 'tareas' && UI2()) return;   // Tareas tiene su propia franja compacta
+  if (tab === 'tareas' && UI2()) return;
+  if (document.querySelector('#view .pv-hero')) return;   // las portadas nuevas ya resumen la pestaña   // Tareas tiene su propia franja compacta
   const v = $('#view'); if (!v || !DASH[tab] || v.querySelector(':scope > .dsh')) return;
   const f = v.firstElementChild; if (!f || (f.classList.contains('empty') && v.children.length === 1)) return;
   const d = DASH[tab](); if (!d) return;

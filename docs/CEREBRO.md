@@ -366,3 +366,10 @@ Antes cada «agente» (Copiloto, agente de ventas, agente de tareas, comprador, 
 - **Tareas → Tablero** (vista por defecto en el diseño nuevo): columnas Atrasadas · Hoy · Mañana · Esta semana · Después · Sin fecha. Tarjetas compactas con ícono de color por categoría (`CAT_ESTILO`), días de atraso, hora, subtareas, urgencia y avatar del cliente o negociación vinculada. Acciones de un toque: ✓ hecha, ↷ mañana / ↶ hoy (con Deshacer), ▶ foco. Arrastrar una tarjeta a otra columna la reprograma. «＋» en cada columna crea la tarea con esa fecha. Tecla **N** = nueva tarea.
 - Una franja de una línea reemplaza los 4 recuadros de resumen de Tareas: avance de hoy, racha, carga de los próximos 7 días (cada barra abre el día) y pestañas.
 - Contactos: los avisos largos pasan a una fila de indicadores compactos; los 8 indicadores quedan en una sola fila en pantallas grandes. Resúmenes por pestaña más bajos.
+
+## Contactos y Redes con portada (app v59)
+
+- Mismo lenguaje que el Hoy del Piso de venta: portada con el foco del día y acciones, 4 pasos «Empieza por aquí» y un mosaico de tarjetas que se tocan.
+- **Contactos → Resumen** (`baseResumenV2`): dona por tipo y % con perfil; pasos Responder · A quién escribir · Clientes fríos · Sin guardar; tarjetas Esperan respuesta, Ciclo de vida (dona), A quién escribir, Contactos nuevos (8 semanas + chats y tiempo de respuesta), Listas inteligentes y Qué andan buscando (disciplinas).
+- **Redes → Resumen** (`redesResumenV2`): seguidores con línea de alcance y anillo de constancia semanal; pasos Publicar hoy · Por grabar · Clientes desde IG · Banco de ideas; tarjetas Alcance 30 días (días con publicación marcados), Próximos 7 días (íconos por formato, ＋ para planificar), Flujo de contenido, Qué formato funciona, Cuándo publicar y Mejores publicaciones.
+- El análisis completo anterior queda en «Más análisis» al final de cada portada (nada se perdió). El resumen de 4 recuadros de esas pestañas no se muestra cuando hay portada.
