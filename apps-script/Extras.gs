@@ -15,8 +15,8 @@
  * Para actualizar este archivo más adelante: reemplaza todo su contenido y repite los dos pasos anteriores.
  */
 
-const EX_VERSION = '2026-12-19';
-const EX_NIVEL = 38;      // la app lo usa para saber qué funciones tiene este script
+const EX_VERSION = '2026-12-26';
+const EX_NIVEL = 39;      // la app lo usa para saber qué funciones tiene este script
 const EX_HOJA = 'Tareas';
 const EX_PRIMERA = 4;
 const EX_ULTIMA = 400;
@@ -167,6 +167,8 @@ function app_extra_(p) {
     case 'avisos':     return ex_avisos_(p);
     case 'fuentes':    return ex_fuentes_(p);
     case 'copiloto':   return ex_copiloto_(p);
+    case 'skills':     return ex_skillsEstado_();
+    case 'skillsConf': return ex_skillsConf_(p);
     case 'cerebro':    return ex_cerebro_(p);
     case 'global':     return ex_contextoGlobal_(p);
     case 'proveedores': return ex_proveedores_(p);
@@ -1580,10 +1582,10 @@ function ex_describirFotos_(maxMs) {
       } catch (e) { sh.getRange(k + 2, 5).setValue('(sin vista previa)'); }
     });
     if (!idx.length) continue;
-    const r = UrlFetchApp.fetch('https://api.anthropic.com/v1/messages', { method: 'post', contentType: 'application/json', muteHttpExceptions: true, headers: { 'x-api-key': clave, 'anthropic-version': '2023-06-01' },
-      payload: JSON.stringify({ model: pr.getProperty('FOTOS_MODELO') || 'claude-haiku-5-5', max_tokens: 2500, output_config: { format: { type: 'json_schema', schema: EX_FOTO_ESQUEMA } }, messages: [{ role: 'user', content: content }] }) });
-    if (r.getResponseCode() !== 200) { console.log('Fotos IA: ' + r.getResponseCode() + ' ' + r.getContentText().slice(0, 200)); break; }
-    const j = JSON.parse(r.getContentText()), txt = (j.content || []).filter(function (c) { return c.type === 'text'; }).map(function (c) { return c.text; }).join('');
+    let j;
+    try { j = ex_ia_('fotos', { max_tokens: 2500, output_config: { format: { type: 'json_schema', schema: EX_FOTO_ESQUEMA } }, messages: [{ role: 'user', content: content }] }); }
+    catch (e) { console.log('Fotos IA: ' + e.message); break; }
+    const txt = ex_iaTexto_(j);
     let res = []; try { res = JSON.parse(txt).fotos || []; } catch (e) {}
     res.forEach(function (x) {
       const k = lote[x.i]; if (k == null || !x.descripcion) return;
@@ -1717,8 +1719,8 @@ const EX_EST_ESQUEMA = { type: 'object', additionalProperties: false, required: 
   i: { type: 'integer' }, id: { type: 'string' }, nota: { type: 'integer' }, motivo: { type: 'string' }, pedido: { type: 'string' } } } } } };
 // Mira las fotos candidatas (con visión) y elige la mejor para cada lámina, o pide que se saque una.
 function ex_elegirFotos_(p) {
-  const pr = PropertiesService.getScriptProperties(), clave = pr.getProperty('ANTHROPIC_API_KEY'); if (!clave) throw new Error('falta ANTHROPIC_API_KEY');
-  const modelo = pr.getProperty('ESTUDIO_MODELO') || 'claude-sonnet-5-5', tok = ex_igToken_(), C = (p.candidatos || []).slice(0, 36), content = [];
+  if (!PropertiesService.getScriptProperties().getProperty('ANTHROPIC_API_KEY')) throw new Error('falta ANTHROPIC_API_KEY');
+  const modelo = ex_modeloSkill_('director_arte'), tok = ex_igToken_(), C = (p.candidatos || []).slice(0, 36), content = [];
   content.push({ type: 'text', text: 'Pieza: ' + String(p.titulo || '') + '\nLáminas que necesitan foto:\n' + (p.laminas || []).map(function (l) { return '- Lámina ' + l.i + ' (' + l.layout + '): «' + String(l.titulo || '').slice(0, 120) + '» · foto buscada: ' + String(l.descripcion || '') + ' · palabras: ' + (l.palabras || []).join(', '); }).join('\n') + '\n\nCandidatas (cada imagen va precedida de su id y su fuente):' });
   let n = 0;
   C.forEach(function (x) {
@@ -1738,12 +1740,7 @@ function ex_elegirFotos_(p) {
   });
   if (!n) return { ok: true, laminas: (p.laminas || []).map(function (l) { return { i: l.i, id: '', nota: 0, motivo: 'sin candidatas', pedido: 'Foto vertical para «' + (l.titulo || '') + '»: ' + (l.descripcion || '') }; }) };
   const cuerpo = { model: modelo, max_tokens: 4000, output_config: { effort: 'low', format: { type: 'json_schema', schema: EX_EST_ESQUEMA } }, system: EX_EST_FOTOS, messages: [{ role: 'user', content: content }] };
-  const headers = { 'x-api-key': clave, 'anthropic-version': '2023-06-01' };
-  if (!/haiku/.test(modelo)) { cuerpo.fallbacks = 'default'; headers['anthropic-beta'] = 'server-side-fallback-2026-07-01'; }
-  const r = UrlFetchApp.fetch('https://api.anthropic.com/v1/messages', { method: 'post', contentType: 'application/json', muteHttpExceptions: true, payload: JSON.stringify(cuerpo), headers: headers });
-  const j = JSON.parse(r.getContentText() || '{}');
-  if (r.getResponseCode() !== 200) throw new Error('Claude respondió ' + r.getResponseCode() + ': ' + ((j.error && j.error.message) || '').slice(0, 200));
-  const txt = (j.content || []).filter(function (c) { return c.type === 'text'; }).map(function (c) { return c.text; }).join('');
+  const txt = ex_iaTexto_(ex_ia_('director_arte', cuerpo));
   return Object.assign({ ok: true, vistas: n }, JSON.parse(txt || '{"laminas":[]}'));
 }
 
@@ -2057,7 +2054,7 @@ function ex_asistente_(p) {
   if (!ctx) throw new Error('sin contexto');
   let extra = (modo === 'pieza' || modo === 'contenido' || modo === 'redes') ? '\n\n' + EX_EST_MTB + '\n\n' + ex_bibliotecaContexto_() : '';
   if (modo === 'pieza' || modo === 'contenido') extra += '\n\n' + [ex_stockDestacado_(), modo === 'pieza' ? ex_inventarioFotos_(160) : ''].filter(String).join('\n\n');
-  return { ok: true, modo: modo, r: ex_llamarClaude_(ctx + extra, EX_AS_SISTEMA[modo], EX_AS_ESQUEMA[modo]) };
+  return { ok: true, modo: modo, r: ex_llamarClaude_(ctx + extra, EX_AS_SISTEMA[modo], EX_AS_ESQUEMA[modo], 'contenido') };
 }
 
 /* ---------- agente de ventas con IA ---------- */
@@ -2173,29 +2170,18 @@ function ex_hojaAg_() {
 }
 
 // Llama a Claude con la conversación y devuelve el análisis (JSON validado por esquema).
-function ex_llamarClaude_(contexto, sistema, esquema) {
-  const props = PropertiesService.getScriptProperties();
-  const clave = props.getProperty('ANTHROPIC_API_KEY');
-  if (!clave) throw new Error('falta ANTHROPIC_API_KEY en las propiedades del script');
-  const modelo = props.getProperty('AGENTE_MODELO') || EX_AG_MODELO, haiku = /haiku/.test(modelo);
-  const cuerpo = {
-    model: modelo,
-    max_tokens: 8000,
-    // Haiku: esfuerzo bajo (lo más barato). Opus/Sonnet: esfuerzo medio y respaldo automático si el modelo rechaza.
+function ex_llamarClaude_(contexto, sistema, esquema, skill) {
+  skill = skill || 'seguimiento';
+  const modelo = ex_modeloSkill_(skill), haiku = /haiku/.test(modelo);
+  const j = ex_ia_(skill, {
+    model: modelo, max_tokens: 8000,
+    // Haiku: esfuerzo bajo (lo más barato). Opus/Sonnet: esfuerzo medio (el respaldo automático lo pone ex_ia_).
     output_config: { effort: haiku ? 'low' : 'medium', format: { type: 'json_schema', schema: esquema || EX_AG_ESQUEMA } },
     system: [{ type: 'text', text: (sistema || EX_AG_SISTEMA) + '\n\n' + EX_POLITICA, cache_control: { type: 'ephemeral' } }],
     messages: [{ role: 'user', content: contexto }]
-  };
-  const headers = { 'x-api-key': clave, 'anthropic-version': '2023-06-01' };
-  if (!haiku) { cuerpo.fallbacks = 'default'; headers['anthropic-beta'] = 'server-side-fallback-2026-07-01'; }
-  const r = UrlFetchApp.fetch('https://api.anthropic.com/v1/messages', {
-    method: 'post', contentType: 'application/json', muteHttpExceptions: true, payload: JSON.stringify(cuerpo), headers: headers
   });
-  const j = JSON.parse(r.getContentText() || '{}');
-  if (r.getResponseCode() !== 200) throw new Error('Claude respondió ' + r.getResponseCode() + ': ' + ((j.error && j.error.message) || '').slice(0, 200));
   if (j.stop_reason === 'refusal') throw new Error('Claude no analizó esta conversación');
-  const txt = (j.content || []).filter(function (c) { return c.type === 'text'; }).map(function (c) { return c.text; }).join('');
-  return JSON.parse(txt);
+  return JSON.parse(ex_iaTexto_(j));
 }
 
 // Arma el contexto (perfil, negociación abierta, tareas abiertas y la conversación) para un contacto.
@@ -2844,7 +2830,7 @@ function ex_bsaleVentasTexto_(consulta, dias) {
 // Ronda automática (cada 10 min): analiza las conversaciones con mensajes nuevos que ya se calmaron.
 function ex_rondaAgente_() {
   const props = PropertiesService.getScriptProperties();
-  if (!props.getProperty('ANTHROPIC_API_KEY')) return;
+  if (!props.getProperty('ANTHROPIC_API_KEY') || !ex_skillActiva_('seguimiento')) return;
   const pend = JSON.parse(props.getProperty('EX_AG_PEND') || '{}'), listos = Object.keys(pend).filter(function (id) { return Date.now() - pend[id] > EX_AG_ESPERA_MIN * 60000; }).slice(0, EX_AG_MAX_POR_RONDA);
   const hechos = {};
   listos.forEach(function (id) {
@@ -3457,7 +3443,7 @@ function ex_noticias_(forzar) {
   let items = [];
   if (pr.getProperty('ANTHROPIC_API_KEY') && todos.length) {
     try {
-      const r = ex_llamarClaude_(todos.map(function (x, i) { return i + '. [' + x.fuente + ', ' + (x.fecha || '').slice(0, 10) + '] ' + x.titulo + ' — ' + x.resumen.slice(0, 160); }).join('\n'), EX_NOT_SISTEMA, EX_NOT_ESQUEMA);
+      const r = ex_llamarClaude_(todos.map(function (x, i) { return i + '. [' + x.fuente + ', ' + (x.fecha || '').slice(0, 10) + '] ' + x.titulo + ' — ' + x.resumen.slice(0, 160); }).join('\n'), EX_NOT_SISTEMA, EX_NOT_ESQUEMA, 'noticias');
       items = (r.destacadas || []).filter(function (d) { return todos[d.i]; }).map(function (d) { return Object.assign({}, todos[d.i], { original: todos[d.i].titulo, titulo: d.titulo, por_que: d.por_que, tipo: d.tipo, relevancia: d.relevancia }); });
     } catch (e) { console.log('Noticias IA: ' + e.message); }
   }
@@ -3743,20 +3729,145 @@ function ex_copHerramienta_(nombre, inp, estado) {
       return 'Cambio propuesto. Gustavo lo verá como botón para aprobar.';
     }
     case 'proponer_nota_contacto': estado.acciones.push({ tipo: 'nota_contacto', titulo: String(inp.titulo || 'Guardar nota').slice(0, 160), ref: String(inp.id || ''), detalle: String(inp.texto || '').slice(0, 1500) }); return 'Nota propuesta. Gustavo la verá como botón.';
+    case 'leer_skill': estado.usadas['skill ' + inp.skill] = 1; return ex_leerSkill_(String(inp.skill || ''));
     case 'proponer_accion': estado.acciones.push({ tipo: inp.tipo, titulo: String(inp.titulo || '').slice(0, 160), detalle: String(inp.detalle || '').slice(0, 1500), fecha: inp.fecha || '', ref: inp.ref || '' }); return 'Acción propuesta. Gustavo la verá como botón.';
   }
   throw new Error('herramienta desconocida: ' + nombre);
 }
-function ex_claudeMensajes_(cuerpo) {
-  const clave = PropertiesService.getScriptProperties().getProperty('ANTHROPIC_API_KEY');
+/* ==================== Cerebro único con skills ====================
+   Antes cada «agente» se conectaba a Claude por su cuenta, con su propio modelo y sus propias reglas.
+   Ahora hay UN solo cerebro: todas las llamadas pasan por ex_ia_(skill, …), que pone la identidad y la
+   política de Blackline, elige el modelo según la skill (rápido o experto), reintenta si Claude está
+   saturado y anota el consumo de cada skill. Una skill = instrucciones + herramientas + cuándo se activa. */
+const EX_SKILLS = [
+  { id: 'conversar', nombre: 'Conversar y consultar', icono: '💬', nivel: 'rapido', modo: 'manual', donde: 'Botón «Cerebro» (o tecla /)', tab: '', prop: 'COPILOTO_MODELO',
+    que: 'Responde cualquier pregunta con tus datos reales (tareas, clientes, negocios, stock, ventas, Instagram, proveedores) y propone cambios que apruebas con un toque.' },
+  { id: 'plan_dia', nombre: 'Plan del día', icono: '🌅', nivel: 'rapido', modo: 'auto', cuando: 'Cada mañana a las 7:00', donde: 'Inicio y Hoy', tab: 'hoy',
+    que: 'Cruza agenda, tareas, clientes, WhatsApp, Bsale, Specialized, clima y noticias, y deja las 3 prioridades del día y los avisos.' },
+  { id: 'seguimiento', nombre: 'Seguimiento de clientes', icono: '🤝', nivel: 'rapido', modo: 'auto', cuando: 'Cuando entra un WhatsApp (revisa cada 10 min)', donde: 'Contactos y Negociaciones', tab: 'negocios', prop: 'AGENTE_MODELO',
+    que: 'Lee cada conversación nueva, actualiza la ficha del cliente, crea o mueve la negociación y deja la próxima tarea.' },
+  { id: 'tareas', nombre: 'Planificar tareas', icono: '✅', nivel: 'rapido', modo: 'manual', donde: 'Al crear una tarea (✨ Pensar la tarea)', tab: 'tareas', prop: 'TAREAS_MODELO',
+    que: 'Convierte lo que dictas en una tarea completa: fecha, pasos, proveedor, cantidades según el stock y el mensaje listo para enviar.' },
+  { id: 'compras', nombre: 'Comprador', icono: '📦', nivel: 'rapido', modo: 'manual', donde: 'Compras → buscador', tab: 'compras', prop: 'COMPRAS_MODELO',
+    que: 'Busca en los catálogos de proveedores y de Specialized, cruza con stock, ventas y clientes que lo piden, y recomienda qué y cuánto pedir.' },
+  { id: 'contenido', nombre: 'Planes y contenido', icono: '✍️', nivel: 'rapido', modo: 'manual', donde: 'Hoy, Tareas y Redes', tab: 'redes',
+    que: 'Arma el plan del día o de la semana, ideas y calendario de contenido, estrategia de redes, análisis y piezas para Instagram.' },
+  { id: 'noticias', nombre: 'Curador de noticias', icono: '📰', nivel: 'rapido', modo: 'auto', cuando: 'Cada 6 horas', donde: 'Inicio → Noticias', tab: 'inicio',
+    que: 'Elige las noticias del mundo bike que le importan a la tienda y explica por qué.' },
+  { id: 'fotos', nombre: 'Catalogar fotos', icono: '🖼️', nivel: 'rapido', modo: 'auto', cuando: 'Cuando hay fotos nuevas en Drive', donde: 'Redes → Estudio', tab: 'redes', prop: 'FOTOS_MODELO',
+    que: 'Mira cada foto nueva y la describe con etiquetas, para encontrarla al diseñar.' },
+  { id: 'director_arte', nombre: 'Director de arte', icono: '🎨', nivel: 'experto', modo: 'manual', donde: 'Redes → Estudio', tab: 'redes', prop: 'ESTUDIO_MODELO',
+    que: 'Elige la mejor foto para cada lámina de una pieza, o te dice exactamente qué foto sacar.' }
+];
+// US$ por millón de tokens: [entrada, salida, caché leído]. La escritura en caché cuesta 1,25 × entrada.
+const EX_PRECIOS = { haiku: [0.10, 0.50, 0.01], sonnet: [2, 10, 0.20], opus: [4, 20, 0.20], fable: [10, 50, 0.25] };
+var EX_FONDO = false;   // true mientras corre una tarea automática (para aplicar el tope diario)
+
+function ex_skill_(id) { for (let i = 0; i < EX_SKILLS.length; i++) if (EX_SKILLS[i].id === id) return EX_SKILLS[i]; return EX_SKILLS[0]; }
+function ex_modeloSkill_(id) {
+  const pr = PropertiesService.getScriptProperties(), s = ex_skill_(id);
+  return (s.prop && pr.getProperty(s.prop)) || (s.nivel === 'experto' ? pr.getProperty('CEREBRO_EXPERTO') || 'claude-sonnet-5-5' : pr.getProperty('CEREBRO_MODELO') || pr.getProperty('AGENTE_MODELO') || EX_AG_MODELO);
+}
+function ex_skillsPausa_() { return String(PropertiesService.getScriptProperties().getProperty('EX_SKILLS_PAUSA') || '').split(',').filter(String); }
+function ex_skillActiva_(id) { return ex_skillsPausa_().indexOf(id) < 0; }
+function ex_precio_(modelo) { const m = String(modelo); return EX_PRECIOS[/opus/.test(m) ? 'opus' : /sonnet/.test(m) ? 'sonnet' : /fable|mythos/.test(m) ? 'fable' : 'haiku']; }
+
+// La única puerta a Claude. cuerpo = petición de la API de mensajes (si no trae model, lo pone la skill).
+// opt.sinWeb: si la búsqueda web no está habilitada en la organización, se reintenta sin ella.
+function ex_ia_(skill, cuerpo, opt) {
+  opt = opt || {};
+  const pr = PropertiesService.getScriptProperties(), clave = pr.getProperty('ANTHROPIC_API_KEY');
   if (!clave) throw new Error('falta ANTHROPIC_API_KEY en las propiedades del script');
-  const r = UrlFetchApp.fetch('https://api.anthropic.com/v1/messages', { method: 'post', contentType: 'application/json', muteHttpExceptions: true, payload: JSON.stringify(cuerpo), headers: { 'x-api-key': clave, 'anthropic-version': '2023-06-01' } });
-  const j = JSON.parse(r.getContentText() || '{}');
-  if (r.getResponseCode() !== 200) throw new Error('Claude respondió ' + r.getResponseCode() + ': ' + ((j.error && j.error.message) || '').slice(0, 200));
+  const s = ex_skill_(skill), tope = +pr.getProperty('CEREBRO_TOPE_USD') || 0;
+  if (EX_FONDO && tope && ex_usoDia_(ex_hoyYmd_(ex_tz_())).usd >= tope) throw new Error('se alcanzó el tope diario del Cerebro (US$ ' + tope + '); las tareas automáticas siguen mañana');
+  cuerpo.model = cuerpo.model || ex_modeloSkill_(s.id);
+  if (typeof cuerpo.system === 'string') cuerpo.system = [{ type: 'text', text: cuerpo.system }];
+  cuerpo.system = cuerpo.system || [];
+  if (!cuerpo.system.some(function (b) { return /POLÍTICA DE BLACKLINE/.test(b.text); })) {
+    if (cuerpo.system.length) cuerpo.system[cuerpo.system.length - 1].text += '\n\n' + EX_POLITICA; else cuerpo.system.push({ type: 'text', text: EX_POLITICA });
+  }
+  const headers = { 'x-api-key': clave, 'anthropic-version': '2023-06-01' };
+  if (!/haiku/.test(cuerpo.model)) { cuerpo.fallbacks = 'default'; headers['anthropic-beta'] = 'server-side-fallback-2026-07-01'; }
+  let r, j;
+  for (let k = 0; k < 3; k++) {
+    r = UrlFetchApp.fetch('https://api.anthropic.com/v1/messages', { method: 'post', contentType: 'application/json', muteHttpExceptions: true, payload: JSON.stringify(cuerpo), headers: headers });
+    j = JSON.parse(r.getContentText() || '{}');
+    const c = r.getResponseCode();
+    if (c === 200) break;
+    const msg = (j.error && j.error.message) || '';
+    if (opt.sinWeb && /web_search|web search/i.test(msg) && (cuerpo.tools || []).some(function (t) { return t.name === 'web_search'; })) {
+      cuerpo.tools = cuerpo.tools.filter(function (t) { return t.name !== 'web_search'; }); opt.sinWeb(); continue;
+    }
+    if ((c === 429 || c === 529 || c >= 500) && k < 2) { Utilities.sleep(2500 * (k + 1)); continue; }
+    throw new Error('Claude respondió ' + c + ': ' + msg.slice(0, 200));
+  }
+  if (r.getResponseCode() !== 200) throw new Error('Claude no respondió; inténtalo en un minuto');
+  try { ex_usoSumar_(s.id, cuerpo.model, j.usage || {}); } catch (e) {}
   return j;
 }
+// Texto de la respuesta (bloques de texto unidos).
+function ex_iaTexto_(j) { return (j.content || []).filter(function (c) { return c.type === 'text'; }).map(function (c) { return c.text; }).join(''); }
+
+// Consumo: una propiedad por día (EX_USO_yyyy-MM-dd) con {skill: [llamadas, entrada, salida, caché, US$]}.
+function ex_usoSumar_(skill, modelo, u) {
+  const pr = PropertiesService.getScriptProperties(), dia = ex_hoyYmd_(ex_tz_()), k = 'EX_USO_' + dia, p = ex_precio_(modelo);
+  const ent = +u.input_tokens || 0, sal = +u.output_tokens || 0, cl = +u.cache_read_input_tokens || 0, ce = +u.cache_creation_input_tokens || 0;
+  const usd = (ent * p[0] + sal * p[1] + cl * p[2] + ce * p[0] * 1.25) / 1e6;
+  const o = JSON.parse(pr.getProperty(k) || '{}'), a = o[skill] || [0, 0, 0, 0, 0];
+  o[skill] = [a[0] + 1, a[1] + ent + ce, a[2] + sal, a[3] + cl, Math.round((a[4] + usd) * 1e5) / 1e5];
+  if (!pr.getProperty(k)) {   // día nuevo: se borra lo de hace más de 35 días
+    const lim = ex_ymd_(new Date(Date.now() - 35 * 86400000), ex_tz_());
+    pr.getKeys().forEach(function (x) { if (x.indexOf('EX_USO_') === 0 && x.slice(7) < lim) pr.deleteProperty(x); });
+  }
+  pr.setProperty(k, JSON.stringify(o));
+}
+function ex_usoDia_(dia) {
+  const o = JSON.parse(PropertiesService.getScriptProperties().getProperty('EX_USO_' + dia) || '{}'), t = { n: 0, usd: 0, skills: o };
+  Object.keys(o).forEach(function (s) { t.n += o[s][0]; t.usd += o[s][4]; });
+  return t;
+}
+// Para la app: el catálogo de skills con su estado y consumo (hoy, 7 y 30 días).
+function ex_skillsEstado_() {
+  const pr = PropertiesService.getScriptProperties(), tz = ex_tz_(), pausa = ex_skillsPausa_(), por = {}, tot = { hoy: 0, d7: 0, d30: 0, n30: 0 }, serie = [];
+  for (let d = 29; d >= 0; d--) {
+    const dia = ex_ymd_(new Date(Date.now() - d * 86400000), tz), u = ex_usoDia_(dia);
+    serie.push({ dia: dia, usd: Math.round(u.usd * 1000) / 1000, n: u.n });
+    Object.keys(u.skills).forEach(function (s) {
+      const v = u.skills[s], x = por[s] || (por[s] = { hoy: 0, d7: 0, d30: 0, n30: 0, tok30: 0 });
+      x.d30 += v[4]; x.n30 += v[0]; x.tok30 += v[1] + v[2] + v[3]; if (d < 7) x.d7 += v[4]; if (d === 0) x.hoy += v[4];
+    });
+    tot.d30 += u.usd; tot.n30 += u.n; if (d < 7) tot.d7 += u.usd; if (d === 0) tot.hoy += u.usd;
+  }
+  return { ok: true, ia: !!pr.getProperty('ANTHROPIC_API_KEY'), tope: +pr.getProperty('CEREBRO_TOPE_USD') || 0,
+    modelos: { rapido: ex_modeloSkill_('noticias'), experto: ex_modeloSkill_('director_arte') }, total: tot, serie: serie,
+    skills: EX_SKILLS.map(function (s) { return { id: s.id, nombre: s.nombre, icono: s.icono, nivel: s.nivel, modo: s.modo, cuando: s.cuando || 'Cuando tú lo pides', donde: s.donde, tab: s.tab, que: s.que, modelo: ex_modeloSkill_(s.id), activa: pausa.indexOf(s.id) < 0, uso: por[s.id] || { hoy: 0, d7: 0, d30: 0, n30: 0, tok30: 0 } }; }) };
+}
+// Pausar o reanudar skills automáticas y fijar el tope diario (US$) de las tareas automáticas.
+function ex_skillsConf_(p) {
+  const pr = PropertiesService.getScriptProperties();
+  if (p.pausa) pr.setProperty('EX_SKILLS_PAUSA', p.pausa.filter(function (id) { return EX_SKILLS.some(function (s) { return s.id === id && s.modo === 'auto'; }); }).join(','));
+  if (p.tope !== undefined) { const t = Math.max(0, Math.min(50, +p.tope || 0)); if (t) pr.setProperty('CEREBRO_TOPE_USD', String(t)); else pr.deleteProperty('CEREBRO_TOPE_USD'); }
+  return ex_skillsEstado_();
+}
+// Índice de skills para el chat (carga progresiva: solo nombre y para qué; las instrucciones se leen con leer_skill).
+const EX_SKILLS_GUIA = { tareas: 'EX_TAR_SISTEMA', compras: 'EX_COM_SISTEMA', seguimiento: 'EX_AG_SISTEMA', plan_dia: 'EX_CER_SISTEMA', contenido: 'contenido', redes: 'redes', semana: 'semana' };
+function ex_skillsIndice_() {
+  return 'ERES EL CEREBRO de la app (un solo cerebro con varias skills). Skills que puedes aplicar en esta conversación: si el pedido calza con una, llama primero a leer_skill para cargar sus instrucciones y síguelas usando tus herramientas:\n' +
+    '- tareas: pensar una tarea dictada (fecha, pasos, proveedor, cantidades, mensaje listo).\n- compras: qué y cuánto comprar, a qué proveedor, con margen y rotación.\n' +
+    '- seguimiento: cómo seguir a un cliente según su conversación (etapa, próxima acción, mensaje).\n- plan_dia: armar el plan y las prioridades del día.\n' +
+    '- contenido / redes / semana: ideas de contenido, estrategia de Instagram y plan de la semana.';
+}
+function ex_leerSkill_(id) {
+  const k = EX_SKILLS_GUIA[id]; if (!k) return 'No existe esa skill. Opciones: ' + Object.keys(EX_SKILLS_GUIA).join(', ');
+  let t = k === 'EX_TAR_SISTEMA' ? EX_TAR_SISTEMA : k === 'EX_COM_SISTEMA' ? EX_COM_SISTEMA : k === 'EX_AG_SISTEMA' ? EX_AG_SISTEMA : k === 'EX_CER_SISTEMA' ? EX_CER_SISTEMA : EX_AS_SISTEMA[k];
+  t = Array.isArray(t) ? t.join('\n') : String(t || '');
+  return 'INSTRUCCIONES DE LA SKILL «' + id + '» (adáptalas al chat: responde en texto breve y, si hay que crear o cambiar algo, usa proponer_accion o proponer_cambio_negocio en vez de entregar un JSON):\n' + t.replace(EX_POLITICA, '').slice(0, 9000);
+}
+EX_COP_TOOLS.push({ name: 'leer_skill', description: 'Carga las instrucciones completas de una skill del Cerebro (tareas, compras, seguimiento, plan_dia, contenido, redes, semana) cuando el pedido calza con ella.', input_schema: { type: 'object', properties: { skill: { type: 'string', enum: ['tareas', 'compras', 'seguimiento', 'plan_dia', 'contenido', 'redes', 'semana'] } }, required: ['skill'] } });
+
+function ex_claudeMensajes_(cuerpo, skill) { return ex_ia_(skill || 'conversar', cuerpo); }
 function ex_copiloto_(p) {
-  const pr = PropertiesService.getScriptProperties(), modelo = pr.getProperty('COPILOTO_MODELO') || pr.getProperty('AGENTE_MODELO') || EX_AG_MODELO, tz = ex_tz_();
+  const pr = PropertiesService.getScriptProperties(), modelo = ex_modeloSkill_('conversar'), tz = ex_tz_();
   const hist = (p.mensajes || []).slice(-12).filter(function (m) { return m && m.texto; });
   if (!hist.length || hist[hist.length - 1].rol !== 'yo') throw new Error('falta la pregunta');
   const ahora = Utilities.formatDate(new Date(), tz, "EEEE d 'de' MMMM yyyy, HH:mm");
@@ -3770,7 +3881,7 @@ function ex_copiloto_(p) {
   const tools = EX_COP_TOOLS.map(function (t, i) { return i === EX_COP_TOOLS.length - 1 ? Object.assign({}, t, { cache_control: { type: 'ephemeral' } }) : t; });
   let texto = '';
   for (let paso = 0; paso < 7; paso++) {
-    const j = ex_claudeMensajes_({ model: modelo, max_tokens: 6000, output_config: { effort: /haiku/.test(modelo) ? 'medium' : 'low' }, system: [{ type: 'text', text: EX_COP_SISTEMA, cache_control: { type: 'ephemeral' } }], tools: tools, messages: messages });
+    const j = ex_claudeMensajes_({ model: modelo, max_tokens: 6000, output_config: { effort: /haiku/.test(modelo) ? 'medium' : 'low' }, system: [{ type: 'text', text: EX_COP_SISTEMA + '\n\n' + ex_skillsIndice_(), cache_control: { type: 'ephemeral' } }], tools: tools, messages: messages });
     if (j.stop_reason === 'refusal') { texto = 'No puedo ayudar con eso.'; break; }
     messages.push({ role: 'assistant', content: j.content });
     texto = (j.content || []).filter(function (c) { return c.type === 'text'; }).map(function (c) { return c.text; }).join('\n').trim() || texto;
@@ -3854,7 +3965,7 @@ function ex_tarHerramienta_(nombre, inp, estado) {
   return ex_copHerramienta_(nombre, inp, estado);
 }
 function ex_tareaIA_(p) {
-  const pr = PropertiesService.getScriptProperties(), tz = ex_tz_(), modelo = pr.getProperty('TAREAS_MODELO') || EX_TAR_MODELO, haiku = /haiku/.test(modelo);
+  const pr = PropertiesService.getScriptProperties(), tz = ex_tz_(), modelo = ex_modeloSkill_('tareas'), haiku = /haiku/.test(modelo);
   const texto = String(p.texto || '').trim(); if (!texto) throw new Error('falta el texto de la tarea');
   const ahora = Utilities.formatDate(new Date(), tz, "EEEE d 'de' MMMM yyyy, HH:mm");
   const cfg = p.config || {};
@@ -3868,20 +3979,9 @@ function ex_tareaIA_(p) {
   const web = { type: haiku ? 'web_search_20250305' : 'web_search_20260209', name: 'web_search', max_uses: 3, user_location: { type: 'approximate', country: 'CL', city: 'Puerto Varas', timezone: 'America/Santiago' } };
   let conWeb = pr.getProperty('TAREAS_WEB') !== 'no';
   const messages = [{ role: 'user', content: pedido }], estado = { acciones: [], usadas: {} };
-  const clave = pr.getProperty('ANTHROPIC_API_KEY'); if (!clave) throw new Error('falta ANTHROPIC_API_KEY en las propiedades del script');
   const llamar = function () {
-    const cuerpo = { model: modelo, max_tokens: 16000, output_config: { effort: 'medium' }, system: [{ type: 'text', text: EX_TAR_SISTEMA, cache_control: { type: 'ephemeral' } }], tools: conWeb ? [web].concat(tools) : tools, messages: messages };
-    const headers = { 'x-api-key': clave, 'anthropic-version': '2023-06-01' };
-    if (!haiku) { cuerpo.fallbacks = 'default'; headers['anthropic-beta'] = 'server-side-fallback-2026-07-01'; }
-    const r = UrlFetchApp.fetch('https://api.anthropic.com/v1/messages', { method: 'post', contentType: 'application/json', muteHttpExceptions: true, payload: JSON.stringify(cuerpo), headers: headers });
-    const j = JSON.parse(r.getContentText() || '{}');
-    if (r.getResponseCode() !== 200) {
-      const msg = (j.error && j.error.message) || '';
-      // Si la búsqueda web no está habilitada en la organización, se sigue sin ella.
-      if (conWeb && /web_search|web search/i.test(msg)) { conWeb = false; return llamar(); }
-      throw new Error('Claude respondió ' + r.getResponseCode() + ': ' + msg.slice(0, 200));
-    }
-    return j;
+    return ex_ia_('tareas', { model: modelo, max_tokens: 16000, output_config: { effort: 'medium' }, system: [{ type: 'text', text: EX_TAR_SISTEMA, cache_control: { type: 'ephemeral' } }], tools: conWeb ? [web].concat(tools) : tools, messages: messages },
+      { sinWeb: function () { conWeb = false; } });   // si la búsqueda web no está habilitada en la organización, se sigue sin ella
   };
   let plan = null, fuentes = {};
   for (let paso = 0; paso < 10 && !plan; paso++) {
@@ -3926,20 +4026,14 @@ const EX_COM_FINAL = { name: 'entregar_busqueda', description: 'Entrega el resul
   siguiente_paso: { type: 'string', description: 'La acción concreta que recomiendas (por ejemplo, armar pedido a Outside con X e Y)' } } } };
 const EX_COM_TOOLS = ['buscar_en_proveedores', 'buscar_producto', 'ficha_specialized_en_vivo', 'stock_tienda', 'ventas_tienda', 'clientes_interesados', 'oportunidades_compra', 'correos_proveedores'];
 function ex_comprasIA_(p) {
-  const pr = PropertiesService.getScriptProperties(), clave = pr.getProperty('ANTHROPIC_API_KEY'); if (!clave) throw new Error('falta ANTHROPIC_API_KEY en las propiedades del script');
   const q = String(p.q || '').trim(); if (!q) throw new Error('escribe qué buscas');
-  const modelo = pr.getProperty('COMPRAS_MODELO') || 'claude-haiku-5-5', haiku = /haiku/.test(modelo);   // económico; se cambia con COMPRAS_MODELO
+  const modelo = ex_modeloSkill_('compras');   // económico; se cambia con COMPRAS_MODELO o CEREBRO_MODELO
   const tools = EX_COP_TOOLS.filter(function (t) { return EX_COM_TOOLS.indexOf(t.name) >= 0; }).concat([Object.assign({}, EX_COM_FINAL, { cache_control: { type: 'ephemeral' } })]);
   const conf = ex_proveedoresConf_().map(function (x) { return x.nombre + ' (' + x.marcas + ', descuento ' + x.desc + '%' + (x.iva ? ', precios ' + x.iva : '') + ')'; }).join('; ');
   const messages = [{ role: 'user', content: 'Hoy es ' + ex_hoyYmd_(ex_tz_()) + '. Proveedores configurados: ' + conf + '.\nBúsqueda de Gustavo: «' + q.slice(0, 500) + '»' }], estado = { acciones: [], usadas: {} };
   let res = null; const fuentes = {};
   for (let paso = 0; paso < 9 && !res; paso++) {
-    const cuerpo = { model: modelo, max_tokens: 12000, output_config: { effort: 'medium' }, system: [{ type: 'text', text: EX_COM_SISTEMA, cache_control: { type: 'ephemeral' } }], tools: tools, messages: messages };
-    const headers = { 'x-api-key': clave, 'anthropic-version': '2023-06-01' };
-    if (!haiku) { cuerpo.fallbacks = 'default'; headers['anthropic-beta'] = 'server-side-fallback-2026-07-01'; }
-    const r = UrlFetchApp.fetch('https://api.anthropic.com/v1/messages', { method: 'post', contentType: 'application/json', muteHttpExceptions: true, payload: JSON.stringify(cuerpo), headers: headers });
-    const j = JSON.parse(r.getContentText() || '{}');
-    if (r.getResponseCode() !== 200) throw new Error('Claude respondió ' + r.getResponseCode() + ': ' + ((j.error && j.error.message) || '').slice(0, 200));
+    const j = ex_ia_('compras', { model: modelo, max_tokens: 12000, output_config: { effort: 'medium' }, system: [{ type: 'text', text: EX_COM_SISTEMA, cache_control: { type: 'ephemeral' } }], tools: tools, messages: messages });
     messages.push({ role: 'assistant', content: j.content });
     if (j.stop_reason === 'pause_turn') continue;
     const usos = (j.content || []).filter(function (c) { return c.type === 'tool_use'; });
@@ -4033,7 +4127,7 @@ function ex_cerebro_(p) {
   const ult = leer();
   if (!p.forzar && ult && ult.fecha === hoy) return Object.assign({ ok: true }, ult);
   if (!p.forzar && !p.generar) return Object.assign({ ok: true, pendiente: true }, ult || {});
-  const plan = ex_llamarClaude_(ex_cerebroContexto_(p.contexto), EX_CER_SISTEMA, EX_CER_ESQUEMA);
+  const plan = ex_llamarClaude_(ex_cerebroContexto_(p.contexto), EX_CER_SISTEMA, EX_CER_ESQUEMA, 'plan_dia');
   sh.appendRow([hoy, new Date(), JSON.stringify(plan)]);
   if (sh.getLastRow() > 120) sh.deleteRows(2, sh.getLastRow() - 100);
   (plan.avisos || []).slice(0, 3).forEach(function (a) { try { ex_avisoAuto_(a.titulo, a.detalle, a.importancia, a.fecha); } catch (e) {} });
@@ -4042,7 +4136,7 @@ function ex_cerebro_(p) {
 // Cada hora: a partir de las 7:00 genera el plan del día una vez (si hay clave de Claude).
 function ex_rondaCerebro_() {
   const pr = PropertiesService.getScriptProperties(), tz = ex_tz_(), hoy = ex_hoyYmd_(tz), hora = +Utilities.formatDate(new Date(), tz, 'H');
-  if (!pr.getProperty('ANTHROPIC_API_KEY') || hora < 7 || pr.getProperty('EX_CEREBRO_DIA') === hoy) return;
+  if (!pr.getProperty('ANTHROPIC_API_KEY') || !ex_skillActiva_('plan_dia') || hora < 7 || pr.getProperty('EX_CEREBRO_DIA') === hoy) return;
   pr.setProperty('EX_CEREBRO_DIA', hoy);
   ex_cerebro_({ generar: true });
 }
@@ -4101,6 +4195,7 @@ function ex_conDocLock_(fn) {
 }
 function ex_tareaHoraria() {
   if (!ex_cuentaVigente_()) return;
+  EX_FONDO = true;
   ex_conLock_(ex_sincCalendario_);
   try { ex_rondaPublicar_(); } catch (e) { console.log('Publicar: ' + e.message); }
   try { ex_spzRonda_(); } catch (e) { console.log('Specialized: ' + e.message); }
@@ -4112,6 +4207,7 @@ function ex_tareaHoraria() {
 }
 function ex_tareaBase() {
   if (!ex_cuentaVigente_()) return;
+  EX_FONDO = true;
   ex_conLock_(ex_escanearBase_);
   try { ex_avanzarPostventa_(); ex_conLock_(ex_unirDuplicados_); } catch (e) { console.log('postventa: ' + e.message); }
   if (ex_bsaleToken_()) { try { ex_bsaleCatalogo_(); ex_bsaleSincStock_(); } catch (e) { console.log('Bsale: ' + e.message); } }   // catálogo y stock (arribos, stock crítico)
@@ -4123,6 +4219,7 @@ function ex_tareaBase() {
 }
 function ex_tareaAgente() {
   if (!ex_cuentaVigente_()) return;
+  EX_FONDO = true;
   ex_rondaAgente_(); ex_rondaPerfiles_();
   try { ex_describirFotos_(90000); } catch (e) { console.log('Fotos IA: ' + e.message); }
 }

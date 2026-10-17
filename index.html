@@ -592,7 +592,7 @@ nav.bottom button span .ico{width:21px;height:21px}
 .rs-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .rs-row input[type=text]{margin-top:0}
 @media (max-width:700px){.rs-grid,.rs-row{grid-template-columns:1fr}}
-/* Análisis del agente y estadísticas de la base */
+/* Análisis del Cerebro y estadísticas de la base */
 .ins{display:block!important;margin-bottom:14px;border-color:var(--s1);background:linear-gradient(180deg,var(--accent-soft),var(--card) 140px)}
 .ins .wh .r{margin-left:auto;display:flex;gap:8px;align-items:center}
 .ins-res{margin:2px 0 4px;font-size:15.5px;line-height:1.5;font-weight:500;max-width:85ch}
@@ -976,7 +976,7 @@ body:has(.selbar) .fab,body:has(.selbar) .fab2{display:none}
   .pz-sl{width:118px}.pz-strip.v .pz-sl{width:92px}
   .mk-c{grid-template-columns:repeat(5,1fr)}
 }
-/* Cerebro: plan del día, clima, radar, avisos, noticias, Specialized, Copiloto */
+/* Cerebro: plan del día, clima, radar, avisos, noticias, Specialized, Cerebro */
 .cmd{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(300px,1fr);gap:14px;margin:0 0 14px}
 .cmd-plan{background:linear-gradient(140deg,#16213A 0%,#1D2B4B 55%,#23396A 100%);color:#fff;border-radius:18px;padding:20px 22px;position:relative;overflow:hidden;box-shadow:0 18px 40px -24px rgba(22,33,58,.9)}
 .cmd-plan::after{content:"";position:absolute;right:-70px;top:-90px;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(91,155,255,.35),transparent 70%)}
@@ -1171,7 +1171,7 @@ body:has(.selbar) .fab,body:has(.selbar) .fab2{display:none}
 .fz-b2b{background:var(--accent-soft);border-radius:14px;padding:12px 14px;margin-top:16px}
 .fz-b2b b{display:flex;align-items:center;gap:6px}
 .fz-b2b p{margin:6px 0 10px;font-size:13px;line-height:1.5;color:var(--ink)}
-/* Copiloto */
+/* Cerebro */
 .fab2{position:fixed;right:18px;bottom:calc(166px + env(safe-area-inset-bottom));z-index:9;border:0;display:flex;align-items:center;gap:8px;height:46px;padding:0 16px 0 13px;border-radius:999px;background:#16213A;color:#fff;font-weight:800;font-size:14px;box-shadow:0 12px 28px -10px rgba(22,33,58,.7);cursor:pointer;transition:transform .12s}
 .fab2:active{transform:scale(.95)}
 .fab2 .ico{width:18px;height:18px;color:#9CC3FF}
@@ -1512,7 +1512,7 @@ body:has(.selbar) .fab,body:has(.selbar) .fab2{display:none}
 .ccard .cic{font-size:24px}.ccard b{font-size:15px}.ccard small{color:var(--muted);font-size:13px;line-height:1.4}.ccard .cn{margin-top:auto;padding-top:8px;font-size:12.5px;font-weight:700;color:var(--accent-ink)}
 .cmsg{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:8px}
 .cmsg small{display:block;color:var(--muted);font-size:12px}.cmsg.ok{opacity:.6}
-/* Cambios propuestos por el Copiloto */
+/* Cambios propuestos por el Cerebro */
 .cmb{display:grid;grid-template-columns:120px 1fr 1fr;gap:8px;font-size:14px;padding:7px 0;border-top:1px solid var(--line);align-items:baseline}
 .cmb span{color:var(--muted);font-size:13px}.cmb s{color:var(--muted)}.cmb b{color:var(--ok-ink)}
 .cmb-n{background:var(--soft);border-radius:10px;padding:10px 12px;font-size:14px;margin-top:10px;line-height:1.45}
@@ -1666,7 +1666,7 @@ body:has(.selbar) .fab,body:has(.selbar) .fab2{display:none}
 @media (max-width:640px){.hm-postit{transform:none}.hh-v{font-size:32px}.hh-chart{height:120px}.hh-src{position:static;margin-top:8px}.pp-r{grid-template-columns:78px 1fr 62px}}
 .hm-upd{display:flex;gap:12px;align-items:center;background:#EAF2FD;border-radius:16px;padding:12px 14px;margin-bottom:12px}
 .hm-upd b{display:block;font-size:14px}.hm-upd span{font-size:12.5px;color:var(--muted)}
-/* plan del agente: franja clara */
+/* plan del Cerebro: franja clara */
 .home-plan .pstrip{background:var(--card);color:var(--ink);box-shadow:0 1px 2px rgba(16,24,40,.04),0 10px 30px -20px rgba(16,24,40,.25);border:1px solid rgba(16,24,40,.05);border-radius:18px;padding:10px 10px 10px 16px;margin-bottom:16px}
 .home-plan .ps-k{color:var(--accent-ink)}
 .home-plan .ps-f{background:var(--soft);border-color:transparent}.home-plan .ps-f:hover{background:var(--line)}
@@ -1927,6 +1927,66 @@ header.top{background:transparent!important}
 .mas-an > summary small{color:var(--muted);font-size:12.5px;flex:1}
 .mas-an > summary::after{content:"Mostrar ▾";font-size:12.5px;font-weight:700;color:var(--accent-ink);flex:none}
 .mas-an[open] > summary::after{content:"Ocultar ▴"}
+/* ===== Cerebro: un cerebro con skills ===== */
+.cb-hero{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:24px;background:radial-gradient(600px 300px at 100% 0%,rgba(97,152,223,.45),rgba(97,152,223,0) 70%),linear-gradient(135deg,#0E1A31 0%,#16305C 60%,#1F4F96 100%);color:#fff;border-radius:24px;padding:28px 30px;box-shadow:0 24px 48px -28px rgba(14,26,49,.7);position:relative;overflow:hidden}
+.cb-tag{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#BFD5F2}
+.cb-tag .ico{width:15px;height:15px}
+.cb-hero h2{margin:8px 0 8px;font-size:28px;font-weight:800;letter-spacing:-.035em}
+.cb-hero p{margin:0;color:rgba(255,255,255,.8);font-size:14.5px;line-height:1.55;max-width:62ch}
+.cb-flow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:18px}
+.cb-flow span{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:999px;padding:5px 12px;font-size:12.5px;font-weight:600}
+.cb-flow i{opacity:.55;font-style:normal}
+.cb-kpis{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;align-content:center}
+.cb-k{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:12px 14px;backdrop-filter:blur(6px)}
+.cb-k small{display:block;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.62);font-weight:800}
+.cb-k b{display:block;font-size:24px;font-weight:800;letter-spacing:-.035em;margin-top:3px;font-variant-numeric:tabular-nums}
+.cb-k em{display:block;font-style:normal;font-size:11.5px;color:rgba(255,255,255,.66);margin-top:1px}
+.cb-sec{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:28px 2px 12px;flex-wrap:wrap}
+.cb-sec h3{margin:0;font-size:17px;font-weight:800;letter-spacing:-.02em}
+.cb-sec span{color:var(--muted);font-size:13px}
+.cb-g{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+@media (min-width:1400px){.cb-g.g4{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.cb-seg{display:flex;flex-wrap:wrap;gap:6px}.cb-seg button{border:1px solid var(--line);background:var(--card);border-radius:10px;padding:7px 12px;font:inherit;font-size:13px;font-weight:700;color:#344054;cursor:pointer}.cb-seg button:hover{border-color:rgba(42,120,214,.4)}.cb-seg button.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.cb-acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.cb-s{background:var(--card);border-radius:var(--r-card);border:var(--bd-card);box-shadow:var(--sh-card);padding:16px 18px;display:flex;flex-direction:column;gap:10px;min-width:0;transition:box-shadow .2s,transform .2s}
+.cb-s:hover{box-shadow:0 2px 4px rgba(16,24,40,.05),0 18px 40px -20px rgba(16,24,40,.28)}
+.cb-s.off{background:#FAFBFC}.cb-s.off .cb-ic{filter:grayscale(1);opacity:.6}.cb-s.off p{color:var(--muted)}
+.cb-st{display:flex;align-items:center;gap:12px;min-width:0}
+.cb-ic{width:42px;height:42px;border-radius:13px;background:var(--accent-soft);display:flex;align-items:center;justify-content:center;font-size:21px;flex:none}
+.cb-st b{display:block;font-size:15px;letter-spacing:-.01em}
+.cb-st small{display:block;font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cb-s p{margin:0;font-size:13.5px;line-height:1.45;color:#3B4456}
+.cb-meta{display:flex;flex-wrap:wrap;gap:6px}
+.cb-meta span{font-size:11.5px;font-weight:700;background:var(--soft);color:#475467;border-radius:999px;padding:3px 9px}
+.cb-meta span.exp{background:#F1ECFE;color:#5B3FD0}
+.cb-ft{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:auto;padding-top:10px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted)}
+.cb-ft b{color:var(--ink);font-variant-numeric:tabular-nums}
+.cb-go{all:unset;cursor:pointer;color:var(--accent-ink);font-weight:700;font-size:12.5px;white-space:nowrap}
+.cb-go:hover{text-decoration:underline}
+.sw{position:relative;width:40px;height:23px;border-radius:999px;background:#D0D5DD;border:0;cursor:pointer;flex:none;transition:background .15s;padding:0}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:17px;height:17px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.2);transition:transform .15s}
+.sw.on{background:var(--ok)}.sw.on::after{transform:translateX(17px)}.sw:disabled{opacity:.5}
+.cb-row{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:16px}
+.cb-card{background:var(--card);border-radius:var(--r-card);border:var(--bd-card);box-shadow:var(--sh-card);padding:18px 20px}
+.cb-ch{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}.cb-ch span{font-size:12.5px;color:var(--muted)}
+.cb-bars{display:flex;align-items:flex-end;gap:3px;height:96px;margin-top:14px}
+.cb-bars i{flex:1;background:var(--s2);border-radius:4px 4px 1px 1px;min-height:2px;transition:background .15s}
+.cb-bars i:hover{background:var(--s4)}.cb-bars i.hoy{background:var(--accent)}
+.cb-ax{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:6px}
+.cb-how{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.cb-how div{background:var(--soft);border-radius:14px;padding:12px 14px}
+.cb-how b{display:block;font-size:13px;margin-bottom:4px}.cb-how small{font-size:12.5px;color:#475467;line-height:1.45;display:block}
+@media (max-width:1180px){.cb-g{grid-template-columns:repeat(2,minmax(0,1fr))}.cb-row,.cb-hero{grid-template-columns:1fr}.cb-how{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:640px){.cb-g,.cb-how{grid-template-columns:1fr}.cb-hero{padding:20px 18px;border-radius:20px}.cb-hero h2{font-size:23px}.cb-k b{font-size:20px}}
+.cm-f span.sk{background:#F1ECFE;color:#5B3FD0;font-weight:700}
+/* Guía de la app */
+.gd{display:flex;flex-direction:column;gap:12px;max-width:520px}
+.gd-steps{display:flex;gap:6px}.gd-steps i{flex:1;height:4px;border-radius:4px;background:var(--line)}.gd-steps i.on{background:var(--accent)}
+.gd-ic{width:54px;height:54px;border-radius:16px;background:var(--accent-soft);display:flex;align-items:center;justify-content:center;font-size:27px;margin-top:6px}
+.gd h3{margin:0;font-size:21px;letter-spacing:-.025em}.gd p{margin:0;color:#3B4456;line-height:1.5}
+.gd ul{margin:0;padding-left:18px;color:#3B4456;line-height:1.65;font-size:14px}
+.gd-nav{display:flex;justify-content:space-between;gap:8px;margin-top:6px}
+#btnGuia{font-weight:800;font-size:16px}
 </style>
 
 
@@ -1938,7 +1998,8 @@ header.top{background:transparent!important}
     <div><h1 id="hTitle">Organizador</h1><small id="hSub"></small></div>
     <div class="row" style="gap:8px">
       <button class="icon-btn" id="btnBus" title="Buscar en toda la app (Ctrl+K)" aria-label="Buscar">⌕</button>
-      <button class="btn sec hdr-cop" id="btnCop" title="Abrir el Copiloto"></button>
+      <button class="icon-btn" id="btnGuia" title="Guía de la app" aria-label="Guía de la app">?</button>
+      <button class="btn sec hdr-cop" id="btnCop" title="Abrir el Cerebro"></button>
       <button class="icon-btn hdr-add" id="btnAdd" title="Agregar tarea" aria-label="Agregar tarea">＋</button>
       <button class="icon-btn" id="btnRefresh" title="Actualizar">↻</button>
       <button class="icon-btn" id="btnSettings" title="Ajustes">⚙️</button>
@@ -1947,7 +2008,7 @@ header.top{background:transparent!important}
   <main id="view"></main>
 </div>
 <button class="fab" id="fab" aria-label="Agregar tarea">+</button>
-<button class="fab2" id="copFab" aria-label="Abrir el Copiloto"></button>
+<button class="fab2" id="copFab" aria-label="Abrir el Cerebro"></button>
 <button class="focus-pill" id="focusPill" hidden></button>
 <nav class="bottom">
   <div class="brand"><img src="icon-192.png" alt=""><div>Organizador<small>Blackline Puerto Varas</small></div></div>
@@ -1963,6 +2024,8 @@ header.top{background:transparent!important}
   <div class="nb-sec">Marca</div>
   <button data-tab="redes" class="nb2"><span data-ic="camera"></span>Redes</button>
   <button data-tab="proy" class="nb2"><span data-ic="flag"></span>Proyectos</button>
+  <div class="nb-sec">Inteligencia</div>
+  <button data-tab="cerebro" class="nb2"><span data-ic="brain"></span>Cerebro</button>
   <button class="nb-mas" id="nbMas" aria-label="Más secciones"><span>•••</span>Más</button>
 </nav>
 <div id="layer"></div>
@@ -1976,7 +2039,7 @@ const LS = window.localStorage;
 document.body.classList.toggle('ui2', LS.ui !== 'clasico');
 const UI2 = () => document.body.classList.contains('ui2');
 // Para qué sirve cada pestaña, en una línea (para que cualquiera del equipo entienda dónde está).
-const PROPOSITO = { hoy: 'Lo que hay que hacer hoy, en orden', tareas: 'Todas tus tareas y pendientes', semana: 'Agenda, entregas y eventos del mes', compras: 'Proveedores, stock y ventas de Bsale', negocios: 'Tus ventas en curso, de la primera consulta a la postventa', proy: 'Iniciativas largas y su avance', base: 'Clientes, proveedores y chats de WhatsApp', redes: 'Instagram, contenido y estudio de diseño' };
+const PROPOSITO = { hoy: 'Lo que hay que hacer hoy, en orden', tareas: 'Todas tus tareas y pendientes', semana: 'Agenda, entregas y eventos del mes', compras: 'Proveedores, stock y ventas de Bsale', negocios: 'Tus ventas en curso, de la primera consulta a la postventa', proy: 'Iniciativas largas y su avance', base: 'Clientes, proveedores y chats de WhatsApp', redes: 'Instagram, contenido y estudio de diseño', cerebro: 'Un solo cerebro con skills: qué hace solo, qué hace cuando lo pides y cuánto gasta' };
 let S = { data: null, tab: (/[?&]tab=(hoy|tareas|negocios|base|redes|semana|proy|compras)\b/.exec(location.search) || [])[1] || 'inicio', filtro: 'todas', q: '', verHechas: false, vista: LS.vista || 'lista', offline: false, busy: false, google: null, googleBusy: false, googleAt: 0, ext: null, extInactivo: false, base: null, baseAt: 0, bf: 'todos', bq: '', mutado: false, subH: 'habitos', neg: null, negAt: 0, nv: LS.nv2 || '', nf: 'abiertas', nq: '' };
 let deferredInstall = null;
 
@@ -2040,7 +2103,7 @@ async function apiX(op, extra){
 }
 // Nivel 2 del script Extras: recordatorios y base de contactos. Nivel 3: la base solo usa contacto@blacklinechile.cl. Nivel 4: eventos de varios días.
 function extNivel(){ return S.extInactivo ? 0 : (S.ext && S.ext.nivel) || 1; }
-const APP_VER = 'v55', NIVEL_ULTIMO = 38;
+const APP_VER = 'v56', NIVEL_ULTIMO = 39;
 function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < NIVEL_ULTIMO; }
 let sincTimer = null;
 // Después de cambiar tareas, el script actualiza los recordatorios del calendario (en segundo plano).
@@ -2115,27 +2178,28 @@ async function updateTask(t, cambios){
 }
 
 /* ---------- cabecera y navegación ---------- */
-const TITLES = { inicio: 'Inicio', hoy: 'Hoy', tareas: 'Tareas', habitos: 'Hábitos', semana: 'Calendario', proy: 'Proyectos', base: 'Contactos', redes: 'Redes sociales', negocios: 'Negociaciones', compras: 'Compras y proveedores' };
+const TITLES = { inicio: 'Inicio', hoy: 'Hoy', tareas: 'Tareas', habitos: 'Hábitos', semana: 'Calendario', proy: 'Proyectos', base: 'Contactos', redes: 'Redes sociales', negocios: 'Negociaciones', compras: 'Compras y proveedores', cerebro: 'Cerebro' };
 function head(){
   $('#hTitle').innerHTML = (S.tab === 'inicio' && S.data ? saludoTxt() : TITLES[S.tab]) + (S.offline ? '<span class="chip-off">sin conexión</span>' : '');
   $('#hSub').innerHTML = S.busy ? '<span class="spin"></span>Actualizando…' : fmtLong(hoy()) + (UI2() && PROPOSITO[S.tab] ? '<span class="h-prop"> · ' + PROPOSITO[S.tab] + '</span>' : '');
-  $$('nav.bottom button').forEach(b => b.classList.toggle('on', b.dataset.tab === S.tab || (b.id === 'nbMas' && ['semana', 'compras', 'proy', 'redes'].includes(S.tab))));
+  $$('nav.bottom button').forEach(b => b.classList.toggle('on', b.dataset.tab === S.tab || (b.id === 'nbMas' && ['semana', 'compras', 'proy', 'redes', 'cerebro'].includes(S.tab))));
   const hb = $('nav.bottom [data-tab=hoy]'); if (hb){ let n = 0; try { n = pendientesHoyN(); } catch(e){} let x = hb.querySelector('.nb'); if (!x){ x = document.createElement('i'); x.className = 'nb'; hb.appendChild(x); } x.textContent = n > 99 ? '99+' : n; x.style.display = n ? '' : 'none'; }
 }
 function go(tab){ $$('.qpop').forEach(x => x.remove()); S.tab = tab; render(); window.scrollTo(0, 0); }
 $$('nav.bottom button[data-tab]').forEach(b => b.onclick = () => go(b.dataset.tab));
 // Celular: la barra muestra las 5 secciones del día a día; el resto queda en «Más».
 $('#nbMas').onclick = () => {
-  const L = [['semana', 'cal', 'Calendario'], ['compras', 'box', 'Compras'], ['proy', 'flag', 'Proyectos'], ['redes', 'camera', 'Redes']];
+  const L = [['semana', 'cal', 'Calendario'], ['compras', 'box', 'Compras'], ['proy', 'flag', 'Proyectos'], ['redes', 'camera', 'Redes'], ['cerebro', 'brain', 'Cerebro']];
   const md = modal('Más secciones', '<div class="mas-g">' + L.map(x => '<button data-mt="' + x[0] + '" class="' + (S.tab === x[0] ? 'on' : '') + '">' + icon(x[1]) + '<span>' + x[2] + '</span></button>').join('') + '</div>');
   md.el.querySelectorAll('[data-mt]').forEach(b => b.onclick = () => { md.cerrar(); go(b.dataset.mt); });
 };
 $('#btnAdd').onclick = () => openAdd();
 $('#btnBus').onclick = () => openBuscar();
+$('#btnGuia').onclick = () => openGuia();
 // Buscador global: Ctrl+K (o ⌘K) desde cualquier pestaña.
 addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k'){ e.preventDefault(); openBuscar(); } });
 function openBuscar(){
-  const SECC = [['inicio', 'Inicio'], ['hoy', 'Hoy'], ['tareas', 'Tareas'], ['semana', 'Calendario'], ['compras', 'Compras'], ['negocios', 'Negocios'], ['proy', 'Proyectos'], ['base', 'Contactos'], ['redes', 'Redes']];
+  const SECC = [['inicio', 'Inicio'], ['hoy', 'Hoy'], ['tareas', 'Tareas'], ['semana', 'Calendario'], ['compras', 'Compras'], ['negocios', 'Negocios'], ['proy', 'Proyectos'], ['base', 'Contactos'], ['redes', 'Redes'], ['cerebro', 'Cerebro']];
   const md = modal('Buscar', '<input type="search" id="gb_q" placeholder="Cliente, tarea, negocio, aviso o sección…" autocomplete="off" style="width:100%;font-size:17px"><div id="gb_r" class="gb-r"></div><div class="hint" style="margin:8px 0 0">↑ ↓ para moverte · Enter para abrir · Ctrl+K desde cualquier pestaña</div>', { wide: true });
   const q = md.el.querySelector('#gb_q'), box = md.el.querySelector('#gb_r'); let R = [], sel = 0;
   const abrir = r => { md.cerrar(); r.fn(); };
@@ -2148,7 +2212,7 @@ function openBuscar(){
       negocios().filter(n => has([n.titulo, n.producto, n.notas].join(' '))).slice(0, 6).forEach(n => R.push({ g: 'Negocios', ic: '🤝', tx: n.titulo, sub: n.etapa + (n.valor ? ' · ' + clpCorto(n.valor) : ''), fn: () => openNegocio(n) }));
       pendientes().filter(x => has(textoTarea(x))).slice(0, 6).forEach(x => R.push({ g: 'Tareas', ic: '✅', tx: x.tarea, sub: [x.limite ? fmtRel(x.limite) : 'Sin fecha', x.categoria].filter(Boolean).join(' · '), fn: () => openDetail(x) }));
       avisos().filter(a => has(a.titulo + ' ' + a.detalle)).slice(0, 3).forEach(a => R.push({ g: 'Avisos', ic: '📌', tx: a.titulo, sub: a.fecha ? fmt(a.fecha) : '', fn: () => avisoForm(a) }));
-      R.push({ g: 'Copiloto', ic: '✦', tx: 'Preguntarle al Copiloto: «' + q.value.trim() + '»', sub: 'Busca en todas tus fuentes', fn: () => { copiloto(); setTimeout(() => { const cq = $('#copQ'); if (cq){ cq.value = q.value.trim(); cq.focus(); } }, 150); } });
+      R.push({ g: 'Cerebro', ic: '✦', tx: 'Preguntarle al Cerebro: «' + q.value.trim() + '»', sub: 'Busca en todas tus fuentes', fn: () => { copiloto(); setTimeout(() => { const cq = $('#copQ'); if (cq){ cq.value = q.value.trim(); cq.focus(); } }, 150); } });
     } else SECC.forEach(x => R.push({ g: 'Ir a', ic: '→', tx: x[1], sub: '', fn: () => go(x[0]) }));
     sel = Math.min(sel, R.length - 1); let g = '';
     box.innerHTML = R.map((r, i) => (r.g !== g ? '<div class="gb-g">' + esc(g = r.g) + '</div>' : '') + '<button class="gb-i' + (i === sel ? ' on' : '') + '" data-gi="' + i + '"><span class="gb-ic">' + r.ic + '</span><span class="gb-t"><b>' + esc(r.tx) + '</b>' + (r.sub ? '<small>' + esc(r.sub) + '</small>' : '') + '</span></button>').join('') || '<div class="empty">Sin resultados</div>';
@@ -2173,10 +2237,11 @@ document.addEventListener('keydown', e => { if ((e.key === '/' && !/INPUT|TEXTAR
 
 function render(){
   head();
-  const cf = $('#copFab'); if (cf && !cf.innerHTML) cf.innerHTML = icon('spark') + '<span>Copiloto</span>';
-  const hc = $('#btnCop'); if (hc && !hc.innerHTML) hc.innerHTML = icon('spark') + ' Copiloto';
+  const cf = $('#copFab'); if (cf && !cf.innerHTML) cf.innerHTML = icon('spark') + '<span>Cerebro</span>';
+  const hc = $('#btnCop'); if (hc && !hc.innerHTML) hc.innerHTML = icon('spark') + ' Cerebro';
   if (!S.data){ $('#view').innerHTML = '<div class="empty"><span class="spin"></span>Cargando…</div>'; return; }
-  ({ inicio: viewInicio, hoy: viewHoy, tareas: viewTareas, habitos: () => S.subH === 'semana' ? viewSemana() : viewHabitos(), semana: () => S.per && S.per !== 'semana' ? viewPeriodo() : viewSemana(), proy: viewProy, base: viewBase, negocios: viewNegocios, redes: viewRedes, compras: viewCompras })[S.tab]();
+  ({ inicio: viewInicio, hoy: viewHoy, tareas: viewTareas, habitos: () => S.subH === 'semana' ? viewSemana() : viewHabitos(), semana: () => S.per && S.per !== 'semana' ? viewPeriodo() : viewSemana(), proy: viewProy, base: viewBase, negocios: viewNegocios, redes: viewRedes, compras: viewCompras, cerebro: viewCerebro })[S.tab]();
+  if (!S.guiaAuto){ S.guiaAuto = 1; let v = '1'; try { v = LS.guiaVista; } catch(e){} if (!v) setTimeout(() => { if (!$('.pop-bg')) openGuia(); }, 900); }
   focusPill(); imxPill();
 }
 
@@ -2320,6 +2385,7 @@ const ICONS = {
   chart: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
   bolt: '<path d="M13 2 4 14h7l-1 8 9-12h-7z"/>',
   drop: '<path d="M12 3s6 6.4 6 11a6 6 0 0 1-12 0c0-4.6 6-11 6-11z"/>',
+  brain: '<path d="M9.5 3.5A3 3 0 0 0 6.6 6 3 3 0 0 0 4 9.2a3.2 3.2 0 0 0 .9 4.6A3 3 0 0 0 7 18.4a2.8 2.8 0 0 0 5 1.4V5a1.8 1.8 0 0 0-2.5-1.5z"/><path d="M14.5 3.5A3 3 0 0 1 17.4 6 3 3 0 0 1 20 9.2a3.2 3.2 0 0 1-.9 4.6 3 3 0 0 1-2.1 4.6 2.8 2.8 0 0 1-5 1.4"/><path d="M12 9h2.5M9.5 13H12"/>',
   spark: '<path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M18 6l-2.5 2.5M8.5 15.5 6 18"/>',
   clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
   plus: '<path d="M12 5v14M5 12h14"/>',
@@ -2499,7 +2565,7 @@ function noticiasHome(){
 // Texto corto de lo que trae la versión nueva del script (el banner de actualización del Inicio).
 function novedadScript(){
   const n = extNivel();
-  return n >= 37 ? 'Las tareas automáticas ya no bloquean la app (por ejemplo, la lectura de ventas de Bsale).' : n >= 36 ? 'Cuando un cliente con negociación abierta compra en Bsale, la app te propone marcarla como ganada.' : n >= 35 ? 'Ventas del mes igual que en Bsale (solo boletas y facturas, menos notas de crédito) y noticias con foto de portada.' : n >= 34 ? 'Meta y gráfico de ventas del mes en el Inicio, con el avance diario desde Bsale.' : n >= 33 ? 'Une sola las negociaciones duplicadas de una venta ganada.' : n >= 32 ? 'Etapas después del pago: seguimiento, entrega y postventa.' : n >= 31 ? 'Venta perdida: cierra tareas, eventos y la idea de respuesta del agente.' : 'Funciones nuevas para el Organizador.';
+  return n >= 39 ? 'La app ahora tiene un solo Cerebro con 9 skills (en vez de agentes sueltos): mira qué hace solo, cuánto gasta y paúsalo en la pestaña Cerebro.' : n >= 37 ? 'Las tareas automáticas ya no bloquean la app (por ejemplo, la lectura de ventas de Bsale).' : n >= 36 ? 'Cuando un cliente con negociación abierta compra en Bsale, la app te propone marcarla como ganada.' : n >= 35 ? 'Ventas del mes igual que en Bsale (solo boletas y facturas, menos notas de crédito) y noticias con foto de portada.' : n >= 34 ? 'Meta y gráfico de ventas del mes en el Inicio, con el avance diario desde Bsale.' : n >= 33 ? 'Une sola las negociaciones duplicadas de una venta ganada.' : n >= 32 ? 'Etapas después del pago: seguimiento, entrega y postventa.' : n >= 31 ? 'Venta perdida: cierra tareas, eventos y la idea de respuesta del Cerebro.' : 'Funciones nuevas para el Organizador.';
 }
 
 /* ---------- Ventas del mes: avance diario acumulado contra el mes anterior y la meta ---------- */
@@ -2730,8 +2796,8 @@ function insights(){
   if (extNivel() >= 7 && S.base){
     const hoyAg = (S.base.interacciones || []).filter(i => /🧠 Agente/.test(i.tipo) && i.fecha === hoy()).length;
     const esperan = contactos().filter(c => agenteDe(c.id).idea).length;
-    if (esperan) out.push({ ic: '🧠', c: '#6D5DFC', tx: '<b>' + esperan + (esperan === 1 ? ' cliente espera' : ' clientes esperan') + ' respuesta</b> por WhatsApp. El agente te dejó una idea de respuesta en su ficha.', acts: [['Ver', 'base-esperan']] });
-    else if (hoyAg) out.push({ ic: '🧠', c: '#6D5DFC', tx: 'El agente organizó <b>' + hoyAg + (hoyAg === 1 ? ' conversación' : ' conversaciones') + '</b> de WhatsApp hoy.' });
+    if (esperan) out.push({ ic: '🧠', c: '#6D5DFC', tx: '<b>' + esperan + (esperan === 1 ? ' cliente espera' : ' clientes esperan') + ' respuesta</b> por WhatsApp. El Cerebro te dejó una idea de respuesta en su ficha.', acts: [['Ver', 'base-esperan']] });
+    else if (hoyAg) out.push({ ic: '🧠', c: '#6D5DFC', tx: 'El Cerebro organizó <b>' + hoyAg + (hoyAg === 1 ? ' conversación' : ' conversaciones') + '</b> de WhatsApp hoy.' });
   }
   const frios = contactosFrios();
   if (frios.length) out.push({ ic: '🤝', c: '#13B386', tx: '<b>' + frios.length + (frios.length === 1 ? ' cliente' : ' clientes') + '</b> sin contacto hace más de 30 días. Un mensaje de seguimiento puede ser una venta.', acts: [['Ver', 'base-frios']] });
@@ -2938,7 +3004,7 @@ function openPersonas(){
     catch(e){ b.disabled = false; toast('No se pudo agregar: ' + e.message); }
   });
 }
-// Lo último que entendió el agente de IA sobre un contacto, con su idea de respuesta si el cliente espera.
+// Lo último que entendió el Cerebro sobre un contacto, con su idea de respuesta si el cliente espera.
 function agenteDe(id){
   const I = ((S.base && S.base.interacciones) || []).filter(i => i.id === id);
   const r = I.find(i => /🧠 Agente/.test(i.tipo)), idea = I.find(i => /Idea de respuesta/.test(i.tipo)), perdida = I.find(i => /Venta perdida/.test(i.tipo));
@@ -2949,8 +3015,8 @@ function agenteHTML(c){
   if (!c || extNivel() < 7) return '';
   const g = agenteDe(c.id), tel = String(c.telefono || '').replace(/[^\d+]/g, '').replace(/^\+/, '').replace(/^9(\d{8})$/, '569$1');
   if (!g.r && !agenteActivo() && extNivel() < 8) return '';
-  return '<div class="ai"><div class="wh" style="margin:0">' + icon('spark') + 'Lo que entendió el agente</div>' +
-    (g.r ? '<div style="font-size:14px;line-height:1.45;margin-top:6px">' + esc(g.r.detalle) + '</div><div class="hint" style="margin:4px 0 0">' + fmtRel(g.r.fecha) + '</div>' : '<div class="hint">' + (agenteActivo() ? 'Aún no ha analizado conversaciones de este contacto.' : 'Activa el agente (clave de Claude) para que lea sus chats. Mientras, puedes importar su chat.') + '</div>') +
+  return '<div class="ai"><div class="wh" style="margin:0">' + icon('spark') + 'Lo que entendió el Cerebro</div>' +
+    (g.r ? '<div style="font-size:14px;line-height:1.45;margin-top:6px">' + esc(g.r.detalle) + '</div><div class="hint" style="margin:4px 0 0">' + fmtRel(g.r.fecha) + '</div>' : '<div class="hint">' + (agenteActivo() ? 'Aún no ha analizado conversaciones de este contacto.' : 'Activa el Cerebro (clave de Claude) para que lea sus chats. Mientras, puedes importar su chat.') + '</div>') +
     (g.idea ? '<div class="card" style="margin:10px 0 0;padding:10px 12px"><div class="hint" style="margin:0 0 4px">💬 Espera respuesta · idea:</div><div style="font-size:14px">' + esc(g.idea.detalle) + '</div>' + (tel ? '<a class="btn sm sec" style="display:inline-block;margin-top:8px;text-decoration:none" target="_blank" href="https://wa.me/' + esc(tel) + '?text=' + encodeURIComponent(g.idea.detalle) + '">Abrir WhatsApp con esta idea</a>' : '') + '</div>' : '') +
     (agenteActivo() ? '<button class="btn sm sec" data-agente="' + esc(c.id) + '" style="margin-top:10px">🧠 Analizar ahora</button>' : '') +
     (extNivel() >= 8 ? ' <button class="btn sm sec" data-impc="' + esc(c.id) + '" style="margin-top:10px">📥 Importar chat</button>' : '') + '</div>';
@@ -3060,7 +3126,7 @@ async function leerArchivoChat(blob, nombre){
 function openImportar(pre){
   pre = pre || {};
   if (extNivel() < 8){ toast('Actualiza el script Extras para importar chats'); return showExtrasSetup(); }
-  sheet('<h3>📥 Importar chat de WhatsApp</h3><div class="hint">Para negociaciones en curso o clientes antiguos. En WhatsApp abre el chat → <b>⋮ → Más → Exportar chat → Sin archivos</b> y compártelo con <b>Organizador</b>. Desde el PC, sube aquí los .zip o .txt. Puedes elegir cientos a la vez, o el .zip de una carpeta de Drive: el agente perfila a cada cliente.</div>' +
+  sheet('<h3>📥 Importar chat de WhatsApp</h3><div class="hint">Para negociaciones en curso o clientes antiguos. En WhatsApp abre el chat → <b>⋮ → Más → Exportar chat → Sin archivos</b> y compártelo con <b>Organizador</b>. Desde el PC, sube aquí los .zip o .txt. Puedes elegir cientos a la vez, o el .zip de una carpeta de Drive: el Cerebro perfila a cada cliente.</div>' +
     '<div id="imp_paso1"' + (pre.txt || pre.files ? ' style="display:none"' : '') + '><label class="btn sec" style="display:block;text-align:center;margin-top:12px">📄 Elegir archivos (.zip o .txt)<input type="file" id="imp_f" multiple accept=".zip,.txt,text/plain,application/zip,application/x-zip-compressed" style="display:none"></label></div><div id="imp_paso2"></div>');
   const mostrar = (txt, archivo) => {
     const r = leerChatWhatsApp(txt), autores = Object.entries(r.autores).sort((a, b) => b[1] - a[1]);
@@ -3075,7 +3141,7 @@ function openImportar(pre){
       '<label class="l">¿Quién eres tú en este chat?</label>' + pills('imp_yo', autores.map(a => ({ v: a[0], t: a[0] })), yo) +
       '<label class="l">Cliente</label><select id="imp_c"><option value="">➕ Contacto nuevo</option>' + C.map(c => '<option value="' + esc(c.id) + '"' + (c.id === sugerido ? ' selected' : '') + '>' + esc(c.nombre || c.email) + (c.telefono ? ' · ' + esc(c.telefono) : '') + '</option>').join('') + '</select>' +
       '<div id="imp_nuevo"' + (sugerido ? ' style="display:none"' : '') + '><label class="l">Nombre</label><input type="text" id="imp_n" value="' + esc(telDe(nombre) ? '' : nombre) + '"><label class="l">Teléfono (para unirlo con sus mensajes nuevos)</label><input type="text" id="imp_t" inputmode="tel" value="' + esc(telDe(nombre)) + '" placeholder="+56 9…"></div>' +
-      (agenteActivo() ? '<label class="row" style="margin-top:12px;gap:8px;font-size:14px;font-weight:600"><input type="checkbox" id="imp_ag" checked style="width:20px;height:20px"> 🧠 Que el agente lo analice al importar (ficha, negociación y tareas pendientes)</label>' : '<div class="hint">🧠 Con el agente activado, además se analiza solo al importar.</div>') +
+      (agenteActivo() ? '<label class="row" style="margin-top:12px;gap:8px;font-size:14px;font-weight:600"><input type="checkbox" id="imp_ag" checked style="width:20px;height:20px"> 🧠 Que el Cerebro lo analice al importar (ficha, negociación y tareas pendientes)</label>' : '<div class="hint">🧠 Con el Cerebro activado, además se analiza solo al importar.</div>') +
       '<div class="btns"><button class="btn" id="imp_ok">Importar ' + r.mensajes.length + ' mensajes</button></div>';
     bindPills('imp_yo');
     $('#imp_c').onchange = () => { $('#imp_nuevo').style.display = $('#imp_c').value ? 'none' : 'block'; };
@@ -3088,7 +3154,7 @@ function openImportar(pre){
       b.disabled = true; b.innerHTML = '<span class="spin"></span>' + (ag ? 'Importando y analizando…' : 'Importando…');
       try {
         const res = await apiX('importarChat', { contacto, mensajes: r.mensajes.map(m => ({ fecha: m.fecha, saliente: m.autor === yoSel, texto: m.texto })), analizar: ag });
-        toast('📥 ' + res.importados + ' mensajes importados' + (res.repetidos ? ' (' + res.repetidos + ' ya estaban)' : '') + (res.agente ? ' · 🧠 ' + (res.agente.cambios || []).slice(0, 2).join(' · ') : '') + (res.errorAgente ? ' · el agente no pudo: ' + res.errorAgente : ''));
+        toast('📥 ' + res.importados + ' mensajes importados' + (res.repetidos ? ' (' + res.repetidos + ' ya estaban)' : '') + (res.agente ? ' · 🧠 ' + (res.agente.cambios || []).slice(0, 2).join(' · ') : '') + (res.errorAgente ? ' · el Cerebro no pudo: ' + res.errorAgente : ''));
         S.mutado = true; await Promise.all([loadBase(true), loadNeg(true)]); closeSheet();
         const c2 = contactoPorId(res.id); if (c2) openContacto(c2); load();
       } catch(e){ b.disabled = false; b.textContent = 'Importar'; toast('No se pudo importar: ' + e.message); }
@@ -3125,7 +3191,7 @@ function openImportar(pre){
     $('#imp_paso2').innerHTML = '<div class="card" style="margin-top:12px"><b>' + ok.length + ' chats listos</b>' + (chats.length > ok.length ? '<div class="hint">' + (chats.length - ok.length) + ' archivo(s) no se pudieron leer.</div>' : '') + '</div>' +
       '<label class="l">¿Quién eres tú en estos chats?</label>' + pills('imp_yo', cands.map(a => ({ v: a[0], t: a[0] + ' (' + a[1] + ')' })), yo) +
       '<div id="imp_lista" style="margin-top:8px">' + filas() + '</div>' +
-      (agenteActivo() ? '<label class="row" style="margin-top:12px;gap:8px;font-size:14px;font-weight:600"><input type="checkbox" id="imp_ag" checked style="width:20px;height:20px"> 🧠 Que el agente analice cada chat (tarda unos segundos por chat)</label>' : '') +
+      (agenteActivo() ? '<label class="row" style="margin-top:12px;gap:8px;font-size:14px;font-weight:600"><input type="checkbox" id="imp_ag" checked style="width:20px;height:20px"> 🧠 Que el Cerebro analice cada chat (tarda unos segundos por chat)</label>' : '') +
       '<div class="btns"><button class="btn" id="imp_ok">Importar chats marcados</button></div>';
     bindPills('imp_yo', v => { yo = v; $('#imp_lista').innerHTML = filas(); });
     $('#imp_ok').onclick = async () => {
@@ -3142,11 +3208,11 @@ function openImportar(pre){
           const contacto = d.existente ? { id: d.existente.id, nombre: d.existente.nombre, telefono: d.existente.telefono } : { nombre: d.nombre, telefono: d.tel };
           const res = await apiX('importarChat', { contacto, mensajes: c.r.mensajes.map(m => ({ fecha: m.fecha, saliente: m.autor === yo, texto: m.texto })), analizar: ag });
           msgs += res.importados; listos++;
-          if (res.errorAgente) fallos.push(d.nombre + ': el agente no pudo (' + res.errorAgente + ')');
+          if (res.errorAgente) fallos.push(d.nombre + ': el Cerebro no pudo (' + res.errorAgente + ')');
         } catch(err){ fallos.push(d.nombre + ': ' + err.message); }
       }
       S.mutado = true; await Promise.all([loadBase(true), loadNeg(true)]); load();
-      $('#imp_paso2').innerHTML = '<div class="card" style="margin-top:12px"><b>📥 ' + listos + ' de ' + marcados.length + ' chats importados</b><div class="hint">' + msgs + ' mensajes nuevos' + (ag ? ' · 🧠 analizados por el agente' : '') + '.</div>' +
+      $('#imp_paso2').innerHTML = '<div class="card" style="margin-top:12px"><b>📥 ' + listos + ' de ' + marcados.length + ' chats importados</b><div class="hint">' + msgs + ' mensajes nuevos' + (ag ? ' · 🧠 analizados por el Cerebro' : '') + '.</div>' +
         (fallos.length ? '<div class="hint">⚠️ ' + fallos.map(esc).join('<br>⚠️ ') + '</div>' : '') + '</div><div class="btns"><button class="btn" id="imp_fin">Ver la Base</button></div>';
       $('#imp_fin').onclick = () => { closeSheet(); S.tab = 'base'; render(); };
     };
@@ -3591,7 +3657,7 @@ function redesContenido(){
 /* --- Audiencia: lo que busca tu público (chats) y datos demográficos de Instagram --- */
 function redesAudiencia(){
   const a = igAnalisis(), demo = (S.ig && S.ig.audiencia) || null;
-  let html = '<div class="wsub" style="margin:0 2px 12px">Lo que tu público busca, sacado de los perfiles que el agente armó con tus chats de WhatsApp, comparado con cuánto lo muestras en Instagram (últimos 90 días).</div>';
+  let html = '<div class="wsub" style="margin:0 2px 12px">Lo que tu público busca, sacado de los perfiles que el Cerebro armó con tus chats de WhatsApp, comparado con cuánto lo muestras en Instagram (últimos 90 días).</div>';
   const mxD = Math.max(1, ...a.demanda.map(x => x.n));
   html += '<div class="cols2"><div><div class="w" style="margin-bottom:14px"><div class="wh">' + icon('users') + 'Modelos que más preguntan' + ib('igDemanda') + '</div>' + (a.demanda.length ? '<div class="dem"><span class="dh"></span><span class="dh">Clientes interesados</span><span class="dh">Publicaciones</span>' + a.demanda.map(d => '<span class="dn">' + esc(d.k.charAt(0).toUpperCase() + d.k.slice(1)) + '</span><span class="dbar"><i style="width:' + (d.n / mxD * 100) + '%"></i><b class="num">' + d.n + '</b></span><span class="dpost' + (d.posts <= 1 && d.n >= 3 ? ' gap' : '') + '">' + d.posts + (d.posts <= 1 && d.n >= 3 ? ' · falta contenido' : '') + '</span>').join('') + '</div>' : '<div class="wsub">Cuando importes tus chats, aquí verás qué modelos piden más tus clientes.</div>') + '</div>';
   const bar = (titulo, obj, L, info) => { const E = Object.entries(obj).sort((x, y) => y[1] - x[1]).slice(0, 7), mx = Math.max(1, ...E.map(e => e[1])); return '<div class="w" style="margin-bottom:14px"><div class="wh">' + titulo + (info ? ib(info) : '') + '</div>' + (E.length ? E.map((e, i) => '<div class="pil"><span class="pn">' + esc(L[e[0]] || e[0]) + '</span><span class="hbt"><i style="width:' + (e[1] / mx * 100) + '%;background:' + SEQ[Math.max(0, 4 - i)] + '"></i></span><b class="num">' + (+e[1]).toLocaleString('es-CL') + '</b></div>').join('') : '<div class="wsub">Sin datos todavía.</div>') + '</div>'; };
@@ -3727,7 +3793,7 @@ function contextoContenido(){
     'NEGOCIACIONES ABIERTAS (producto): ' + an.slice(0, 20).map(x => x.n.producto || x.n.titulo).join('; '),
     'VENTAS ÚLTIMOS 30 DÍAS: ' + (gan.map(n => n.producto || n.titulo).join('; ') || 'ninguna registrada'),
     'PRODUCTOS EN NEGOCIACIÓN O ENCARGADOS SIN CONTENIDO EN INSTAGRAM: ' + (productosSinContenido().map(x => x.producto + ' [' + x.etapa + (x.notas ? '; ' + x.notas.slice(0, 120) : '') + ']').join('; ') || 'ninguno detectado'),
-    'LO QUE SE HABLA EN LOS CHATS (resúmenes del agente): ' + (perfiles().slice(0, 25).map(pf => pf.resumen).filter(Boolean).map(x => x.slice(0, 200)).join(' | ') || 'sin resúmenes'),
+    'LO QUE SE HABLA EN LOS CHATS (resúmenes del Cerebro): ' + (perfiles().slice(0, 25).map(pf => pf.resumen).filter(Boolean).map(x => x.slice(0, 200)).join(' | ') || 'sin resúmenes'),
     'YA PLANIFICADO (no repetir): ' + ((S.cont || []).filter(x => x.fecha >= h && x.estado !== 'Descartado').map(x => x.fecha + ' ' + x.formato + ': ' + x.tema).join('; ') || 'nada'),
     '', 'Planifica desde mañana por 2 semanas (fechas AAAA-MM-DD, hora HH:MM), respetando la frecuencia y los horarios.'].join('\n');
 }
@@ -3798,7 +3864,7 @@ function openIdea(x, pre){
   md.el.querySelectorAll('[data-es]').forEach(b => b.onclick = async () => { b.disabled = true; try { const r = await apiX('contenido', { accion: 'estado', id: x.id, estado: b.dataset.es, post: b.dataset.es === 'Publicado' && p ? p.id : undefined }); S.cont = r.items; md.cerrar(); if (b.dataset.es === 'Publicado') confetti(40); render(); } catch(e){ b.disabled = false; toast('No se pudo: ' + e.message); } });
 }
 
-/* ---------- Análisis del agente (IA): lee los datos calculados, anticipa y recomienda. Lo usan Redes y Contactos ---------- */
+/* ---------- Análisis del Cerebro: lee los datos calculados, anticipa y recomienda. Lo usan Redes y Contactos ---------- */
 // Tendencia de una serie (mínimos cuadrados): cambio por período y proyección a n períodos.
 function tendencia(vals, n){
   const P = vals.map((v, i) => [i, +v]).filter(p => isFinite(p[1]));
@@ -3817,7 +3883,7 @@ function insightsViejo(area){
   if (area === 'redes' && S.ig && S.ig.sinc && S.ig.sinc > x.f && dias > 0.5) return true;
   return false;
 }
-// Datos para el agente: Instagram
+// Datos para el Cerebro: Instagram
 function contextoInsightsRedes(){
   const a = igAnalisis(), m = a.m, D = m.D;
   const seg = D.filter(d => d.seguidores !== '' && d.seguidores != null).map(d => +d.seguidores), tS = tendencia(seg.slice(-12), 8);
@@ -3835,7 +3901,7 @@ function contextoInsightsRedes(){
     '- Seguidores nuevos 28 d: ' + (m.conBotones ? m.nuevos + ', bajas ' + m.bajas : 's/d') + '; toques en el botón de mensaje 28 d: ' + (m.conBotones ? m.tMensaje : 's/d') + '.',
     '', 'SEÑALES QUE DETECTÓ LA APP (úsalas como insumo, no las copies):', señales.join('\n') || '(ninguna)'].join('\n');
 }
-// Datos para el agente: base de clientes
+// Datos para el Cerebro: base de clientes
 function baseDatos(){
   const P = perfiles(), st = (S.leadsCanal && S.leadsCanal.stats) || null, h = hoy();
   const nuevas = st ? semanas(st.nuevas, 26) : [], tN = tendencia(nuevas.slice(-12).map(x => x.v), 6);
@@ -3861,7 +3927,7 @@ function contextoInsightsBase(){
   const heat = b.st ? Object.entries(b.st.heat).sort((x, y) => y[1] - x[1]).slice(0, 6).map(e => { const [d, hr] = e[0].split(':'); return DIAS_L[+d] + ' ' + hr + 'h (' + e[1] + ' msj)'; }).join(', ') : 's/d';
   const ops = oportunidades();
   return ['ÁREA: Base de clientes', 'Hoy es ' + fmtLong(hoy()) + '.',
-    'Contactos: ' + contactos().length + '; con perfil del agente: ' + P.length + '. Ciclo de vida: ' + Object.entries(C).map(e => ((CICLO[e[0]] || {}).t || e[0]) + ' ' + e[1]).join(', ') + '.',
+    'Contactos: ' + contactos().length + '; con perfil del Cerebro: ' + P.length + '. Ciclo de vida: ' + Object.entries(C).map(e => ((CICLO[e[0]] || {}).t || e[0]) + ' ' + e[1]).join(', ') + '.',
     'Conversaciones nuevas por semana (26 semanas, de la más antigua a la actual): ' + (b.nuevas.map(x => x.v).join(', ') || 's/d') + (b.tN ? '; tendencia ' + (b.tN.cambio >= 0 ? '+' : '') + (b.tN.cambio * 100).toFixed(1) + '% por semana; proyección a 6 semanas ≈ ' + Math.max(0, Math.round(b.tN.proy)) + ' por semana' : '') + '.',
     'Conversaciones nuevas últimas 4 semanas: ' + (b.n28 ?? 's/d') + ' (4 semanas antes: ' + (b.n56 ?? 's/d') + ').',
     'Tiempo de respuesta de la tienda (mediana, últimas 4 semanas): ' + (b.resp28 != null ? b.resp28 + ' min' : 's/d') + ' (4 semanas antes: ' + (b.respPrev != null ? b.respPrev + ' min' : 's/d') + '); respondidas en menos de 1 hora: ' + (b.en1h != null ? b.en1h + '%' : 's/d') + '. Clientes esperando respuesta (últimos 30 días): ' + (b.st ? b.st.esperan : 's/d') + '.',
@@ -3886,12 +3952,12 @@ async function generarInsights(area, btn){
   if ((area === 'base' && S.tab === 'base') || (area === 'redes' && S.tab === 'redes')) render();
 }
 function insightsHTML(area){
-  if (extNivel() < 14) return '<div class="w ins"><div class="wh">' + icon('spark') + 'Análisis del agente</div><div class="wsub">Actualiza el script a la versión nueva para que el agente analice tus datos, anticipe lo que viene y te recomiende qué hacer.</div></div>';
-  if (!iaDisponible()) return '<div class="w ins"><div class="wh">' + icon('spark') + 'Análisis del agente</div><div class="wsub">Falta la clave de Claude (ANTHROPIC_API_KEY) para que el agente analice tus datos.</div></div>';
+  if (extNivel() < 14) return '<div class="w ins"><div class="wh">' + icon('spark') + 'Análisis del Cerebro</div><div class="wsub">Actualiza el script a la versión nueva para que el Cerebro analice tus datos, anticipe lo que viene y te recomiende qué hacer.</div></div>';
+  if (!iaDisponible()) return '<div class="w ins"><div class="wh">' + icon('spark') + 'Análisis del Cerebro</div><div class="wsub">Falta la clave de Claude (ANTHROPIC_API_KEY) para que el Cerebro analice tus datos.</div></div>';
   const x = insightsDe(area), r = x.r, corriendo = S._insCorriendo && S._insCorriendo[area], err = S._insError && S._insError[area];
-  if (!r) return '<div class="w ins" id="ins-' + area + '"><div class="wh">' + icon('spark') + 'Análisis del agente</div>' + (corriendo || !err ? '<div class="ins-sk"><span class="spin"></span>El agente está leyendo tus datos y armando predicciones…</div><div class="sk"></div><div class="sk s2"></div>' : '<div class="wsub">No se pudo: ' + esc(err) + '</div><button class="btn sm" data-ins="' + area + '">Reintentar</button>') + '</div>';
+  if (!r) return '<div class="w ins" id="ins-' + area + '"><div class="wh">' + icon('spark') + 'Análisis del Cerebro</div>' + (corriendo || !err ? '<div class="ins-sk"><span class="spin"></span>El Cerebro está leyendo tus datos y armando predicciones…</div><div class="sk"></div><div class="sk s2"></div>' : '<div class="wsub">No se pudo: ' + esc(err) + '</div><button class="btn sm" data-ins="' + area + '">Reintentar</button>') + '</div>';
   const cf = { alta: 't-ok', media: 't-acc', baja: 't-mut' }, imp = { alto: 'Impacto alto', medio: 'Impacto medio', bajo: 'Impacto bajo' }, esf = { bajo: 'poco esfuerzo', medio: 'esfuerzo medio', alto: 'mucho esfuerzo' };
-  return '<div class="w ins" id="ins-' + area + '"><div class="wh">' + icon('spark') + 'Análisis del agente<span class="r"><span class="wsub" style="margin:0">' + esc(x.f ? 'actualizado ' + haceTxt(x.f.slice(0, 10)) : '') + '</span><button class="btn sm sec" data-ins="' + area + '"' + (corriendo ? ' disabled' : '') + '>' + (corriendo ? '<span class="spin"></span>' : '↻') + ' Actualizar</button></span></div>' +
+  return '<div class="w ins" id="ins-' + area + '"><div class="wh">' + icon('spark') + 'Análisis del Cerebro<span class="r"><span class="wsub" style="margin:0">' + esc(x.f ? 'actualizado ' + haceTxt(x.f.slice(0, 10)) : '') + '</span><button class="btn sm sec" data-ins="' + area + '"' + (corriendo ? ' disabled' : '') + '>' + (corriendo ? '<span class="spin"></span>' : '↻') + ' Actualizar</button></span></div>' +
     '<p class="ins-res">' + esc(r.resumen) + '</p>' +
     ((r.alertas || []).length ? '<div class="ins-al">' + r.alertas.map(a => '<div>' + icon('flag') + '<span><b>' + esc(a.titulo) + '</b> ' + esc(a.detalle) + '</span></div>').join('') + '</div>' : '') +
     ((r.predicciones || []).length ? '<div class="lab2" style="margin-top:12px">Lo que viene</div><div class="ins-pred">' + r.predicciones.map(p => '<div class="pr"><div class="pr-h"><span class="tag ' + (cf[p.confianza] || 't-acc') + '">Confianza ' + esc(p.confianza) + '</span><small>' + esc(p.horizonte) + '</small></div><b>' + esc(p.titulo) + '</b><span>' + esc(p.detalle) + '</span><em>Basado en: ' + esc(p.base) + '</em></div>').join('') + '</div>' : '') +
@@ -3914,7 +3980,7 @@ function perfilarExistentes(){
   const todos = sinPerfil(false), chat = sinPerfil(true);
   const m = modal(icon('users') + ' Perfilar tus contactos', '<div id="pe"></div>', { wide: true }); m.el.classList.add('imx');
   const box = m.el.querySelector('#pe');
-  box.innerHTML = '<p style="margin:0 0 12px;line-height:1.5">El agente lee la conversación de cada contacto y arma su perfil (relación, experiencia, gama, disciplina, intereses, probabilidad de compra) para agruparlos en los segmentos y estadísticas. No crea tareas: solo perfila y, si hay una venta real de los últimos 60 días, abre la negociación.</p>' +
+  box.innerHTML = '<p style="margin:0 0 12px;line-height:1.5">El Cerebro lee la conversación de cada contacto y arma su perfil (relación, experiencia, gama, disciplina, intereses, probabilidad de compra) para agruparlos en los segmentos y estadísticas. No crea tareas: solo perfila y, si hay una venta real de los últimos 60 días, abre la negociación.</p>' +
     '<div class="im-kpis" style="grid-template-columns:repeat(2,1fr)"><div><b class="num">' + chat.length + '</b><small>con chat de WhatsApp</small></div><div><b class="num">' + todos.length + '</b><small>sin perfil en total</small></div></div>' +
     '<div class="seg" id="pe_q">' + [['chat', 'Solo los que tienen chat (' + chat.length + ')'], ['todos', 'Todos (' + todos.length + ')']].map(x => '<button type="button" class="pill' + (x[0] === (chat.length ? 'chat' : 'todos') ? ' on' : '') + '" data-v="' + x[0] + '">' + x[1] + '</button>').join('') + '</div>' +
     '<div class="hint">Costo aproximado: menos de US$' + Math.max(1, Math.ceil(todos.length * 0.002)) + '. Si cierras la app, el servidor sigue solo.</div><div class="btns"><button class="btn" id="pe_go">' + icon('spark') + ' Perfilar ahora</button></div>';
@@ -3936,9 +4002,9 @@ async function correrPerfilado(ids, box, m){
     box.innerHTML = '<div class="im-big"><b class="num">' + est.listos + '</b><span>/ ' + est.total + '</span><small>contactos perfilados · ' + (hechos >= est.total ? 'listo' : eta ? '~' + eta + ' min restantes' : 'terminando…') + '</small></div>' +
       '<div class="segbar"><i class="d" style="width:' + pct(est.listos) + '"></i><i class="r" style="width:' + pct(enCurso) + '"></i><i class="f" style="width:' + pct(est.fallos.length) + '"></i></div>' +
       '<div class="seglg"><span><i class="d"></i>Listos ' + est.listos + '</span><span><i class="r"></i>Analizando ' + enCurso + '</span><span><i class="f"></i>Con error ' + est.fallos.length + '</span><span>' + icon('deal') + ' ' + est.neg + ' negociaciones</span></div>' +
-      '<div class="im-feed">' + (est.feed.length ? est.feed.slice(0, 6).map(f => '<div class="im-f"><span class="av">' + esc(iniciales(f.nombre)) + '</span><div><b>' + esc(f.nombre) + '</b><div class="pcs">' + f.chips + '</div></div>' + (f.neg ? '<span class="pc lc">' + icon('deal') + ' negociación</span>' : '') + '</div>').join('') : '<div class="wsub" style="padding:10px 0">El agente está leyendo los primeros chats…</div>') + '</div>' +
+      '<div class="im-feed">' + (est.feed.length ? est.feed.slice(0, 6).map(f => '<div class="im-f"><span class="av">' + esc(iniciales(f.nombre)) + '</span><div><b>' + esc(f.nombre) + '</b><div class="pcs">' + f.chips + '</div></div>' + (f.neg ? '<span class="pc lc">' + icon('deal') + ' negociación</span>' : '') + '</div>').join('') : '<div class="wsub" style="padding:10px 0">El Cerebro está leyendo los primeros chats…</div>') + '</div>' +
       '<div class="btns">' + (hechos >= est.total ? '<button class="btn" id="pe_fin">Ver segmentos</button>' : '<button class="btn sec" id="pe_bg">Seguir en segundo plano</button>') + '</div>';
-    const bg = box.querySelector('#pe_bg'); if (bg) bg.onclick = () => { m.cerrar(); toast('El agente sigue perfilando. Te aviso al terminar.'); render(); };
+    const bg = box.querySelector('#pe_bg'); if (bg) bg.onclick = () => { m.cerrar(); toast('El Cerebro sigue perfilando. Te aviso al terminar.'); render(); };
     const fin = box.querySelector('#pe_fin'); if (fin) fin.onclick = () => { m.cerrar(); S.bv = 'seg'; go('base'); };
   };
   pintar();
@@ -3994,7 +4060,7 @@ function statsBaseHTML(){
 }
 
 /* ---------- Redes · Estudio de contenido (carruseles e historias) ---------- */
-/* ---------- Estudio de contenido: el agente diseña carruseles e historias con tu marca; tú revisas y publicas ---------- */
+/* ---------- Estudio de contenido: el Cerebro diseña carruseles e historias con tu marca; tú revisas y publicas ---------- */
 const FUENTES_MARCA = ['Barlow Condensed', 'Anton', 'Archivo Black', 'Oswald', 'Bebas Neue', 'Montserrat', 'Poppins', 'Barlow', 'Archivo', 'Work Sans', 'DM Sans', 'Manrope'];
 const MARCA_BASE = {
   nombre: 'Blackline Puerto Varas', handle: '@blackline_bicicletas', web: 'blacklinechile.cl',
@@ -4045,7 +4111,7 @@ async function bancoListas(){
   if (!S.ytFotos && extNivel() >= 22){ try { S.ytFotos = (await apiX('imagen', { accion: 'yt' })).items || []; } catch(e){ S.ytFotos = []; } }
   if (!S.propias){ try { S.propias = igActivo() ? (await apiX('imagen', { accion: 'propias' })).items || [] : []; } catch(e){ S.propias = []; } }
 }
-// Elige la foto que mejor calza con cada lámina. Con el script nuevo, el agente MIRA las candidatas (visión) y descarta las que no
+// Elige la foto que mejor calza con cada lámina. Con el script nuevo, el Cerebro MIRA las candidatas (visión) y descarta las que no
 // corresponden; si ninguna sirve, deja la lámina sin foto y te pide la foto concreta que hay que sacar.
 async function resolverFotos(pz, opt){
   opt = opt || {};
@@ -4187,7 +4253,7 @@ async function renderPieza(pz){
 
 /* --- Vista: Redes → Estudio --- */
 function redesEstudio(){
-  if (extNivel() < 15) return '<div class="sec rd-con"><div class="wh">' + icon('spark') + 'Estudio de contenido</div><p>El agente diseña carruseles e historias con tu marca, a partir de lo que está pasando en la tienda. Tú los revisas, pides cambios y publicas con un toque. Necesita la versión nueva del script.</p><button class="btn sm" id="rUpd">Ver cómo actualizar</button></div>';
+  if (extNivel() < 15) return '<div class="sec rd-con"><div class="wh">' + icon('spark') + 'Estudio de contenido</div><p>El Cerebro diseña carruseles e historias con tu marca, a partir de lo que está pasando en la tienda. Tú los revisas, pides cambios y publicas con un toque. Necesita la versión nueva del script.</p><button class="btn sm" id="rUpd">Ver cómo actualizar</button></div>';
   if (!S.piezas){ if (!S._estPend){ S._estPend = 1; loadEstudio(true).then(() => { S._estPend = 0; if (S.tab === 'redes') render(); }); } return '<div class="empty"><span class="spin"></span>Cargando el estudio…</div>'; }
   const srv = S.marcaSrv || {}, falta = [];
   if (!(srv.marca)) falta.push(['Kit de marca', 'Colores, tipografías y logo de tu Instagram.', 'marca']);
@@ -4196,9 +4262,9 @@ function redesEstudio(){
   const tmp = temporadaPV();
   let html = '<div class="est-top"><div><div class="wh" style="margin:0">' + icon('spark') + 'Estudio de contenido</div><div class="wsub">Temporada: <b>' + esc(tmp.k) + '</b> · ' + esc(tmp.t.split(':')[1] || '') + '</div></div><div class="est-acts">' + (extNivel() >= 27 ? '<button class="btn sm sec" id="esSub">📥 Subir fotos</button>' : '') + (extNivel() >= 22 ? '<button class="btn sm sec" id="esCarp">' + icon('camera') + ' Carpetas de fotos</button>' : '') + '<button class="btn sm sec" id="esMarca">' + icon('target') + ' Kit de marca</button><button class="btn sm" id="esNueva">' + icon('spark') + ' Crear con IA</button></div></div>';
   if (falta.length) html += '<div class="w est-setup"><div class="lab2">Para dejarlo listo</div>' + falta.map(f => '<div class="est-f">' + icon('flag') + '<div><b>' + esc(f[0]) + '</b><span>' + esc(f[1]) + '</span></div>' + (f[2] === 'marca' ? '<button class="btn sm" data-esm="1">Configurar</button>' : f[2] === 'guia' ? '<a class="btn sm sec" target="_blank" href="https://github.com/SnowPv/Organizador/blob/main/docs/INSTAGRAM.md#estudio-de-contenido" style="text-decoration:none">Ver cómo</a>' : '') + '</div>').join('') + (srv.banco ? '' : '') + '</div>';
-  if (srv.banco) html += '<div class="wsub" style="margin:0 2px 12px">Banco de imágenes: <a href="' + esc(srv.banco) + '" target="_blank">abrir la carpeta de Drive</a>. Sube fotos reales con nombres descriptivos (por ejemplo «levo-sendero-pichijuan.jpg») y el agente las elige solas.' + (srv.pexels ? ' También usa el banco gratuito Pexels.' : '') + '</div>';
+  if (srv.banco) html += '<div class="wsub" style="margin:0 2px 12px">Banco de imágenes: <a href="' + esc(srv.banco) + '" target="_blank">abrir la carpeta de Drive</a>. Sube fotos reales con nombres descriptivos (por ejemplo «levo-sendero-pichijuan.jpg») y el Cerebro las elige solas.' + (srv.pexels ? ' También usa el banco gratuito Pexels.' : '') + '</div>';
   const grupos = [['Borrador', 'Para revisar'], ['Aprobado', 'Aprobadas'], ['Programado', 'Programadas'], ['Error', 'Con error'], ['Publicado', 'Publicadas']];
-  if (!S.piezas.length) html += '<div class="sec seg-empty"><div class="empty">' + icon('camera') + '<b>Aún no hay piezas</b>Toca «Crear con IA»: el agente mira la temporada, lo que preguntan tus clientes, lo que más se vende y el stock, y te propone un carrusel o historias listos para revisar.</div></div>';
+  if (!S.piezas.length) html += '<div class="sec seg-empty"><div class="empty">' + icon('camera') + '<b>Aún no hay piezas</b>Toca «Crear con IA»: el Cerebro mira la temporada, lo que preguntan tus clientes, lo que más se vende y el stock, y te propone un carrusel o historias listos para revisar.</div></div>';
   grupos.forEach(([e, t]) => { const L = S.piezas.filter(p => p.estado === e); if (!L.length) return;
     html += '<div class="lab2" style="margin:14px 2px 8px">' + t + ' <span class="num">' + L.length + '</span></div><div class="pz-grid">' + L.map(p => '<button class="pz" data-pz="' + esc(p.id) + '"><span class="pz-th' + (p.tipo === 'historias' ? ' v' : '') + '" id="th-' + esc(p.id) + '">' + (S._thumbs && S._thumbs[p.id] ? '<img src="' + S._thumbs[p.id] + '" alt="">' : '<span class="spin"></span>') + '</span><span class="pz-b"><b>' + esc(p.titulo || 'Sin título') + '</b><small>' + (p.tipo === 'historias' ? 'Historias' : 'Carrusel') + ' · ' + ((p.diseno && p.diseno.slides) || []).length + (p.tipo === 'historias' ? ' pantallas' : ' láminas') + (p.programado && e === 'Programado' ? ' · ' + esc(fmt(p.programado.slice(0, 10)) + ' ' + p.programado.slice(11)) : '') + '</small>' + (p.error ? '<small class="err">' + esc(p.error.slice(0, 90)) + '</small>' : '') + '</span></button>').join('') + '</div>'; });
   return html;
@@ -4258,7 +4324,7 @@ async function subirFotos(){
 }
 
 function abrirCarpetas(){
-  const pintar = () => '<p style="margin:0 0 10px;color:var(--muted);line-height:1.5">El agente busca fotos en tu Instagram, en el banco de Drive y en estas carpetas (con sus subcarpetas). Para usar fotos de otra cuenta (por ejemplo la de la tienda), comparte la carpeta con la cuenta dueña del script y pega aquí su link. Nombres descriptivos ayudan: «levo-sendero-pichijuan.jpg» o carpetas como «Levo 4 / Taller».</p>' +
+  const pintar = () => '<p style="margin:0 0 10px;color:var(--muted);line-height:1.5">El Cerebro busca fotos en tu Instagram, en el banco de Drive y en estas carpetas (con sus subcarpetas). Para usar fotos de otra cuenta (por ejemplo la de la tienda), comparte la carpeta con la cuenta dueña del script y pega aquí su link. Nombres descriptivos ayudan: «levo-sendero-pichijuan.jpg» o carpetas como «Levo 4 / Taller».</p>' +
     '<div class="wl">' + ((S.bancoCarp || []).map(c => '<div class="it"><span class="dot" style="background:' + (c.error ? 'var(--bad)' : 'var(--ok)') + '"></span><div class="tx">' + esc(c.nombre || c.id) + '<small>' + (c.error ? 'Sin acceso: compártela con la cuenta del script' : c.fotos + ' fotos') + '</small></div><button class="btn sm sec" data-cq="' + esc(c.id) + '">Quitar</button></div>').join('') || '<div class="wsub">Aún no agregas carpetas extra.</div>') + '</div>' +
     '<label class="l">Link de la carpeta de Drive</label><div class="row" style="gap:8px"><input type="text" id="cf_l" placeholder="https://drive.google.com/drive/folders/…"><button class="btn" id="cf_ok">Agregar</button></div>';
   const md = modal(icon('camera') + ' Carpetas de fotos', '<div id="cfB">' + pintar() + '</div>');
@@ -4293,12 +4359,12 @@ function crearPieza(idea){
   const prox = (S.cont || []).filter(x => x.fecha >= hoy() && /Carrusel|Historia/.test(x.formato) && x.estado !== 'Publicado' && !(S.piezas || []).some(p => p.contenido === x.id)).slice(0, 6);
   const md = modal(icon('spark') + ' Crear con IA', '<label class="l" style="margin-top:0">Formato</label><div class="seg" id="cp_t"><button type="button" class="pill on" data-v="carrusel">Carrusel</button><button type="button" class="pill" data-v="historias">Historias</button></div>' +
     (prox.length ? '<label class="l">Desde tu calendario (opcional)</label><select id="cp_i"><option value="">—</option>' + prox.map(x => '<option value="' + esc(x.id) + '"' + (idea && idea.id === x.id ? ' selected' : '') + '>' + esc(fmt(x.fecha) + ' · ' + x.formato + ' · ' + x.tema) + '</option>').join('') + '</select>' : '') +
-    '<label class="l">Tema (opcional)</label><textarea class="note" id="cp_q" placeholder="Déjalo vacío y el agente elige lo más oportuno: temporada, lo que preguntan tus clientes, lo que más se vende y el stock. O escribe, por ejemplo: «Guía para elegir talla de Levo» o «Mantención de primavera»."></textarea>' +
-    '<div class="wsub" style="margin-top:8px">Tarda unos 20 segundos: el agente escribe, elige las fotos y la app la diseña con tu marca.</div><div class="btns"><button class="btn" id="cp_go">' + icon('spark') + ' Crear</button></div>');
+    '<label class="l">Tema (opcional)</label><textarea class="note" id="cp_q" placeholder="Déjalo vacío y el Cerebro elige lo más oportuno: temporada, lo que preguntan tus clientes, lo que más se vende y el stock. O escribe, por ejemplo: «Guía para elegir talla de Levo» o «Mantención de primavera»."></textarea>' +
+    '<div class="wsub" style="margin-top:8px">Tarda unos 20 segundos: el Cerebro escribe, elige las fotos y la app la diseña con tu marca.</div><div class="btns"><button class="btn" id="cp_go">' + icon('spark') + ' Crear</button></div>');
   bindPills('cp_t'); if (idea){ md.el.querySelectorAll('#cp_t .pill').forEach(b => b.classList.toggle('on', /Historia/.test(idea.formato || idea.tema || '') === (b.dataset.v === 'historias'))); if (idea.tema && !idea.id) md.el.querySelector('#cp_q').value = idea.tema; }
   md.el.querySelector('#cp_go').onclick = async () => {
     const b = md.el.querySelector('#cp_go'), tipo = (md.el.querySelector('#cp_t .on') || {}).dataset.v || 'carrusel', iid = md.el.querySelector('#cp_i') ? md.el.querySelector('#cp_i').value : '', it = (S.cont || []).find(x => x.id === iid);
-    b.disabled = true; b.innerHTML = '<span class="spin"></span>El agente está creando…';
+    b.disabled = true; b.innerHTML = '<span class="spin"></span>El Cerebro está creando…';
     try {
       if (!S.base) await loadBase(false);
       try { await bancoListas(); } catch(e){}
@@ -4333,7 +4399,7 @@ async function abrirPieza(p){
       '<div class="pz-side"><label class="l" style="margin-top:0">Texto de la publicación</label><textarea class="note" id="pe_c" rows="6">' + esc(pz.caption || '') + '</textarea><label class="l">Hashtags</label><input type="text" id="pe_h" value="' + esc(pz.hashtags || '') + '">' +
         (pz.por_que ? '<div class="hint">Por qué ahora: ' + esc(pz.por_que) + '</div>' : '') +
         (pedidosFoto(pz).length ? '<div class="pz-ped"><b>📸 Fotos que te pido</b>' + pedidosFoto(pz).map(x => '<div><span>Lámina ' + (x.i + 1) + '</span>' + esc(x.t) + '</div>').join('') + '<div class="hint" style="margin:6px 0 8px">No encontré fotos que calcen de verdad. Sácalas (o súbelas a tu carpeta de fotos) y vuelve a elegir en cada lámina.</div><button class="btn sm sec" id="pe_ped">＋ Crear tarea para sacarlas</button></div>' : '') +
-        '<div class="pz-ia"><label class="l">Pedir cambios al agente</label><textarea class="note" id="pe_q" rows="2" placeholder="Ej.: más corto, enfócalo en la Levo SL, agrega una lámina de tallas, cambia el tono a más técnico…"></textarea><button class="btn sm" id="pe_ia">' + icon('spark') + ' Pedir cambios</button></div>' +
+        '<div class="pz-ia"><label class="l">Pedir cambios al Cerebro</label><textarea class="note" id="pe_q" rows="2" placeholder="Ej.: más corto, enfócalo en la Levo SL, agrega una lámina de tallas, cambia el tono a más técnico…"></textarea><button class="btn sm" id="pe_ia">' + icon('spark') + ' Pedir cambios</button></div>' +
         (pub ? '<div class="pz-ok">' + icon('check') + ' Publicada' + (p.link ? ' · <a href="' + esc(p.link) + '" target="_blank">ver en Instagram</a>' : '') + '</div>' : '') +
         (p.error ? '<div class="im-warn" style="margin-top:10px">' + icon('flag') + '<span>' + esc(p.error) + '</span></div>' : '') +
         '<div class="pz-acc">' + (pub ? '' : '<button class="btn" id="pe_pub"' + (alo ? '' : ' title="Falta el alojamiento de imágenes"') + '>' + icon('arrow') + ' Publicar ahora</button><div class="rs-row"><input type="datetime-local" id="pe_d" value="' + esc(p.programado || sugerirHorario()) + '"><button class="btn sec" id="pe_pr">Programar</button></div>') +
@@ -4434,7 +4500,7 @@ function abrirMarca(){
     '<div class="lab2" style="margin-top:14px">Logo</div><div class="row" style="gap:10px;align-items:center"><span class="mk-logo" id="mk_lg">' + (m.logoData ? '<img src="' + m.logoData + '" alt="">' : 'Sin logo') + '</span><label class="btn sm sec">Subir logo (PNG con fondo transparente)<input type="file" id="mk_lf" accept="image/*" style="display:none"></label></div>' +
     '<label class="row" style="gap:8px;margin-top:6px;font-size:14px"><input type="checkbox" id="mk_inv"' + (m.logoInvertir ? ' checked' : '') + ' style="width:18px;height:18px"> Invertir el logo sobre fondos claros</label>' +
     '<div class="rs-row"><div><label class="l">Usuario</label><input type="text" id="mk_h" value="' + esc(m.handle) + '"></div><div><label class="l">Peso de e-bikes en el contenido</label><input type="number" id="mk_eb" min="0" max="100" value="' + m.focoEbike + '"></div></div>' +
-    '<label class="l">Tono</label><input type="text" id="mk_to" value="' + esc(m.tono) + '"><label class="l">Contexto del negocio (lo lee el agente)</label><textarea class="note" id="mk_cx" rows="5">' + esc(m.contexto) + '</textarea>' +
+    '<label class="l">Tono</label><input type="text" id="mk_to" value="' + esc(m.tono) + '"><label class="l">Contexto del negocio (lo lee el Cerebro)</label><textarea class="note" id="mk_cx" rows="5">' + esc(m.contexto) + '</textarea>' +
     '<div class="btns"><button class="btn" id="mk_ok">Guardar kit de marca</button></div></div></div>', { wide: true });
   md.el.classList.add('pzm');
   let logo = m.logoData;
@@ -4596,7 +4662,7 @@ function avisoForm(a, pre){
     '<label class="l">Detalle</label><textarea class="note" id="av_d" rows="3" placeholder="Lo que el equipo tiene que saber o hacer">' + esc(a.detalle) + '</textarea>' +
     '<div class="rs-row"><div><label class="l">Fecha del evento (opcional)</label><input type="date" id="av_f" value="' + esc(a.fecha) + '"></div><div><label class="l">Mostrar hasta</label><input type="date" id="av_h" value="' + esc(a.hasta || '') + '"></div></div>' +
     '<label class="l">Importancia</label><div class="seg" id="av_i">' + [['normal', 'Normal'], ['importante', 'Importante'], ['urgente', 'Urgente']].map(x => '<button type="button" class="pill' + (x[0] === a.importancia ? ' on' : '') + '" data-v="' + x[0] + '">' + x[1] + '</button>').join('') + '</div>' +
-    '<div class="wsub" style="margin-top:8px">Aparece como aviso al abrir la app (a todo el equipo) y lo leen los agentes al armar el plan del día.</div>' +
+    '<div class="wsub" style="margin-top:8px">Aparece como aviso al abrir la app (a todo el equipo) y lo lee el Cerebro al armar el plan del día.</div>' +
     '<div class="btns">' + (nuevo ? '' : '<button class="btn bad" id="av_x">Archivar</button>') + '<button class="btn" id="av_ok">Guardar</button></div>');
   bindPills('av_i');
   md.el.querySelector('#av_ok').onclick = async () => {
@@ -4625,7 +4691,7 @@ function noticiasW(n){
   if (!L.length) return extNivel() >= 16 ? '' : '<div class="w"><div class="wh">' + icon('note') + 'Noticias del mundo bike</div><div class="wsub">Lanzamientos de Specialized y lo importante de Pinkbike y Vital MTB, con la versión nueva del script.</div></div>';
   return '<div class="w nt-w"><div class="wh">' + icon('note') + 'Noticias del mundo bike' + (L.length > n ? '<button class="go" id="ntAll">Más</button>' : '') + '</div>' + L.slice(0, n).map(noticiaHTML).join('') + '</div>';
 }
-function abrirNoticias(){ modal(icon('note') + ' Noticias del mundo bike', '<div class="wsub" style="margin:0 0 6px">Elegidas por el agente entre Pinkbike, Vital MTB, Specialized en la prensa y ciclismo en Chile.</div>' + noticias().map(noticiaHTML).join(''), { wide: true }); }
+function abrirNoticias(){ modal(icon('note') + ' Noticias del mundo bike', '<div class="wsub" style="margin:0 0 6px">Elegidas por el Cerebro entre Pinkbike, Vital MTB, Specialized en la prensa y ciclismo en Chile.</div>' + noticias().map(noticiaHTML).join(''), { wide: true }); }
 
 /* --- Specialized Chile --- */
 const GENERICOS = new Set(['turbo', 'comp', 'expert', 'pro', 'sport', 'base', 'alloy', 'carbon', 'works', 'bike', 'bicicleta', 'bicicletas', 'evo', 'ltd', 'gen', 'step', 'through', 'mujer', 'women']);
@@ -4705,7 +4771,7 @@ function radarHTML(L, compacto){
 }
 function bindRadar(root, L){ root.querySelectorAll('[data-rda]').forEach(b => b.onclick = () => ejecutarAccion(L[+b.dataset.rda].acc)); }
 
-// Ejecuta una acción propuesta por el Copiloto, el Cerebro o el Radar (siempre con un toque tuyo).
+// Ejecuta una acción propuesta por el Cerebro o el Radar (siempre con un toque tuyo).
 function ejecutarAccion(a){
   if (!a) return;
   const t = a.tipo, ref = String(a.ref || ''), soloTel = ref.replace(/\D/g, '');
@@ -4725,7 +4791,7 @@ function ejecutarAccion(a){
   if (t === 'editar_negocio') return aplicarCambioNegocio(a);
   if (t === 'nota_contacto') return aplicarNotaContacto(a, c);
 }
-// Cambios que propone el Copiloto sobre datos existentes: se muestran y se aplican solo si los confirmas.
+// Cambios que propone el Cerebro sobre datos existentes: se muestran y se aplican solo si los confirmas.
 const CAMPO_NEG_TX = { etapa: 'Etapa', valor: 'Valor', proxima: 'Próxima acción', fechaProx: 'Fecha próxima acción', motivo: 'Motivo de pérdida', fechaEtapa: 'Fecha del cambio' };
 async function aplicarCambioNegocio(a){
   if (!S.neg) await loadNeg(true);
@@ -4763,16 +4829,16 @@ function contextoApp(){
   return L.join('\n');
 }
 async function generarCerebro(btn){
-  if (extNivel() < 16){ toast('Actualiza el script para el plan del agente'); return showExtrasUpdate(); }
+  if (extNivel() < 16){ toast('Actualiza el script para el plan del Cerebro'); return showExtrasUpdate(); }
   if (!iaDisponible()){ toast('Falta la clave de Claude en el script'); return; }
-  const t0 = btn ? btn.innerHTML : ''; if (btn){ btn.disabled = true; btn.innerHTML = '<span class="spin"></span>El agente está cruzando todo…'; }
+  const t0 = btn ? btn.innerHTML : ''; if (btn){ btn.disabled = true; btn.innerHTML = '<span class="spin"></span>El Cerebro está cruzando todo…'; }
   try { const r = await apiX('cerebro', { forzar: true, contexto: contextoApp() }); S.cerebroHoy = r; S.global = Object.assign(G(), { cerebro: r }); lsSet('globalCache', S.global); loadGlobal(true); toast('🧠 Plan del día listo'); render(); }
   catch(e){ if (btn){ btn.disabled = false; btn.innerHTML = t0; } toast('No se pudo: ' + e.message); }
 }
 function focoHechos(){ return lsGet('foco:' + hoy(), []); }
 function planHeroHTML(pl){
   const hechos = focoHechos();
-  return '<div class="pl-h"><span class="pl-k">' + icon('spark') + ' Plan del agente</span><div class="pl-t">' + esc(pl.titular) + '</div><p>' + esc(pl.resumen) + '</p>' +
+  return '<div class="pl-h"><span class="pl-k">' + icon('spark') + ' Plan del Cerebro</span><div class="pl-t">' + esc(pl.titular) + '</div><p>' + esc(pl.resumen) + '</p>' +
     '<div class="pl-foco">' + (pl.foco || []).slice(0, 3).map((f, i) => '<button class="pl-f' + (hechos.includes(i) ? ' ok' : '') + '" data-pf="' + i + '"><span>' + (hechos.includes(i) ? icon('check') : i + 1) + '</span>' + esc(f) + '</button>').join('') + '</div></div>';
 }
 function bindPlanHero(root){
@@ -4790,7 +4856,7 @@ function abrirPlan(){
     ((pl.contenido || []).length ? '<div class="lab2" style="margin-top:16px">Contenido sugerido</div>' + pl.contenido.map((c, i) => '<div class="pl-p"><div class="pl-pb"><div class="pl-pt"><span class="tag">' + esc(c.formato) + '</span></div><b>' + esc(c.tema) + '</b><small>' + esc(c.por_que) + '</small></div><button class="btn sm sec" data-plc="' + i + '">Diseñar →</button></div>').join('') : '') +
     (pl.clima ? '<div class="wx-tip" style="margin-top:14px">' + icon('sun') + '<span>' + esc(pl.clima) + '</span></div>' : '') +
     '<div class="wsub" style="margin-top:12px">' + (gen ? 'Generado ' + esc(new Date(gen).toTimeString().slice(0, 5)) + ' · ' : '') + 'Se arma solo cada mañana a las 7:00 cruzando todas tus fuentes.</div>' +
-    '<div class="btns"><button class="btn sec" id="plR">' + icon('spark') + ' Regenerar con lo último</button><button class="btn" id="plCop">Preguntar al Copiloto</button></div></div>';
+    '<div class="btns"><button class="btn sec" id="plR">' + icon('spark') + ' Regenerar con lo último</button><button class="btn" id="plCop">Preguntar al Cerebro</button></div></div>';
   const md = modal(icon('spark') + ' Plan del día', html, { wide: true });
   bindPlanHero(md.el);
   md.el.querySelectorAll('[data-pla]').forEach(b => b.onclick = () => { md.cerrar(); ejecutarAccion(acc[+b.dataset.pla]); });
@@ -4803,8 +4869,8 @@ function cmdHTML(){
   const pl = cerebroPlan(), nm = params()['Tu nombre (para el saludo)'];
   let izq;
   if (pl) izq = planHeroHTML(pl) + '<div class="pl-acts"><button class="btn sm" id="plAbrir">Ver plan completo</button><button class="btn sm sec" data-go="hoy">Ir a Hoy</button><button class="btn sm sec" id="copIni">' + icon('spark') + ' Preguntar</button></div>';
-  else izq = '<div class="pl-h"><span class="pl-k">' + icon('spark') + ' Plan del agente</span><div class="pl-t">' + (extNivel() >= 16 ? (iaDisponible() ? 'Tu plan de hoy aún no está listo' : 'Conecta tu clave de Claude para el plan diario') : 'Actualiza el script para activar el Cerebro') + '</div><p>' + (extNivel() >= 16 ? 'Cada mañana a las 7:00 el agente cruza tareas, agenda, clientes, WhatsApp, Bsale, la web de Specialized, Instagram, clima y noticias, y te deja las 3 cosas que hacen que el día valga la pena.' : 'El Cerebro lee todas tus fuentes cada mañana y te arma el plan del día, con avisos automáticos y el Copiloto para preguntar lo que quieras.') + '</p>' +
-    '<div class="pl-acts">' + (extNivel() >= 16 ? (iaDisponible() ? '<button class="btn sm" id="plGen">' + icon('spark') + ' Generar ahora</button>' : '') : '<button class="btn sm" id="updBtn2">Actualizar (5 min)</button>') + '<button class="btn sm sec" id="copIni">' + icon('spark') + ' Preguntar al Copiloto</button></div></div>';
+  else izq = '<div class="pl-h"><span class="pl-k">' + icon('spark') + ' Plan del Cerebro</span><div class="pl-t">' + (extNivel() >= 16 ? (iaDisponible() ? 'Tu plan de hoy aún no está listo' : 'Conecta tu clave de Claude para el plan diario') : 'Actualiza el script para activar el Cerebro') + '</div><p>' + (extNivel() >= 16 ? 'Cada mañana a las 7:00 el Cerebro cruza tareas, agenda, clientes, WhatsApp, Bsale, la web de Specialized, Instagram, clima y noticias, y te deja las 3 cosas que hacen que el día valga la pena.' : 'El Cerebro lee todas tus fuentes cada mañana y te arma el plan del día, con avisos automáticos y un chat para preguntar lo que quieras.') + '</p>' +
+    '<div class="pl-acts">' + (extNivel() >= 16 ? (iaDisponible() ? '<button class="btn sm" id="plGen">' + icon('spark') + ' Generar ahora</button>' : '') : '<button class="btn sm" id="updBtn2">Actualizar (5 min)</button>') + '<button class="btn sm sec" id="copIni">' + icon('spark') + ' Preguntar al Cerebro</button></div></div>';
   return '<div class="cmd"><div class="cmd-plan">' + izq + '</div>' + climaW() + '</div>';
 }
 function bindCmd(root){
@@ -4859,7 +4925,98 @@ function abrirProducto(q){
   if (/^\d{6,8}$/.test(String(q || ''))) ficha({ id: String(q), nombre: '', detalle: [] }); else if (q) buscar(); else setTimeout(() => inp.focus(), 80);
 }
 
-/* --- Copiloto: pregúntale lo que sea; consulta todas tus fuentes --- */
+/* ---------- Cerebro: un solo cerebro con skills (reemplaza a los agentes sueltos) ---------- */
+const SKILL_NOM = { tareas: 'Planificar tareas', compras: 'Comprador', seguimiento: 'Seguimiento de clientes', plan_dia: 'Plan del día', contenido: 'Planes y contenido', redes: 'Estrategia de redes', semana: 'Plan de la semana' };
+function usd(x){ x = +x || 0; return 'US$ ' + (x >= 10 ? Math.round(x) : x >= 1 ? x.toFixed(1) : x.toFixed(2)).replace('.', ','); }
+function nombreModelo(m){ m = String(m || ''); const t = /opus/.test(m) ? 'Opus' : /sonnet/.test(m) ? 'Sonnet' : /fable/.test(m) ? 'Fable' : /haiku/.test(m) ? 'Haiku' : m; const v = m.match(/(\d+)-(\d+)$/) || []; return t + (v[1] ? ' ' + v[1] + '.' + v[2] : ''); }
+async function loadSkills(){
+  if (S.skillsCargando) return; S.skillsCargando = true;
+  try { S.skills = await apiX('skills'); } catch(e){ S.skills = { error: e.message }; }
+  S.skillsCargando = false; if (S.tab === 'cerebro') render();
+}
+function cbHero(d){
+  const auto = d ? d.skills.filter(s => s.modo === 'auto') : [];
+  return '<div class="cb-hero"><div><span class="cb-tag">' + icon('brain') + ' Inteligencia de la tienda</span><h2>Un cerebro, ' + (d ? d.skills.length : 9) + ' skills</h2>' +
+    '<p>La app ya no tiene agentes sueltos. Tiene un solo cerebro, con las reglas y el contexto de Blackline, que usa la skill adecuada para cada trabajo. Así responde con más contexto, todo queda conectado y gasta menos.</p>' +
+    '<div class="cb-flow"><span>Tus datos</span><i>→</i><span>Cerebro</span><i>→</i><span>Skill</span><i>→</i><span>Propuesta para aprobar</span></div></div>' +
+    (d ? '<div class="cb-kpis"><div class="cb-k"><small>Hoy</small><b>' + usd(d.total.hoy) + '</b><em>' + (d.tope ? 'tope automático ' + usd(d.tope) : 'sin tope') + '</em></div>' +
+      '<div class="cb-k"><small>Últimos 7 días</small><b>' + usd(d.total.d7) + '</b><em>' + nombreModelo(d.modelos.rapido) + ' en lo diario</em></div>' +
+      '<div class="cb-k"><small>Últimos 30 días</small><b>' + usd(d.total.d30) + '</b><em>' + d.total.n30 + ' consultas</em></div>' +
+      '<div class="cb-k"><small>Trabajando solas</small><b>' + auto.filter(s => s.activa).length + ' de ' + auto.length + '</b><em>' + (d.ia ? 'clave de Claude conectada' : 'falta la clave de Claude') + '</em></div></div>' : '') + '</div>';
+}
+function cbSkill(s){
+  const u = s.uso || {};
+  return '<div class="cb-s' + (s.activa ? '' : ' off') + '"><div class="cb-st"><span class="cb-ic">' + s.icono + '</span><div class="grow"><b>' + esc(s.nombre) + '</b><small>' + (s.activa ? esc(s.cuando) : 'En pausa') + '</small></div>' +
+    (s.modo === 'auto' ? '<button class="sw' + (s.activa ? ' on' : '') + '" data-sw="' + s.id + '" aria-label="' + (s.activa ? 'Pausar ' : 'Reanudar ') + esc(s.nombre) + '" title="' + (s.activa ? 'Activa: toca para pausar' : 'En pausa: toca para reanudar') + '"></button>' : '') + '</div>' +
+    '<p>' + esc(s.que) + '</p><div class="cb-meta"><span class="' + (s.nivel === 'experto' ? 'exp' : '') + '">' + (s.nivel === 'experto' ? 'Experto' : 'Rápido') + ' · ' + esc(nombreModelo(s.modelo)) + '</span><span>' + esc(s.donde) + '</span></div>' +
+    '<div class="cb-ft"><span>30 días: <b>' + (u.n30 || 0) + '</b> usos · <b>' + usd(u.d30) + '</b></span>' + (s.tab ? '<button class="cb-go" data-go="' + s.tab + '">Abrir ' + esc(TITLES[s.tab] || '') + ' →</button>' : '<button class="cb-go" data-ask="1">Preguntar →</button>') + '</div></div>';
+}
+function viewCerebro(){
+  const v = $('#view');
+  if (extNivel() < 39){
+    v.innerHTML = cbHero(null) + '<div class="cb-card" style="margin-top:16px"><b>Falta actualizar el script</b><div class="hint">Pega el Extras.gs nuevo y crea una «Nueva versión» para ver tus skills, su consumo y pausarlas.</div><div class="btns" style="margin-top:10px"><button class="btn sm" id="cbUpd">Cómo actualizar</button></div></div>';
+    $('#cbUpd').onclick = showExtrasUpdate; return;
+  }
+  const d = S.skills;
+  if (!d){ v.innerHTML = cbHero(null) + '<div class="empty"><span class="spin"></span>Leyendo el Cerebro…</div>'; loadSkills(); return; }
+  if (d.error){ v.innerHTML = cbHero(null) + '<div class="empty">No pude leer el Cerebro (' + esc(d.error) + ').<br><br><button class="btn sm" id="cbRe">Reintentar</button></div>'; $('#cbRe').onclick = () => { S.skills = null; render(); }; return; }
+  const auto = d.skills.filter(s => s.modo === 'auto'), man = d.skills.filter(s => s.modo !== 'auto'), max = Math.max(0.0001, ...d.serie.map(x => x.usd));
+  v.innerHTML = cbHero(d) +
+    '<div class="cb-sec"><h3>Trabajan solas</h3><span>Se activan sin que hagas nada. Puedes pausarlas.</span></div><div class="cb-g g4">' + auto.map(cbSkill).join('') + '</div>' +
+    '<div class="cb-sec"><h3>Cuando tú las pides</h3><span>Botones dentro de cada pestaña, o pregúntale al Cerebro.</span></div><div class="cb-g">' + man.map(cbSkill).join('') + '</div>' +
+    '<div class="cb-sec"><h3>Consumo y control</h3><span>Calculado con los precios de la API de Claude</span></div><div class="cb-row">' +
+      '<div class="cb-card"><div class="cb-ch"><b>Gasto por día · últimos 30 días</b><span>' + d.total.n30 + ' consultas · ' + usd(d.total.d30) + '</span></div><div class="cb-bars">' +
+        d.serie.map((x, i) => '<i class="' + (i === d.serie.length - 1 ? 'hoy' : '') + '" style="height:' + Math.max(2, Math.round(x.usd / max * 100)) + '%" title="' + x.dia + ': ' + usd(x.usd) + ' · ' + x.n + ' consultas"></i>').join('') +
+        '</div><div class="cb-ax"><span>' + fmt(d.serie[0].dia) + '</span><span>hoy</span></div><div class="hint" style="margin-top:8px">Se mide desde que se instaló esta versión del script.</div></div>' +
+      '<div class="cb-card"><b>Tope diario para lo automático</b><div class="hint" style="margin:4px 0 12px">Si el gasto del día llega al tope, lo automático espera hasta mañana. Lo que pides tú siempre funciona.</div><div class="cb-seg" id="cbTope">' +
+        [0, 0.5, 1, 2, 5].map(t => '<button type="button" data-t="' + t + '" class="' + ((d.tope || 0) === t ? 'on' : '') + '">' + (t ? usd(t) : 'Sin tope') + '</button>').join('') +
+        '</div><div class="hint" style="margin-top:12px">Modelo rápido: <b>' + esc(nombreModelo(d.modelos.rapido)) + '</b> · experto: <b>' + esc(nombreModelo(d.modelos.experto)) + '</b>. El rápido hace casi todo; el experto solo elige fotos para tus piezas.</div></div>' +
+    '</div>' +
+    '<div class="cb-sec"><h3>Cómo funciona</h3><span></span></div><div class="cb-card"><div class="cb-how">' +
+      [['1 · Lee', 'WhatsApp, correo, Bsale, agenda, Specialized, Instagram, proveedores, clima y noticias.'], ['2 · Piensa', 'Un solo cerebro, con las reglas de Blackline (asesoría experta, sin descuentos), elige la skill adecuada.'], ['3 · Propone', 'Deja tareas, negociaciones, avisos y mensajes listos. Nada le llega a un cliente sin tu aprobación.'], ['4 · Registra', 'Todo queda en la ficha del cliente y en el historial, así la próxima vez parte con contexto.']].map(x => '<div><b>' + x[0] + '</b><small>' + x[1] + '</small></div>').join('') +
+    '</div><div class="cb-acts"><button class="btn sm" id="cbAsk">' + icon('spark') + ' Preguntarle al Cerebro</button><button class="btn sm sec" id="cbGuia">Guía de la app</button><button class="btn sm sec" id="cbFz">Fuentes de información</button></div></div>';
+  v.querySelectorAll('[data-sw]').forEach(b => b.onclick = async () => {
+    const id = b.dataset.sw, pausa = auto.filter(s => s.id === id ? s.activa : !s.activa).map(s => s.id), sk = auto.find(s => s.id === id);
+    b.disabled = true;
+    try { S.skills = await apiX('skillsConf', { pausa }); toast(sk.activa ? '⏸ «' + sk.nombre + '» en pausa' : '▶ «' + sk.nombre + '» activa de nuevo'); } catch(e){ toast('No pude cambiarla: ' + e.message); }
+    render();
+  });
+  v.querySelectorAll('#cbTope [data-t]').forEach(b => b.onclick = async () => { try { S.skills = await apiX('skillsConf', { tope: +b.dataset.t }); toast(+b.dataset.t ? 'Tope diario: ' + usd(+b.dataset.t) : 'Sin tope diario'); } catch(e){ toast('No pude guardarlo: ' + e.message); } render(); });
+  v.querySelectorAll('[data-go]').forEach(b => b.onclick = () => go(b.dataset.go));
+  v.querySelectorAll('[data-ask]').forEach(b => b.onclick = () => copiloto());
+  $('#cbAsk').onclick = () => copiloto(); $('#cbGuia').onclick = openGuia; $('#cbFz').onclick = abrirFuentes;
+}
+
+/* ---------- Guía de la app: para que cualquiera del equipo la entienda en 1 minuto ---------- */
+const GUIA = [
+  { ic: '👋', t: 'Bienvenido al Organizador', p: 'Todo el trabajo de Blackline Puerto Varas en un solo lugar: tareas, clientes, ventas, compras, redes y un Cerebro que te ayuda. El menú está ordenado en cuatro grupos:',
+    l: ['<b>Día a día</b>: Inicio, Hoy, Tareas y Calendario.', '<b>Ventas</b>: Negocios, Contactos y Compras.', '<b>Marca</b>: Redes y Proyectos.', '<b>Inteligencia</b>: el Cerebro y sus skills.'] },
+  { ic: '☀️', t: 'Día a día', tab: 'hoy', p: 'Empieza por aquí cada mañana.',
+    l: ['<b>Inicio</b>: el resumen del día (ventas de Bsale, negocios, agenda, avisos).', '<b>Hoy</b>: qué hacer ahora, en orden de prioridad.', '<b>Tareas</b>: toca <b>＋</b> y escribe o dicta («llamar a Pedro el viernes a las 10, urgente»). El Cerebro la completa.', '<b>Calendario</b>: agenda, entregas y eventos.'] },
+  { ic: '🤝', t: 'Ventas', tab: 'negocios', p: 'Cada venta avanza por etapas, de la primera consulta a la postventa.',
+    l: ['<b>Negocios</b>: el pipeline: Nuevo → Contactado → Prueba → Cotización → Negociación → Ganada → Entregada → Postventa. Toca una venta para moverla o ver su detalle.', '<b>Contactos</b>: la ficha de cada cliente con su WhatsApp, compras y notas.', '<b>Compras</b>: proveedores, stock y ventas de Bsale, y qué conviene pedir.'] },
+  { ic: '📸', t: 'Marca', tab: 'redes', p: 'Contenido e iniciativas largas.',
+    l: ['<b>Redes</b>: métricas de Instagram, calendario de contenido y el Estudio para diseñar piezas.', '<b>Proyectos</b>: iniciativas largas con su avance.'] },
+  { ic: '🧠', t: 'El Cerebro', tab: 'cerebro', p: 'Un solo cerebro con varias skills: sigue a los clientes, arma el plan del día, planifica tareas, busca compras y elige fotos.',
+    l: ['Pregúntale lo que sea con el botón <b>Cerebro</b> o la tecla <b>/</b>.', 'Propone, pero <b>nada le llega a un cliente sin tu aprobación</b>.', 'En la pestaña <b>Cerebro</b> ves qué hace solo, cuánto gasta y puedes pausarlo.'] },
+  { ic: '⌨️', t: 'Atajos', p: 'Para moverte rápido:',
+    l: ['<b>Ctrl + K</b>: buscar clientes, tareas o secciones.', '<b>/</b>: preguntarle al Cerebro.', '<b>＋</b>: agregar una tarea.  <b>↻</b>: actualizar.  <b>⚙️</b>: ajustes.', 'Esta guía siempre está en el botón <b>?</b> de arriba.'] }
+];
+function openGuia(paso){
+  let k = +paso || 0; try { LS.guiaVista = '1'; } catch(e){}
+  const md = modal('Guía de la app', '<div class="gd" id="gd"></div>');
+  const pintar = () => {
+    const g = GUIA[k], box = md.el.querySelector('#gd');
+    box.innerHTML = '<div class="gd-steps">' + GUIA.map((x, i) => '<i class="' + (i <= k ? 'on' : '') + '"></i>').join('') + '</div><div class="gd-ic">' + g.ic + '</div><h3>' + g.t + '</h3><p>' + g.p + '</p><ul>' + g.l.map(x => '<li>' + x + '</li>').join('') + '</ul>' +
+      '<div class="gd-nav"><button class="btn sec sm" id="gdA"' + (k ? '' : ' style="visibility:hidden"') + '>← Atrás</button>' + (g.tab ? '<button class="btn sec sm" id="gdIr">Ir a ' + esc(TITLES[g.tab]) + '</button>' : '') + '<button class="btn sm" id="gdS">' + (k < GUIA.length - 1 ? 'Siguiente →' : 'Listo') + '</button></div>';
+    box.querySelector('#gdA').onclick = () => { k--; pintar(); };
+    box.querySelector('#gdS').onclick = () => { if (k < GUIA.length - 1){ k++; pintar(); } else md.cerrar(); };
+    const ir = box.querySelector('#gdIr'); if (ir) ir.onclick = () => { md.cerrar(); go(g.tab); };
+  };
+  pintar();
+}
+
+/* --- Cerebro (chat): pregúntale lo que sea; consulta todas tus fuentes y usa sus skills --- */
 const COP_SUG = {
   inicio: ['¿Qué es lo más importante hoy?', '¿Qué se está vendiendo en Chile y qué tengo en stock?', '¿A qué clientes les escribo hoy y qué les digo?'],
   hoy: ['¿Por dónde empiezo?', '¿Cómo viene el clima para la salida del fin de semana?', 'Escríbeme los mensajes para los que esperan respuesta'],
@@ -4880,8 +5037,8 @@ function copMd(s){
 function copiloto(pregunta){
   let p = $('#cop');
   if (!p){
-    p = document.createElement('div'); p.id = 'cop'; p.className = 'cop'; p.setAttribute('role', 'dialog'); p.setAttribute('aria-label', 'Copiloto');
-    p.innerHTML = '<div class="cop-h"><span class="cop-av">' + icon('spark') + '</span><div class="grow"><b>Copiloto</b><small>Pregunta o pide cambios: tareas, clientes, negocios, stock, Specialized, Instagram y más</small></div><button class="icon-btn" id="copNew" title="Nueva conversación">↺</button><button class="icon-btn" id="copX" aria-label="Cerrar">✕</button></div><div class="cop-m" id="copM"></div><div class="cop-s" id="copS"></div><form class="cop-f" id="copF"><textarea id="copQ" rows="1" placeholder="Pregunta lo que quieras…"></textarea><button class="btn" aria-label="Enviar">' + icon('arrow') + '</button></form>';
+    p = document.createElement('div'); p.id = 'cop'; p.className = 'cop'; p.setAttribute('role', 'dialog'); p.setAttribute('aria-label', 'Cerebro');
+    p.innerHTML = '<div class="cop-h"><span class="cop-av">' + icon('spark') + '</span><div class="grow"><b>Cerebro</b><small>Un cerebro con todas tus skills. Pregunta o pide cambios: tareas, clientes, negocios, stock, Specialized, Instagram y más</small></div><button class="icon-btn" id="copNew" title="Nueva conversación">↺</button><button class="icon-btn" id="copX" aria-label="Cerrar">✕</button></div><div class="cop-m" id="copM"></div><div class="cop-s" id="copS"></div><form class="cop-f" id="copF"><textarea id="copQ" rows="1" placeholder="Pregunta lo que quieras…"></textarea><button class="btn" aria-label="Enviar">' + icon('arrow') + '</button></form>';
     document.body.appendChild(p);
     p.querySelector('#copX').onclick = () => p.classList.remove('on');
     p.querySelector('#copNew').onclick = () => { S.copHist = []; lsSet('copHist', []); copPintar(); };
@@ -4898,7 +5055,7 @@ function copPintar(){
   m.innerHTML = H.length ? H.map((x, i) => x.rol === 'yo' ? '<div class="cm yo">' + esc(x.texto) + '</div>' :
     '<div class="cm ia' + (x.error ? ' err' : '') + '">' + (x.pensando ? '<span class="cop-dots"><i></i><i></i><i></i></span> Revisando tus fuentes…' : copMd(x.texto)) +
     ((x.acciones || []).length ? '<div class="cm-acc">' + x.acciones.map((a, k) => '<button class="btn sm' + (k ? ' sec' : '') + '" data-cpa="' + i + ':' + k + '">' + esc(a.titulo || a.tipo) + '</button>').join('') + '</div>' : '') +
-    ((x.fuentes || []).length ? '<div class="cm-f">' + x.fuentes.filter(f => f !== 'proponer_accion').map(f => '<span>' + esc(f.replace(/_/g, ' ')) + '</span>').join('') + '</div>' : '') + '</div>').join('') :
+    ((x.fuentes || []).length ? '<div class="cm-f">' + x.fuentes.filter(f => f !== 'proponer_accion' && f !== 'leer_skill').map(f => /^skill /.test(f) ? '<span class="sk">Skill: ' + esc(SKILL_NOM[f.slice(6)] || f.slice(6)) + '</span>' : '<span>' + esc(f.replace(/_/g, ' ')) + '</span>').join('') + '</div>' : '') + '</div>').join('') :
     '<div class="cop-hola"><span class="cop-av lg">' + icon('spark') + '</span><b>¿En qué te ayudo?</b><p>Pregúntame por stock y tallas, clientes, negociaciones, qué publicar, el clima o lo que sea. Si hay algo que hacer, te lo dejo listo en un botón.</p></div>';
   s.innerHTML = (H.length ? [] : (COP_SUG[S.tab] || []).concat(COP_SUG.def).slice(0, 4)).map(t => '<button>' + esc(t) + '</button>').join('');
   s.querySelectorAll('button').forEach(b => b.onclick = () => copEnviar(b.textContent));
@@ -4917,7 +5074,7 @@ async function copEnviar(texto){
   if (H.some(x => x.pensando)) return;
   H.push({ rol: 'yo', texto }); const r = { rol: 'ia', texto: '', pensando: true }; H.push(r); copPintar();
   try {
-    if (extNivel() < 16) throw new Error('Para usar el Copiloto actualiza el script a la versión nueva (Ajustes → Actualizar).');
+    if (extNivel() < 16) throw new Error('Para usar el Cerebro actualiza el script a la versión nueva (Ajustes → Actualizar).');
     if (!iaDisponible()) throw new Error('Falta la clave de Claude (ANTHROPIC_API_KEY) en las propiedades del script.');
     const res = await apiX('copiloto', { mensajes: H.filter(x => !x.pensando && !x.error).slice(-12).map(x => ({ rol: x.rol, texto: x.texto })), pestana: TITLES[S.tab] || S.tab, contexto: contextoPantalla() });
     Object.assign(r, { texto: res.texto, acciones: res.acciones || [], fuentes: res.fuentes || [], pensando: false });
@@ -4929,7 +5086,7 @@ async function copEnviar(texto){
 function abrirFuentes(){
   const e = S.ext || {}, s = spz(), n = G().noticias, F = G().fuentes || [], ok = (b) => '<i class="fz ' + (b ? 'ok' : 'no') + '"></i>';
   const nivel = extNivel(), fila = (on, ic, t, d, extra) => '<div class="fz-it">' + ok(on) + '<span class="fz-ic">' + icon(ic) + '</span><div class="grow"><b>' + t + '</b><small>' + d + '</small></div>' + (extra || '') + '</div>';
-  const html = '<div class="wsub" style="margin:0 0 10px">Todo lo que la app y sus agentes leen. Cada fuente alimenta a las demás: el plan del día, el radar de cruces, el Copiloto, las oportunidades de contacto y el estudio de contenido.</div>' +
+  const html = '<div class="wsub" style="margin:0 0 10px">Todo lo que lee el Cerebro de la app. Cada fuente alimenta a las demás: el plan del día, el radar de cruces, el chat del Cerebro, las oportunidades de contacto y el estudio de contenido.</div>' +
     '<div class="lab2">Tu negocio</div>' +
     fila(!!S.data, 'check', 'Tareas, proyectos y hábitos', 'Tu planilla de Google · al día') +
     fila(S.google && !S.google.inactivo, 'cal', 'Google Calendar y Gmail', S.google && S.google.eventos ? S.google.eventos.length + ' eventos próximos' : 'Sin conectar') +
@@ -4945,8 +5102,8 @@ function abrirFuentes(){
     fila(nivel >= 16, 'flag', 'Avisos internos', avisos().length + ' activos') +
     '<div class="lab2" style="margin-top:14px">Tus planillas y archivos</div>' +
     (F.length ? F.map(f => fila(true, 'chart', esc(f.nombre), (f.carpeta ? 'Carpeta Fuentes · ' : 'Planilla · ') + esc(f.descripcion || (f.tipo === 'csv' ? 'CSV' : 'Google Sheets')), f.carpeta ? '' : '<button class="btn sm sec" data-fzq="' + esc(f.id) + '">Quitar</button>')).join('') : '<div class="wsub">Aún no conectas planillas. Pega abajo el link de cualquier Google Sheet tuyo (lista de precios, metas, proveedores, exportación del B2B…).</div>') +
-    (nivel >= 16 ? '<div class="fz-add"><input type="url" id="fzU" placeholder="Link de la planilla de Google"><input type="text" id="fzD" placeholder="¿Qué contiene? (ayuda al agente)"><button class="btn sm" id="fzA">Conectar</button></div>' : '') +
-    '<div class="fz-b2b"><b>' + icon('box') + ' B2B de Specialized</b><p>El B2B es un portal privado con tu usuario: la app no entra con tu clave (ni la guarda), por seguridad y porque el portal no tiene una conexión oficial para esto. La forma segura: exporta desde el B2B la disponibilidad o lista de precios (Excel o CSV) y déjala en la carpeta <b>Organizador · Fuentes</b> de tu Drive (si es Excel, ábrelo y guárdalo como Hoja de cálculo de Google). Los agentes la leen solos, solo para consultar, y la cruzan con Specialized, Bsale y tus clientes.</p>' + (G().fuentesCarpeta ? '<a class="btn sm sec" target="_blank" href="' + esc(G().fuentesCarpeta) + '">Abrir carpeta Fuentes</a>' : '') + '</div>';
+    (nivel >= 16 ? '<div class="fz-add"><input type="url" id="fzU" placeholder="Link de la planilla de Google"><input type="text" id="fzD" placeholder="¿Qué contiene? (ayuda al Cerebro)"><button class="btn sm" id="fzA">Conectar</button></div>' : '') +
+    '<div class="fz-b2b"><b>' + icon('box') + ' B2B de Specialized</b><p>El B2B es un portal privado con tu usuario: la app no entra con tu clave (ni la guarda), por seguridad y porque el portal no tiene una conexión oficial para esto. La forma segura: exporta desde el B2B la disponibilidad o lista de precios (Excel o CSV) y déjala en la carpeta <b>Organizador · Fuentes</b> de tu Drive (si es Excel, ábrelo y guárdalo como Hoja de cálculo de Google). El Cerebro la lee solo, solo para consultar, y la cruzan con Specialized, Bsale y tus clientes.</p>' + (G().fuentesCarpeta ? '<a class="btn sm sec" target="_blank" href="' + esc(G().fuentesCarpeta) + '">Abrir carpeta Fuentes</a>' : '') + '</div>';
   const md = modal(icon('chart') + ' Fuentes de información', html, { wide: true });
   const a = md.el.querySelector('#fzA'); if (a) a.onclick = async () => {
     const u = md.el.querySelector('#fzU').value.trim(); if (!u){ toast('Pega el link de la planilla'); return; }
@@ -4974,7 +5131,7 @@ function bindExterno(root){
   const aa = root.querySelector('#avAll'); if (aa) aa.onclick = () => abrirAvisos();
   root.querySelectorAll('.av-list [data-av]').forEach(b => b.onclick = () => avisoForm(avisos().find(a => a.id === b.dataset.av)));
 }
-// Texto con lo externo para los prompts de los otros agentes (contenido, estrategia, plan del día).
+// Texto con lo externo para las demás skills del Cerebro (contenido, estrategia, plan del día).
 function contextoExterno(){
   const L = [], s = spz(), t = temporadaPV(), n = noticias();
   L.push('POLÍTICA DE MARCA: Blackline no hace descuentos ni promociones, no participa en Cyber ni Black Friday. El contenido y los mensajes se centran en asesoría, experiencia, servicio, comunidad y el valor del producto; nunca en rebajas.');
@@ -5006,8 +5163,8 @@ function planStrip(){
   const pl = cerebroPlan(), c = climaDatos(), d = diaClima(hoy()), cur = c && c.current;
   const wx = S.yr ? yrWidget() : cur && d ? '<button class="ps-wx" id="psWx" title="Clima en Puerto Varas">' + wxIcon(cur.weather_code, 28) + '<b>' + Math.round(cur.temperature_2m) + '°</b><span>' + icon('drop') + d.prob + '%</span></button>' : '';
   let txt;
-  if (pl){ const H = focoHechos(); txt = '<button class="ps-main" id="plAbrir"><span class="ps-k">' + icon('spark') + 'Plan del agente</span><b>' + esc(pl.titular) + '</b></button><div class="ps-foco">' + (pl.foco || []).slice(0, 3).map((f, i) => '<button class="ps-f' + (H.includes(i) ? ' ok' : '') + '" data-pf="' + i + '" title="' + esc(f) + '"><span>' + (H.includes(i) ? icon('check') : i + 1) + '</span><em>' + esc(f) + '</em></button>').join('') + '</div>'; }
-  else txt = '<div class="ps-main"><span class="ps-k">' + icon('spark') + 'Plan del agente</span><b>' + (extNivel() >= 16 ? (iaDisponible() ? 'Tu plan de hoy aún no está listo' : 'Falta la clave de Claude') : 'Actualiza el script para activarlo') + '</b></div>' + (extNivel() >= 16 && iaDisponible() ? '<button class="btn sm" id="plGen">' + icon('spark') + ' Generar</button>' : extNivel() < 16 ? '<button class="btn sm" id="updBtn2">Actualizar</button>' : '');
+  if (pl){ const H = focoHechos(); txt = '<button class="ps-main" id="plAbrir"><span class="ps-k">' + icon('spark') + 'Plan del Cerebro</span><b>' + esc(pl.titular) + '</b></button><div class="ps-foco">' + (pl.foco || []).slice(0, 3).map((f, i) => '<button class="ps-f' + (H.includes(i) ? ' ok' : '') + '" data-pf="' + i + '" title="' + esc(f) + '"><span>' + (H.includes(i) ? icon('check') : i + 1) + '</span><em>' + esc(f) + '</em></button>').join('') + '</div>'; }
+  else txt = '<div class="ps-main"><span class="ps-k">' + icon('spark') + 'Plan del Cerebro</span><b>' + (extNivel() >= 16 ? (iaDisponible() ? 'Tu plan de hoy aún no está listo' : 'Falta la clave de Claude') : 'Actualiza el script para activarlo') + '</b></div>' + (extNivel() >= 16 && iaDisponible() ? '<button class="btn sm" id="plGen">' + icon('spark') + ' Generar</button>' : extNivel() < 16 ? '<button class="btn sm" id="updBtn2">Actualizar</button>' : '');
   return '<div class="pstrip">' + txt + wx + '</div>';
 }
 function kpiRow(){
@@ -5232,7 +5389,7 @@ function viewCompras(){
   const t = S.cpTab || 'oport';
   let html = '<div class="kstrip cp-k"><div class="ks1"><div><b>' + P.length + '</b><small>proveedores</small></div></div><div class="ks1"><div><b>' + (C.total || 0).toLocaleString('es-CL') + '</b><small>productos catalogados</small></div></div><div class="ks1"><div><b>' + O.length + '</b><small>oportunidades de compra</small></div></div><div class="ks1"><div><b>' + promos.length + '</b><small>correos con promos (30 d)</small></div></div></div>';
   html += '<div class="cp-pol">' + icon('flag') + '<span><b>Uso interno.</b> Las promociones de proveedores sirven para comprar mejor y vender a precio normal. Blackline no hace descuentos ni los comunica.</span></div>';
-  html += '<div class="cp-bus"><input type="search" id="cpQ" placeholder="' + (extNivel() >= 31 && iaDisponible() ? 'Pregúntale al agente comprador: «pastillas para Levo 4», «lubricante para barro», «casco enduro talla M»…' : 'Buscar en todos los proveedores: «fox 36 grip x2», «hope tech 4», «edge 1050», «magic mary 29»…') + '" value="' + esc(S.cpQ || '') + '"><button class="btn" id="cpGo">Buscar</button></div><div id="cpIA"></div><div id="cpRes"></div>';
+  html += '<div class="cp-bus"><input type="search" id="cpQ" placeholder="' + (extNivel() >= 31 && iaDisponible() ? 'Pregúntale al Cerebro comprador: «pastillas para Levo 4», «lubricante para barro», «casco enduro talla M»…' : 'Buscar en todos los proveedores: «fox 36 grip x2», «hope tech 4», «edge 1050», «magic mary 29»…') + '" value="' + esc(S.cpQ || '') + '"><button class="btn" id="cpGo">Buscar</button></div><div id="cpIA"></div><div id="cpRes"></div>';
   html += '<div class="btabs"><div class="tabs">' + (extNivel() >= 23 ? [['ventas', '📊 Ventas y rotación']] : []).concat([['oport', 'Oportunidades de compra (' + O.length + ')'], ['prov', 'Proveedores'], ['mail', 'Correos (' + M.length + ')'], ['mov', 'Cambios de precio (' + mov.length + ')']]).map(x => '<button class="' + (x[0] === t ? 'on' : '') + '" data-cpt2="' + x[0] + '">' + x[1] + '</button>').join('') + '</div><button class="btn sm sec" id="cpRef">↻ Actualizar</button></div>';
   if (t === 'ventas') html += ventasHTML();
   else if (t === 'oport'){
@@ -5290,13 +5447,13 @@ async function comprasIA(q){
   S.cpIA[q] = { cargando: true }; pintar();
   try { const r = await apiX('comprasIA', { q }); S.cpIA[q] = { r: r.r }; }
   catch(e){ S.cpIA[q] = { error: e.message }; }
-  if (S.tab === 'compras' && S.cpQ === q) pintar(); else if (!S.cpIA[q].error) aviso('🧠 El agente comprador terminó «' + q + '»', 'Ver', () => { S.cpQ = q; go('compras'); });
+  if (S.tab === 'compras' && S.cpQ === q) pintar(); else if (!S.cpIA[q].error) aviso('🧠 El Cerebro comprador terminó «' + q + '»', 'Ver', () => { S.cpQ = q; go('compras'); });
 }
 function provForm(p){
   const md = modal(icon('box') + ' ' + esc(p.nombre), '<label class="l" style="margin-top:0">Tu descuento de distribuidor (%)</label><input type="number" id="pv_d" min="0" max="70" value="' + esc(p.desc) + '">' +
     '<label class="l">Marcas y lo que les compras</label><input type="text" id="pv_m" value="' + esc(p.marcas) + '">' +
     '<label class="l">Dominios de correo (para detectar sus promociones en Gmail)</label><input type="text" id="pv_c" value="' + esc((p.dominios || []).join(', ')) + '">' +
-    '<label class="l">Notas (el agente las tiene en cuenta)</label><textarea class="note" id="pv_n" rows="3" placeholder="Ej.: pedidos los martes, mínimo de compra, ejecutivo de cuenta…">' + esc(p.notas || '') + '</textarea>' +
+    '<label class="l">Notas (el Cerebro las tiene en cuenta)</label><textarea class="note" id="pv_n" rows="3" placeholder="Ej.: pedidos los martes, mínimo de compra, ejecutivo de cuenta…">' + esc(p.notas || '') + '</textarea>' +
     '<div class="btns"><button class="btn" id="pv_ok">Guardar</button></div>');
   md.el.querySelector('#pv_ok').onclick = async () => {
     const b = md.el.querySelector('#pv_ok'); b.disabled = true;
@@ -5614,7 +5771,7 @@ function openGanada(n){
   $('#gw_x').onclick = () => { closeSheet(); refrescarNeg(negocios().find(x => x.id === n.id) || n); };
 }
 // Cierre por pérdida: un solo lugar para avisar que la venta se cayó. Cancela las tareas y los eventos que colgaban de ella,
-// apaga la idea de respuesta del agente (y evita que la reabra), etiqueta al cliente y agenda el reintento si quieres.
+// apaga la idea de respuesta del Cerebro (y evita que la reabra), etiqueta al cliente y agenda el reintento si quieres.
 const REINTENTO_MOTIVO = { 'Precio': 6, 'Compró en otro lado': 12, 'No respondió': 3, 'Postergó la compra': 3, 'Sin stock': 1, 'Otro': 6 };
 function fmtAnio(f){ return fmt(f) + (String(f).slice(0, 4) !== hoy().slice(0, 4) ? ' de ' + String(f).slice(0, 4) : ''); }
 function sumarMeses(f, m){ const d = new Date(f + 'T12:00:00'); d.setMonth(d.getMonth() + m); return d.toISOString().slice(0, 10); }
@@ -5639,7 +5796,7 @@ function openPerdida(n, opt){
       '<div class="hint" style="margin:6px 0 4px">✅ Tareas pendientes de esta venta (se cancelan las marcadas)</div>' +
       (T.length ? T.map((t, i) => '<label class="row" style="gap:8px;padding:4px 0;align-items:flex-start"><input type="checkbox" data-pt="' + i + '" checked><span style="font-size:14px">' + esc(t.tarea) + (t.limite ? ' <span class="hint">· ' + fmtRel(t.limite) + '</span>' : '') + '</span></label>').join('') : '<div class="wsub">Ninguna.</div>') +
       '<div class="hint" style="margin:10px 0 4px">📅 Próximos eventos en tu calendario con ' + esc(nom) + '</div><div id="pd_ev">' + (nuevo ? '<div class="wsub">Buscando…</div>' : '<div class="wsub">Con la versión nueva del script se buscan y borran aquí.</div>') + '</div>' +
-      '<div class="hint" style="margin-top:10px">Además: ' + (nuevo ? 'se apaga la «idea de respuesta» del agente y no reabre la venta salvo que ' + esc(String(nom).split(' ')[0]) + ' vuelva a escribir; queda la etiqueta «Venta perdida» y la nota en su historial; ' : '') + 'los tableros cuentan la pérdida con su motivo.</div></div>' +
+      '<div class="hint" style="margin-top:10px">Además: ' + (nuevo ? 'se apaga la «idea de respuesta» del Cerebro y no reabre la venta salvo que ' + esc(String(nom).split(' ')[0]) + ' vuelva a escribir; queda la etiqueta «Venta perdida» y la nota en su historial; ' : '') + 'los tableros cuentan la pérdida con su motivo.</div></div>' +
     '<div class="btns"><button class="btn sec" id="pd_no">Cancelar</button><button class="btn" id="pd_ok" style="background:#F04461">Confirmar venta perdida</button></div>');
   const pintarR = () => { $$('[data-pr]').forEach(b => b.classList.toggle('on', meses !== null && +b.dataset.pr === meses)); const h = $('#pd_rh'); if (h) h.textContent = meses ? 'Te quedará una tarea «♻️ Retomar a ' + nom + '» el ' + fmtAnio(sumarMeses(hoy(), meses)) + '.' : meses === 0 ? 'No se agenda reintento.' : 'Se elige solo según el motivo; puedes cambiarlo.'; };
   $$('[data-pr]').forEach(b => b.onclick = () => { meses = +b.dataset.pr; mesesAMano = true; pintarR(); });
@@ -5857,14 +6014,14 @@ const INFO = {
   bCuando: { t: '🕒 Cuándo te escriben', d: 'Mensajes de clientes de los últimos 6 meses, agrupados por día y bloque horario. Más oscuro = más mensajes. Sirve para estar atento a WhatsApp en esas horas, programar al equipo y publicar en Instagram justo antes.' },
   bResp: { t: '⏱️ Tiempo de respuesta', d: 'Cuánto tardas en responder cuando un cliente escribe (mediana de cada semana). Responder rápido es lo que más sube la probabilidad de venta: las barras naranjas son semanas sobre 1 hora.' },
   bOrigen: { t: '🧭 De dónde llegan', d: 'Clientes que llegaron desde Instagram o la web (por código o porque lo dijeron) y el canal por el que entró cada contacto a tu base.' },
-  bMatriz: { t: '🎯 Disciplina × gama', d: 'Cuántos clientes hay en cada combinación de disciplina y gama, según los perfiles del agente. Muestra tus nichos más grandes. Toca una celda para ver esos contactos.' },
+  bMatriz: { t: '🎯 Disciplina × gama', d: 'Cuántos clientes hay en cada combinación de disciplina y gama, según los perfiles del Cerebro. Muestra tus nichos más grandes. Toca una celda para ver esos contactos.' },
   bConv: { t: '🏆 Quién compra', d: 'Para cada grupo de clientes: cuántos perfiles hay, qué porcentaje llegó a una negociación y qué porcentaje compró (venta ganada o compra registrada en el chat).' },
   igLinks: { t: '🔗 Toques en links', d: 'Veces que alguien tocó un link o botón de tu perfil en los últimos 28 días: el link de la bio y los botones de contacto (mensaje o WhatsApp, llamar, cómo llegar). Es el paso entre «me gustó» y «te escribo».' },
   igLeads: { t: '💬 Clientes desde Instagram', d: 'Conversaciones de WhatsApp de los últimos 28 días en que el cliente llegó desde Instagram. Se detectan por el código de tus links (por ejemplo «ref IG-LEVO») o porque lo dice en sus primeros mensajes («te vi en Instagram», «vi el reel»). Requiere importar los chats.' },
   igConst: { t: '📅 Constancia', d: 'Publicaciones de feed y reels por semana en las últimas 8 semanas. La línea es tu meta según la estrategia. Publicar parejo cada semana rinde más que hacer mucho un día y nada el resto.' },
   igFranja: { t: '🕒 Cuándo publicar', d: 'Agrupa tus publicaciones de los últimos 90 días por día y franja horaria, y compara su alcance con el de tu publicación típica (la mediana). +40% significa que ahí llegas 40% más lejos que lo normal.', f: 'Valor de cada celda = promedio de (alcance de la publicación ÷ alcance mediano de tus publicaciones). Se recomienda una franja solo si tiene 2 o más publicaciones.' },
   igPilares: { t: '🏷️ Temas (pilares)', d: 'La app clasifica cada publicación según las palabras de su texto: producto y stock, taller y consejos, comunidad y salidas, clientes y entregas, promociones, lugar y estilo de vida. Muestra cuánto publicas de cada uno y cuánto alcanza.' },
-  igDemanda: { t: '🔎 Lo que preguntan', d: 'Modelos que nombran tus clientes en WhatsApp (intereses y bicis que tienen, según los perfiles del agente) y cuántas veces aparecen en tus publicaciones de los últimos 90 días. «Falta contenido» marca lo que piden mucho y casi no muestras.' },
+  igDemanda: { t: '🔎 Lo que preguntan', d: 'Modelos que nombran tus clientes en WhatsApp (intereses y bicis que tienen, según los perfiles del Cerebro) y cuántas veces aparecen en tus publicaciones de los últimos 90 días. «Falta contenido» marca lo que piden mucho y casi no muestras.' },
   igEmbudo: { t: '🧭 De Instagram a ventas', d: 'Cada paso del camino: cuántos vieron tu contenido, cuántos interactuaron, cuántos tocaron un link, cuántos te escribieron por WhatsApp y cuántos se volvieron negociación. El % es el paso respecto del anterior.' },
   igLinksCod: { t: '🏷️ Links con código', d: 'Links a WhatsApp con un mensaje ya escrito que termina en «(ref CÓDIGO)». Cuando el cliente lo envía, el código queda en el chat y la app sabe qué publicación, historia o link lo trajo. Para la web, el link lleva parámetros UTM que puedes ver en Google Analytics.' },
   igCiudades: { t: '📍 Ciudades', d: 'De dónde son tus seguidores, según Instagram (los 20 principales). Útil para decidir si hablarle también a Bariloche, Osorno o Puerto Montt. Instagram lo entrega desde los 100 seguidores.' },
@@ -5895,7 +6052,7 @@ const INFO = {
   ticket: { t: '🧾 Ticket promedio', d: 'El valor promedio de las negociaciones ganadas.', calc: () => { const m = metricasNeg(); return [['Ventas ganadas', m.nGan], ['Suma de esas ventas', clp(m.totalGan)], ['Ticket promedio', m.ticket == null ? 'aún sin datos' : clp(m.ticket)]]; } },
   embudo: { t: '🔻 Embudo de ventas', d: 'Cada barra muestra cuántas negociaciones abiertas hay en cada etapa y cuánto suman. El «% avanza» indica, de todas las negociaciones que alguna vez llegaron a una etapa, cuántas pasaron a la siguiente. Sirve para ver en qué etapa se te caen las ventas.' },
   oportunidades: { t: '💡 Oportunidades detectadas', d: 'Contactos (clientes o por clasificar) que en los últimos 30 días hablaron de algo de compra (precio, cotización, test ride, cuotas, talla, reserva, Levo…) y no tienen una negociación abierta. Toca «＋ Negocio» para crearla.' },
-  temperatura: { t: '🌡️ Temperatura', d: 'La pone el agente de IA al leer la conversación: caliente (quiere comprar pronto), tibio (interesado, sin apuro), frío (poco interés o no responde) o sin intención (no es una venta). Es su lectura de la conversación, no una fórmula.' },
+  temperatura: { t: '🌡️ Temperatura', d: 'La pone el Cerebro al leer la conversación: caliente (quiere comprar pronto), tibio (interesado, sin apuro), frío (poco interés o no responde) o sin intención (no es una venta). Es su lectura de la conversación, no una fórmula.' },
   igSeg: { t: '👥 Seguidores', d: 'Seguidores actuales de tu cuenta de Instagram. Lo de abajo es cuánto cambió en los últimos 28 días (se calcula con la foto diaria que guarda el script; los primeros días puede no haber dato anterior).' },
   igAlc: { t: '📣 Alcance', d: 'Cuántas cuentas distintas vieron tu contenido (publicaciones, reels e historias). Es la suma del alcance diario de los últimos 28 días que entrega Instagram, comparada con los 28 días anteriores. Ojo: una misma cuenta puede contarse en varios días.' },
   igInter: { t: '❤️ Interacciones', d: 'Me gusta, comentarios, guardados, compartidos y respuestas que recibió tu contenido en los últimos 28 días, según Instagram.' },
@@ -6016,7 +6173,7 @@ function openNegocio(n, opt){
   };
 }
 
-/* ---------- Perfiles de clientes (los arma el agente) ---------- */
+/* ---------- Perfiles de clientes (los arma el Cerebro) ---------- */
 const CICLO = {
   oportunidad: { t: 'Oportunidad activa', c: 'var(--s5)' }, lead_activo: { t: 'Prospecto activo', c: 'var(--s4)' }, cliente_nuevo: { t: 'Cliente nuevo', c: 'var(--s3)' },
   cliente_activo: { t: 'Cliente activo', c: 'var(--s2)' }, institucion: { t: 'Club / institución', c: 'var(--s1)' }, en_riesgo: { t: 'En riesgo', c: '#C9D3E0' },
@@ -6042,7 +6199,7 @@ function chipsPerfil(pf, max){
 const primerNombre = c => String((c && (c.nombre || '')) || '').split(' ')[0] || '';
 const RE_MODELO = /\b(levo|kenevo|vado|como|creo|stumpjumper|stumpy|epic|chisel|rockhopper|tarmac|roubaix|aethos|allez|diverge|crux|sirrus|status|enduro|demo|fuse|riprock|jett|hotrock|turbo|s-works)\b/;
 
-/* ---------- Oportunidades de contacto (el agente decide a quién escribir y por qué) ---------- */
+/* ---------- Oportunidades de contacto (el Cerebro decide a quién escribir y por qué) ---------- */
 function indiceStock(){
   const st = S.base && S.base.stock && S.base.stock.items; if (!st || !st.length) return null;
   if (S._stIdx && S._stIdx.src === st) return S._stIdx;
@@ -6095,9 +6252,9 @@ function oportunidades(){
       if (bici && d >= 165 && d <= 215) add(Object.assign({ k: 'mant6:' + c.id + ':' + cp.fecha, tipo: 'mantencion', ic: 'clock', titulo: 'Mantención de los 6 meses', porque: 'Compró ' + prod + ' en ' + fmtMes(cp.fecha), msg: msg.mantencion(n, prod), pr: 75 }, base));
       if (bici && /levo|kenevo|vado|como|creo|turbo/.test(norm(prod)) && d >= 600 && d <= 670) add(Object.assign({ k: 'bat:' + c.id + ':' + cp.fecha, tipo: 'bateria', ic: 'bolt', titulo: 'Batería: garantía por vencer', porque: prod + ' comprada en ' + fmtMes(cp.fecha) + ' (garantía de 2 años)', msg: msg.bateria(n, prod), pr: 70 }, base)); });
     if (reciente) return;
-    // 3) recomendaciones del agente con fecha cumplida
+    // 3) recomendaciones del Cerebro con fecha cumplida
     (pf.r || []).filter(r => r.tipo !== 'avisar_stock' && /^\d{4}-\d{2}-\d{2}$/.test(r.fecha || '') && r.fecha <= addDays(h, 2) && diffDays(r.fecha, h) <= 45).forEach(r =>
-      add(Object.assign({ k: 'rec:' + c.id + ':' + r.tipo + ':' + r.fecha, tipo: r.tipo, ic: 'spark', titulo: r.texto, porque: 'Sugerencia del agente' + (r.producto ? ' · ' + r.producto : ''), msg: (msg[r.tipo] || msg.reactivar)(n, r.producto || 'tu bici'), pr: 65 }, base)));
+      add(Object.assign({ k: 'rec:' + c.id + ':' + r.tipo + ':' + r.fecha, tipo: r.tipo, ic: 'spark', titulo: r.texto, porque: 'Sugerencia del Cerebro' + (r.producto ? ' · ' + r.producto : ''), msg: (msg[r.tipo] || msg.reactivar)(n, r.producto || 'tu bici'), pr: 65 }, base)));
     // 4) retomar un interés que se enfrió, reactivar clientes valiosos, upgrade
     if (pf.ciclo === 'lead_frio' && /alta|media/.test(p.fuerza_intencion || '') && m.diasCliente > 60 && m.diasCliente <= 200) add(Object.assign({ k: 'retomar:' + c.id + ':' + mes, tipo: 'retomar', ic: 'arrow', titulo: 'Retomar: ' + ((p.intereses || [])[0] || L_INT[p.intencion] || 'su consulta'), porque: 'Preguntó hace ' + m.diasCliente + ' días y quedó ahí', msg: msg.retomar(n, (p.intereses || [])[0] || 'una bici'), pr: 60 }, base));
     if (pf.ciclo === 'en_riesgo' && /A|B/.test(pf.clase || '')) add(Object.assign({ k: 'react:' + c.id + ':' + mes, tipo: 'reactivar', ic: 'users', titulo: 'Reactivar cliente ' + pf.clase, porque: 'Sin contacto hace ' + m.diasCliente + ' días', msg: msg.reactivar(n), pr: 55 }, base));
@@ -6148,9 +6305,9 @@ function toastUndo(txt, fn){
   const u = document.createElement('button'); u.className = 'undo'; u.textContent = 'Deshacer'; u.onclick = () => { fn(); t.remove(); setTimeout(render, 50); }; t.appendChild(u);
 }
 
-/* ---------- Importación masiva: todos tus chats, el agente perfila a cada cliente ---------- */
+/* ---------- Importación masiva: todos tus chats, el Cerebro perfila a cada cliente ---------- */
 function openImportMasivo(files){
-  if (extNivel() < 12){ const mm = modal(icon('users') + ' Falta un paso', '<p style="margin:0 0 12px;line-height:1.5">Para que el agente perfile a todos tus clientes, primero actualiza el script (Extras.gs) a la versión nueva. Toma 2 minutos.</p><div class="btns"><button class="btn" id="imUpd">Ver cómo actualizar</button></div>'); mm.el.querySelector('#imUpd').onclick = () => { mm.cerrar(); showExtrasSetup(); }; return; }
+  if (extNivel() < 12){ const mm = modal(icon('users') + ' Falta un paso', '<p style="margin:0 0 12px;line-height:1.5">Para que el Cerebro perfile a todos tus clientes, primero actualiza el script (Extras.gs) a la versión nueva. Toma 2 minutos.</p><div class="btns"><button class="btn" id="imUpd">Ver cómo actualizar</button></div>'); mm.el.querySelector('#imUpd').onclick = () => { mm.cerrar(); showExtrasSetup(); }; return; }
   const m = modal(icon('users') + ' Importar tus chats de WhatsApp', '<div id="im"><div class="empty"><span class="spin"></span>Leyendo ' + files.length + ' archivos…</div></div>', { wide: true });
   m.el.classList.add('imx'); const box = m.el.querySelector('#im');
   (async () => {
@@ -6186,7 +6343,7 @@ function openImportMasivo(files){
       box.innerHTML = '<div class="im-step"><span class="on">1 Revisar</span><span>2 Analizar</span><span>3 Resultado</span></div>' +
         '<div class="im-kpis"><div><b>' + validos.length + '</b><small>chats</small></div><div><b>' + msgs.toLocaleString('es-CL') + '</b><small>mensajes</small></div><div><b>' + nuevos + '</b><small>contactos nuevos</small></div><div><b>' + rec + '</b><small>activos (≤ 60 días)</small></div></div>' +
         (ay.length > 1 ? '<div class="im-years">' + ay.map(x => '<div><i style="height:' + Math.max(6, x[1] / mx * 46) + 'px"></i><small>' + x[0] + '</small></div>').join('') + '<span class="wsub">Último mensaje de cada chat, por año</span></div>' : '') +
-        '<div class="im-how"><div class="lab2">Cómo trabajará el agente</div>' +
+        '<div class="im-how"><div class="lab2">Cómo trabajará el Cerebro</div>' +
           '<div>' + icon('users') + '<span><b>Perfila a cada contacto:</b> tipo de cliente, experiencia, gama, disciplina, bicis que tiene, intereses, frecuencia de consulta y probabilidad de compra.</span></div>' +
           '<div>' + icon('deal') + '<span><b>Abre negociaciones solo con opciones reales de venta</b> y conversación de los últimos 60 días (' + rec + ' chats califican por fecha).</span></div>' +
           '<div>' + icon('check') + '<span><b>No crea tareas.</b> Lo antiguo queda como <b>oportunidades</b> para el momento justo: cuando llegue stock en Bsale, la mantención a los 6 meses, la batería o un upgrade.</span></div>' +
@@ -6194,7 +6351,7 @@ function openImportMasivo(files){
         '<div class="lab2" style="margin-top:14px">¿Quién eres tú en los chats?</div>' + pills('im_yo', cands.map(a => ({ v: a[0], t: a[0] + ' (' + a[1] + ')' })), yo) +
         '<label class="row" style="gap:8px;margin-top:10px;font-size:13.5px"><input type="checkbox" id="im_gr"' + (S.imSinGrupos !== false ? ' checked' : '') + ' style="width:18px;height:18px"> Omitir grupos (' + D.filter(d => d.grupo).length + ')</label>' +
         '<details class="im-list"><summary>Ver los ' + D.length + ' chats' + (chats.length > ok.length ? ' · ' + (chats.length - ok.length) + ' archivos no se pudieron leer' : '') + '</summary>' + D.map(d => '<div class="im-r' + (validos.includes(d) ? '' : ' off') + '"><b>' + esc(d.existente ? d.existente.nombre || d.nombre : d.nombre) + '</b><small>' + d.c.r.mensajes.length + ' msj · último ' + fmt(d.ult) + (d.existente ? ' · ya está en tu base' : '') + (d.grupo ? ' · grupo' : '') + (d.sinCliente ? ' · solo mensajes tuyos' : '') + '</small></div>').join('') + '</details>' +
-        '<div class="hint">Tiempo estimado: ~' + min + ' min con la app abierta. Si la cierras, el agente sigue solo en el servidor (unos 25 chats cada 10 minutos). Costo aproximado del agente: menos de US$' + Math.max(1, Math.ceil(validos.length * 0.002)) + '.</div>' +
+        '<div class="hint">Tiempo estimado: ~' + min + ' min con la app abierta. Si la cierras, el Cerebro sigue solo en el servidor (unos 25 chats cada 10 minutos). Costo aproximado del Cerebro: menos de US$' + Math.max(1, Math.ceil(validos.length * 0.002)) + '.</div>' +
         '<div class="btns"><button class="btn" id="im_go">' + icon('spark') + ' Importar y analizar ' + validos.length + ' chats</button></div>';
       bindPills('im_yo', v => { yo = v; pintar(); });
       box.querySelector('#im_gr').onchange = e => { S.imSinGrupos = e.target.checked; pintar(); };
@@ -6213,9 +6370,9 @@ function openImportMasivo(files){
         '<div class="im-big"><b class="num">' + (est.fase === 'subir' ? est.subidos : est.listos) + '</b><span>/ ' + est.total + '</span><small>' + (est.fase === 'subir' ? 'chats subidos a tu base' : 'clientes perfilados · ' + (eta ? '~' + eta + ' min restantes' : 'terminando…')) + '</small></div>' +
         '<div class="segbar">' + (est.fase === 'subir' ? '<i class="d" style="width:' + pct(est.subidos) + '"></i>' : '<i class="d" style="width:' + pct(est.listos) + '"></i><i class="r" style="width:' + pct(enCurso) + '"></i><i class="f" style="width:' + pct(est.fallos.length) + '"></i>') + '</div>' +
         '<div class="seglg"><span><i class="d"></i>' + (est.fase === 'subir' ? 'Subidos' : 'Listos ' + est.listos) + '</span>' + (est.fase === 'analizar' ? '<span><i class="r"></i>Analizando ' + enCurso + '</span><span><i class="f"></i>Con error ' + est.fallos.length + '</span><span>' + icon('deal') + ' ' + est.neg + ' negociaciones</span>' : '') + '</div>' +
-        '<div class="im-feed">' + (est.feed.length ? est.feed.slice(0, 6).map(f => '<div class="im-f"><span class="av">' + esc(iniciales(f.nombre)) + '</span><div><b>' + esc(f.nombre) + '</b><div class="pcs">' + f.chips + '</div></div>' + (f.neg ? '<span class="pc lc">' + icon('deal') + ' negociación</span>' : '') + '</div>').join('') : '<div class="wsub" style="padding:10px 0">' + (est.fase === 'subir' ? 'Guardando los mensajes en tu Sheet…' : 'El agente está leyendo los primeros chats…') + '</div>') + '</div>' +
+        '<div class="im-feed">' + (est.feed.length ? est.feed.slice(0, 6).map(f => '<div class="im-f"><span class="av">' + esc(iniciales(f.nombre)) + '</span><div><b>' + esc(f.nombre) + '</b><div class="pcs">' + f.chips + '</div></div>' + (f.neg ? '<span class="pc lc">' + icon('deal') + ' negociación</span>' : '') + '</div>').join('') : '<div class="wsub" style="padding:10px 0">' + (est.fase === 'subir' ? 'Guardando los mensajes en tu Sheet…' : 'El Cerebro está leyendo los primeros chats…') + '</div>') + '</div>' +
         '<div class="btns"><button class="btn sec" id="im_bg">Seguir en segundo plano</button></div>';
-      box.querySelector('#im_bg').onclick = () => { m.cerrar(); toast('El agente sigue trabajando. Te aviso al terminar.'); render(); };
+      box.querySelector('#im_bg').onclick = () => { m.cerrar(); toast('El Cerebro sigue trabajando. Te aviso al terminar.'); render(); };
     };
     pintar();
     for (const x of lista){
@@ -6252,11 +6409,11 @@ function openImportMasivo(files){
     const C = est.ciclos, tot = Object.values(C).reduce((s, x) => s + x, 0) || 1, ord = Object.keys(CICLO).filter(k => C[k]);
     const cli = (C.cliente_nuevo || 0) + (C.cliente_activo || 0) + (C.en_riesgo || 0) + (C.perdido || 0), ops = oportunidades().length;
     box.innerHTML = '<div class="im-step"><span class="ok">1 Revisar</span><span class="ok">2 Analizar</span><span class="on">3 Resultado</span></div>' +
-      '<div class="im-done">' + ringSVG(est.listos / Math.max(1, est.total), 64) + '<div><h3>' + est.listos + ' contactos perfilados</h3><div class="wsub">' + (parar ? 'Se detuvo: ' + esc(parar) + '. Los pendientes los sigue el servidor cuando se resuelva.' : 'Tu base quedó ordenada por el agente.') + '</div></div></div>' +
+      '<div class="im-done">' + ringSVG(est.listos / Math.max(1, est.total), 64) + '<div><h3>' + est.listos + ' contactos perfilados</h3><div class="wsub">' + (parar ? 'Se detuvo: ' + esc(parar) + '. Los pendientes los sigue el servidor cuando se resuelva.' : 'Tu base quedó ordenada por el Cerebro.') + '</div></div></div>' +
       '<div class="im-kpis"><div><b>' + (C.oportunidad || 0) + '</b><small>oportunidades activas</small></div><div><b>' + est.neg + '</b><small>negociaciones abiertas</small></div><div><b>' + cli + '</b><small>clientes</small></div><div><b>' + ops + '</b><small>a quién escribir</small></div></div>' +
       '<div class="lab2">Ciclo de vida</div><div class="stack">' + ord.map(k => '<i style="width:' + (C[k] / tot * 100) + '%;background:' + CICLO[k].c + '" title="' + esc(CICLO[k].t) + ' ' + C[k] + '"></i>').join('') + '</div>' +
       '<div class="stack-lg">' + ord.map(k => '<span><i style="background:' + CICLO[k].c + '"></i>' + esc(CICLO[k].t) + ' <b>' + C[k] + '</b></span>').join('') + '</div>' +
-      (est.baja ? '<div class="im-warn">' + icon('flag') + '<span><b>' + est.baja + ' perfiles con poca información.</b> Revísalos cuando tengas tiempo: el agente los marcó para que confirmes.</span></div>' : '') +
+      (est.baja ? '<div class="im-warn">' + icon('flag') + '<span><b>' + est.baja + ' perfiles con poca información.</b> Revísalos cuando tengas tiempo: el Cerebro los marcó para que confirmes.</span></div>' : '') +
       (est.fallos.length ? '<details class="im-list"><summary>' + est.fallos.length + ' con error</summary>' + est.fallos.map(f => '<div class="im-r"><small>' + esc(f) + '</small></div>').join('') + '</details>' : '') +
       '<div class="btns"><button class="btn" id="im_seg">Ver segmentos</button>' + (ops ? '<button class="btn sec" id="im_op">A quién escribir (' + ops + ')</button>' : '') + '</div>';
     box.querySelector('#im_seg').onclick = () => { m.cerrar(); S.bv = 'seg'; go('base'); };
@@ -6267,28 +6424,28 @@ function imxPill(){
   let b = $('#imxPill');
   const e = S.imx, abierto = $('.pop.imx');
   if (!e || abierto){ if (b) b.remove(); return; }
-  if (!b){ b = document.createElement('button'); b.id = 'imxPill'; b.className = 'imx-pill'; document.body.appendChild(b); b.onclick = () => toast('El agente sigue perfilando tus chats…'); }
+  if (!b){ b = document.createElement('button'); b.id = 'imxPill'; b.className = 'imx-pill'; document.body.appendChild(b); b.onclick = () => toast('El Cerebro sigue perfilando tus chats…'); }
   const n = e.fase === 'subir' ? e.subidos : e.listos;
   b.innerHTML = '<span class="spin"></span>' + (e.fase === 'subir' ? 'Subiendo chats ' : 'Perfilando ') + n + '/' + e.total + '<i style="width:' + (n / Math.max(1, e.total) * 100) + '%"></i>';
 }
-// Ficha del perfil: lo que entendió el agente (con su evidencia), métricas de los mensajes y recomendaciones. Todo corregible.
+// Ficha del perfil: lo que entendió el Cerebro (con su evidencia), métricas de los mensajes y recomendaciones. Todo corregible.
 function perfilTab(c, box){
   const pf = perfilDe(c.id); if (!pf){ box.innerHTML = '<div class="empty">Aún sin perfil.</div>'; return; }
   const p = pf.p || {}, m = pf.m || {}, conf = pf.confirmado || {};
-  const ai = k => conf[k] ? '' : '<i class="aidot" title="Lo completó el agente: tócalo para corregir"></i>';
+  const ai = k => conf[k] ? '' : '<i class="aidot" title="Lo completó el Cerebro: tócalo para corregir"></i>';
   const campo = (k, t, v, opciones) => '<div class="pf-f' + (opciones ? ' ed' : '') + '"' + (opciones ? ' data-pfe="' + k + '"' : '') + '><small>' + t + '</small><b>' + (v ? esc(v) : '<span class="hint">Sin dato</span>') + (v ? ai(k) : '') + '</b></div>';
   const L = (a, M) => (a || []).map(x => M ? M[x] || x : x).join(', ');
-  if (/Pendiente/.test(pf.estado || '')){ box.innerHTML = '<div class="empty"><span class="spin"></span>El agente aún no analiza este chat.</div>'; return; }
+  if (/Pendiente/.test(pf.estado || '')){ box.innerHTML = '<div class="empty"><span class="spin"></span>El Cerebro aún no analiza este chat.</div>'; return; }
   box.innerHTML = '<div class="pf-score"><div><small>Probabilidad de venta</small><b class="num">' + pf.prob + '%</b><span class="pb"><i style="width:' + pf.prob + '%"></i></span></div><div><small>Potencial</small><b class="num">' + (pf.clase || '–') + '</b><span class="wsub">' + pf.potencial + '/100</span></div><div><small>Ciclo</small><b style="font-size:15px">' + esc((CICLO[pf.ciclo] || {}).t || '–') + '</b><span class="wsub">' + esc(frecDe(pf)) + '</span></div></div>' +
-    (pf.resumen ? '<div class="ai" style="margin-bottom:12px"><div class="wh" style="margin:0">' + icon('spark') + 'Resumen del agente</div><div style="font-size:14px;line-height:1.45;margin-top:6px">' + esc(pf.resumen) + '</div>' + (p.evidencia ? '<div class="pf-ev">«' + esc(p.evidencia) + '»' + (p.evidencia_no_verificada ? ' <span class="tag warn">no verificado</span>' : '') + '</div>' : '') + (p.confianza === 'baja' ? '<div class="hint" style="margin:6px 0 0">' + icon('flag') + ' Poca información: revisa y corrige si algo no calza.</div>' : '') + '</div>' : '') +
+    (pf.resumen ? '<div class="ai" style="margin-bottom:12px"><div class="wh" style="margin:0">' + icon('spark') + 'Resumen del Cerebro</div><div style="font-size:14px;line-height:1.45;margin-top:6px">' + esc(pf.resumen) + '</div>' + (p.evidencia ? '<div class="pf-ev">«' + esc(p.evidencia) + '»' + (p.evidencia_no_verificada ? ' <span class="tag warn">no verificado</span>' : '') + '</div>' : '') + (p.confianza === 'baja' ? '<div class="hint" style="margin:6px 0 0">' + icon('flag') + ' Poca información: revisa y corrige si algo no calza.</div>' : '') + '</div>' : '') +
     '<div class="pf-grid">' + campo('relacion', 'Relación', L_REL[p.relacion], L_REL) + campo('experiencia', 'Experiencia', p.experiencia !== 'desconocido' && L_EXP[p.experiencia], L_EXP) + campo('gama', 'Gama', p.gama !== 'desconocido' && L_GAMA[p.gama], L_GAMA) +
       campo('disciplinas', 'Disciplinas', L(p.disciplinas, L_DISC)) + campo('intencion', 'Busca', [L_INT[p.intencion], p.fuerza_intencion && p.fuerza_intencion !== 'ninguna' ? 'intención ' + p.fuerza_intencion : ''].filter(Boolean).join(' · '), L_INT) +
       campo('plazo', 'Plazo', ({ inmediato: 'Inmediato', '1_3_meses': '1 a 3 meses', mas_3_meses: 'Más de 3 meses', sin_plazo: '' })[p.plazo]) + campo('bicis', 'Sus bicis', (p.bicis || []).map(b => [b.modelo, b.anio, b.talla].filter(Boolean).join(' ') + (b.compro_en_tienda === 'si' ? ' (Blackline)' : '')).join(' · ')) +
       campo('talla', 'Talla / altura', [p.talla, p.altura_cm ? p.altura_cm + ' cm' : ''].filter(Boolean).join(' · ')) + campo('presupuesto_clp', 'Presupuesto', p.presupuesto_clp ? clpCorto(p.presupuesto_clp) : '') + campo('pago', 'Pago', p.pago !== 'desconocido' && p.pago ? p.pago.replace(/_/g, ' ') : '') +
       campo('intereses', 'Intereses', L(p.intereses)) + campo('objeciones', 'Objeciones', L(p.objeciones).replace(/_/g, ' ')) + campo('sensibilidad_precio', 'Sensibilidad al precio', p.sensibilidad_precio !== 'desconocida' ? p.sensibilidad_precio : '') + campo('compras', 'Compras', (p.compras || []).map(x => x.producto + (x.fecha ? ' (' + fmtMes(x.fecha) + ')' : '')).join(' · ')) + '</div>' +
     '<div class="lab2" style="margin-top:14px">Actividad en WhatsApp</div><div class="pf-met"><div><b class="num">' + (m.mensajes || 0) + '</b><small>mensajes</small></div><div><b class="num">' + (m.sesiones12 || 0) + '</b><small>consultas 12 m</small></div><div><b class="num">' + (m.diasCliente != null && m.diasCliente < 9999 ? m.diasCliente + ' d' : '–') + '</b><small>desde su último msj</small></div><div><b class="num">' + (m.respuestaMin == null ? '–' : m.respuestaMin < 60 ? m.respuestaMin + ' min' : Math.round(m.respuestaMin / 60) + ' h') + '</b><small>tu respuesta (mediana)</small></div></div>' +
-    ((pf.r || []).length ? '<div class="lab2" style="margin-top:14px">Recomendaciones del agente</div>' + pf.r.map(r => '<div class="pf-rec">' + icon('spark') + '<div><b>' + esc(r.texto) + '</b><small>' + esc(OP_TIPO[r.tipo] || r.tipo) + (r.fecha ? ' · ' + fmtRel(r.fecha) : '') + (r.producto ? ' · ' + esc(r.producto) : '') + '</small></div></div>').join('') : '') +
-    '<div class="hint" style="margin-top:12px"><i class="aidot"></i> = lo completó el agente. Toca un campo para corregirlo; lo que corriges no se vuelve a pisar.</div>';
+    ((pf.r || []).length ? '<div class="lab2" style="margin-top:14px">Recomendaciones del Cerebro</div>' + pf.r.map(r => '<div class="pf-rec">' + icon('spark') + '<div><b>' + esc(r.texto) + '</b><small>' + esc(OP_TIPO[r.tipo] || r.tipo) + (r.fecha ? ' · ' + fmtRel(r.fecha) : '') + (r.producto ? ' · ' + esc(r.producto) : '') + '</small></div></div>').join('') : '') +
+    '<div class="hint" style="margin-top:12px"><i class="aidot"></i> = lo completó el Cerebro. Toca un campo para corregirlo; lo que corriges no se vuelve a pisar.</div>';
   box.querySelectorAll('[data-pfe]').forEach(el => el.onclick = () => {
     const k = el.dataset.pfe, M = { relacion: L_REL, experiencia: L_EXP, gama: L_GAMA, intencion: L_INT }[k]; if (!M) return;
     const md = modal('Corregir: ' + el.querySelector('small').textContent, '<div class="seg" style="flex-wrap:wrap;gap:6px">' + Object.entries(M).map(([v, t]) => '<button class="pill' + (p[k] === v ? ' on' : '') + '" data-v="' + v + '">' + esc(t) + '</button>').join('') + '</div>');
@@ -6321,10 +6478,10 @@ function barrasHTML(titulo, campo, cuentas, labels, info){
 }
 function segmentosHTML(){
   const P = perfiles(), pend = perfPendientes();
-  let html = pend || S.imx ? '<div class="seg-prog"><span class="spin"></span><div><b>El agente está perfilando tus chats</b><small>' + (S.imx ? (S.imx.listos || S.imx.subidos) + ' de ' + S.imx.total : pend + ' pendientes · sigue solo en el servidor (unos 25 cada 10 minutos)') + '</small></div></div>' : '';
+  let html = pend || S.imx ? '<div class="seg-prog"><span class="spin"></span><div><b>El Cerebro está perfilando tus chats</b><small>' + (S.imx ? (S.imx.listos || S.imx.subidos) + ' de ' + S.imx.total : pend + ' pendientes · sigue solo en el servidor (unos 25 cada 10 minutos)') + '</small></div></div>' : '';
   const sp0 = extNivel() >= 14 && agenteActivo() && !S.imx ? sinPerfil(false).length : 0;
   if (sp0) html += '<div class="seg-prog sp"><span class="ico-w">' + icon('users') + '</span><div><b>' + sp0 + (sp0 === 1 ? ' contacto sin perfil' : ' contactos sin perfil') + '</b><small>Se analizaron antes de que existieran los perfiles, así que no aparecen en los grupos ni en las estadísticas.</small></div><button class="btn sm" id="pePerf">' + icon('spark') + ' Perfilar ahora</button></div>';
-  if (!P.length) return html + (S.leadsCanal ? statsBaseHTML() : '') + '<div class="sec seg-empty"><div class="empty">' + icon('users') + '<b>Aún no hay perfiles de clientes</b>Importa tus chats de WhatsApp (puedes elegir cientos a la vez) y el agente arma la ficha de cada cliente: experiencia, gama, disciplina, intereses y probabilidad de compra.<br><button class="btn" id="segImp" style="margin-top:14px">' + icon('users') + ' Importar chats</button></div></div>';
+  if (!P.length) return html + (S.leadsCanal ? statsBaseHTML() : '') + '<div class="sec seg-empty"><div class="empty">' + icon('users') + '<b>Aún no hay perfiles de clientes</b>Importa tus chats de WhatsApp (puedes elegir cientos a la vez) y el Cerebro arma la ficha de cada cliente: experiencia, gama, disciplina, intereses y probabilidad de compra.<br><button class="btn" id="segImp" style="margin-top:14px">' + icon('users') + ' Importar chats</button></div></div>';
   const cnt = (fn) => { const o = {}; P.forEach(pf => [].concat(fn(pf)).forEach(v => { if (v) o[v] = (o[v] || 0) + 1; })); return o; };
   const C = cnt(pf => pf.ciclo), tot = P.length, ord = Object.keys(CICLO).filter(k => C[k]);
   const cli = P.filter(pf => /cliente|riesgo|perdido/.test(pf.ciclo)).length, opsN = oportunidades().length;
@@ -6346,8 +6503,8 @@ function segmentosHTML(){
 }
 function opsHTML(){
   const L = oportunidades();
-  if (!perfiles().length) return '<div class="sec"><div class="empty">Cuando el agente perfile tus chats, aquí verás a quién escribir y por qué: stock que llegó, mantenciones, baterías, upgrades y clientes que conviene reactivar.</div></div>';
-  if (!L.length) return '<div class="sec"><div class="empty">' + icon('check') + '<br><b>Estás al día</b><br>No hay contactos sugeridos por ahora. El agente revisa a diario el stock de Bsale y las fechas de tus clientes.</div></div>';
+  if (!perfiles().length) return '<div class="sec"><div class="empty">Cuando el Cerebro perfile tus chats, aquí verás a quién escribir y por qué: stock que llegó, mantenciones, baterías, upgrades y clientes que conviene reactivar.</div></div>';
+  if (!L.length) return '<div class="sec"><div class="empty">' + icon('check') + '<br><b>Estás al día</b><br>No hay contactos sugeridos por ahora. El Cerebro revisa a diario el stock de Bsale y las fechas de tus clientes.</div></div>';
   const grupos = {}; L.forEach((o, i) => { (grupos[o.tipo] = grupos[o.tipo] || []).push(i); });
   return '<div class="wsub" style="margin:0 2px 10px">Una sugerencia por cliente, ordenadas por importancia. El mensaje es editable: tócalo antes de enviar.</div>' +
     '<div class="opgrid">' + L.map(opCardHTML).join('') + '</div>';
@@ -6357,7 +6514,7 @@ function opsHTML(){
 function telWA(c){ return String((c && c.telefono) || '').replace(/[^\d+]/g, '').replace(/^\+/, '').replace(/^9(\d{8})$/, '569$1'); }
 function iniciales(s){ return String(s || '?').replace(/[^\p{L}\s]/gu, ' ').trim().split(/\s+/).slice(0, 2).map(w => w[0] || '').join('').toUpperCase() || '?'; }
 function respHoy(){ const r = lsGet('respHoy', {}); return r.dia === hoy() ? r : { dia: hoy(), ids: [] }; }
-// Clientes que esperan respuesta: el agente dejó una idea y aún no la marcas como respondida.
+// Clientes que esperan respuesta: el Cerebro dejó una idea y aún no la marcas como respondida.
 function esperanRespuesta(){
   if (!S.base) return [];
   const R = lsGet('respondidos', {});
@@ -6387,7 +6544,7 @@ function datosHoy(){
   return { h, venc, hoyL, curso, hacer, top, ev, resp, negs, hechas, rh, nh, cont, ops, oc: ocupados()[h] };
 }
 function pendientesHoyN(){ if (!S.data) return 0; const D = datosHoy(); return D.resp.length + D.hacer.length + D.negs.length + D.ops.length; }
-// Resumen del agente: lo importante del día en frases cortas, con lo que pasa en las otras pestañas.
+// Resumen del Cerebro: lo importante del día en frases cortas, con lo que pasa en las otras pestañas.
 function briefingHoy(D){
   const L = [], ahora = new Date().toTimeString().slice(0, 5);
   if (D.oc) L.push(['clock', '<b>Día ocupado</b> (' + esc(D.oc.titulo) + '): haz solo lo urgente.']);
@@ -6416,7 +6573,7 @@ function respHTML(x, i){
   const c = x.c, g = x.g, tel = telWA(c), res = g.r ? String(g.r.detalle).split(' · ')[0] : '';
   return '<div class="hy-item"><div class="av">' + esc(iniciales(c.nombre || c.email)) + '</div><div class="bd"><div class="tt">' + esc(c.nombre || c.email) + '<small>' + esc(fmtRel(g.idea.fecha)) + '</small></div>' +
     (res ? '<div class="ctx">' + esc(res.length > 160 ? res.slice(0, 157) + '…' : res) + '</div>' : '') +
-    '<div class="idea"><small>Idea de respuesta del agente</small>' + esc(g.idea.detalle) + '</div>' +
+    '<div class="idea"><small>Idea de respuesta del Cerebro</small>' + esc(g.idea.detalle) + '</div>' +
     '<div class="acts">' + (tel ? '<a class="btn sm" target="_blank" href="https://wa.me/' + esc(tel) + '?text=' + encodeURIComponent(g.idea.detalle) + '" data-rwa="' + i + '">' + icon('note') + ' Responder por WhatsApp</a>' : '<button class="btn sm" data-rcp="' + i + '">Copiar idea</button>') +
     '<button class="btn sm sec" data-rfi="' + i + '">Ver ficha</button><button class="btn sm sec" data-rok="' + i + '">' + icon('check') + ' Listo</button></div></div></div>';
 }
@@ -6438,14 +6595,14 @@ function viewHoy(){
   const nm = params()['Tu nombre (para el saludo)'], hr = new Date().getHours();
   let html = '<div class="hy-hero"><div class="hy-hl"><div class="hy-g">Tu día · ' + esc(fmtLong(hoy())) + '</div>' +
     hyWx() + (cerebroPlan() ? planHeroHTML(cerebroPlan()) : '<div class="hy-brief">' + briefingHoy(D).map(l => '<div>' + icon(l[0]) + '<span>' + l[1] + '</span></div>').join('') + '</div>') +
-    '<div class="hy-cta"><button class="btn" id="hFoco">' + icon('arrow') + ' Empezar mi día</button>' + (cerebroPlan() ? '<button class="btn sec" id="hPlan">' + icon('spark') + ' Plan del agente</button>' : extNivel() >= 16 && iaDisponible() ? '<button class="btn sec" id="hPlanG">' + icon('spark') + ' Generar plan del agente</button>' : '') + '<button class="btn sec" id="aiDia">' + icon('clock') + ' Horario con IA</button><button class="btn sec" id="qa" title="Agregar para hoy">' + icon('plus') + '</button></div></div>' +
+    '<div class="hy-cta"><button class="btn" id="hFoco">' + icon('arrow') + ' Empezar mi día</button>' + (cerebroPlan() ? '<button class="btn sec" id="hPlan">' + icon('spark') + ' Plan del Cerebro</button>' : extNivel() >= 16 && iaDisponible() ? '<button class="btn sec" id="hPlanG">' + icon('spark') + ' Generar plan del Cerebro</button>' : '') + '<button class="btn sec" id="aiDia">' + icon('clock') + ' Horario con IA</button><button class="btn sec" id="qa" title="Agregar para hoy">' + icon('plus') + '</button></div></div>' +
     '<div class="hy-ring"><div class="rg">' + ringSVG(tot ? hechoTot / tot : 0, 108) + '<div class="rv"><b>' + hechoTot + '</b><small>de ' + tot + '</small></div></div><div class="wsub" style="text-align:center">acciones del día</div></div>' +
     '<div class="hy-tl">' + lineaDiaHTML(D.ev) + '</div></div>';
   html += '<div class="hy-steps">' + pasos.map(p => { const T = p.pend + p.hecho, ok = !p.pend; return '<button class="hy-step' + (S.hPaso === p.k ? ' on' : '') + (ok ? ' ok' : '') + '" data-paso="' + p.k + '"><span class="num">' + (ok ? icon('check') : p.n) + '</span><span class="tx"><b>' + p.t + '</b><small>' + (ok ? (p.hecho ? p.hecho + ' hechas ✓' : p.sub) : p.txt || p.pend + ' ' + p.sub) + '</small></span><span class="pb"><i style="width:' + (T ? p.hecho / T * 100 : ok ? 100 : 0) + '%"></i></span></button>'; }).join('') + '</div>';
   let izq = '';
   if (S.hPaso === 'resp'){
-    izq = '<div class="sec"><div class="sh">' + icon('note') + ' Clientes que esperan respuesta <span class="n">' + D.resp.length + '</span></div><div class="wsub" style="padding:0 0 8px">El agente leyó sus chats y te dejó una idea de respuesta. Revísala, envíala desde WhatsApp y marca «Listo».</div>' +
-      (D.resp.length ? D.resp.map(respHTML).join('') : '<div class="empty">Nadie espera respuesta ✓' + (S.base ? '' : '<br><small>Cargando chats…</small>') + '<br><small>Los lunes importa los chats nuevos para que el agente los lea.</small></div>') + '</div>';
+    izq = '<div class="sec"><div class="sh">' + icon('note') + ' Clientes que esperan respuesta <span class="n">' + D.resp.length + '</span></div><div class="wsub" style="padding:0 0 8px">El Cerebro leyó sus chats y te dejó una idea de respuesta. Revísala, envíala desde WhatsApp y marca «Listo».</div>' +
+      (D.resp.length ? D.resp.map(respHTML).join('') : '<div class="empty">Nadie espera respuesta ✓' + (S.base ? '' : '<br><small>Cargando chats…</small>') + '<br><small>Los lunes importa los chats nuevos para que el Cerebro los lea.</small></div>') + '</div>';
   } else if (S.hPaso === 'hacer'){
     const enTop = new Set(D.top), resto = D.venc.filter(t => !enTop.has(t)), restoH = D.hoyL.filter(t => !enTop.has(t));
     izq = '<div class="sec"><div class="sh">' + icon('target') + ' Tus 3 prioridades</div><div class="wsub" style="padding:0 0 6px">Si haces solo esto, el día valió la pena. Toca ▶ para trabajar en una con temporizador.</div>' +
@@ -6457,7 +6614,7 @@ function viewHoy(){
   } else {
     izq = '<div class="sec"><div class="sh">' + icon('deal') + ' Negociaciones que necesitan un empujón <span class="n">' + D.negs.length + '</span></div><div class="wsub" style="padding:0 0 8px">Ordenadas por monto. Contacta al cliente y registra qué pasó: así no se enfría ninguna venta.</div>' + (D.negs.length ? '<button class="btn" id="hRonda" style="width:100%;margin:2px 0 8px">' + icon('arrow') + ' Empezar ronda de seguimiento (' + D.negs.length + ')</button>' : '') +
       (D.negs.length ? D.negs.map(negHoyHTML).join('') : '<div class="empty">' + (S.neg ? 'Todas tus negociaciones están al día ✓' : '<span class="spin"></span>Cargando negociaciones…') + '</div>') + '</div>';
-    if (D.ops.length) izq += '<div class="sec hy-ops"><div class="sh">' + icon('box') + ' A quién escribir hoy <span class="n">' + D.ops.length + '</span><span class="r"><button class="btn sm sec" id="hOpsAll">Ver todas</button></span></div><div class="wsub" style="padding:0 0 10px">El agente cruzó tus clientes con el stock de Bsale y sus fechas (compras, mantenciones, intereses). El mensaje es editable.</div><div class="opgrid">' + D.ops.map(opCardHTML).join('') + '</div></div>';
+    if (D.ops.length) izq += '<div class="sec hy-ops"><div class="sh">' + icon('box') + ' A quién escribir hoy <span class="n">' + D.ops.length + '</span><span class="r"><button class="btn sm sec" id="hOpsAll">Ver todas</button></span></div><div class="wsub" style="padding:0 0 10px">El Cerebro cruzó tus clientes con el stock de Bsale y sus fechas (compras, mantenciones, intereses). El mensaje es editable.</div><div class="opgrid">' + D.ops.map(opCardHTML).join('') + '</div></div>';
   }
   const ahora = new Date().toTimeString().slice(0, 5), man = addDays(h, 1);
   const evM = S.google && S.google.eventos ? S.google.eventos.filter(e => e.fecha === man) : [], tM = pendientes().filter(t => t.limite === man);
@@ -6552,8 +6709,8 @@ function rondaSeguimiento(t, opt){
       '<div class="acts">' + (tel ? '<a class="btn sm sec" target="_blank" href="https://wa.me/' + esc(tel) + (idea.idea ? '?text=' + encodeURIComponent(idea.idea.detalle) : '') + '">' + icon('note') + ' WhatsApp</a><a class="btn sm sec" href="tel:' + esc(tel) + '">' + icon('phone') + ' Llamar</a>' : '') + (c && c.email ? '<a class="btn sm sec" href="mailto:' + esc(c.email) + '">✉️</a>' : '') + '</div></div>' +
       '<div class="rs-grid"><div>' +
         '<div class="rs-box todo"><small>Qué hacer ahora</small><b>' + esc(rec ? rec.t : (n.proxima || e.sig || 'Contactar al cliente')) + '</b>' + (rec && rec.d ? '<span>' + esc(rec.d) + '</span>' : e.tip ? '<span>' + esc(e.tip) + '</span>' : '') + '</div>' +
-        (idea.idea ? '<div class="idea"><small>Idea de respuesta del agente</small>' + esc(idea.idea.detalle) + '</div>' : '') +
-        (idea.r ? '<div class="ctx" style="margin-top:8px"><b>Lo que entendió el agente:</b> ' + esc(idea.r.detalle) + '</div>' : n.notas ? '<div class="ctx" style="margin-top:8px"><b>Notas:</b> ' + esc(n.notas) + '</div>' : '') +
+        (idea.idea ? '<div class="idea"><small>Idea de respuesta del Cerebro</small>' + esc(idea.idea.detalle) + '</div>' : '') +
+        (idea.r ? '<div class="ctx" style="margin-top:8px"><b>Lo que entendió el Cerebro:</b> ' + esc(idea.r.detalle) + '</div>' : n.notas ? '<div class="ctx" style="margin-top:8px"><b>Notas:</b> ' + esc(n.notas) + '</div>' : '') +
       '</div><div><div class="lab2">Avances</div>' + (av.length ? '<div class="tl2">' + av.map(y => '<div class="ev2"><b>' + esc(y.tipo) + ' ' + esc(String(y.d).length > 110 ? String(y.d).slice(0, 108) + '…' : y.d) + '</b><small>' + esc(fmtRel(y.f)) + '</small></div>').join('') + '</div>' : '<div class="wsub">Sin registros todavía.</div>') + '</div></div>' +
       '<div class="rs-form"><div class="lab2">¿Qué hiciste?</div><div class="rs-acts">' + ACTIVIDADES.map((y, k) => '<button type="button" class="pill" data-ra="' + k + '">' + esc(y[0]) + '</button>').join('') + '</div>' +
         '<input type="text" id="rsN" placeholder="Detalle (opcional): qué dijo, qué quedó pendiente…">' +
@@ -6684,7 +6841,7 @@ function sugerenciasTareas(){
   const h = hoy(), out = [], desc = new Set(descartadas());
   const add = x => { if (!desc.has(x.k) && !yaExisteTarea(x.tarea, x.clave) && !out.some(y => similitud(y.tarea, x.tarea) >= 0.6)) out.push(x); };
   if (S.neg) abiertos().forEach(n => { if (n.proxima) add({ k: 'n:' + n.id + ':' + n.proxima, tarea: '🤝 ' + n.proxima + ' – ' + n.titulo, fecha: n.fechaProx && n.fechaProx > h ? n.fechaProx : h, fuente: 'Negociación', motivo: 'Próximo paso de la negociación sin tarea en tu lista', clave: n.id, notas: negTag(n) }); });
-  esperanRespuesta().map(x => x.c).forEach(c => add({ k: 'r:' + c.id + ':' + (agenteDe(c.id).idea.fecha || ''), tarea: 'Responder a ' + (c.nombre || c.email), fecha: h, fuente: 'Chat', motivo: 'Te escribió y espera respuesta (el agente dejó una idea en su ficha)', clave: c.id, notas: c.telefono ? '📞 ' + c.telefono : '' }));
+  esperanRespuesta().map(x => x.c).forEach(c => add({ k: 'r:' + c.id + ':' + (agenteDe(c.id).idea.fecha || ''), tarea: 'Responder a ' + (c.nombre || c.email), fecha: h, fuente: 'Chat', motivo: 'Te escribió y espera respuesta (el Cerebro dejó una idea en su ficha)', clave: c.id, notas: c.telefono ? '📞 ' + c.telefono : '' }));
   const ev = S.google && S.google.eventos ? S.google.eventos.filter(e => e.fecha > h && e.fecha <= addDays(h, 3) && !e.todoElDia && /client|reuni|visita|entrega|test|salida|capacit|proveedor|evento/i.test(e.titulo)) : [];
   ev.forEach(e => add({ k: 'e:' + e.id, tarea: 'Preparar: ' + e.titulo, fecha: addDays(e.fecha, -1), fuente: 'Agenda', motivo: 'Evento del ' + fmt(e.fecha) + (e.inicio ? ' a las ' + e.inicio : ''), notas: '📅 ' + e.titulo }));
   (S.data.proyectos || []).forEach(p => { if (!S.data.tareas.some(t => t.proyecto === p.nombre && !t.hecho)) add({ k: 'p:' + p.nombre, tarea: 'Definir la próxima tarea del proyecto ' + p.nombre, fecha: addDays(h, 1), fuente: 'Proyecto', motivo: 'El proyecto no tiene tareas pendientes', proyecto: p.nombre }); });
@@ -6715,7 +6872,7 @@ function viewTareas(){
     (venc.length ? der : izq).push('<div class="sec hk"><div class="sh">Para hoy <span class="n">' + hoyL.length + '</span></div>' + (hoyL.length ? lista(hoyL) : '<div class="empty">Nada con fecha de hoy ☀️' + (prox.length ? '<br>Lo próximo: «' + esc(prox[0].tarea) + '» (' + fmt(prox[0].limite) + ').' : '') + '</div>') + '</div>');
     if (pronto.length) der.push('<div class="sec"><div class="sh">Próximos 3 días <span class="n">' + pronto.length + '</span><span class="r"><button class="btn sm sec" data-tv="prox">Ver todas</button></span></div>' + lista(pronto.slice(0, 6)) + '</div>');
     cuerpo += '<div class="cols2"><div>' + izq.join('') + '</div><div>' + der.join('') + '</div></div>';
-    if (nRev) cuerpo += '<div class="sec" style="border-color:#D7E4F7"><div class="sh" style="color:var(--accent-ink)">' + icon('spark') + ' ' + nRev + ' por revisar<span class="r"><button class="btn sm sec" data-tv="revisar">Revisar</button></span></div><div class="wsub" style="padding:0 0 10px">Sugerencias de tareas, tareas que creó el agente desde los chats y posibles duplicadas.</div></div>';
+    if (nRev) cuerpo += '<div class="sec" style="border-color:#D7E4F7"><div class="sh" style="color:var(--accent-ink)">' + icon('spark') + ' ' + nRev + ' por revisar<span class="r"><button class="btn sm sec" data-tv="revisar">Revisar</button></span></div><div class="wsub" style="padding:0 0 10px">Sugerencias de tareas, tareas que creó el Cerebro desde los chats y posibles duplicadas.</div></div>';
   } else if (S.tv === 'prox'){
     const dias = {}; prox.forEach(t => { (dias[t.limite] = dias[t.limite] || []).push(t); });
     const keys = Object.keys(dias).sort(), cerca = keys.filter(k => k <= addDays(h, 14)), lejos = keys.filter(k => k > addDays(h, 14));
@@ -6727,7 +6884,7 @@ function viewTareas(){
   } else if (S.tv === 'revisar'){
     cuerpo += '<div class="ai"><div class="wh" style="margin:0 0 6px">' + icon('spark') + 'Asistente de tareas<span class="r" style="margin-left:auto"><button class="btn sm" id="aiTar">Revisar con IA</button></span></div><div class="wsub">Analiza negociaciones, chats, agenda y proyectos, sugiere lo que falta y encuentra tareas repetidas. Tú decides qué queda.</div></div>';
     cuerpo += '<div class="sec"><div class="sh">Sugerencias <span class="n">' + sug.length + '</span></div>' + (sug.length ? sug.map((x, i) => '<div class="sgi"><div class="tx"><span class="src">' + esc(x.fuente) + '</span><b>' + esc(x.tarea) + '</b><small>' + esc(fmtRel(x.fecha)) + ' · ' + esc(x.motivo) + '</small></div><div class="ac"><button class="ok" data-sga="' + i + '" aria-label="Agregar">＋</button><button data-sgd="' + i + '" aria-label="Descartar">✕</button></div></div>').join('') : '<div class="wsub" style="padding:4px 0 10px">No falta nada por ahora ✓</div>') + '</div>';
-    cuerpo += '<div class="sec"><div class="sh">Creadas por el agente desde los chats <span class="n">' + agente.length + '</span></div>' + (agente.length ? agente.map(t => { const idx = d.tareas.indexOf(t); return '<div class="sgi"><div class="tx" data-open="' + idx + '"><b>' + esc(t.tarea) + '</b><small>' + (t.limite ? esc(fmtRel(t.limite)) + ' · ' : '') + esc(String(t.notas || '').replace(/🧠\s*WhatsApp\s*·\s*/, '').slice(0, 80)) + '</small></div><div class="ac"><button class="ok" data-agok="' + idx + '" aria-label="Mantener">✓</button><button data-agno="' + idx + '" aria-label="Eliminar">✕</button></div></div>'; }).join('') : '<div class="wsub" style="padding:4px 0 10px">Nada nuevo del agente.</div>') + '</div>';
+    cuerpo += '<div class="sec"><div class="sh">Creadas por el Cerebro desde los chats <span class="n">' + agente.length + '</span></div>' + (agente.length ? agente.map(t => { const idx = d.tareas.indexOf(t); return '<div class="sgi"><div class="tx" data-open="' + idx + '"><b>' + esc(t.tarea) + '</b><small>' + (t.limite ? esc(fmtRel(t.limite)) + ' · ' : '') + esc(String(t.notas || '').replace(/🧠\s*WhatsApp\s*·\s*/, '').slice(0, 80)) + '</small></div><div class="ac"><button class="ok" data-agok="' + idx + '" aria-label="Mantener">✓</button><button data-agno="' + idx + '" aria-label="Eliminar">✕</button></div></div>'; }).join('') : '<div class="wsub" style="padding:4px 0 10px">Nada nuevo del Cerebro.</div>') + '</div>';
     cuerpo += '<div class="sec"><div class="sh">Posibles duplicadas <span class="n">' + dups.length + '</span></div>' + (dups.length ? dups.map((g, i) => '<div class="sgi"><div class="tx"><b>' + esc(g[0].tarea) + '</b>' + g.slice(1).map(t => '<small>≈ ' + esc(t.tarea) + (t.limite ? ' (' + fmt(t.limite) + ')' : '') + '</small>').join('') + '</div><div class="ac"><button class="ok" data-dupok="' + i + '" style="width:auto;padding:0 10px;font-size:12.5px">Dejar una</button><button data-dupno="' + i + '" aria-label="No son iguales">✕</button></div></div>').join('') : '<div class="wsub" style="padding:4px 0 10px">Sin tareas repetidas ✓</div>') + '</div>';
   } else if (S.tv === 'hechas'){
     const H = d.tareas.filter(t => t.hecho).sort((a, b) => String(b.cierre || '').localeCompare(String(a.cierre || ''))).slice(0, 60);
@@ -7217,7 +7374,7 @@ function openAdd(pre){
       '<label class="l">🔁 Repetir</label>' + pills('f_rep', [{ v: '', t: 'No' }].concat(REPETIR.map(x => ({ v: x, t: x }))), '') +
       '<label class="l">☑ Subtareas (una por línea)</label><textarea class="note" id="f_subs" placeholder="Cotizar&#10;Enviar correo&#10;Confirmar"></textarea>') +
     '<label class="l">Notas</label><input type="text" id="f_notas" autocomplete="off" value="' + esc(pre.notas || '') + '"></details>' +
-    (agenteTareasOk() ? '<div class="hint" style="margin:10px 0 0">✨ El agente piensa la tarea por ti: pasos, fecha, proveedor, stock, pedido y mejores opciones. Tú solo apruebas.</div><div class="btns"><button class="btn sec" id="f_ok">Guardar tal cual</button><button class="btn ia" id="f_ia">✨ Pensar con el agente</button></div><button class="link" id="f_otra" style="margin-top:6px">Guardar tal cual y agregar otra</button>' : '<div class="btns"><button class="btn sec" id="f_otra">Guardar y otra</button><button class="btn" id="f_ok">Agregar</button></div>'));
+    (agenteTareasOk() ? '<div class="hint" style="margin:10px 0 0">✨ El Cerebro piensa la tarea por ti: pasos, fecha, proveedor, stock, pedido y mejores opciones. Tú solo apruebas.</div><div class="btns"><button class="btn sec" id="f_ok">Guardar tal cual</button><button class="btn ia" id="f_ia">✨ Pensar con el Cerebro</button></div><button class="link" id="f_otra" style="margin-top:6px">Guardar tal cual y agregar otra</button>' : '<div class="btns"><button class="btn sec" id="f_otra">Guardar y otra</button><button class="btn" id="f_ok">Agregar</button></div>'));
   const fillCats = sel => { $('#f_cat').innerHTML = '<option value="">— sin categoría —</option>' + catsDe(area).map(x => '<option' + (x.nombre === sel ? ' selected' : '') + '>' + esc(x.nombre) + '</option>').join(''); };
   fillCats(proy && proy.categoria);
   const setArea = (a, cat) => { area = a; setPill('f_area', a); fillCats(cat); };
@@ -7261,11 +7418,11 @@ function openAdd(pre){
   actualizar();
   setTimeout(() => $('#f_t').focus(), 80);
   const iaBtn = $('#f_ia'); if (iaBtn) iaBtn.onclick = () => pensarTarea($('#f_t').value);
-  // ¿Es una orden para cambiar datos («corrige la negociación de…»)? Eso lo hace el Copiloto.
+  // ¿Es una orden para cambiar datos («corrige la negociación de…»)? Eso lo hace el Cerebro.
   const RE_ORDEN = /^\s*(corrige|corregir|actualiza|actualizar|cambia|cambiar|marca|marcar|mueve|mover|saca|sacar|borra|borrar|elimina|eliminar|registra|registrar|anota|anotar)\b|negociaci[oó]n de|pipeline/i;
-  const avOrden = () => { const v = $('#f_t').value, on = extNivel() >= 20 && RE_ORDEN.test(v); let b = $('#f_cop'); if (on && !b){ $('#f_prev').insertAdjacentHTML('afterend', '<button class="btn sm sec" id="f_cop" style="margin-top:8px">✨ Esto parece una corrección: mandarlo al Copiloto</button>'); $('#f_cop').onclick = () => { const t = $('#f_t').value; closeSheet(); copiloto(t); }; } else if (!on && b) b.remove(); };
+  const avOrden = () => { const v = $('#f_t').value, on = extNivel() >= 20 && RE_ORDEN.test(v); let b = $('#f_cop'); if (on && !b){ $('#f_prev').insertAdjacentHTML('afterend', '<button class="btn sm sec" id="f_cop" style="margin-top:8px">✨ Esto parece una corrección: mandarlo al Cerebro</button>'); $('#f_cop').onclick = () => { const t = $('#f_t').value; closeSheet(); copiloto(t); }; } else if (!on && b) b.remove(); };
   $('#f_t').addEventListener('input', avOrden); avOrden();
-  // Al terminar de dictar algo largo, el agente la piensa solo (se puede desactivar en el texto de la hoja).
+  // Al terminar de dictar algo largo, el Cerebro la piensa solo (se puede desactivar en el texto de la hoja).
   if (voz) $('#f_mic').onclick = () => dictar($('#f_t'), $('#f_mic'), actualizar, () => { const v = $('#f_t') && $('#f_t').value.trim(); if (v && agenteTareasOk() && v.split(/\s+/).length >= 7) pensarTarea(v); });
   const enviar = async otra => {
     const crudo = $('#f_t').value.trim(); if (!crudo){ toast('Escribe la tarea'); return; }
@@ -7327,7 +7484,7 @@ function openDetail(t, opt){
   const c = S.data.config, q = QUAD[quadOf(t)], quedan = opt.cadena ? ordenTrabajo().filter(x => !x.hecho).length : 0;
   sheet((opt.cadena ? '<div class="cadena"><span>➡️ Siguiente tarea · quedan ' + quedan + '</span><button class="btn sm sec" id="e_salir">Terminar por ahora</button></div>' : '') + '<h3>✏️ Editar tarea</h3><div class="meta" style="margin:6px 0 4px">' + tagFecha(t) + '<span class="tag" style="background:' + hexToRgba(q.c, .15) + ';color:' + q.c + '">' + q.ic + ' ' + q.n + '</span>' + (t.puntos ? '<span class="tag">⭐ ' + esc(t.puntos) + ' pts</span>' : '') + '</div>' +
     (!t.hecho ? '<div class="btns" style="margin-top:8px"><button class="btn sec" id="e_focus">▶ Enfocarme 25 min</button><button class="btn sec" id="e_done">✅ Marcar hecha</button></div>' : '') +
-    (!t.hecho && agenteTareasOk() ? '<button class="btn ia" id="e_ia" style="width:100%;margin-top:8px">✨ Repensar con el agente</button>' : '') +
+    (!t.hecho && agenteTareasOk() ? '<button class="btn ia" id="e_ia" style="width:100%;margin-top:8px">✨ Repensar con el Cerebro</button>' : '') +
     '<label class="l">Tarea</label><input type="text" id="e_t" value="' + esc(t.tarea) + '">' +
     '<label class="l">Estado</label>' + pills('e_est', c.estados.map(x => ({ v: x, t: (EST_IC[x] || '') + ' ' + x })), t.estado) +
     '<label class="l">Fecha límite</label><input type="date" id="e_f" value="' + esc(t.limite) + '">' +
@@ -7546,15 +7703,15 @@ function showSettings(){
   const g = S.google, gTxt = S.extInactivo || (g && g.inactivo) ? 'No activadas' : !g ? 'Revisando…' : 'Activas ✓ · ' + (g.eventos || []).length + ' eventos · ' + (g.correos || []).length + ' correos' + (g.avisos && g.avisos.length ? ' · ⚠️ ' + g.avisos.join(' · ') : '');
   sheet('<h3>⚙️ Ajustes</h3><div class="hint">Conectado a tu Sheet del organizador.</div>' +
     (S.ext && !S.ext.waHist && extNivel() >= 24 ? '<div class="card"><b>💬 Historial de WhatsApp</b><div class="hint">Todavía no llega el historial. Al conectar el número con «compartir historial», Meta lo envía por partes durante las primeras 24 horas y aquí verás el avance.</div></div>' : '') +
-    (S.ext && S.ext.waHist ? '<div class="card"><b>💬 Historial de WhatsApp</b><div class="hint">' + (S.ext.waHist.rechazado ? 'No se compartió el historial al conectar el número (' + esc(S.ext.waHist.rechazado) + '). Para recibirlo hay que desconectar y volver a conectar el número aceptando «compartir historial».' : 'Recibidos ' + (S.ext.waHist.mensajes || 0).toLocaleString('es-CL') + ' mensajes de ' + (S.ext.waHist.chats || 0) + ' chats' + (S.ext.waHist.fases ? ' · avance por etapa: ' + Object.keys(S.ext.waHist.fases).sort().map(f => ['último día', 'hasta 90 días', 'hasta 180 días'][+f] + ' ' + S.ext.waHist.fases[f] + '%').join(', ') : S.ext.waHist.progreso != null ? ' · avance ' + S.ext.waHist.progreso + '%' : '') + ' · último envío ' + esc(haceTxt(String(S.ext.waHist.ultimo || '').slice(0, 10))) + '. El agente arma el perfil de cada contacto en modo masivo (sin tareas ni negocios antiguos).') + '</div></div>' : '') +
+    (S.ext && S.ext.waHist ? '<div class="card"><b>💬 Historial de WhatsApp</b><div class="hint">' + (S.ext.waHist.rechazado ? 'No se compartió el historial al conectar el número (' + esc(S.ext.waHist.rechazado) + '). Para recibirlo hay que desconectar y volver a conectar el número aceptando «compartir historial».' : 'Recibidos ' + (S.ext.waHist.mensajes || 0).toLocaleString('es-CL') + ' mensajes de ' + (S.ext.waHist.chats || 0) + ' chats' + (S.ext.waHist.fases ? ' · avance por etapa: ' + Object.keys(S.ext.waHist.fases).sort().map(f => ['último día', 'hasta 90 días', 'hasta 180 días'][+f] + ' ' + S.ext.waHist.fases[f] + '%').join(', ') : S.ext.waHist.progreso != null ? ' · avance ' + S.ext.waHist.progreso + '%' : '') + ' · último envío ' + esc(haceTxt(String(S.ext.waHist.ultimo || '').slice(0, 10))) + '. El Cerebro arma el perfil de cada contacto en modo masivo (sin tareas ni negocios antiguos).') + '</div></div>' : '') +
     '<div class="card"><b>🎨 Diseño de la interfaz</b><div class="hint">El diseño nuevo ordena la app en secciones, con resúmenes más simples. El clásico es el anterior. No cambia ningún dato.</div><div class="seg" style="margin-top:10px"><button type="button" class="pill' + (LS.ui !== 'clasico' ? ' on' : '') + '" data-ui="nuevo">Nuevo</button><button type="button" class="pill' + (LS.ui === 'clasico' ? ' on' : '') + '" data-ui="clasico">Clásico</button></div></div>' +
     '<div class="card"><b>🔢 Versiones</b><div class="hint">App: ' + esc(APP_VER) + ' · Script: ' + (S.extInactivo ? 'funciones extra no activadas' : 'versión ' + esc((S.ext && S.ext.version) || '?') + ' (nivel ' + extNivel() + ')') + (extNivel() < NIVEL_ULTIMO ? ' · <b style="color:var(--bad-ink)">hay una versión nueva del script</b>: pega el Extras.gs nuevo y crea una Nueva versión de la implementación.' : ' · al día ✓') + '</div></div>' +
     (deferredInstall ? '<div class="btns"><button class="btn" id="s_inst">📲 Instalar app en este dispositivo</button></div>' : '') +
-    '<div class="card"><b>🧠 Cerebro y fuentes</b><div class="hint">' + (extNivel() >= 16 ? 'Activo ✓ Cada mañana a las 7:00 el agente cruza todas tus fuentes y arma el plan del día. El Copiloto (botón ✨ abajo a la derecha, o la tecla /) responde con tus datos. Specialized Chile se lee solo cada hora.' : 'Actualiza el script para activar el plan del día, el Copiloto, Specialized Chile, noticias y avisos.') + '</div><div class="btns" style="margin-top:8px"><button class="btn sm sec" id="s_fz">📊 Fuentes de información</button>' + (extNivel() >= 16 ? '<button class="btn sm sec" id="s_av">📣 Avisos</button>' : '') + '</div></div>' +
+    '<div class="card"><b>🧠 Cerebro y fuentes</b><div class="hint">' + (extNivel() >= 16 ? 'Activo ✓ Un solo cerebro con 9 skills: arma el plan del día a las 7:00, sigue a tus clientes, planifica tareas, busca compras y elige fotos. Su chat (botón ✨ o la tecla /) responde con tus datos.' : 'Actualiza el script para activar el plan del día, el chat del Cerebro, Specialized Chile, noticias y avisos.') + '</div><div class="btns" style="margin-top:8px"><button class="btn sm" id="s_cb">🧠 Abrir el Cerebro</button><button class="btn sm sec" id="s_gd">❓ Guía de la app</button><button class="btn sm sec" id="s_fz">📊 Fuentes de información</button>' + (extNivel() >= 16 ? '<button class="btn sm sec" id="s_av">📣 Avisos</button>' : '') + '</div></div>' +
     '<div class="card"><b>✨ Funciones extra</b> <span class="hint">(calendario, correo, subtareas, repetir)</span><div class="hint">' + esc(gTxt) + '</div><button class="btn sm sec" id="s_g">' + (g && !g.inactivo ? 'Ver sugerencias' : 'Cómo activarlas') + '</button></div>' +
     (extNivel() >= 2 ? '<div class="card"><b>📅 Recordatorios en tu calendario</b><div class="hint">Cada tarea pendiente con fecha está en el calendario «' + esc((S.ext && S.ext.calendario) || 'Organizador BlackLine') + '», con aviso en tu teléfono 10 min antes (a las 9:00, o a la hora que pongas: «a las 15:30»). Se actualiza solo cada hora y cuando cambias algo.</div><button class="btn sm sec" id="s_sinc">🔄 Sincronizar ahora</button></div>' : necesitaActualizar() ? '<div class="card"><b>⬆️ Hay una versión nueva del script</b><div class="hint">📅 Recordatorios y 📇 base de datos solo con contacto@blacklinechile.cl.</div><button class="btn sm" id="s_upd">Actualizar (2 min)</button></div>' : '') +
-    (extNivel() >= 9 ? '<div class="card"><b>📦 Bsale</b><div class="hint">' + (bsaleActivo() ? 'Conectado ✓' + (S.ext.bsale.sinc ? ' · catálogo actualizado ' + haceTxt(S.ext.bsale.sinc.slice(0, 10)) : '') + '. El agente revisa stock y precio de lo que pide cada cliente, y en cada negociación puedes consultar el stock. El catálogo se actualiza solo una vez al día.' : 'No conectado: falta tu token de Bsale (BSALE_TOKEN) en las propiedades del script. Los pasos están en la guía.') + '</div>' + (bsaleActivo() ? '<div class="btns" style="margin-top:8px"><button class="btn sm sec" id="s_bs">📦 Buscar stock</button><button class="btn sm sec" id="s_bsc">🔄 Actualizar catálogo</button></div>' : '') + '</div>' : '') +
-    (extNivel() >= 7 ? '<div class="card"><b>🧠 Agente de ventas IA</b><div class="hint">' + (agenteActivo() ? 'Activo ✓ (' + esc(S.ext.agente.modelo) + (/haiku/.test(S.ext.agente.modelo) ? ', modo económico' : '') + ')' + (S.ext.agente.ultimo ? ' · último análisis ' + haceTxt(S.ext.agente.ultimo.slice(0, 10)) : '') + '. Cada 10 minutos lee las conversaciones nuevas de WhatsApp: crea y completa clientes, mueve negociaciones, agenda lo conversado como tareas y te sugiere qué responder. Nunca escribe a tus clientes.' : 'No activado: falta tu clave de Claude (ANTHROPIC_API_KEY) en las propiedades del script. Los pasos están en la guía.') + '</div>' + (extNivel() >= 8 ? '<button class="btn sm sec" id="s_imp">📥 Importar chat de WhatsApp</button>' : '') + '</div>' : '') +
+    (extNivel() >= 9 ? '<div class="card"><b>📦 Bsale</b><div class="hint">' + (bsaleActivo() ? 'Conectado ✓' + (S.ext.bsale.sinc ? ' · catálogo actualizado ' + haceTxt(S.ext.bsale.sinc.slice(0, 10)) : '') + '. El Cerebro revisa stock y precio de lo que pide cada cliente, y en cada negociación puedes consultar el stock. El catálogo se actualiza solo una vez al día.' : 'No conectado: falta tu token de Bsale (BSALE_TOKEN) en las propiedades del script. Los pasos están en la guía.') + '</div>' + (bsaleActivo() ? '<div class="btns" style="margin-top:8px"><button class="btn sm sec" id="s_bs">📦 Buscar stock</button><button class="btn sm sec" id="s_bsc">🔄 Actualizar catálogo</button></div>' : '') + '</div>' : '') +
+    (extNivel() >= 7 ? '<div class="card"><b>🤝 Skill: seguimiento de clientes</b><div class="hint">' + (agenteActivo() ? 'Activo ✓ (' + esc(S.ext.agente.modelo) + (/haiku/.test(S.ext.agente.modelo) ? ', modo económico' : '') + ')' + (S.ext.agente.ultimo ? ' · último análisis ' + haceTxt(S.ext.agente.ultimo.slice(0, 10)) : '') + '. Cada 10 minutos lee las conversaciones nuevas de WhatsApp: crea y completa clientes, mueve negociaciones, agenda lo conversado como tareas y te sugiere qué responder. Nunca escribe a tus clientes.' : 'No activado: falta tu clave de Claude (ANTHROPIC_API_KEY) en las propiedades del script. Los pasos están en la guía.') + '</div>' + (extNivel() >= 8 ? '<button class="btn sm sec" id="s_imp">📥 Importar chat de WhatsApp</button>' : '') + '</div>' : '') +
     (extNivel() >= 6 ? '<div class="card"><b>💬 WhatsApp Business</b><div class="hint">' + (S.ext && S.ext.wa ? 'Conectado ✓ · último mensaje recibido ' + haceTxt(S.ext.wa.slice(0, 10)) + '. Cada mensaje crea o actualiza al cliente en la Base, queda en su historial y, si pregunta por precio, stock, talla o test ride, abre una negociación nueva.' : 'Aún no conectado. Con la conexión, cada mensaje crea o actualiza al cliente, queda en su historial y abre negociaciones solas.') + '</div><a class="btn sm sec" style="display:inline-block;text-decoration:none" href="https://github.com/SnowPv/Organizador/blob/main/docs/WHATSAPP.md" target="_blank">📖 Guía de conexión</a></div>' : '') +
     '<div class="card"><b>✨ Trucos para agregar rápido</b><div class="hint">• Fechas: <i>hoy, mañana, pasado mañana, el viernes, en 3 días, 15/10, 20 de octubre, la próxima semana</i><br>• Hora: <i>a las 10, 15:30</i><br>• Prioridad: <i>urgente</i> o <i>!</i> · <i>importante</i><br>• Categoría o área: <i>#ventas, #marketing, #personal</i><br>• Proyecto: <i>@levo</i><br>• Repetir: <i>cada lunes, todos los días, días hábiles, cada mes</i><br>• Toca 🎤 para dictar.</div></div>' +
     '<div class="btns"><button class="btn sec" id="s_re">Cambiar link o clave</button></div>' +
@@ -7562,6 +7719,7 @@ function showSettings(){
   if (deferredInstall) $('#s_inst').onclick = async () => { deferredInstall.prompt(); await deferredInstall.userChoice; deferredInstall = null; closeSheet(); };
   $('#s_g').onclick = () => g && !g.inactivo ? openSugerencias() : showExtrasSetup();
   const fz = $('#s_fz'); if (fz) fz.onclick = () => { closeSheet(); abrirFuentes(); };
+  $('#s_cb').onclick = () => { closeSheet(); go('cerebro'); }; $('#s_gd').onclick = () => { closeSheet(); openGuia(); };
   const sav = $('#s_av'); if (sav) sav.onclick = () => { closeSheet(); abrirAvisos(); };
   $$('[data-ui]').forEach(b => b.onclick = () => { LS.ui = b.dataset.ui; document.body.classList.toggle('ui2', LS.ui !== 'clasico'); closeSheet(); render(); toast(LS.ui === 'clasico' ? 'Diseño clásico' : 'Diseño nuevo'); });
   const ss2 = $('#s_sinc'); if (ss2) ss2.onclick = async () => { ss2.disabled = true; try { const r = await apiX('sinc'); toast('📅 ' + r.creados + ' nuevos · ' + r.actualizados + ' actualizados · ' + r.borrados + ' borrados'); } catch(e){ toast('No se pudo: ' + e.message); } ss2.disabled = false; };
@@ -7781,8 +7939,8 @@ function dashBase(){
   return { ic: 'users', t: 'Resumen de contactos', intro: 'Tu base de clientes y proveedores: quién espera respuesta y a quién conviene volver a escribir.',
     head: esp.length ? { tono: 'bad', tx: '<b>' + plural(esp.length, 'cliente espera', 'clientes esperan') + ' tu respuesta</b>' + (esp[0] ? ', partiendo por ' + esc(esp[0].c.nombre || esp[0].c.email || '') : '') + '.' } : frios.length ? { tono: 'warn', tx: '<b>' + plural(frios.length, 'cliente lleva', 'clientes llevan') + ' más de 30 días sin contacto.</b> Un saludo o una invitación a una salida mantiene la relación.' } : { tono: 'ok', tx: '<b>Base al día.</b>' },
     tiles: [
-      { k: 'donut', l: 'Tu base', centro: C.length, sub: 'contactos', seg: [{ l: 'Clientes', v: cli.length, c: CATC[0] }, { l: 'Proveedores', v: C.filter(c => c.tipo === 'Proveedor').length, c: CATC[1] }, { l: 'Por clasificar', v: C.filter(c => c.tipo === 'Por clasificar').length, c: OTRAC }], q: 'Clasifica los «por clasificar» para que el agente sepa cómo tratarlos.' },
-      { k: 'num', l: 'Esperan respuesta', v: esp.length, tono: esp.length ? 'bad' : 'ok', sub: esp.length === 1 ? ' cliente' : ' clientes', list: esp.slice(0, 3).map(x => esc(x.c.nombre || x.c.email || '')), q: 'Te escribieron y el agente ya te dejó una idea de respuesta en su ficha.', go: () => go('hoy') },
+      { k: 'donut', l: 'Tu base', centro: C.length, sub: 'contactos', seg: [{ l: 'Clientes', v: cli.length, c: CATC[0] }, { l: 'Proveedores', v: C.filter(c => c.tipo === 'Proveedor').length, c: CATC[1] }, { l: 'Por clasificar', v: C.filter(c => c.tipo === 'Por clasificar').length, c: OTRAC }], q: 'Clasifica los «por clasificar» para que el Cerebro sepa cómo tratarlos.' },
+      { k: 'num', l: 'Esperan respuesta', v: esp.length, tono: esp.length ? 'bad' : 'ok', sub: esp.length === 1 ? ' cliente' : ' clientes', list: esp.slice(0, 3).map(x => esc(x.c.nombre || x.c.email || '')), q: 'Te escribieron y el Cerebro ya te dejó una idea de respuesta en su ficha.', go: () => go('hoy') },
       { k: 'num', l: 'Clientes fríos', v: frios.length, tono: frios.length ? 'warn' : 'ok', sub: ' de ' + cli.length + ' clientes', meter: cli.length ? frios.length / cli.length : 0, mc: 'var(--warn)', q: 'Más de 30 días sin hablar con ellos.', go: () => { S.bv = 'ops'; viewBase(); } },
       { k: 'bars', l: 'Contactos nuevos · 8 semanas', v: sem.reduce((s, x) => s + x.v, 0), sub: ' nuevos', vals: sem, q: 'Cuántas personas nuevas entraron a tu base cada semana (correo, WhatsApp y chats importados).' }
     ] };
@@ -7809,18 +7967,18 @@ function agenteTareasOk(){ return extNivel() >= 19 && agenteActivo(); }
 // texto: lo dictado o escrito. t: tarea existente (para repensarla y reemplazarla).
 async function pensarTarea(texto, t){
   texto = String(texto || '').trim(); if (!texto){ toast('Escribe o dicta la tarea'); return; }
-  if (!agenteTareasOk()){ toast(extNivel() < 19 ? 'Actualiza el script para usar el agente de tareas' : 'Falta la clave de Claude en el script'); return; }
+  if (!agenteTareasOk()){ toast(extNivel() < 19 ? 'Actualiza el script para usar el Cerebro de tareas' : 'Falta la clave de Claude en el script'); return; }
   const pasos = ['Entendiendo lo que dictaste…', 'Buscando proveedor y contactos…', 'Revisando correos y pedidos anteriores…', 'Mirando stock y catálogos…', 'Investigando las mejores opciones…', 'Armando la tarea, los pasos y el pedido…'];
-  sheet('<h3>🧠 El agente está pensando tu tarea</h3><div class="ta-q">«' + esc(texto) + '»</div><div class="ta-steps">' + pasos.map((p, i) => '<div data-tp="' + i + '"><span class="spin"></span>' + esc(p) + '</div>').join('') + '</div><div class="hint">Tarda entre 30 segundos y 2 minutos. Puedes cerrar esto: la tarea no se guarda hasta que la apruebes.</div>');
+  sheet('<h3>🧠 El Cerebro está pensando tu tarea</h3><div class="ta-q">«' + esc(texto) + '»</div><div class="ta-steps">' + pasos.map((p, i) => '<div data-tp="' + i + '"><span class="spin"></span>' + esc(p) + '</div>').join('') + '</div><div class="hint">Tarda entre 30 segundos y 2 minutos. Puedes cerrar esto: la tarea no se guarda hasta que la apruebes.</div>');
   let k = 0; const tick = setInterval(() => { const el = $('[data-tp="' + k + '"]'); if (!el){ clearInterval(tick); return; } el.classList.add('ok'); k++; const nx = $('[data-tp="' + k + '"]'); if (nx) nx.classList.add('on'); }, 9000);
   const p0 = $('[data-tp="0"]'); if (p0) p0.classList.add('on');
   try {
     const c = S.data.config;
     const r = await apiX('tareaIA', { texto, notas: t ? t.notas : '', config: { areas: c.areas, categorias: c.categorias } });
     clearInterval(tick);
-    if (!$('.ta-steps')) { toast('El agente terminó tu tarea'); }
+    if (!$('.ta-steps')) { toast('El Cerebro terminó tu tarea'); }
     revisarPlanTarea(r.plan, texto, t, r.fuentes || []);
-  } catch(e){ clearInterval(tick); if ($('.ta-steps')) sheet('<h3>No se pudo pensar la tarea</h3><div class="hint">' + esc(e.message) + '</div><div class="btns"><button class="btn sec" id="ta_raw">Guardarla tal cual</button><button class="btn" id="ta_re">Reintentar</button></div>'), $('#ta_re').onclick = () => pensarTarea(texto, t), $('#ta_raw').onclick = () => openAdd({ texto }); else toast('El agente no pudo: ' + e.message); }
+  } catch(e){ clearInterval(tick); if ($('.ta-steps')) sheet('<h3>No se pudo pensar la tarea</h3><div class="hint">' + esc(e.message) + '</div><div class="btns"><button class="btn sec" id="ta_raw">Guardarla tal cual</button><button class="btn" id="ta_re">Reintentar</button></div>'), $('#ta_re').onclick = () => pensarTarea(texto, t), $('#ta_raw').onclick = () => openAdd({ texto }); else toast('El Cerebro no pudo: ' + e.message); }
 }
 const FUENTE_TXT = { buscar_proveedor: 'contactos', buscar_correos: 'Gmail', stock_tienda: 'Bsale', buscar_en_proveedores: 'catálogos', buscar_producto: 'Specialized', web_search: 'internet', ver_agenda: 'agenda', ver_tareas: 'tareas', correos_proveedores: 'correos de proveedores', buscar_en_planillas: 'planillas', ver_clima: 'clima', buscar_clientes: 'clientes', ver_negociaciones: 'negocios' };
 function revisarPlanTarea(P, texto, t, fuentes){
@@ -7828,7 +7986,7 @@ function revisarPlanTarea(P, texto, t, fuentes){
   const cto = pv.estado === 'encontrado' && pv.id ? contactoPorId(pv.id) : null;
   const cats = c.categorias.filter(x => x.area === T.area);
   const sec = (ic, tit, cuerpo, extra) => '<div class="ta-sec"><div class="ta-h">' + ic + ' ' + tit + (extra || '') + '</div>' + cuerpo + '</div>';
-  let h = '<h3>🧠 Así lo pensó el agente</h3>';
+  let h = '<h3>🧠 Así lo pensó el Cerebro</h3>';
   h += '<div class="ta-res">' + esc(P.resumen || '') + (fuentes.length ? '<div class="ta-src">Consultó: ' + fuentes.map(f => esc(FUENTE_TXT[f] || f)).join(' · ') + '</div>' : '') + '</div>';
   if ((P.correcciones || []).length) h += '<div class="ta-fix">✍️ ' + P.correcciones.map(esc).join(' · ') + '</div>';
   if ((P.preguntas || []).length) h += '<div class="ta-ask"><b>Para confirmar</b>' + P.preguntas.map(q => '<div>• ' + esc(q) + '</div>').join('') + '</div>';
@@ -7943,7 +8101,7 @@ async function accionContactos(acc, ids, alTerminar){
 function irAlChat(id){ closeSheet(); S.bv = 'chats'; S.chatSel = id; S.chats = null; go('base'); }
 
 /* ---------- Depurar la base de WhatsApp ---------- */
-// Primero muestra qué haría (sin cambiar nada); al confirmar archiva y manda al agente los chats que van al Pipeline.
+// Primero muestra qué haría (sin cambiar nada); al confirmar archiva y manda al Cerebro los chats que van al Pipeline.
 async function openDepurar(){
   if (S.depJob){ toast('🧹 La revisión ya está en curso; te aviso cuando esté'); return; }
   const m = modal('🧹 Depurar contactos de WhatsApp', '<div class="empty"><span class="spin"></span>Revisando tus contactos y conversaciones…</div><p class="hint" style="text-align:center;margin:0">Se hace en segundo plano: puedes cerrar esta ventana y seguir trabajando. Te aviso cuando esté.</p>');
@@ -7956,10 +8114,10 @@ async function openDepurar(){
 function mostrarDepuracion(r){
   const C = r.cuenta || {}, P = r.protegidos || {};
   const fila = (n, t) => n ? '<div class="it"><span class="dot" style="background:var(--s1)"></span><div class="tx">' + t + '<small>' + n + ' contactos</small></div></div>' : '';
-  const html = '<p style="margin:0 0 10px;line-height:1.5">Quedan en tu base solo quienes tienes <b>guardados en el teléfono</b>' + (r.agenda ? '' : ' (no llegó tu agenda: se usa «tiene nombre»)') + ' y tuvieron una <b>conversación de ida y vuelta</b>. El agente revisa esos chats: los que hablaron de comprar entran al <b>Pipeline</b>; el resto se archiva.</p>' +
-    '<div class="nkpis bsk" style="margin:0 0 12px"><div class="nkpi"><small>Se archivan</small><b>' + r.archivar + '</b></div><div class="nkpi"><small>El agente revisa para el Pipeline</small><b>' + r.pipeline + '</b></div><div class="nkpi"><small>No se tocan</small><b>' + ((P.recientes || 0) + (P.negocio_abierto || 0) + (P.otros || 0)) + '</b><span>recientes, con negocio abierto, proveedores o correo</span></div></div>' +
+  const html = '<p style="margin:0 0 10px;line-height:1.5">Quedan en tu base solo quienes tienes <b>guardados en el teléfono</b>' + (r.agenda ? '' : ' (no llegó tu agenda: se usa «tiene nombre»)') + ' y tuvieron una <b>conversación de ida y vuelta</b>. El Cerebro revisa esos chats: los que hablaron de comprar entran al <b>Pipeline</b>; el resto se archiva.</p>' +
+    '<div class="nkpis bsk" style="margin:0 0 12px"><div class="nkpi"><small>Se archivan</small><b>' + r.archivar + '</b></div><div class="nkpi"><small>El Cerebro revisa para el Pipeline</small><b>' + r.pipeline + '</b></div><div class="nkpi"><small>No se tocan</small><b>' + ((P.recientes || 0) + (P.negocio_abierto || 0) + (P.otros || 0)) + '</b><span>recientes, con negocio abierto, proveedores o correo</span></div></div>' +
     '<div class="wl">' + fila(C.sin_conversacion, 'No están guardados y no hubo conversación') + fila(C.solo_consulto, 'Consultaron, se les respondió y no volvieron a escribir') + fila(C.no_guardado, 'No están guardados en el teléfono') + fila(C.un_solo_lado, 'Conversación de un solo lado') + '</div>' +
-    '<details style="margin:10px 0"><summary class="wsub" style="cursor:pointer">Ver ejemplos</summary><div class="wsub" style="line-height:1.6;margin-top:6px"><b>Se archivan:</b> ' + esc((r.ejemplos.archivar || []).map(x => x.nombre).join(', ')) + '<br><b>Van al agente:</b> ' + esc((r.ejemplos.pipeline || []).map(x => x.nombre).join(', ')) + '</div></details>' +
+    '<details style="margin:10px 0"><summary class="wsub" style="cursor:pointer">Ver ejemplos</summary><div class="wsub" style="line-height:1.6;margin-top:6px"><b>Se archivan:</b> ' + esc((r.ejemplos.archivar || []).map(x => x.nombre).join(', ')) + '<br><b>Van al Cerebro:</b> ' + esc((r.ejemplos.pipeline || []).map(x => x.nombre).join(', ')) + '</div></details>' +
     '<div class="hint" style="margin:0 0 12px">Archivar no borra nada: quedan en el filtro «🗄️ Archivados», y si alguien vuelve a escribir reaparece solo. Puedes deshacerlo con «Restaurar».</div>' +
     '<div class="btns"><button class="btn sec" id="depRest">Restaurar archivados</button><button class="btn" id="depOk"' + (r.archivar + r.pipeline ? '' : ' disabled') + '>Archivar ' + r.archivar + ' y revisar ' + r.pipeline + '</button></div>';
   const m2 = modal('🧹 Depurar contactos de WhatsApp', html, { wide: true });
@@ -8056,13 +8214,13 @@ async function chatTab(c, box, forzar){
 
 /* ---------- Contactos sin guardar: los que todavía no tienen nombre ---------- */
 // El nombre se completa solo desde la tarjeta de WhatsApp (perfil o agenda del teléfono) o, si no está ahí,
-// el agente lo busca en el chat (cómo se presenta, cómo firma o cómo lo saludas). Aquí quedan los que no tienen ninguna pista.
+// el Cerebro lo busca en el chat (cómo se presenta, cómo firma o cómo lo saludas). Aquí quedan los que no tienen ninguna pista.
 const sinNombre = n => { n = String(n == null ? '' : n).trim(); return !n || /^\+?[\d\s()-]+$/.test(n) || /^WhatsApp [\w.]{1,8}$/.test(n) || /^#(ERROR!|NAME\?|VALUE!)/.test(n); };
 function sinGuardar(){ return contactos().filter(c => c.tipo !== 'Ignorar' && !c.email && sinNombre(c.nombre)); }
 function sinGuardarHTML(){
   const L = sinGuardar().sort((a, b) => (b.ultima || '').localeCompare(a.ultima || ''));
   if (!L.length) return '<div class="sec"><div class="empty">Todos tus contactos tienen nombre ✓</div></div>';
-  return '<div class="wsub" style="margin:0 2px 12px;line-height:1.5">Contactos de WhatsApp sin nombre: no está en su tarjeta de WhatsApp ni en tu agenda, y el agente no lo encontró en el chat. Escríbelo aquí, o pregúntaselo por WhatsApp: cuando te responda, el agente lo guarda solo.</div>' +
+  return '<div class="wsub" style="margin:0 2px 12px;line-height:1.5">Contactos de WhatsApp sin nombre: no está en su tarjeta de WhatsApp ni en tu agenda, y el Cerebro no lo encontró en el chat. Escríbelo aquí, o pregúntaselo por WhatsApp: cuando te responda, el Cerebro lo guarda solo.</div>' +
     '<div class="btns" style="margin:0 0 12px"><button class="btn sm" id="snIA">🧠 Buscar nombres en los chats (' + L.length + ')</button></div>' +
     '<div class="sec">' + L.map((c, i) => '<div class="ct-row" style="flex-wrap:wrap;gap:10px;cursor:default">' + avatar(c, 36) + '<div class="grow" style="min-width:160px"><b>' + esc(c.telefono || c.nombre || c.id) + '</b><div class="tm"><span>' + esc(c.tipo) + '</span>' + (c.ultima ? '<span>última conversación ' + esc(haceTxt(c.ultima)) + '</span>' : '') + (c.telefono ? '' : '<span>sin teléfono (usuario de WhatsApp)</span>') + '</div></div>' +
       '<input type="text" data-snn="' + i + '" placeholder="Nombre" style="flex:1;min-width:140px;max-width:240px">' +
@@ -8082,7 +8240,7 @@ function bindSinGuardar(){
   $$('[data-sno]').forEach(b => b.onclick = () => openContacto(L[+b.dataset.sno]));
   const ia = $('#snIA'); if (ia) ia.onclick = async () => {
     ia.disabled = true; ia.innerHTML = '<span class="spin"></span>Encolando…';
-    try { await apiX('perfilar', { encolar: L.map(c => c.id) }); toast('🧠 El agente revisará esos chats en las próximas rondas (cada 10 min)'); ia.textContent = '✓ En cola'; }
+    try { await apiX('perfilar', { encolar: L.map(c => c.id) }); toast('🧠 El Cerebro revisará esos chats en las próximas rondas (cada 10 min)'); ia.textContent = '✓ En cola'; }
     catch(e){ ia.disabled = false; ia.textContent = '🧠 Buscar nombres en los chats'; toast('No se pudo: ' + e.message); }
   };
 }
@@ -8112,7 +8270,7 @@ const CAMPANAS = [
 ];
 function campEnviados(k){ return lsGet('camp_' + k, {}); }
 function campanasHTML(){
-  if (!perfiles().length && !S.neg) return '<div class="sec"><div class="empty">Cuando el agente perfile tus chats, aquí podrás armar campañas personalizadas por segmento.</div></div>';
+  if (!perfiles().length && !S.neg) return '<div class="sec"><div class="empty">Cuando el Cerebro perfile tus chats, aquí podrás armar campañas personalizadas por segmento.</div></div>';
   const k = S.campK;
   if (!k) return '<div class="wsub" style="margin:0 2px 12px">Elige un objetivo. La app arma la lista y un mensaje personal para cada cliente; tú lo revisas y lo envías por WhatsApp con un toque. Cada envío queda en la ficha del cliente.</div>' +
     '<div class="cgrid">' + CAMPANAS.map(x => { const n = x.quien().length, env = Object.keys(campEnviados(x.k)).length; return '<button class="ccard" data-camp="' + x.k + '"><span class="cic">' + x.ic + '</span><b>' + esc(x.t) + '</b><small>' + esc(x.d) + '</small><span class="cn">' + n + ' ' + (n === 1 ? 'cliente' : 'clientes') + (env ? ' · ' + env + ' enviados' : '') + '</span></button>'; }).join('') + '</div>';

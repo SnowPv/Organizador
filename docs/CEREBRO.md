@@ -339,3 +339,15 @@ Solo cambia la interfaz; los datos y funciones son los mismos. Con «Clásico» 
 - Resumen de cada pestaña: una línea de aviso + 4 tarjetas con la misma anatomía (etiqueta · cifra · comparación · gráfico · pie). Las explicaciones están en la «i».
 - Negocios: Pipeline abierto (barra por etapa, pronóstico, ticket, estancados) · Ganado este mes (barras por mes, % vs mes anterior, ciclo de venta) · Tasa de cierre 90 días (ganadas/perdidas, motivo de pérdida más común) · Requieren atención (monto en juego y los 3 más urgentes). Tablero de columnas más limpio.
 - Contactos y Redes: el análisis detallado queda plegado («Mostrar ▾»), se recuerda abierto/cerrado.
+
+## Un solo Cerebro con skills (nivel 39 · app v56)
+
+Antes cada «agente» (Copiloto, agente de ventas, agente de tareas, comprador, fotos, estudio, plan del día, noticias, asistente) llamaba a Claude por su cuenta, con su propio modelo. Ahora todo pasa por **una sola puerta**: `ex_ia_(skill, cuerpo)` en `apps-script/Extras.gs`.
+
+- **Catálogo `EX_SKILLS`** (9 skills): conversar, plan_dia, seguimiento, tareas, compras, contenido, noticias, fotos, director_arte. Cada skill tiene nombre, para qué sirve, cuándo se activa (automática o manual), dónde aparece en la app y su nivel (rápido = Haiku 5.5, experto = Sonnet 5.5).
+- **La puerta** pone la política de marca, elige el modelo según la skill, reintenta si Claude está saturado (429/5xx), usa el respaldo automático en modelos no Haiku y **anota el consumo** por skill y día (`EX_USO_yyyy-MM-dd`, 35 días), en US$ según los precios de la API.
+- **Modelos**: `CEREBRO_MODELO` (rápido) y `CEREBRO_EXPERTO` reemplazan a las propiedades sueltas. Las antiguas (`TAREAS_MODELO`, `COPILOTO_MODELO`, etc.) siguen teniendo prioridad si existen; la pestaña Cerebro muestra qué modelo usa cada skill.
+- **Control**: las skills automáticas se pueden pausar (`EX_SKILLS_PAUSA`) y hay un tope diario en US$ para lo automático (`CEREBRO_TOPE_USD`); lo que pide el usuario siempre funciona.
+- **Chat con carga progresiva**: el chat del Cerebro ve un índice corto de skills y, cuando el pedido calza, llama a `leer_skill` para cargar las instrucciones completas (tareas, compras, seguimiento, plan_dia, contenido, redes, semana) y las sigue con sus herramientas. No paga esas instrucciones en cada mensaje.
+- **App**: nueva pestaña **Cerebro** (Inteligencia) con las skills, su consumo de 30 días, interruptores de pausa y tope; «Copiloto» pasa a llamarse **Cerebro**; **Guía de la app** (botón **?**, se muestra sola la primera vez en cada equipo) para que cualquiera del equipo entienda la app en un minuto.
+- Operaciones nuevas: `skills` (estado y consumo) y `skillsConf` (`{pausa:[ids], tope:US$}`).
