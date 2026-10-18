@@ -2326,7 +2326,8 @@ const $ = s => document.querySelector(s);
 const $$ = s => document.querySelectorAll(s);
 const LS = window.localStorage;
 // Diseño de la interfaz: «nuevo» (propuesta 2026) o «clásico». Se cambia en ⚙️ Ajustes.
-document.body.classList.toggle('ui2', LS.ui !== 'clasico');
+try { if (LS.ui === 'clasico') delete LS.ui; } catch (e) {}
+document.body.classList.add('ui2');
 const UI2 = () => document.body.classList.contains('ui2');
 // Para qué sirve cada pestaña, en una línea (para que cualquiera del equipo entienda dónde está).
 const PROPOSITO = { hoy: 'Lo que hay que hacer hoy, en orden', tareas: 'Todas tus tareas y pendientes', semana: 'Agenda, entregas y eventos del mes', compras: 'Proveedores, stock y ventas de Bsale', negocios: 'Tus ventas en curso, de la primera consulta a la postventa', proy: 'Iniciativas largas y su avance', base: 'Clientes, proveedores y chats de WhatsApp', redes: 'Instagram, contenido y estudio de diseño', cerebro: 'Un solo cerebro con skills: qué hace solo, qué hace cuando lo pides y cuánto gasta' };
@@ -2401,7 +2402,7 @@ async function apiX(op, extra){
 }
 // Nivel 2 del script Extras: recordatorios y base de contactos. Nivel 3: la base solo usa contacto@blacklinechile.cl. Nivel 4: eventos de varios días.
 function extNivel(){ return S.extInactivo ? 0 : (S.ext && S.ext.nivel) || 1; }
-const APP_VER = 'v62', NIVEL_ULTIMO = 40;
+const APP_VER = 'v63', NIVEL_ULTIMO = 40;
 function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < NIVEL_ULTIMO; }
 let sincTimer = null;
 // Después de cambiar tareas, el script actualiza los recordatorios del calendario (en segundo plano).
@@ -8505,7 +8506,6 @@ function showSettings(){
   sheet('<h3>⚙️ Ajustes</h3><div class="hint">Conectado a tu Sheet del organizador.</div>' + usuariosCardHTML() +
     (S.ext && !S.ext.waHist && extNivel() >= 24 ? '<div class="card"><b>💬 Historial de WhatsApp</b><div class="hint">Todavía no llega el historial. Al conectar el número con «compartir historial», Meta lo envía por partes durante las primeras 24 horas y aquí verás el avance.</div></div>' : '') +
     (S.ext && S.ext.waHist ? '<div class="card"><b>💬 Historial de WhatsApp</b><div class="hint">' + (S.ext.waHist.rechazado ? 'No se compartió el historial al conectar el número (' + esc(S.ext.waHist.rechazado) + '). Para recibirlo hay que desconectar y volver a conectar el número aceptando «compartir historial».' : 'Recibidos ' + (S.ext.waHist.mensajes || 0).toLocaleString('es-CL') + ' mensajes de ' + (S.ext.waHist.chats || 0) + ' chats' + (S.ext.waHist.fases ? ' · avance por etapa: ' + Object.keys(S.ext.waHist.fases).sort().map(f => ['último día', 'hasta 90 días', 'hasta 180 días'][+f] + ' ' + S.ext.waHist.fases[f] + '%').join(', ') : S.ext.waHist.progreso != null ? ' · avance ' + S.ext.waHist.progreso + '%' : '') + ' · último envío ' + esc(haceTxt(String(S.ext.waHist.ultimo || '').slice(0, 10))) + '. El Cerebro arma el perfil de cada contacto en modo masivo (sin tareas ni negocios antiguos).') + '</div></div>' : '') +
-    '<div class="card"><b>🎨 Diseño de la interfaz</b><div class="hint">El diseño nuevo ordena la app en secciones, con resúmenes más simples. El clásico es el anterior. No cambia ningún dato.</div><div class="seg" style="margin-top:10px"><button type="button" class="pill' + (LS.ui !== 'clasico' ? ' on' : '') + '" data-ui="nuevo">Nuevo</button><button type="button" class="pill' + (LS.ui === 'clasico' ? ' on' : '') + '" data-ui="clasico">Clásico</button></div></div>' +
     '<div class="card"><b>🔢 Versiones</b><div class="hint">App: ' + esc(APP_VER) + ' · Script: ' + (S.extInactivo ? 'funciones extra no activadas' : 'versión ' + esc((S.ext && S.ext.version) || '?') + ' (nivel ' + extNivel() + ')') + (extNivel() < NIVEL_ULTIMO ? ' · <b style="color:var(--bad-ink)">hay una versión nueva del script</b>: pega el Extras.gs nuevo y crea una Nueva versión de la implementación.' : ' · al día ✓') + '</div></div>' +
     (deferredInstall ? '<div class="btns"><button class="btn" id="s_inst">📲 Instalar app en este dispositivo</button></div>' : '') +
     '<div class="card"><b>🧠 Cerebro y fuentes</b><div class="hint">' + (extNivel() >= 16 ? 'Activo ✓ Un solo cerebro con 9 skills: arma el plan del día a las 7:00, sigue a tus clientes, planifica tareas, busca compras y elige fotos. Su chat (botón ✨ o la tecla /) responde con tus datos.' : 'Actualiza el script para activar el plan del día, el chat del Cerebro, Specialized Chile, noticias y avisos.') + '</div><div class="btns" style="margin-top:8px"><button class="btn sm" id="s_cb">🧠 Abrir el Cerebro</button><button class="btn sm sec" id="s_gd">❓ Guía de la app</button><button class="btn sm sec" id="s_fz">📊 Fuentes de información</button>' + (extNivel() >= 16 ? '<button class="btn sm sec" id="s_av">📣 Avisos</button>' : '') + '</div></div>' +
