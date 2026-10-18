@@ -390,3 +390,12 @@ Basado en un estudio visual de los 20 CRM de referencia (Linear, Attio, HubSpot 
 - Cada tarea tiene: **Hecha**, **Posponer** (mañana, próximo lunes, en una semana u otra fecha), **Esperando respuesta** (cambia el estado y vuelve en 2 días), **Temporizador**, **Cancelar tarea** y **Saltar**.
 - **Cancelar** cierra la tarea con la nota «❌ Cancelada el …» al inicio: queda en el historial pero no cuenta como hecha (`esCancelada`).
 - Para el Piso de venta no se muestran montos de las negociaciones.
+
+## Capa Dribbble (app v65)
+
+Basada en el análisis de unos 300 diseños de Dribbble (búsquedas: crm, crm-dashboard, sales-dashboard, retail-dashboard, crm-mobile-app, task-management-app, daily-planner-app, pipeline-kanban, contact-profile, ai-assistant-dashboard).
+- **Hoy**: portada oscura (`pv-hero hz`) con el saludo, una línea de foco, el botón blanco **Empezar mi día** como acción principal, acciones secundarias más chicas, anillo de avance del día (`hzAnillo`) y clima. «Empieza por aquí» pasa a ser una franja de números con divisores, sin cajas sueltas.
+- **Empezar mi día**: título grande, **Hecha** a todo el ancho, Posponer · En espera · Temporizador parejos, Cancelar y Saltar como enlaces; cada paso entra deslizándose.
+- **Negocios**: columnas en bandeja gris con una barra de color arriba; las etapas vacías se vuelven una franja vertical angosta (se abren al arrastrar). Tarjetas (`kc5`) con avatar, producto, monto destacado, próxima acción y «N d en etapa»; borde ámbar a los 7 días y rojo a los 14 o si requiere atención. El Piso de venta no ve montos.
+- **Tareas**: la franja superior queda en una sola línea.
+- **Cerebro**: recomendaciones con borde violeta. **Celular**: píldora detrás del ícono activo en la barra inferior.

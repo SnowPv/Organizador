@@ -2279,6 +2279,103 @@ body.ui2{background:#F7F8FA!important;background-image:none!important;font-featu
 
 .reco-k{font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin:18px 2px 8px}
 .ui2 .pv-lbl + .ai,.ui2 .pv-lbl + .w{margin-top:0}
+
+/* ===== v65 · Capa Dribbble (análisis de ~300 diseños de CRM, ventas, tareas y asistentes IA) =====
+   Portada oscura con anillo y una acción principal · números en franja sin cajas · columnas vacías angostas ·
+   tarjetas de negocio con avatar, monto y antigüedad por color · pop-up de foco con una acción grande. */
+.ui2{--bg:#F6F7F9;--line:#E6E9EF}
+body.ui2{background:#F6F7F9!important}
+.ui2 .pv-sn,.ui2 .kc5-v,.ui2 .hz-ring b,.ui2 .nkpi b,.ui2 .k2 b{font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+/* Portada de Hoy */
+.ui2 .pv-hero.hz{background:#111827!important;border-color:#111827!important;color:#F8FAFC;padding:22px 24px;border-radius:16px!important;grid-template-columns:minmax(0,1fr) auto}
+.ui2 .pv-hero.hz .pv-k{color:#9AA4B5}
+.ui2 .pv-hero.hz h2{color:#fff;font-size:26px;font-weight:650;letter-spacing:-.02em}
+.ui2 .pv-hero.hz p{color:#C7CED9;font-size:15px}
+.ui2 .pv-hero.hz .pv-ha{margin-top:16px;gap:8px}
+.ui2 .pv-hero.hz .pv-ha .btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);color:#F1F5F9;box-shadow:none;height:38px;border-radius:10px;font-size:13.5px;font-weight:550;padding:0 12px}
+.ui2 .pv-hero.hz .pv-ha .btn:hover{background:rgba(255,255,255,.14)}
+.ui2 .pv-hero.hz .pv-ha .btn .ico,.ui2 .pv-hero.hz .pv-ha .btn .ei{color:inherit}
+.ui2 .pv-hero.hz #pvDia{background:#fff;color:#111827;border-color:#fff;font-weight:650;height:44px;padding:0 20px;font-size:15px}
+.ui2 .pv-hero.hz #pvDia:hover{background:#E8EEF7}
+.ui2 .pv-hero.hz .pv-dn{background:#111827;color:#fff}
+.ui2 .pv-hero.hz .pv-hr{flex-direction:column;align-items:flex-end;gap:12px}
+.ui2 .pv-hero.hz .hy-wx{background:rgba(255,255,255,.08)!important;border:1px solid rgba(255,255,255,.14)!important;color:#E2E8F0!important;max-width:360px}
+.ui2 .pv-hero.hz .hy-wx b,.ui2 .pv-hero.hz .hy-wx span{color:inherit!important}
+.hz-ring{position:relative;display:flex;align-items:center;gap:12px}
+.hz-ring > div{position:absolute;left:0;top:0;width:84px;height:84px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.hz-ring b{font-size:20px;font-weight:650;color:#fff;line-height:1}
+.hz-ring span{font-size:11px;color:#9AA4B5;margin-top:3px}
+/* «Empieza por aquí»: una franja de números con divisores, sin cajas sueltas */
+.ui2 .pv-steps{gap:0!important;background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.ui2 .pv-steps .pv-s{border:0!important;border-radius:0!important;background:transparent;border-left:1px solid var(--line)!important}
+.ui2 .pv-steps .pv-s:first-child{border-left:0!important}
+.ui2 .pv-steps .pv-s:hover{background:#F8FAFC;box-shadow:none!important}
+.ui2 .pv-sn{font-size:26px}
+@media (max-width:720px){.ui2 .pv-steps .pv-s:nth-child(3){border-left:0!important}.ui2 .pv-steps .pv-s:nth-child(n+3){border-top:1px solid var(--line)!important}
+  .ui2 .pv-hero.hz{grid-template-columns:1fr;padding:18px}.ui2 .pv-hero.hz h2{font-size:22px}.ui2 .pv-hero.hz .pv-hr{flex-direction:row;align-items:center;justify-content:space-between}.ui2 .pv-hero.hz #pvDia{flex-basis:100%}}
+/* Negocios: columnas en bandeja, barra de color, vacías angostas */
+@media (min-width:1000px){
+  .ui2 .kb{display:flex!important;gap:12px;overflow-x:auto;align-items:flex-start}
+  .ui2 .kb{gap:10px}
+  .ui2 .kb .kcol{flex:1 0 210px;max-width:340px}
+  .ui2 .kb .kcol.vacia{flex:0 0 58px;min-height:320px;max-height:none}
+  .ui2 .kb .kcol.vacia .kcol-h{writing-mode:vertical-rl;padding:16px 0 8px!important;margin:0 auto}
+  .ui2 .kb .kcol.vacia .kcol-h b{flex-direction:row;gap:10px;align-items:center}
+  .ui2 .kb .kcol.vacia .kcol-h small,.ui2 .kb .kcol.vacia .kvac{display:none}
+  .ui2 .kb .kcol.vacia .kcards{min-height:0;padding:0}
+  .ui2 .kb .kcol.vacia.over{flex-basis:210px}
+}
+.ui2 .kcol{background:#F1F3F6!important;border-radius:14px!important;position:relative}
+.ui2 .kcol::before{content:"";position:absolute;left:12px;right:12px;top:0;height:3px;border-radius:0 0 3px 3px;background:var(--c)}
+.ui2 .kcol.vacia .kcards{min-height:84px}
+.ui2 .kvac{border:1.5px dashed #D5DBE4;border-radius:10px;padding:16px 6px!important;text-align:center;color:#98A2B3;font-size:12px}
+.ui2 .kcol.over .kvac{border-color:var(--accent);color:var(--accent-ink);background:var(--accent-soft)}
+.ui2 .kc5{padding:12px;border-left:3px solid transparent!important}
+.ui2 .kc5.age1{border-left-color:#F59E0B!important}.ui2 .kc5.age2,.ui2 .kc5.alert{border-left-color:#E5484D!important}
+.kc5-h{display:flex;gap:10px;align-items:center}
+.kc5-h .pv-av{width:30px;height:30px;font-size:11px;flex:none}
+.kc5-n{min-width:0;flex:1}.kc5-n .nm{font-size:14px!important;font-weight:600!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kc5-n .pr{font-size:12px!important;margin-top:1px!important}
+.kc5-v{font-size:16px;font-weight:650;margin-top:10px;color:var(--ink)}
+.ui2 .kc5 .kf{margin-top:8px;font-size:12.5px}
+.kc5-f{display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:8px;border-top:1px solid #F0F2F5;font-size:11.5px;color:#7A8597}
+.kc5-f > span:first-child{display:inline-flex;align-items:center;gap:4px}.kc5-f .ico{width:13px;height:13px}
+.kc5.age1 .kc5-f > span:first-child{color:#B45309}.kc5.age2 .kc5-f > span:first-child{color:#C2410C;font-weight:600}
+.ui2 .kcard.drag{opacity:1;transform:rotate(2deg);box-shadow:0 12px 24px rgba(15,23,42,.14)!important}
+/* Pop-up «Empezar mi día»: una acción grande, secundarias parejas y enlaces */
+#mf .hy-fprog{font-size:12px;letter-spacing:.06em}
+#mf .pb{height:4px;border-radius:4px}
+#mf .hy-fcard{animation:mfIn .22s ease;padding:18px 2px 8px}
+#mf .hy-fcard h3{font-size:22px;font-weight:650;letter-spacing:-.015em}
+@keyframes mfIn{from{opacity:0;transform:translateX(18px)}to{opacity:1;transform:none}}
+#mf .hy-facts{grid-template-columns:repeat(6,1fr)!important}
+#mf .hy-facts > *{grid-column:span 3}
+#mf .hy-facts #mfOk{grid-column:span 6;height:52px;font-size:16px;font-weight:650;border-radius:12px}
+#mf .hy-facts #mfPos,#mf .hy-facts #mfEsp,#mf .hy-facts #mfPlay{grid-column:span 2;height:44px;border-radius:10px;background:#F2F4F7;border-color:#F2F4F7}
+#mf .hy-facts .mf-pos{grid-column:span 6}
+#mf .hy-facts #mfCan,#mf .hy-facts #mfSk{background:none!important;border:0!important;box-shadow:none;height:36px;font-weight:600}
+#mf .hy-facts #mfCan{color:var(--bad-ink);grid-column:span 3}#mf .hy-facts #mfSk{color:var(--muted)!important;grid-column:span 3}
+#mf .hy-facts #mfWA,#mf .hy-facts #mfCp{grid-column:span 6;height:52px;font-size:16px;border-radius:12px}
+/* Tareas: franja en una sola línea */
+.ui2 .tp3{flex-wrap:nowrap;overflow-x:auto;gap:16px;padding:10px 14px;border-radius:14px!important}
+.ui2 .tp3 > *{flex:none}
+.ui2 .tp3-a{margin-left:auto}
+@media (max-width:999px){.ui2 .tp3{flex-wrap:wrap}}
+/* Recomendaciones del Cerebro: etiqueta y borde violeta, sin fondos de color */
+.ui2 .ins,.ui2 .insight{border-left:3px solid #7C5CFF!important}
+/* Celular: barra inferior con píldora detrás del ícono activo */
+@media (max-width:999px){
+  .ui2 nav.bottom button.on{background:none!important;color:var(--accent-ink)}
+  .ui2 nav.bottom button.on span{background:var(--accent-soft)!important;border-radius:999px;padding:3px 14px}
+}
+
+@media (max-width:720px){
+  .ui2 .pv-hero.hz .pv-hr{flex-wrap:nowrap!important;gap:12px}
+  .ui2 .pv-hero.hz .pv-hr .hy-wx{flex:1 1 auto!important;min-width:0}
+  .ui2 .hz-ring svg{width:60px;height:60px}.ui2 .hz-ring > div{width:60px;height:60px}.ui2 .hz-ring b{font-size:15px}.ui2 .hz-ring span{display:none}
+  #mf .hy-facts #mfPos,#mf .hy-facts #mfEsp,#mf .hy-facts #mfPlay{font-size:13.5px;padding:0 4px}
+}
+@media (min-width:1000px) and (max-width:1560px){.ui2 .tp3 .tp3-al,.ui2 .tp3 .tp3-ok{display:none}.ui2 .tp3{gap:12px}}
 </style>
 
 
@@ -2404,7 +2501,7 @@ async function apiX(op, extra){
 }
 // Nivel 2 del script Extras: recordatorios y base de contactos. Nivel 3: la base solo usa contacto@blacklinechile.cl. Nivel 4: eventos de varios días.
 function extNivel(){ return S.extInactivo ? 0 : (S.ext && S.ext.nivel) || 1; }
-const APP_VER = 'v64', NIVEL_ULTIMO = 40;
+const APP_VER = 'v65', NIVEL_ULTIMO = 40;
 function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < NIVEL_ULTIMO; }
 let sincTimer = null;
 // Después de cambiar tareas, el script actualiza los recordatorios del calendario (en segundo plano).
@@ -2777,6 +2874,10 @@ function tonoNombre(s){ let h = 0; for (const ch of String(s || '')) h = (h * 31
 // Progreso compacto (barra fina con número) en vez de anillos grandes
 function emoIcono(e){ const k = String(e || '').replace(/\uFE0F/g, ''), ic = UI2() && EMO_IC[k]; return ic ? '<span class="ei">' + icon(ic) + '</span>' : (UI2() ? '' : esc(e) + ' '); }
 function avTenue(nom){ const t = tonoNombre(nom); return '<span class="pv-av" style="--av-bg:' + t[0] + ';--av-fg:' + t[1] + '">' + esc(iniciales(nom)) + '</span>'; }
+function hzAnillo(hecho, total){
+  const p = total ? Math.min(1, hecho / total) : 0, r = 34, c = 2 * Math.PI * r;
+  return '<div class="hz-ring" title="Acciones del día"><svg width="84" height="84" viewBox="0 0 84 84"><circle cx="42" cy="42" r="' + r + '" fill="none" stroke="rgba(255,255,255,.14)" stroke-width="7"/><circle cx="42" cy="42" r="' + r + '" fill="none" stroke="#7CC4FF" stroke-width="7" stroke-linecap="round" stroke-dasharray="' + (c * p).toFixed(1) + ' ' + c.toFixed(1) + '" transform="rotate(-90 42 42)"/></svg><div><b>' + Math.round(p * 100) + '%</b><span>' + hecho + ' de ' + total + '</span></div></div>';
+}
 function progresoHTML(hecho, total, etq){ const p = total ? Math.min(1, hecho / total) : 0; return '<div class="pg2"><div class="pg2-n"><b>' + hecho + '</b><small>/' + total + '</small></div><div class="pg2-t"><span>' + etq + '</span><i><u style="width:' + Math.round(p * 100) + '%"></u></i></div></div>'; }
 document.querySelectorAll('[data-ic]').forEach(e => { e.innerHTML = icon(e.dataset.ic); });
 /* ---------- ventanas emergentes (sub-ventanas sobre la pantalla o sobre la ficha) ---------- */
@@ -5552,9 +5653,9 @@ function viewHoyPiso(){
   const foco = D.resp.length ? 'Parte respondiendo a ' + plural(D.resp.length, 'cliente', 'clientes') + ' que esperan.' : D.venc.length ? 'Parte por ' + plural(D.venc.length, 'tarea atrasada', 'tareas atrasadas') + '.' : prox ? 'Lo próximo: ' + prox.titulo + ' a las ' + prox.inicio + '.' : D.negs.length ? 'Buen momento para hacer seguimiento a tus clientes.' : 'Día despejado: ordena el piso y prepara contenido.';
   const paso = (k, n, ic, t, sub, tono) => '<button class="pv-s ' + (n ? tono : 'ok') + '" data-pv="' + k + '"><span class="pv-si">' + ic + '</span><span class="pv-sn">' + n + '</span><span class="pv-st">' + t + '</span><span class="pv-ss">' + sub + '</span>' + icon('arrow') + '</button>';
   let html = (S.vistaPiso && !esPiso() && !UI2() ? '<div class="pv-prev">👀 Vista previa del <b>Hoy del Piso de venta</b> (tú sigues como Admin).<button class="btn sm sec" id="pvSalir">Volver a mi Hoy</button></div>' : '') +
-    '<section class="pv-hero"><div class="pv-hl"><div class="pv-k">' + esc(fmtLong(h)) + '</div><h2>' + sal + ', ' + esc(esPiso() ? 'equipo' : (params()['Tu nombre (para el saludo)'] || 'equipo')) + '</h2><p>' + esc(foco) + '</p>' +
+    '<section class="pv-hero hz"><div class="pv-hl"><div class="pv-k">' + esc(fmtLong(h)) + '</div><h2>' + sal + ', ' + esc(esPiso() ? 'equipo' : (params()['Tu nombre (para el saludo)'] || 'equipo')) + '</h2><p>' + esc(foco) + '</p>' +
       '<div class="pv-ha"><button class="btn" id="pvDia">' + icon('arrow') + ' Empezar mi día' + (function(){ try { const n = pendientesHoyN(); return n ? ' <b class="pv-dn">' + n + '</b>' : ''; } catch(e){ return ''; } })() + '</button><button class="btn sec" id="pvAdd">' + icon('plus') + ' Agregar tarea</button><button class="btn sec" id="pvCop">' + icon('spark') + ' Preguntar al Cerebro</button>' + (esPiso() ? '<button class="btn sec" id="pvGuia">¿Nuevo en la tienda?</button>' : (cerebroPlan() ? '<button class="btn sec" id="pvPlan">' + icon('brain') + ' Plan del Cerebro</button>' : '<button class="btn sec" id="pvIA">' + icon('brain') + ' Planificar mi día</button>')) + '</div></div>' +
-      '<div class="pv-hr">' + hyWx() + progresoHTML(accH, accT, 'acciones del día') + '</div></section>' +
+      '<div class="pv-hr">' + hzAnillo(accH, accT) + hyWx() + '</div></section>' +
     '<div class="pv-lbl">Empieza por aquí</div><div class="pv-steps">' +
       paso('resp', D.resp.length, '💬', 'Responder', D.resp.length ? plural(D.resp.length, 'cliente espera', 'clientes esperan') : 'nadie espera', 'bad') +
       paso('tareas', D.hacer.length, '✅', 'Tareas de hoy', D.venc.length ? D.venc.length + ' atrasadas' : D.hacer.length ? 'para hoy' : 'todo al día', D.venc.length ? 'bad' : 'warn') +
@@ -6595,6 +6696,16 @@ function kcardHTML(n, a, opt){
   const c = a.c, nombre = c ? (c.nombre || c.email) : n.titulo, sub = c ? (n.producto || n.titulo) : n.producto, i = etapaIdx(n.etapa);
   const alerta = requiereAtencion(a), mot = alerta ? motivoAlerta(n, a) : '';
   const linea = !a.abierta ? (n.estado === 'Ganada' ? (n.proxima && n.etapa !== 'Postventa' ? n.proxima + (n.fechaProx ? ' · ' + fmtRel(n.fechaProx) : '') : 'Ganada ' + fmt(fechaCierre(n))) : 'Perdida' + (n.motivo ? ' · ' + String(n.motivo).split(' · ')[0] : '')) : alerta ? mot : n.proxima ? n.proxima + (n.fechaProx ? ' · ' + fmtRel(n.fechaProx) : '') : '';
+  if (UI2()){
+    const age = a.abierta ? (a.dEtapa > 14 ? ' age2' : a.dEtapa > 7 ? ' age1' : '') : '';
+    return '<div class="kcard kc5' + (alerta ? ' alert' : '') + age + '" data-neg="' + esc(n.id) + '"' + (opt.drag ? ' draggable="true"' : '') + '>' +
+      (opt.etapa ? '<div class="ks"><span class="dot" style="background:' + a.e.c + '"></span>' + esc(n.etapa) + '</div>' : '') +
+      '<div class="kc5-h">' + avTenue(nombre) + '<div class="kc5-n"><div class="nm">' + esc(nombre) + '</div>' + (sub && sub !== nombre ? '<div class="pr">' + esc(sub) + '</div>' : '') + '</div></div>' +
+      (n.valor && !esPiso() ? '<div class="kc5-v">' + clp(n.valor) + '</div>' : '') +
+      (linea ? '<div class="kf' + (alerta ? ' bad' : '') + '">' + icon(alerta ? 'bolt' : a.abierta ? 'arrow' : 'check') + '<span class="ktx">' + esc(linea) + '</span></div>' : '') +
+      (a.abierta ? '<div class="kc5-f"><span title="Días en esta etapa">' + icon('clock') + a.dEtapa + ' d en etapa</span><span class="kp" data-info="prob" data-ref="' + esc(n.id) + '">' + Math.round(a.prob * 100) + '%</span></div>' : '') +
+      (opt.mv && i >= 0 ? '<div class="mv mob-only">' + (i > 0 ? '<button data-nmv="' + esc(n.id) + '" data-k="' + esc(ETAPAS[i - 1].k) + '">◀ ' + ETAPAS[i - 1].corto + '</button>' : '<span></span>') + '<button data-nmv="' + esc(n.id) + '" data-k="' + esc(i < ETAPAS.length - 1 ? ETAPAS[i + 1].k : 'Ganada') + '">' + (i < ETAPAS.length - 1 ? ETAPAS[i + 1].corto + ' ▶' : 'Ganada ▶') + '</button></div>' : opt.mv && (n.etapa === 'Ganada' || n.etapa === 'Entregada') ? '<div class="mv mob-only"><span></span><button data-nmv="' + esc(n.id) + '" data-k="' + (n.etapa === 'Ganada' ? 'Entregada">✅ Entregada ▶' : 'Postventa">Postventa ▶') + '</button></div>' : '') + '</div>';
+  }
   return '<div class="kcard' + (alerta ? ' alert' : '') + '" data-neg="' + esc(n.id) + '"' + (opt.drag ? ' draggable="true"' : '') + '>' +
     (opt.etapa ? '<div class="ks"><span class="dot" style="background:' + a.e.c + '"></span>' + esc(n.etapa) + '</div>' : '') +
     '<div class="top"><div class="nm">' + esc(nombre) + '</div><span class="kv">' + (n.valor ? clpCorto(n.valor) : '') + '</span></div>' +
@@ -6675,8 +6786,8 @@ function pipelineHTML(){
         .filter(x => !q || norm([x.n.titulo, x.n.producto, x.n.notas, x.a.c && x.a.c.nombre].join(' ')).includes(q));
     }
     const v = C.reduce((s, x) => s + (x.n.valor || 0), 0);
-    return '<div class="kcol" data-k="' + esc(e.k) + '" style="--c:' + e.c + '">' + (UI2() ? '<div class="kcol-h k2h"><b><span><i class="kdot" style="background:' + e.c + '"></i>' + esc(e.t || e.k) + '</span><span class="kn">' + C.length + '</span></b><small>' + (v ? clpCorto(v) : '$0') + (i < ETAPAS.length ? ' · prob. ' + Math.round(e.p * 100) + '%' : e.k === 'Ganada' ? ' · por entregar' : e.k === 'Entregada' ? ' · 1ª semana' : e.k === 'Postventa' ? ' · 90 días' : '') + '</small></div>' : '<div class="kcol-h"><b><span>' + e.ic + ' ' + esc(e.t || e.k) + '</span><span>' + C.length + '</span></b><small>' + clp(v) + (i < ETAPAS.length ? ' · ' + Math.round(e.p * 100) + '% base' + ib('prob') : e.k === 'Ganada' ? ' · pagadas, por entregar' : e.k === 'Entregada' ? ' · primera semana' : e.k === 'Postventa' ? ' · hasta 90 días' : '') + '</small></div>') +
-      '<div class="kcards">' + (C.length ? C.map(x => kcardHTML(x.n, x.a, { drag: dk, mv: i < ETAPAS.length || e.k === 'Ganada' || e.k === 'Entregada' })).join('') : '<div class="hint" style="text-align:center;padding:14px 0">Sin negocios</div>') + '</div></div>';
+    return '<div class="kcol' + (C.length ? '' : ' vacia') + '" data-k="' + esc(e.k) + '" style="--c:' + e.c + '">' + (UI2() ? '<div class="kcol-h k2h"><b><span><i class="kdot" style="background:' + e.c + '"></i>' + esc(e.t || e.k) + '</span><span class="kn">' + C.length + '</span></b><small>' + (v ? clpCorto(v) : '$0') + (i < ETAPAS.length ? ' · prob. ' + Math.round(e.p * 100) + '%' : e.k === 'Ganada' ? ' · por entregar' : e.k === 'Entregada' ? ' · 1ª semana' : e.k === 'Postventa' ? ' · 90 días' : '') + '</small></div>' : '<div class="kcol-h"><b><span>' + e.ic + ' ' + esc(e.t || e.k) + '</span><span>' + C.length + '</span></b><small>' + clp(v) + (i < ETAPAS.length ? ' · ' + Math.round(e.p * 100) + '% base' + ib('prob') : e.k === 'Ganada' ? ' · pagadas, por entregar' : e.k === 'Entregada' ? ' · primera semana' : e.k === 'Postventa' ? ' · hasta 90 días' : '') + '</small></div>') +
+      '<div class="kcards">' + (C.length ? C.map(x => kcardHTML(x.n, x.a, { drag: dk, mv: i < ETAPAS.length || e.k === 'Ganada' || e.k === 'Entregada' })).join('') : '<div class="hint kvac">' + (UI2() ? 'Suelta aquí' : 'Sin negocios') + '</div>') + '</div></div>';
   }).join('') + '</div><div class="hint">' + (dk ? 'Arrastra una tarjeta a otra columna para cambiar su etapa. ' : 'Desliza hacia el lado para ver todas las etapas. ') + 'Borde rojo = requiere atención. Toca cualquier número o ⓘ para saber qué significa.</div>';
 }
 function listaNegHTML(){
@@ -7469,7 +7580,7 @@ function modoEnfoque(){
     } else if (q.k === 't'){
       const t = q.t, p = puntaje(t);
       cuerpo = '<h3>' + esc(t.tarea) + '</h3><p class="ctx">' + (t.limite && t.limite < D.h ? '<span style="color:var(--bad-ink);font-weight:700">' + esc(p.why) + '</span>' : esc(p.why || '')) + (t.categoria ? ' · ' + esc(t.categoria) : '') + '</p>' + (t.notas ? '<p class="ctx">' + esc(String(t.notas).slice(0, 220)) + '</p>' : '');
-      acts = '<button class="btn" id="mfOk">' + icon('check') + ' Hecha</button><button class="btn sec" id="mfPos">Posponer ▾</button><button class="btn sec" id="mfEsp">Esperando respuesta</button><button class="btn sec" id="mfPlay">▶ Temporizador</button><button class="btn sec" id="mfCan">Cancelar tarea</button>' +
+      acts = '<button class="btn" id="mfOk">' + icon('check') + ' Hecha</button><button class="btn sec" id="mfPos">Posponer ▾</button><button class="btn sec" id="mfEsp" title="Esperando respuesta: vuelve en 2 días">En espera</button><button class="btn sec" id="mfPlay">▶ Temporizador</button><button class="btn sec" id="mfCan">Cancelar tarea</button>' +
         '<div class="mf-pos" id="mfPosM" hidden><button class="btn sm sec" data-pos="1">Mañana</button><button class="btn sm sec" data-pos="lun">Próximo lunes</button><button class="btn sm sec" data-pos="7">En una semana</button><label class="mf-fecha">Otra fecha <input type="date" id="mfF" min="' + addDays(D.h, 1) + '"></label></div>';
     } else {
       const n = q.x.n, c = n.contacto ? contactoPorId(n.contacto) : null, tel = telWA(c);
