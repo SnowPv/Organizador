@@ -2274,6 +2274,9 @@ body.ui2{background:#F7F8FA!important;background-image:none!important;font-featu
 .ui2 .pv-sw button .ico{width:15px;height:15px;color:#475467}.ui2 .pv-tp > span:first-child .ico{width:18px;height:18px;color:#667085}
 
 @media (max-width:999px){.ui2 header.top .hdr-add{display:none!important}.ui2 header.top .icon-btn{width:34px;height:34px}}
+
+.reco-k{font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin:18px 2px 8px}
+.ui2 .pv-lbl + .ai,.ui2 .pv-lbl + .w{margin-top:0}
 </style>
 
 
@@ -2398,7 +2401,7 @@ async function apiX(op, extra){
 }
 // Nivel 2 del script Extras: recordatorios y base de contactos. Nivel 3: la base solo usa contacto@blacklinechile.cl. Nivel 4: eventos de varios días.
 function extNivel(){ return S.extInactivo ? 0 : (S.ext && S.ext.nivel) || 1; }
-const APP_VER = 'v61', NIVEL_ULTIMO = 40;
+const APP_VER = 'v62', NIVEL_ULTIMO = 40;
 function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < NIVEL_ULTIMO; }
 let sincTimer = null;
 // Después de cambiar tareas, el script actualiza los recordatorios del calendario (en segundo plano).
@@ -3785,9 +3788,10 @@ function ctoTab(c, tab){
   if (tab === 'perfil') return perfilTab(c, box);
   if (tab === 'resumen'){
     const tareas = tareasDe(c).filter(t => !t.hecho).sort(ordenar);
-    box.innerHTML = agenteHTML(c) + (c.etiquetas || c.notas ? '<div class="sec"><div class="sh">Lo que sabemos</div>' + (c.etiquetas ? '<div class="tm" style="margin:0 0 6px">' + String(c.etiquetas).split(',').map(x => '<span class="pill2">' + esc(x.trim()) + '</span>').join('') + '</div>' : '') + (c.notas ? '<div style="font-size:14px;line-height:1.45;padding-bottom:6px">' + esc(c.notas) + '</div>' : '') + '</div>' : '') +
+    box.innerHTML = (c.etiquetas || c.notas ? '<div class="sec"><div class="sh">Lo que sabemos</div>' + (c.etiquetas ? '<div class="tm" style="margin:0 0 6px">' + String(c.etiquetas).split(',').map(x => '<span class="pill2">' + esc(x.trim()) + '</span>').join('') + '</div>' : '') + (c.notas ? '<div style="font-size:14px;line-height:1.45;padding-bottom:6px">' + esc(c.notas) + '</div>' : '') + '</div>' : '') +
       '<div class="sec"><div class="sh">Tareas pendientes <span class="n">' + tareas.length + '</span></div>' + (tareas.length ? tareas.map(t => taskHTML(t)).join('') : '<div class="wsub" style="padding:4px 0 8px">Sin tareas con este contacto.</div>') + '</div>';
     if (bsvListo()){ box.insertAdjacentHTML('beforeend', '<div id="ct_bsv"></div>'); comprasBsale(c, box.querySelector('#ct_bsv')); }
+    const ag = agenteHTML(c); if (ag) box.insertAdjacentHTML('beforeend', '<div class="reco-k">Recomendación del Cerebro</div>' + ag);
     bindTasks(box);
     box.querySelectorAll('[data-agente]').forEach(b => b.onclick = () => analizarAhora(b.dataset.agente, b));
     box.querySelectorAll('[data-impc]').forEach(b => b.onclick = () => openImportar({ contacto: b.dataset.impc }));
@@ -3962,7 +3966,7 @@ function igConectarHTML(){
 function pvPaso(attr, n, ic, t, sub, tono){ return '<button class="pv-s ' + (n ? tono : 'ok') + '" ' + attr + '><span class="pv-si">' + ic + '</span><span class="pv-sn">' + n + '</span><span class="pv-st">' + t + '</span><span class="pv-ss">' + sub + '</span>' + icon('arrow') + '</button>'; }
 function pvTile(ic, t, extra, cuerpo, cls){ return '<div class="pv-t' + (cls ? ' ' + cls : '') + '"><div class="pv-h">' + icon(ic) + '<b>' + t + '</b>' + (extra || '') + '</div>' + cuerpo + '</div>'; }
 function pvBarrasH(L, attr){ const mx = Math.max(1, ...L.map(x => x.v)); return '<div class="pv-hb">' + L.map(x => '<button ' + (attr ? attr(x) : '') + '><span>' + esc(x.l) + '</span><i><u style="width:' + Math.max(4, x.v / mx * 100) + '%;background:' + (x.c || 'var(--s3)') + '"></u></i><b>' + esc(x.t != null ? x.t : x.v) + '</b></button>').join('') + '</div>'; }
-function masAnalisis(clave, html){ return '<details class="mas-an pv-mas"' + (LS[clave] === '1' ? ' open' : '') + ' ontoggle="LS.' + clave + ' = this.open ? \'1\' : \'0\'"><summary><span>' + icon('chart') + ' Más análisis</span><small>Todo el detalle de siempre</small></summary>' + html + '</details>'; }
+function masAnalisis(clave, html){ return '<details class="mas-an pv-mas"><summary><span>' + icon('chart') + ' Más análisis</span><small>Todo el detalle de siempre</small></summary>' + html + '</details>'; }
 
 function baseResumenV2(){
   const P = perfiles(), C = contactos(), h = hoy(), esp = esperanRespuesta(), ops = oportunidades(), frios = contactosFrios(), sg = sinGuardar();
@@ -3999,7 +4003,8 @@ function baseResumenV2(){
   const dL = Object.entries(dc).sort((a, b) => b[1] - a[1]).slice(0, 5).map(([k, v]) => ({ k, l: (typeof L_DISC !== 'undefined' && L_DISC[k]) || k, v }));
   html += pvTile('bolt', 'Qué andan buscando', '', dL.length ? pvBarrasH(dL, x => 'data-sg="disciplinas|' + esc(x.k) + '"') + '<div class="pv-cap">Disciplinas de tus clientes con perfil</div>' : '<div class="pv-ok">Aparece cuando haya perfiles.</div>');
   html += '</div>';
-  return html + masAnalisis('anBase2', segmentosHTML());
+  S._sinIns = 1; let det = ''; try { det = segmentosHTML(); } finally { S._sinIns = 0; }
+  return html + (P.length ? '<div class="pv-lbl">Recomendación del Cerebro</div>' + insightsHTML('base') : '') + masAnalisis('anBase2', det);
 }
 function bindBaseResumenV2(){
   const v = $('#view');
@@ -4044,7 +4049,8 @@ function redesResumenV2(){
   const top = a.P.slice().sort((x, y) => (+y.alcance || 0) - (+x.alcance || 0)).slice(0, 3);
   html += pvTile('trophy', 'Mejores publicaciones', '<span class="pv-c">90 días</span>', top.length ? '<div class="pv-nl">' + top.map(x => '<a class="pv-n pv-tp" href="' + esc(x.link || '#') + '" target="_blank" rel="noopener"><span>' + icF(x.formato || '') + '</span><span class="pv-tpt"><b>' + esc(String(x.texto || x.formato || 'Publicación').slice(0, 60)) + '</b><small>' + (+x.alcance || 0).toLocaleString('es-CL') + ' de alcance · ' + esc(fmt(String(x.fecha).slice(0, 10))) + '</small></span></a>').join('') + '</div>' : '<div class="pv-ok">Aún no hay publicaciones medidas.</div>');
   html += '</div>';
-  return html + masAnalisis('anRedes2', redesResumen());
+  S._sinIns = 1; let det = ''; try { det = redesResumen(); } finally { S._sinIns = 0; }
+  return html + (iaDisponible() && extNivel() >= 14 ? '<div class="pv-lbl">Recomendación del Cerebro</div>' + insightsHTML('redes') : '') + masAnalisis('anRedes2', det);
 }
 function bindRedesV2(){
   const v = $('#view');
@@ -4083,7 +4089,7 @@ function redesResumen(){
   der += '<div class="sec"><div class="sh">Mejores publicaciones · 90 días</div><div class="wl">' + (top.length ? top.map(x => '<a class="it" href="' + esc(x.link) + '" target="_blank" style="text-decoration:none;color:inherit"><span class="dot" style="background:' + (x.formato === 'REELS' ? 'var(--accent)' : 'var(--s2)') + '"></span><div class="tx">' + esc(String(x.texto || '(sin texto)').split('\n')[0].slice(0, 70)) + '<small>' + esc(fmt(x.fecha.slice(0, 10))) + ' · ' + esc(fmtPost(x)) + ' · ' + esc(pilarDe(x.texto)) + ' · alcance ' + x.alcance.toLocaleString('es-CL') + ' · ' + x.guardados + ' guard. · ' + x.compartidos + ' envíos</small></div><span class="rt"><b style="color:var(--ink)">' + x.interacciones + '</b><br>interacc.</span></a>').join('') : '<div class="wsub" style="padding:4px 0 10px">Aún no hay publicaciones sincronizadas.</div>') + '</div></div>';
   // Recomendaciones (arriba, ancho completo)
   const R = igRecomendaciones(a);
-  if (iaDisponible() && extNivel() >= 14) html += insightsHTML('redes');
+  if (iaDisponible() && extNivel() >= 14 && !S._sinIns) html += insightsHTML('redes');
   else html += R.length ? '<div class="w rd-recs" style="margin-bottom:14px"><div class="wh">' + icon('spark') + 'Señales en tus datos<span class="r"><button class="btn sm sec" data-rt2="estrategia">Estrategia con IA</button></span></div><div class="recs">' + R.slice(0, 6).map(x => '<div class="rec' + (x.mal ? ' mal' : '') + '">' + icon(x.ic) + '<div><b>' + esc(x.t) + '</b><span>' + esc(x.d) + '</span></div></div>').join('') + '</div></div>' : '';
   const det = '<div class="cols2"><div>' + izq + '</div><div>' + der + '</div></div>';
   return html + (UI2() ? '<details class="mas-an"' + (LS.anRedes === '1' ? ' open' : '') + ' ontoggle="LS.anRedes = this.open ? \'1\' : \'0\'"><summary><span>' + icon('chart') + ' Análisis detallado</span><small>Alcance diario, constancia, cuándo publicar, formatos, temas y mejores publicaciones</small></summary>' + det + '</details>' : det);
@@ -7180,7 +7186,7 @@ function segmentosHTML(){
   const cli = P.filter(pf => /cliente|riesgo|perdido/.test(pf.ciclo)).length, opsN = oportunidades().length;
   const probs = P.filter(pf => /oportunidad|lead_activo/.test(pf.ciclo)).map(pf => pf.prob), pm = probs.length ? Math.round(probs.reduce((s, x) => s + x, 0) / probs.length) : 0;
   const bd = baseDatos(), dl = (x, y, inv) => (x == null || !y) ? '' : (() => { const d = Math.round((x - y) / y * 100), bueno = inv ? d < 0 : d > 0; return '<small class="dl ' + (d === 0 ? '' : bueno ? 'up' : 'dn') + '">' + (d > 0 ? '▲ ' : d < 0 ? '▼ ' : '= ') + Math.abs(d) + '% vs 4 sem. antes</small>'; })();
-  html += insightsHTML('base');
+  if (!S._sinIns) html += insightsHTML('base');
   if (bd.st) html += '<div class="kstrip k4" style="margin-top:14px"><div class="ks1" data-info="bNuevas"><div><b class="num">' + bd.n28 + '</b><small>conversaciones nuevas (4 sem.)</small>' + dl(bd.n28, bd.n56) + '</div></div><div class="ks1" data-info="bResp"><div><b class="num">' + (bd.resp28 != null ? (bd.resp28 < 60 ? bd.resp28 + ' min' : (bd.resp28 / 60).toFixed(1).replace('.', ',') + ' h') : '–') + '</b><small>tu tiempo de respuesta</small>' + dl(bd.resp28, bd.respPrev, true) + '</div></div>' +
     '<div class="ks1" data-bfj2="esperan"><div><b class="num" style="color:' + (bd.st.esperan ? 'var(--bad-ink)' : 'inherit') + '">' + bd.st.esperan + '</b><small>sin respuesta (30 días)</small></div></div><div class="ks1"><div><b class="num">' + Math.round(P.length / Math.max(1, contactos().length) * 100) + '%</b><small>contactos con perfil</small></div></div></div>';
   html += '<div class="kstrip"><div class="ks1" data-sg="vista|op"><div><b class="num">' + (C.oportunidad || 0) + '</b><small>oportunidades activas</small></div></div><div class="ks1" data-bv="ops"><div><b class="num">' + opsN + '</b><small>a quién escribir</small></div></div>' +
