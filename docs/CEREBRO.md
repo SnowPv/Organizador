@@ -373,3 +373,13 @@ Antes cada «agente» (Copiloto, agente de ventas, agente de tareas, comprador, 
 - **Contactos → Resumen** (`baseResumenV2`): dona por tipo y % con perfil; pasos Responder · A quién escribir · Clientes fríos · Sin guardar; tarjetas Esperan respuesta, Ciclo de vida (dona), A quién escribir, Contactos nuevos (8 semanas + chats y tiempo de respuesta), Listas inteligentes y Qué andan buscando (disciplinas).
 - **Redes → Resumen** (`redesResumenV2`): seguidores con línea de alcance y anillo de constancia semanal; pasos Publicar hoy · Por grabar · Clientes desde IG · Banco de ideas; tarjetas Alcance 30 días (días con publicación marcados), Próximos 7 días (íconos por formato, ＋ para planificar), Flujo de contenido, Qué formato funciona, Cuándo publicar y Mejores publicaciones.
 - El análisis completo anterior queda en «Más análisis» al final de cada portada (nada se perdió). El resumen de 4 recuadros de esas pestañas no se muestra cuando hay portada.
+
+## Diseño sobrio (app v61)
+
+Basado en un estudio visual de los 20 CRM de referencia (Linear, Attio, HubSpot Canvas, Fluent 2, Salesforce SLDS 2, Pipedrive, entre otros):
+- **Íconos de línea en vez de emojis** en botones, pestañas, títulos y pasos (`iconizar`, `EMO_IC`, ~45 íconos nuevos en `ICONS`). Nunca toca el contenido escrito por personas (tareas, chats, avisos).
+- **Superficies**: grises fríos, borde de 1px sin sombra, radio 12 en tarjetas y 8 en botones; fondo plano sin degradados; portadas planas.
+- **Tipografía**: títulos de página 24px/650, tarjetas 14px/600, números 650.
+- **Pestañas subrayadas** (estilo Linear/HubSpot) en vez de cápsulas; menú lateral con estado activo gris.
+- **Avisos** como tarjeta sobria (sin post-it); **progreso** como número + barra fina en vez de anillos grandes; **avatares** en tonos tenues estables por nombre.
+- Encabezado con íconos (buscar, ayuda, actualizar, ajustes); duplicados quitados en Contactos → Lista.
