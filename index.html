@@ -863,6 +863,8 @@ nav.bottom button span .ico{width:21px;height:21px}
 .hy-link > b{font-size:16px;color:var(--accent-ink)}
 .hy-link span{flex:1;min-width:0}
 .hy-link svg{width:16px;height:16px;flex:none;color:var(--muted)}
+#mf .hy-facts{display:grid;grid-template-columns:1fr 1fr;gap:8px}#mf .hy-facts .btn{justify-content:center}#mf #mfOk,#mf .mf-pos,#mf #mfSk{grid-column:span 2}#mf #mfSk{background:none;border:0}.mf-fecha{white-space:nowrap}
+.mf-pos{display:flex;flex-wrap:wrap;gap:8px;align-items:center;flex-basis:100%;padding:10px 0 2px}.mf-pos[hidden]{display:none}.mf-fecha{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted)}.mf-fecha input{padding:6px 8px;border:1px solid var(--line);border-radius:8px;font:inherit;background:var(--card);color:var(--ink)}.pv-dn{display:inline-block!important;width:auto!important;min-width:20px;padding:0 6px;margin-left:4px;border-radius:10px;background:rgba(255,255,255,.25);font-size:12px;line-height:20px;text-align:center}
 .hy-fprog{display:flex;justify-content:space-between;font-size:12.5px;font-weight:700;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em}
 .hy-fcard{padding:16px 2px 6px}.hy-fcard h3{margin:0 0 6px;font-size:20px;line-height:1.3}
 .hy-fcard input{width:100%;margin-top:4px}
@@ -2402,7 +2404,7 @@ async function apiX(op, extra){
 }
 // Nivel 2 del script Extras: recordatorios y base de contactos. Nivel 3: la base solo usa contacto@blacklinechile.cl. Nivel 4: eventos de varios días.
 function extNivel(){ return S.extInactivo ? 0 : (S.ext && S.ext.nivel) || 1; }
-const APP_VER = 'v63', NIVEL_ULTIMO = 40;
+const APP_VER = 'v64', NIVEL_ULTIMO = 40;
 function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < NIVEL_ULTIMO; }
 let sincTimer = null;
 // Después de cambiar tareas, el script actualiza los recordatorios del calendario (en segundo plano).
@@ -2547,7 +2549,8 @@ function render(){
 
 /* ---------- lógica: listas y prioridad inteligente ---------- */
 function pendientes(){ return S.data.tareas.filter(t => !t.hecho); }
-function hechasEl(dia){ return S.data.tareas.filter(t => t.hecho && (t.cierre || '').slice(0, 10) === dia); }
+function esCancelada(t){ return /^❌ Cancelada/.test(String(t.notas || '')); }
+function hechasEl(dia){ return S.data.tareas.filter(t => t.hecho && !esCancelada(t) && (t.cierre || '').slice(0, 10) === dia); }
 function vencidas(){ const h = hoy(); return pendientes().filter(t => t.limite && t.limite < h); }
 function paraHoy(){ const h = hoy(); return pendientes().filter(t => (t.limite && t.limite <= h) || t.estado === 'En curso'); }
 function ordenar(a, b){
@@ -5550,7 +5553,7 @@ function viewHoyPiso(){
   const paso = (k, n, ic, t, sub, tono) => '<button class="pv-s ' + (n ? tono : 'ok') + '" data-pv="' + k + '"><span class="pv-si">' + ic + '</span><span class="pv-sn">' + n + '</span><span class="pv-st">' + t + '</span><span class="pv-ss">' + sub + '</span>' + icon('arrow') + '</button>';
   let html = (S.vistaPiso && !esPiso() && !UI2() ? '<div class="pv-prev">👀 Vista previa del <b>Hoy del Piso de venta</b> (tú sigues como Admin).<button class="btn sm sec" id="pvSalir">Volver a mi Hoy</button></div>' : '') +
     '<section class="pv-hero"><div class="pv-hl"><div class="pv-k">' + esc(fmtLong(h)) + '</div><h2>' + sal + ', ' + esc(esPiso() ? 'equipo' : (params()['Tu nombre (para el saludo)'] || 'equipo')) + '</h2><p>' + esc(foco) + '</p>' +
-      '<div class="pv-ha"><button class="btn" id="pvAdd">' + icon('plus') + ' Agregar tarea</button><button class="btn sec" id="pvCop">' + icon('spark') + ' Preguntar al Cerebro</button>' + (esPiso() ? '<button class="btn sec" id="pvGuia">¿Nuevo en la tienda?</button>' : (cerebroPlan() ? '<button class="btn sec" id="pvPlan">' + icon('brain') + ' Plan del Cerebro</button>' : '<button class="btn sec" id="pvIA">' + icon('brain') + ' Planificar mi día</button>')) + '</div></div>' +
+      '<div class="pv-ha"><button class="btn" id="pvDia">' + icon('arrow') + ' Empezar mi día' + (function(){ try { const n = pendientesHoyN(); return n ? ' <b class="pv-dn">' + n + '</b>' : ''; } catch(e){ return ''; } })() + '</button><button class="btn sec" id="pvAdd">' + icon('plus') + ' Agregar tarea</button><button class="btn sec" id="pvCop">' + icon('spark') + ' Preguntar al Cerebro</button>' + (esPiso() ? '<button class="btn sec" id="pvGuia">¿Nuevo en la tienda?</button>' : (cerebroPlan() ? '<button class="btn sec" id="pvPlan">' + icon('brain') + ' Plan del Cerebro</button>' : '<button class="btn sec" id="pvIA">' + icon('brain') + ' Planificar mi día</button>')) + '</div></div>' +
       '<div class="pv-hr">' + hyWx() + progresoHTML(accH, accT, 'acciones del día') + '</div></section>' +
     '<div class="pv-lbl">Empieza por aquí</div><div class="pv-steps">' +
       paso('resp', D.resp.length, '💬', 'Responder', D.resp.length ? plural(D.resp.length, 'cliente espera', 'clientes esperan') : 'nadie espera', 'bad') +
@@ -5602,7 +5605,7 @@ function viewHoyPiso(){
   v.querySelectorAll('.pv-pi [data-av]').forEach(b => b.onclick = () => { const a = avisos().find(x => x.id === b.dataset.av); if (!a) return; if (esPiso()) modal('📌 ' + esc(a.titulo), '<p style="line-height:1.55;margin:0">' + esc(a.detalle || '') + '</p>' + (a.fecha ? '<div class="hint" style="margin-top:10px">' + esc(fmtLong(a.fecha)) + '</div>' : '')); else avisoForm(a); });
   bindExterno(v);
   const f = (id, fn) => { const b = $('#' + id); if (b) b.onclick = fn; };
-  f('pvAdd', () => openAdd({ limite: h })); f('pvTkAdd', () => openAdd({ limite: h })); f('pvCop', () => copiloto()); f('pvGuia', () => openGuia());
+  f('pvDia', () => modoEnfoque()); f('pvAdd', () => openAdd({ limite: h })); f('pvTkAdd', () => openAdd({ limite: h })); f('pvCop', () => copiloto()); f('pvGuia', () => openGuia());
   f('pvPlan', () => abrirPlan()); f('pvIA', () => planificarDia());
   f('pvRtE', editarRutina); f('pvMa', () => { S.pvMes = (S.pvMes || 0) - 1; viewHoyPiso(); }); f('pvMs', () => { S.pvMes = (S.pvMes || 0) + 1; viewHoyPiso(); });
   f('pvSalir', () => { S.vistaPiso = false; render(); });
@@ -7466,10 +7469,11 @@ function modoEnfoque(){
     } else if (q.k === 't'){
       const t = q.t, p = puntaje(t);
       cuerpo = '<h3>' + esc(t.tarea) + '</h3><p class="ctx">' + (t.limite && t.limite < D.h ? '<span style="color:var(--bad-ink);font-weight:700">' + esc(p.why) + '</span>' : esc(p.why || '')) + (t.categoria ? ' · ' + esc(t.categoria) : '') + '</p>' + (t.notas ? '<p class="ctx">' + esc(String(t.notas).slice(0, 220)) + '</p>' : '');
-      acts = '<button class="btn" id="mfOk">' + icon('check') + ' Hecha</button><button class="btn sec" id="mfMan">Pasar a mañana</button><button class="btn sec" id="mfPlay">▶ Temporizador</button>';
+      acts = '<button class="btn" id="mfOk">' + icon('check') + ' Hecha</button><button class="btn sec" id="mfPos">Posponer ▾</button><button class="btn sec" id="mfEsp">Esperando respuesta</button><button class="btn sec" id="mfPlay">▶ Temporizador</button><button class="btn sec" id="mfCan">Cancelar tarea</button>' +
+        '<div class="mf-pos" id="mfPosM" hidden><button class="btn sm sec" data-pos="1">Mañana</button><button class="btn sm sec" data-pos="lun">Próximo lunes</button><button class="btn sm sec" data-pos="7">En una semana</button><label class="mf-fecha">Otra fecha <input type="date" id="mfF" min="' + addDays(D.h, 1) + '"></label></div>';
     } else {
       const n = q.x.n, c = n.contacto ? contactoPorId(n.contacto) : null, tel = telWA(c);
-      cuerpo = '<h3>' + esc(n.titulo) + '</h3><p class="ctx">' + (n.valor ? '<b>' + clpCorto(n.valor) + '</b> · ' : '') + esc(n.etapa) + ' · <span style="color:var(--warn-ink)">' + esc(motivoAlerta(n, q.x.a)) + '</span></p>' + (n.proxima ? '<p class="ctx">Próximo paso: <b>' + esc(n.proxima) + '</b></p>' : '') +
+      cuerpo = '<h3>' + esc(n.titulo) + '</h3><p class="ctx">' + (n.valor && !esPiso() ? '<b>' + clpCorto(n.valor) + '</b> · ' : '') + esc(n.etapa) + ' · <span style="color:var(--warn-ink)">' + esc(motivoAlerta(n, q.x.a)) + '</span></p>' + (n.proxima ? '<p class="ctx">Próximo paso: <b>' + esc(n.proxima) + '</b></p>' : '') +
         (tel ? '<div class="acts" style="margin:6px 0 10px"><a class="btn sm sec" target="_blank" href="https://wa.me/' + esc(tel) + '">' + icon('note') + ' WhatsApp</a><a class="btn sm sec" href="tel:' + esc(tel) + '">' + icon('phone') + ' Llamar</a></div>' : '') +
         '<input type="text" id="mfN" placeholder="¿Qué pasó? (ej.: le mandé la cotización, responde el viernes)">';
       acts = '<button class="btn" id="mfOk">Registrar y seguir</button><button class="btn sec" id="mfAb">Abrir negociación</button>';
@@ -7484,7 +7488,22 @@ function modoEnfoque(){
       $b('#mfOk').onclick = async () => { $b('#mfOk').disabled = true; await marcarRespondido(q.x); sig(true); };
     } else if (q.k === 't'){
       $b('#mfOk').onclick = async () => { $b('#mfOk').disabled = true; try { await toggle(q.t); } catch(e){} sig(true); };
-      $b('#mfMan').onclick = async () => { $b('#mfMan').disabled = true; try { await updateTask(q.t, { limite: addDays(D.h, 1) }); q.t.limite = addDays(D.h, 1); } catch(e){ toast('No se pudo mover: ' + e.message); } sig(false); };
+      const mover = async f => { if (!f) return; $b('#mfPos').disabled = true; try { await updateTask(q.t, { limite: f }); q.t.limite = f; toast('Pospuesta para ' + fmtRel(f).toLowerCase()); } catch(e){ toast('No se pudo mover: ' + e.message); } sig(false); };
+      $b('#mfPos').onclick = () => { const mm = $b('#mfPosM'); mm.hidden = !mm.hidden; };
+      box.querySelectorAll('[data-pos]').forEach(x => x.onclick = () => mover(x.dataset.pos === 'lun' ? nextMonday(D.h) : addDays(D.h, +x.dataset.pos)));
+      $b('#mfF').onchange = e => mover(e.target.value);
+      $b('#mfEsp').onclick = async () => { $b('#mfEsp').disabled = true; const f = addDays(D.h, 2); try { await updateTask(q.t, { estado: 'Esperando respuesta', limite: f }); q.t.estado = 'Esperando respuesta'; q.t.limite = f; toast('En espera: vuelve a aparecer ' + fmtRel(f).toLowerCase()); } catch(e){ toast('No se pudo guardar: ' + e.message); } sig(false); };
+      $b('#mfCan').onclick = async () => {
+        if (!confirm('¿Cancelar «' + q.t.tarea + '»? Queda en el historial como cancelada.')) return;
+        $b('#mfCan').disabled = true;
+        try {
+          const nota = '❌ Cancelada el ' + fmt(D.h) + (q.t.notas ? '\n' + q.t.notas : '');
+          await updateTask(q.t, { notas: nota }); q.t.notas = nota;
+          await api('toggle', { row: q.t.row, tarea: q.t.tarea, hecho: true }); q.t.hecho = true; q.t.cierre = D.h + 'T' + new Date().toTimeString().slice(0, 5);
+          toast('Tarea cancelada');
+        } catch(e){ toast('No se pudo cancelar: ' + e.message); }
+        sig(false);
+      };
       $b('#mfPlay').onclick = () => { m.cerrar(); openFocus(q.t); };
     } else {
       $b('#mfOk').onclick = async () => { const tx = $b('#mfN').value.trim(); if (!tx){ $b('#mfN').focus(); toast('Escribe en una línea qué pasó'); return; } $b('#mfOk').disabled = true; await negRegistrar(q.x.n, '📝 Nota', tx); sig(true); };

@@ -383,3 +383,10 @@ Basado en un estudio visual de los 20 CRM de referencia (Linear, Attio, HubSpot 
 - **Pestañas subrayadas** (estilo Linear/HubSpot) en vez de cápsulas; menú lateral con estado activo gris.
 - **Avisos** como tarjeta sobria (sin post-it); **progreso** como número + barra fina en vez de anillos grandes; **avatares** en tonos tenues estables por nombre.
 - Encabezado con íconos (buscar, ayuda, actualizar, ajustes); duplicados quitados en Contactos → Lista.
+
+## Empezar mi día (app v64)
+
+- Botón **Empezar mi día** en Hoy (Admin y Piso de venta), con el número de pendientes. Abre un pop-up que muestra una cosa a la vez: clientes que esperan respuesta, tareas atrasadas y de hoy, y negociaciones que necesitan un empujón.
+- Cada tarea tiene: **Hecha**, **Posponer** (mañana, próximo lunes, en una semana u otra fecha), **Esperando respuesta** (cambia el estado y vuelve en 2 días), **Temporizador**, **Cancelar tarea** y **Saltar**.
+- **Cancelar** cierra la tarea con la nota «❌ Cancelada el …» al inicio: queda en el historial pero no cuenta como hecha (`esCancelada`).
+- Para el Piso de venta no se muestran montos de las negociaciones.
