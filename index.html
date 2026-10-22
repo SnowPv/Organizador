@@ -2509,7 +2509,7 @@ async function apiX(op, extra){
 }
 // Nivel 2 del script Extras: recordatorios y base de contactos. Nivel 3: la base solo usa contacto@blacklinechile.cl. Nivel 4: eventos de varios días.
 function extNivel(){ return S.extInactivo ? 0 : (S.ext && S.ext.nivel) || 1; }
-const APP_VER = 'v66', NIVEL_ULTIMO = 41;
+const APP_VER = 'v67', NIVEL_ULTIMO = 41;
 function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < NIVEL_ULTIMO; }
 let sincTimer = null;
 // Después de cambiar tareas, el script actualiza los recordatorios del calendario (en segundo plano).
@@ -8750,7 +8750,8 @@ S.ext = lsGet('extCache', null);
 S.base = lsGet('baseCache', null);
 { const c = lsGet('igCache', null); if (c){ S.ig = c.ig; S.cont = c.cont; } }
 S.neg = lsGet('negCache', null);
-if (!LS.url || !LS.token) { render(); showSetup(); } else if (LS.usrActivos === '1' && !LS.ses) { pantallaLogin(); } else { render(); load(); revisarCompartido(); }
+// Arranca cuando todo el código ya está definido (con datos guardados, render() corre de inmediato y usa funciones de más abajo).
+setTimeout(() => { if (!LS.url || !LS.token) { render(); showSetup(); } else if (LS.usrActivos === '1' && !LS.ses) { pantallaLogin(); } else { render(); load(); revisarCompartido(); } }, 0);
 if (LS.usrActivos === '1' && LS.ses){ const bs = $('nav.bottom .brand small'); if (bs) bs.textContent = esPiso() ? 'Piso de venta' : 'Blackline · Admin'; }
 
 /* ---------- Resumen de cada pestaña: qué hay aquí, explicado con gráficos ---------- */
@@ -8848,7 +8849,7 @@ function conDash(fn, tab){ return function(){ const r = fn.apply(this, arguments
 viewHoy = conDash(viewHoy, 'hoy'); viewTareas = conDash(viewTareas, 'tareas'); viewSemana = conDash(viewSemana, 'semana'); viewPeriodo = conDash(viewPeriodo, 'semana');
 viewCompras = conDash(viewCompras, 'compras'); viewNegocios = conDash(viewNegocios, 'negocios'); viewProy = conDash(viewProy, 'proy'); viewBase = conDash(viewBase, 'base'); viewRedes = conDash(viewRedes, 'redes');
 
-const plural = (n, s, p) => n + ' ' + (n === 1 ? s : (p || s + 's'));
+function plural(n, s, p){ return n + ' ' + (n === 1 ? s : (p || s + 's')); }
 function dashTareas(){
   const h = hoy(), P = pendientes(), venc = vencidas(), hoyL = P.filter(t => t.limite === h), prox = P.filter(t => t.limite > h), sinF = P.filter(t => !t.limite);
   const hechas = hechasEl(h).length, plan = hechas + venc.length + hoyL.length, meta = metaDiaria();
