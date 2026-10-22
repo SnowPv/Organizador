@@ -2384,6 +2384,16 @@ body.ui2{background:#F6F7F9!important}
 .rz-t{flex:1;min-width:0;display:flex;flex-direction:column}.rz-t b{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.rz-t small{font-size:12px;color:var(--muted)}
 .rz-d{font-weight:650;font-size:13.5px;font-variant-numeric:tabular-nums;white-space:nowrap}
 .rz-u{font-size:13px;color:var(--muted);margin-bottom:8px}.rz-u input.rz-n{width:54px}.rz-u input{width:120px;padding:5px 8px;border:1px solid var(--line);border-radius:8px;font:inherit;font-weight:650;color:var(--ink)}
+.err-st{white-space:pre-wrap;font-size:11px;background:var(--soft);border-radius:8px;padding:8px;max-height:160px;overflow:auto;margin:8px 0 0}
+.cpn{display:flex;align-items:center;gap:12px;width:100%;border:0;background:none;padding:10px 4px;border-top:1px solid var(--line);text-align:left;cursor:pointer;font:inherit;color:inherit}.cpn:first-child{border-top:0}.cpn .grow{min-width:0;display:flex;flex-direction:column}.cpn small{color:var(--muted);font-size:12.5px}.cpn:hover{background:var(--soft)}
+.cop-f{align-items:flex-end}.cop-mic{flex:none;width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--ink);display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
+.cop-mic .ico{width:19px;height:19px}.cop-mic.rec{background:#E5484D;border-color:#E5484D;color:#fff;animation:micP 1.2s ease-in-out infinite}
+@keyframes micP{0%,100%{box-shadow:0 0 0 0 rgba(229,72,77,.45)}50%{box-shadow:0 0 0 8px rgba(229,72,77,0)}}
+.cop.voz #copQ{border-color:#E5484D}
+.cm-tl{display:flex;align-items:center;gap:8px;margin-top:10px;flex-wrap:wrap}
+.cm-say{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:5px 11px;font:inherit;font-size:12.5px;font-weight:600;color:var(--muted);display:inline-flex;align-items:center;gap:5px;cursor:pointer}.cm-say .ico{width:14px;height:14px}.cm-say.on{color:var(--accent-ink);border-color:var(--accent)}
+.cm-all{margin-left:auto}.cm-acc .btn.ok{background:#E3F6EE!important;color:var(--ok-ink)!important;border-color:#E3F6EE!important}
+.cop-dic{border-color:#F5C2C4!important;color:#B4232A!important;font-weight:600}.cop-dic .ico{width:14px;height:14px;vertical-align:-2px}
 </style>
 
 
@@ -2509,7 +2519,7 @@ async function apiX(op, extra){
 }
 // Nivel 2 del script Extras: recordatorios y base de contactos. Nivel 3: la base solo usa contacto@blacklinechile.cl. Nivel 4: eventos de varios días.
 function extNivel(){ return S.extInactivo ? 0 : (S.ext && S.ext.nivel) || 1; }
-const APP_VER = 'v68', NIVEL_ULTIMO = 41;
+const APP_VER = 'v69', NIVEL_ULTIMO = 42;
 function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < NIVEL_ULTIMO; }
 let sincTimer = null;
 // Después de cambiar tareas, el script actualiza los recordatorios del calendario (en segundo plano).
@@ -2741,7 +2751,7 @@ function taskHTML(t, opt){
 // Una tarea que viene de una negociación o de un cliente muestra el atajo para abrirlo (conexión Tareas ↔ Negocios ↔ Contactos).
 function vinculosTarea(t){
   const n = String(t.notas || ''), mN = n.match(/\((N-[a-z0-9]+)\)/i), mC = n.match(/\[((?:wa:|c-)[^\]]+|[^\]\s]+@[^\]\s]+)\]/);
-  const neg = mN && S.neg ? negocios().find(x => x.id === mN[1]) : null, c = mC ? contactoPorId(mC[1]) : null;
+  const neg = mN && S.neg ? negociosTodos().find(x => x.id === mN[1]) : null, c = mC ? contactoPorId(mC[1]) : null;
   return (neg ? '<button class="tlink" data-tneg="' + esc(neg.id) + '" title="Abrir la negociación">🤝 ' + esc(String(neg.titulo).slice(0, 28)) + '</button>' : '') +
     (c && (!neg || neg.contacto !== c.id) ? '<button class="tlink" data-tcto="' + esc(c.id) + '" title="Abrir la ficha">👤 ' + esc(String(c.nombre || c.telefono).slice(0, 24)) + '</button>' : '');
 }
@@ -2752,9 +2762,9 @@ function subTag(t){
 }
 function bindTasks(root){
   root.querySelectorAll('[data-tog]').forEach(b => b.onclick = e => { e.stopPropagation(); toggle(S.data.tareas[+b.dataset.tog]); });
-  root.querySelectorAll('[data-open]').forEach(b => b.onclick = () => openDetail(S.data.tareas[+b.dataset.open]));
+  root.querySelectorAll('[data-open]').forEach(b => b.onclick = () => openDetail(((S.data && S.data.tareas) || [])[+b.dataset.open]));
   root.querySelectorAll('[data-focus]').forEach(b => b.onclick = e => { e.stopPropagation(); openFocus(S.data.tareas[+b.dataset.focus]); });
-  root.querySelectorAll('[data-tneg]').forEach(b => b.onclick = e => { e.stopPropagation(); const n = negocios().find(x => x.id === b.dataset.tneg); if (n) openNegocio(n); });
+  root.querySelectorAll('[data-tneg]').forEach(b => b.onclick = e => { e.stopPropagation(); const n = negociosTodos().find(x => x.id === b.dataset.tneg); if (n) openNegocio(n); });
   root.querySelectorAll('[data-tcto]').forEach(b => b.onclick = e => { e.stopPropagation(); const c = contactoPorId(b.dataset.tcto); if (c) openCto(c); });
 }
 function ring(p, color, track, size){
@@ -2843,6 +2853,7 @@ Object.assign(ICONS, {
   pause: '<path d="M9 5v14M15 5v14"/>',
   alert: '<path d="M12 3 2 20h20z"/><path d="M12 10v4M12 17h.01"/>',
   bike: '<circle cx="6" cy="16" r="3.5"/><circle cx="18" cy="16" r="3.5"/><path d="m6 16 4-7h5l3 7M9 9h3M15 9l-1.5-3H12"/>',
+  volume: '<path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/>',
   mic: '<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>',
   cart: '<path d="M3 4h2l2 11h11l2-8H6"/><circle cx="9" cy="19" r="1.5"/><circle cx="17" cy="19" r="1.5"/>',
   clip: '<path d="M21 11 12 20a5 5 0 0 1-7-7l9-9a3.5 3.5 0 0 1 5 5l-9 9a2 2 0 0 1-3-3l8-8"/>',
@@ -2968,7 +2979,7 @@ function viewInicio(){
   $$('[data-go]').forEach(b => b.onclick = e => { e.stopPropagation(); go(b.dataset.go); });
   $$('[data-gonf]').forEach(b => b.onclick = e => { e.stopPropagation(); S.nf = b.dataset.gonf; S.nv = S.nv || 'lista'; go('negocios'); });
   $$('[data-bgo]').forEach(b => b.onclick = e => { e.stopPropagation(); S.bf = b.dataset.bgo; S.bv = 'lista'; go('base'); });
-  $$('#view [data-neg]').forEach(b => b.onclick = () => openNegocio(negocios().find(x => x.id === b.dataset.neg)));
+  $$('#view [data-neg]').forEach(b => b.onclick = () => openNegocio(negociosTodos().find(x => x.id === b.dataset.neg)));
   $$('#home [data-cto]').forEach(b => b.onclick = () => { const c = contactoPorId(b.dataset.cto); if (c) openCto(c); });
   $$('#view [data-etapa]').forEach(b => b.onclick = () => { S.nf = 'abiertas'; S.nv = 'lista'; S.nq = ''; S.netapa = b.dataset.etapa; go('negocios'); });
   $('#qa').onclick = () => openAdd();
@@ -3055,7 +3066,7 @@ function noticiasHome(){
 // Texto corto de lo que trae la versión nueva del script (el banner de actualización del Inicio).
 function novedadScript(){
   const n = extNivel();
-  return n >= 41 ? 'Empezar de cero: la fecha de inicio se guarda en el script y la ven todos los equipos (Admin y Piso de venta).' : n >= 40 ? 'Ahora hay dos cuentas con contraseña: Admin (todo, como siempre) y Piso de venta (parte en un Hoy nuevo, sin cifras de la tienda). Créalas en ⚙️ Ajustes → Usuarios.' : n >= 39 ? 'La app ahora tiene un solo Cerebro con 9 skills (en vez de agentes sueltos): mira qué hace solo, cuánto gasta y paúsalo en la pestaña Cerebro.' : n >= 37 ? 'Las tareas automáticas ya no bloquean la app (por ejemplo, la lectura de ventas de Bsale).' : n >= 36 ? 'Cuando un cliente con negociación abierta compra en Bsale, la app te propone marcarla como ganada.' : n >= 35 ? 'Ventas del mes igual que en Bsale (solo boletas y facturas, menos notas de crédito) y noticias con foto de portada.' : n >= 34 ? 'Meta y gráfico de ventas del mes en el Inicio, con el avance diario desde Bsale.' : n >= 33 ? 'Une sola las negociaciones duplicadas de una venta ganada.' : n >= 32 ? 'Etapas después del pago: seguimiento, entrega y postventa.' : n >= 31 ? 'Venta perdida: cierra tareas, eventos y la idea de respuesta del Cerebro.' : 'Funciones nuevas para el Organizador.';
+  return n >= 42 ? 'Proveedores fuera del pipeline (el agente ya no les abre negociaciones) y el Cerebro puede agregar contactos nuevos cuando le dictas.' : n >= 41 ? 'Empezar de cero: la fecha de inicio se guarda en el script y la ven todos los equipos (Admin y Piso de venta).' : n >= 40 ? 'Ahora hay dos cuentas con contraseña: Admin (todo, como siempre) y Piso de venta (parte en un Hoy nuevo, sin cifras de la tienda). Créalas en ⚙️ Ajustes → Usuarios.' : n >= 39 ? 'La app ahora tiene un solo Cerebro con 9 skills (en vez de agentes sueltos): mira qué hace solo, cuánto gasta y paúsalo en la pestaña Cerebro.' : n >= 37 ? 'Las tareas automáticas ya no bloquean la app (por ejemplo, la lectura de ventas de Bsale).' : n >= 36 ? 'Cuando un cliente con negociación abierta compra en Bsale, la app te propone marcarla como ganada.' : n >= 35 ? 'Ventas del mes igual que en Bsale (solo boletas y facturas, menos notas de crédito) y noticias con foto de portada.' : n >= 34 ? 'Meta y gráfico de ventas del mes en el Inicio, con el avance diario desde Bsale.' : n >= 33 ? 'Une sola las negociaciones duplicadas de una venta ganada.' : n >= 32 ? 'Etapas después del pago: seguimiento, entrega y postventa.' : n >= 31 ? 'Venta perdida: cierra tareas, eventos y la idea de respuesta del Cerebro.' : 'Funciones nuevas para el Organizador.';
 }
 
 /* ---------- Ventas del mes: avance diario acumulado contra el mes anterior y la meta ---------- */
@@ -3216,7 +3227,7 @@ function openPlanSemana(){
   if (ev.length) html += sec('Eventos de la semana', ev.length, '<div class="wl">' + ev.slice(0, 8).map(e => it('var(--s3)', e.titulo, fmt(e.fecha) + (e.todoElDia ? '' : ' · ' + e.inicio))).join('') + '</div>');
   if (frios.length) html += sec('Clientes sin contacto hace más de 30 días', frios.length, '<div class="wl">' + frios.map(c => it('var(--s2)', c.nombre || c.email, haceTxt(c.ultima), 'data-cto="' + esc(c.id) + '"')).join('') + '</div>');
   const m = modal('📋 Plan de la semana', html, { wide: true });
-  m.el.querySelectorAll('[data-neg]').forEach(b => b.onclick = () => { m.cerrar(); openNegocio(negocios().find(x => x.id === b.dataset.neg)); });
+  m.el.querySelectorAll('[data-neg]').forEach(b => b.onclick = () => { m.cerrar(); openNegocio(negociosTodos().find(x => x.id === b.dataset.neg)); });
   m.el.querySelectorAll('[data-cto]').forEach(b => b.onclick = () => { m.cerrar(); openContacto(contactoPorId(b.dataset.cto)); });
   m.el.querySelectorAll('[data-act]').forEach(b => b.onclick = () => { m.cerrar(); reprogramar(vencidas(), hoy(), b); });
 }
@@ -3838,7 +3849,7 @@ function openContacto(c, opt){
   const cn = $('#c_neg'); if (cn) cn.onclick = () => openNegocio(null, { contacto: c.id });
   $$('#layer [data-agente]').forEach(b => b.onclick = () => analizarAhora(b.dataset.agente, b));
   $$('#layer [data-impc]').forEach(b => b.onclick = () => openImportar({ contacto: b.dataset.impc }));
-  $$('#layer [data-neg]').forEach(b => b.onclick = () => openNegocio(negocios().find(x => x.id === b.dataset.neg)));
+  $$('#layer [data-neg]').forEach(b => b.onclick = () => openNegocio(negociosTodos().find(x => x.id === b.dataset.neg)));
   $('#c_seg').onclick = () => { const n = $('#c_nom').value.trim() || c.nombre || c.email; openAdd({ texto: 'Seguimiento ' + n + ' mañana', notas: c.telefono ? '📞 ' + c.telefono : '' }); };
   $('#c_ok').onclick = async () => {
     const d = { id: c.id, tipo: val('c_tipo') || 'Por clasificar', nombre: $('#c_nom').value.trim(), empresa: $('#c_emp').value.trim(), email: $('#c_mail').value.trim(), telefono: $('#c_tel').value.trim(), etiquetas: $('#c_tag').value.trim(), notas: $('#c_not').value.trim() };
@@ -3921,7 +3932,7 @@ function ctoTab(c, tab){
   } else if (tab === 'negocios'){
     const negs = negocios().filter(x => x.contacto === c.id);
     box.innerHTML = (negs.length ? '<div class="klist">' + negs.map(n => kcardHTML(n, analizar(n), { etapa: true })).join('') + '</div>' : '<div class="empty">Sin negociaciones con este contacto.</div>') + '<div class="btns"><button class="btn sec" id="ct_ng2">＋ Nueva negociación</button></div>';
-    box.querySelectorAll('[data-neg]').forEach(b => b.onclick = () => openNegocio(negocios().find(x => x.id === b.dataset.neg)));
+    box.querySelectorAll('[data-neg]').forEach(b => b.onclick = () => openNegocio(negociosTodos().find(x => x.id === b.dataset.neg)));
     $('#ct_ng2').onclick = () => openNegocio(null, { contacto: c.id });
   } else {
     box.innerHTML = '<label class="l" style="margin-top:0">Tipo</label>' + pills('c_tipo', TIPOS_C.map(x => ({ v: x, t: x })), c.tipo) +
@@ -4413,7 +4424,7 @@ async function planContenido(n){
         const res = await apiX('contenido', { accion: 'guardar', items: sel.map(x => Object.assign({}, x, { estado: banco ? 'Idea' : 'Planificado', idea: x.idea + (x.guion ? '\n\nGUION:\n' + x.guion : '') })) }); S.cont = res.items;
         if (!banco && md.el.querySelector('#ii_tk').checked) for (const x of sel) await api('add', { tarea: { tarea: (x.formato === 'Reel' ? 'Grabar reel: ' : 'Preparar ' + x.formato.toLowerCase() + ': ') + x.tema, area: 'Trabajo', categoria: (S.data.config.categorias.find(c => c.nombre === 'Marketing') || {}).nombre || '', proyecto: '', limite: addDays(x.fecha, -1) < hoy() ? hoy() : addDays(x.fecha, -1), urgente: 'No', importante: 'Sí', tamano: 'Mediana', notas: '📸 Contenido ' + x.fecha + (x.hora ? ' ' + x.hora : '') + ' · ' + x.idea, estado: 'Pendiente' } });
         md.cerrar(); toast(banco ? '💡 ' + sel.length + ' ideas guardadas' : '📅 ' + sel.length + ' publicaciones en tu calendario'); S.mutado = true; if (!banco) load(); S.rtab = 'contenido';
-        if (n && $('#ng_root')) openDeal(negocios().find(y => y.id === n.id) || n, { tab: 'resumen' }); else render();
+        if (n && $('#ng_root')) openDeal(negociosTodos().find(y => y.id === n.id) || n, { tab: 'resumen' }); else render();
       } catch(e){ b.disabled = false; b.textContent = banco ? 'Guardar como ideas sin fecha' : 'Guardar en el calendario'; toast('No se pudo guardar: ' + e.message); }
     };
     md.el.querySelector('#ii_ok').onclick = () => guardar(false);
@@ -5371,7 +5382,8 @@ function ejecutarAccion(a){
   if (t === 'crear_tarea') return openAdd({ texto: a.titulo || a.texto || '', notas: a.detalle && a.detalle !== a.titulo ? a.detalle : '', limite: a.fecha || hoy() });
   if (t === 'crear_aviso') return avisoForm(null, { titulo: a.titulo, detalle: a.detalle, fecha: a.fecha });
   if (t === 'crear_negocio') return openNegocio(null, { contacto: c ? c.id : '', titulo: a.titulo, producto: a.detalle });
-  if (t === 'abrir_negocio'){ const n = S.neg ? negocios().find(x => x.id === ref) : null; return n ? openDeal(n) : go('negocios'); }
+  if (t === 'crear_contacto'){ if (!confirm('¿Agregar a «' + (a.titulo || '') + '» a la base de contactos?')) return; return ejecutarDirecta(a).then(m => { a.hecha = true; toast('✓ ' + m); loadBase(true); copPintar(); }).catch(e => toast('No se pudo: ' + e.message)); }
+  if (t === 'abrir_negocio'){ const n = S.neg ? negociosTodos().find(x => x.id === ref) : null; return n ? openDeal(n) : go('negocios'); }
   if (t === 'abrir_contacto') return c ? openCto(c) : go('base');
   if (t === 'disenar_pieza'){ S.rtab = 'estudio'; go('redes'); setTimeout(() => crearPieza({ tema: a.texto || a.titulo || a.detalle || '' }), 350); return; }
   if (t === 'idea_contenido') return openIdea(null, { tema: a.titulo, idea: a.detalle });
@@ -5385,7 +5397,7 @@ function ejecutarAccion(a){
 const CAMPO_NEG_TX = { etapa: 'Etapa', valor: 'Valor', proxima: 'Próxima acción', fechaProx: 'Fecha próxima acción', motivo: 'Motivo de pérdida', fechaEtapa: 'Fecha del cambio' };
 async function aplicarCambioNegocio(a){
   if (!S.neg) await loadNeg(true);
-  const n = negocios().find(x => x.id === a.ref);
+  const n = negociosTodos().find(x => x.id === a.ref);
   if (!n){ toast('No encontré la negociación ' + (a.ref || '')); return; }
   const C = a.cambios || {}, ant = { etapa: n.etapa, valor: n.valor, proxima: n.proxima, fechaProx: n.fechaProx, motivo: n.motivo, fechaEtapa: '' };
   const fv = (k, v) => k === 'valor' ? clp(+v || 0) : /fecha/i.test(k) ? (v ? fmt(v) : '—') : (v === '' || v == null ? '—' : String(v));
@@ -5850,14 +5862,15 @@ function copiloto(pregunta){
   let p = $('#cop');
   if (!p){
     p = document.createElement('div'); p.id = 'cop'; p.className = 'cop'; p.setAttribute('role', 'dialog'); p.setAttribute('aria-label', 'Cerebro');
-    p.innerHTML = '<div class="cop-h"><span class="cop-av">' + icon('spark') + '</span><div class="grow"><b>Cerebro</b><small>Un cerebro con todas tus skills. Pregunta o pide cambios: tareas, clientes, negocios, stock, Specialized, Instagram y más</small></div><button class="icon-btn" id="copNew" title="Nueva conversación">↺</button><button class="icon-btn" id="copX" aria-label="Cerrar">✕</button></div><div class="cop-m" id="copM"></div><div class="cop-s" id="copS"></div><form class="cop-f" id="copF"><textarea id="copQ" rows="1" placeholder="Pregunta lo que quieras…"></textarea><button class="btn" aria-label="Enviar">' + icon('arrow') + '</button></form>';
+    p.innerHTML = '<div class="cop-h"><span class="cop-av">' + icon('spark') + '</span><div class="grow"><b>Cerebro</b><small>Un cerebro con todas tus skills. Pregunta o pide cambios: tareas, clientes, negocios, stock, Specialized, Instagram y más</small></div><button class="icon-btn" id="copNew" title="Nueva conversación">↺</button><button class="icon-btn" id="copX" aria-label="Cerrar">✕</button></div><div class="cop-m" id="copM"></div><div class="cop-s" id="copS"></div><form class="cop-f" id="copF"><button type="button" class="cop-mic" id="copMic" title="Dictar una actualización" aria-label="Dictar por voz">' + icon('mic') + '</button><textarea id="copQ" rows="1" placeholder="Pregunta o dicta una actualización…"></textarea><button class="btn" aria-label="Enviar">' + icon('arrow') + '</button></form>';
     document.body.appendChild(p);
     p.querySelector('#copX').onclick = () => p.classList.remove('on');
     p.querySelector('#copNew').onclick = () => { S.copHist = []; lsSet('copHist', []); copPintar(); };
     const q = p.querySelector('#copQ');
     q.oninput = () => { q.style.height = 'auto'; q.style.height = Math.min(140, q.scrollHeight) + 'px'; };
     q.onkeydown = e => { if (e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); p.querySelector('#copF').requestSubmit(); } };
-    p.querySelector('#copF').onsubmit = e => { e.preventDefault(); const t = q.value.trim(); if (t){ q.value = ''; q.style.height = 'auto'; copEnviar(t); } };
+    p.querySelector('#copF').onsubmit = e => { e.preventDefault(); const t = q.value.trim(); if (t){ q.value = ''; q.style.height = 'auto'; const voz = !!S._modoVoz; S._modoVoz = false; p.classList.remove('voz'); copEnviar(t, { voz }); } };
+    p.querySelector('#copMic').onclick = () => copMic(p.querySelector('#copMic'));
   }
   p.classList.add('on'); copPintar();
   if (pregunta) copEnviar(pregunta); else setTimeout(() => p.querySelector('#copQ').focus(), 120);
@@ -5866,13 +5879,84 @@ function copPintar(){
   const H = copHist(), m = $('#copM'), s = $('#copS'); if (!m) return;
   m.innerHTML = H.length ? H.map((x, i) => x.rol === 'yo' ? '<div class="cm yo">' + esc(x.texto) + '</div>' :
     '<div class="cm ia' + (x.error ? ' err' : '') + '">' + (x.pensando ? '<span class="cop-dots"><i></i><i></i><i></i></span> Revisando tus fuentes…' : copMd(x.texto)) +
-    ((x.acciones || []).length ? '<div class="cm-acc">' + x.acciones.map((a, k) => '<button class="btn sm' + (k ? ' sec' : '') + '" data-cpa="' + i + ':' + k + '">' + esc(a.titulo || a.tipo) + '</button>').join('') + '</div>' : '') +
+    ((x.acciones || []).length ? '<div class="cm-acc">' + x.acciones.map((a, k) => '<button class="btn sm' + (k ? ' sec' : '') + (a.hecha ? ' ok' : '') + '" data-cpa="' + i + ':' + k + '"' + (a.hecha ? ' disabled' : '') + '>' + (a.hecha ? '✓ ' : '') + esc(a.titulo || a.tipo) + '</button>').join('') + '</div>' : '') +
+    (!x.pensando && !x.error && x.texto ? '<div class="cm-tl"><button class="cm-say" data-say="' + i + '">' + icon('volume') + ' Escuchar</button>' + ((x.acciones || []).filter(a => !a.hecha && ACC_DIRECTA.includes(a.tipo)).length ? '<button class="btn sm cm-all" data-all="' + i + '">' + icon('check') + ' Confirmar todo (' + x.acciones.filter(a => !a.hecha && ACC_DIRECTA.includes(a.tipo)).length + ')</button>' : '') + '</div>' : '') +
     ((x.fuentes || []).length ? '<div class="cm-f">' + x.fuentes.filter(f => f !== 'proponer_accion' && f !== 'leer_skill').map(f => /^skill /.test(f) ? '<span class="sk">Skill: ' + esc(SKILL_NOM[f.slice(6)] || f.slice(6)) + '</span>' : '<span>' + esc(f.replace(/_/g, ' ')) + '</span>').join('') + '</div>' : '') + '</div>').join('') :
     '<div class="cop-hola"><span class="cop-av lg">' + icon('spark') + '</span><b>¿En qué te ayudo?</b><p>Pregúntame por stock y tallas, clientes, negociaciones, qué publicar, el clima o lo que sea. Si hay algo que hacer, te lo dejo listo en un botón.</p></div>';
-  s.innerHTML = (H.length ? [] : (COP_SUG[S.tab] || []).concat(COP_SUG.def).slice(0, 4)).map(t => '<button>' + esc(t) + '</button>').join('');
-  s.querySelectorAll('button').forEach(b => b.onclick = () => copEnviar(b.textContent));
+  s.innerHTML = '<button class="cop-dic" data-dic="1">' + icon('mic') + ' Dictar actualización</button>' + (H.length ? [] : (COP_SUG[S.tab] || []).concat(COP_SUG.def).slice(0, 3)).map(t => '<button>' + esc(t) + '</button>').join('');
+  s.querySelectorAll('button:not([data-dic])').forEach(b => b.onclick = () => copEnviar(b.textContent));
+  const dc = s.querySelector('[data-dic]'); if (dc) dc.onclick = () => copMic($('#copMic'));
   m.querySelectorAll('[data-cpa]').forEach(b => b.onclick = () => { const [i, k] = b.dataset.cpa.split(':').map(Number), a = H[i].acciones[k]; ejecutarAccion(a); if (innerWidth < 1000) $('#cop').classList.remove('on'); });
+  m.querySelectorAll('[data-say]').forEach(b => b.onclick = () => decir(H[+b.dataset.say].texto, b));
+  m.querySelectorAll('[data-all]').forEach(b => b.onclick = () => confirmarTodo(H[+b.dataset.all], b));
+  const ult = H[H.length - 1]; if (ult && ult.voz && ult.rol === 'ia' && !ult.pensando && !ult.leida && !ult.error){ ult.leida = true; if (LS.vozLeer !== 'no') decir(ult.texto); }
   m.scrollTop = m.scrollHeight;
+}
+
+/* ---------- Voz: dictar actualizaciones al Cerebro, confirmar y escuchar ---------- */
+const VOZ_PREF = '[ACTUALIZACIÓN DICTADA POR VOZ — interprétala y conviértela en acciones de la app]\n';
+const VOZ_INSTR = '\n[Cómo responder: primero ubica a cada cliente y su negociación con buscar_clientes y ver_negociaciones. Responde muy breve, en dos partes: «**Entendí:**» (1 a 3 líneas) y «**Voy a hacer:**» (una línea por acción). Propón CADA acción con tus herramientas: proponer_nota_contacto para novedades o datos del cliente; proponer_cambio_negocio para mover de etapa, cambiar valor o próxima acción; proponer_accion tipo crear_tarea (con fecha yyyy-MM-dd y el nombre del cliente en el título), crear_negocio (ref = id del contacto) o crear_contacto si la persona no está en la base (titulo = nombre, ref = teléfono si lo dije, detalle = lo que se sabe). Nada se hace sin que yo confirme. No inventes datos que no dije; si algo es ambiguo (por ejemplo dos clientes con el mismo nombre), pregúntalo en vez de proponerlo.]';
+const ACC_DIRECTA = ['crear_tarea', 'editar_negocio', 'nota_contacto', 'crear_negocio', 'crear_contacto'];
+function copMic(btn){
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition, p = $('#cop'), q = $('#copQ');
+  if (!q) return;
+  S._modoVoz = true; p.classList.add('voz');
+  if (!SR){ q.focus(); toast('Toca el micrófono del teclado y dicta. Luego envía: el Cerebro te confirma antes de hacer algo.'); return; }
+  if (S._rec){ S._rec.stop(); return; }
+  const r = new SR(); r.lang = 'es-CL'; r.interimResults = true; r.continuous = true;
+  let fin = q.value.trim() ? q.value.trim() + ' ' : '';
+  r.onresult = e => { let tmp = ''; for (let i = e.resultIndex; i < e.results.length; i++){ const x = e.results[i]; if (x.isFinal) fin += x[0].transcript + ' '; else tmp += x[0].transcript; } q.value = (fin + tmp).trim(); q.style.height = 'auto'; q.style.height = Math.min(140, q.scrollHeight) + 'px'; };
+  r.onerror = e => { if (e.error !== 'no-speech' && e.error !== 'aborted') toast(e.error === 'not-allowed' ? 'Permite el micrófono para dictar (o usa el micrófono del teclado)' : 'No se pudo escuchar (' + e.error + ')'); };
+  r.onend = () => { S._rec = null; if (btn) btn.classList.remove('rec'); const t = q.value.trim(); if (t){ q.value = ''; q.style.height = 'auto'; S._modoVoz = false; p.classList.remove('voz'); copEnviar(t, { voz: true }); } };
+  S._rec = r; if (btn) btn.classList.add('rec');
+  try { r.start(); toast('Te escucho… habla y toca el micrófono para terminar'); } catch(e){ S._rec = null; if (btn) btn.classList.remove('rec'); q.focus(); }
+}
+function decir(texto, btn){
+  if (!('speechSynthesis' in window)){ toast('Este equipo no puede leer en voz alta'); return; }
+  const ss = window.speechSynthesis;
+  if (ss.speaking){ ss.cancel(); return; }
+  const limpio = String(texto || '').replace(/\*\*|__|`|#+ /g, '').replace(/\[([^\]]+)\]\([^)]+\)/g, '$1').replace(/^[-•]\s*/gm, '').replace(/\n+/g, '. ').slice(0, 1200);
+  const u = new SpeechSynthesisUtterance(limpio); u.lang = 'es-CL'; u.rate = 1.05;
+  const v = ss.getVoices().find(x => /^es[-_](CL|419|MX|US)/i.test(x.lang)) || ss.getVoices().find(x => /^es/i.test(x.lang)); if (v) u.voice = v;
+  if (btn){ btn.classList.add('on'); u.onend = u.onerror = () => btn.classList.remove('on'); }
+  ss.speak(u);
+}
+async function ejecutarDirecta(a){
+  const t = a.tipo, ref = String(a.ref || ''), h = hoy();
+  if (t === 'crear_tarea'){
+    const cat = (S.data.config.categorias.find(c => c.nombre === 'Ventas') || {}).nombre || '';
+    const c = ref ? contactoPorId(ref) : null;
+    await api('add', { tarea: { tarea: a.titulo || a.texto || 'Tarea', area: 'Trabajo', categoria: cat, proyecto: '', limite: /^\d{4}-\d{2}-\d{2}$/.test(a.fecha || '') ? a.fecha : h, urgente: 'No', importante: 'Sí', tamano: 'Pequeña', notas: '🎙️ Dictada al Cerebro' + (a.detalle && a.detalle !== a.titulo ? ' · ' + a.detalle : '') + (c ? ' · ' + (c.nombre || '') + ' [' + c.id + ']' : ''), estado: 'Pendiente' } });
+    return 'Tarea creada';
+  }
+  if (t === 'nota_contacto'){ if (!ref || !a.detalle) throw new Error('falta el cliente'); await apiX('nota', { id: ref, texto: '🎙️ ' + a.detalle }); return 'Nota guardada'; }
+  if (t === 'editar_negocio'){
+    const C = Object.assign({}, a.cambios || {});
+    if (C.etapa === 'Perdida'){ await apiX('perderNegocio', { id: ref, motivo: C.motivo || 'Otro' }); }
+    else { delete C.motivo; if (Object.keys(C).length) await apiX('negocio', { negocio: Object.assign({ id: ref }, C) }); }
+    if (a.detalle) await apiX('negocioNota', { id: ref, texto: '🎙️ ' + a.detalle, tipo: '📝 Nota' });
+    return 'Negociación actualizada';
+  }
+  if (t === 'crear_negocio'){ await apiX('negocio', { negocio: { titulo: a.titulo || 'Negociación', contacto: ref && contactoPorId(ref) ? ref : '', producto: a.detalle || '', etapa: 'Nuevo', origen: '🎙️ Dictado al Cerebro' } }); return 'Negociación creada'; }
+  if (t === 'crear_contacto'){ await apiX('contacto', { contacto: { nombre: a.titulo || '', telefono: ref.replace(/[^\d+]/g, ''), tipo: 'Cliente', notas: a.detalle ? '🎙️ ' + a.detalle : '' } }); return 'Contacto agregado'; }
+  throw new Error('acción no soportada');
+}
+async function confirmarTodo(x, btn){
+  const L = (x.acciones || []).filter(a => !a.hecha && ACC_DIRECTA.includes(a.tipo));
+  if (!L.length) return;
+  btn.disabled = true; btn.innerHTML = '<span class="spin"></span>Haciendo…';
+  let ok = 0; const err = [];
+  // Primero los contactos nuevos, para que las tareas y negociaciones los encuentren.
+  for (const a of L.slice().sort((p, q) => (p.tipo === 'crear_contacto' ? 0 : 1) - (q.tipo === 'crear_contacto' ? 0 : 1))){
+    try { await ejecutarDirecta(a); a.hecha = true; ok++; } catch(e){ err.push((a.titulo || a.tipo) + ': ' + e.message); }
+  }
+  lsSet('copHist', copHist().filter(y => !y.pensando));
+  toast(ok ? '✓ Listo: ' + ok + (ok === 1 ? ' acción' : ' acciones') + (err.length ? ' · ' + err.length + ' con error' : '') : 'No se pudo: ' + err[0]);
+  if (err.length) copHist().push({ rol: 'ia', texto: 'No pude hacer: ' + err.join(' · '), error: true });
+  copPintar();
+  try { await load(); } catch(e){}
+  if (L.some(a => /negocio/.test(a.tipo))) loadNeg(true).then(() => { if (!$('#layer').innerHTML) render(); });
+  if (L.some(a => /contacto/.test(a.tipo))) loadBase(true).then(() => { if (!$('#layer').innerHTML) render(); });
 }
 function contextoPantalla(){
   const t = S.tab, L = [];
@@ -5881,14 +5965,15 @@ function contextoPantalla(){
   const ttl = $('.pop h4'); if (ttl) L.push('Ventana abierta: ' + ttl.textContent.slice(0, 80));
   return L.join(' · ');
 }
-async function copEnviar(texto){
+async function copEnviar(texto, opt){
+  opt = opt || {};
   const H = copHist();
   if (H.some(x => x.pensando)) return;
-  H.push({ rol: 'yo', texto }); const r = { rol: 'ia', texto: '', pensando: true }; H.push(r); copPintar();
+  H.push({ rol: 'yo', texto, voz: !!opt.voz }); const r = { rol: 'ia', texto: '', pensando: true, voz: !!opt.voz }; H.push(r); copPintar();
   try {
     if (extNivel() < 16) throw new Error('Para usar el Cerebro actualiza el script a la versión nueva (Ajustes → Actualizar).');
     if (!iaDisponible()) throw new Error('Falta la clave de Claude (ANTHROPIC_API_KEY) en las propiedades del script.');
-    const res = await apiX('copiloto', { mensajes: H.filter(x => !x.pensando && !x.error).slice(-12).map(x => ({ rol: x.rol, texto: x.texto })), pestana: TITLES[S.tab] || S.tab, contexto: contextoPantalla() });
+    const res = await apiX('copiloto', { mensajes: H.filter(x => !x.pensando && !x.error).slice(-12).map(x => ({ rol: x.rol, texto: x.voz && x.rol === 'yo' ? VOZ_PREF + x.texto + VOZ_INSTR : x.texto })), pestana: TITLES[S.tab] || S.tab, contexto: contextoPantalla() });
     Object.assign(r, { texto: res.texto, acciones: res.acciones || [], fuentes: res.fuentes || [], pensando: false });
   } catch(e){ Object.assign(r, { texto: e.message, error: true, pensando: false }); }
   S.copHist = H.slice(-30); lsSet('copHist', S.copHist.filter(x => !x.pensando)); copPintar();
@@ -6166,7 +6251,7 @@ function abrirDia(f){
   const md = modal(icon('cal') + ' ' + esc(fmtLong(f)), html, { wide: true });
   bindTasks(md.el);
   md.el.querySelector('#dTk').onclick = () => { md.cerrar(); openAdd({ limite: f }); };
-  md.el.querySelectorAll('[data-neg]').forEach(b => b.onclick = () => { md.cerrar(); openDeal(negocios().find(n => n.id === b.dataset.neg)); });
+  md.el.querySelectorAll('[data-neg]').forEach(b => b.onclick = () => { md.cerrar(); openDeal(negociosTodos().find(n => n.id === b.dataset.neg)); });
   md.el.querySelectorAll('[data-ct]').forEach(b => b.onclick = () => { md.cerrar(); openIdea((S.cont || []).find(x => x.id === b.dataset.ct)); });
 }
 
@@ -6202,8 +6287,12 @@ function viewCompras(){
   let html = '<div class="kstrip cp-k"><div class="ks1"><div><b>' + P.length + '</b><small>proveedores</small></div></div><div class="ks1"><div><b>' + (C.total || 0).toLocaleString('es-CL') + '</b><small>productos catalogados</small></div></div><div class="ks1"><div><b>' + O.length + '</b><small>oportunidades de compra</small></div></div><div class="ks1"><div><b>' + promos.length + '</b><small>correos con promos (30 d)</small></div></div></div>';
   html += '<div class="cp-pol">' + icon('flag') + '<span><b>Uso interno.</b> Las promociones de proveedores sirven para comprar mejor y vender a precio normal. Blackline no hace descuentos ni los comunica.</span></div>';
   html += '<div class="cp-bus"><input type="search" id="cpQ" placeholder="' + (extNivel() >= 31 && iaDisponible() ? 'Pregúntale al Cerebro comprador: «pastillas para Levo 4», «lubricante para barro», «casco enduro talla M»…' : 'Buscar en todos los proveedores: «fox 36 grip x2», «hope tech 4», «edge 1050», «magic mary 29»…') + '" value="' + esc(S.cpQ || '') + '"><button class="btn" id="cpGo">Buscar</button></div><div id="cpIA"></div><div id="cpRes"></div>';
-  html += '<div class="btabs"><div class="tabs">' + (extNivel() >= 23 ? [['ventas', '📊 Ventas y rotación']] : []).concat([['oport', 'Oportunidades de compra (' + O.length + ')'], ['prov', 'Proveedores'], ['mail', 'Correos (' + M.length + ')'], ['mov', 'Cambios de precio (' + mov.length + ')']]).map(x => '<button class="' + (x[0] === t ? 'on' : '') + '" data-cpt2="' + x[0] + '">' + x[1] + '</button>').join('') + '</div><button class="btn sm sec" id="cpRef">↻ Actualizar</button></div>';
+  html += '<div class="btabs"><div class="tabs">' + (extNivel() >= 23 ? [['ventas', '📊 Ventas y rotación']] : []).concat([['oport', 'Oportunidades de compra (' + O.length + ')'], ['prov', 'Proveedores'], ['mail', 'Correos (' + M.length + ')'], ['mov', 'Cambios de precio (' + mov.length + ')']]).concat(negociosCompra().length ? [['negs', '🤝 Con proveedores (' + negociosCompra().filter(n => n.estado === 'Abierta').length + ')']] : []).map(x => '<button class="' + (x[0] === t ? 'on' : '') + '" data-cpt2="' + x[0] + '">' + x[1] + '</button>').join('') + '</div><button class="btn sm sec" id="cpRef">↻ Actualizar</button></div>';
   if (t === 'ventas') html += ventasHTML();
+  else if (t === 'negs'){
+    const L = negociosCompra().slice().sort((a, b) => (a.estado === 'Abierta' ? 0 : 1) - (b.estado === 'Abierta' ? 0 : 1) || String(b.actividad || b.creada || '').localeCompare(String(a.actividad || a.creada || '')));
+    html += '<div class="wsub" style="margin:0 2px 10px">Conversaciones de compra con proveedores. No aparecen en el pipeline de ventas.</div><div class="sec">' + (L.length ? L.map(n => { const c = contactoPorId(n.contacto) || {}; return '<button class="cpn" data-cpn="' + esc(n.id) + '">' + avTenue(c.nombre || n.titulo) + '<span class="grow"><b>' + esc(n.titulo) + '</b><small>' + esc(c.nombre || '') + ' · ' + esc(n.estado === 'Abierta' ? n.etapa : esArchivada(n) ? 'Archivada' : n.estado) + (n.proxima ? ' · ' + esc(n.proxima) : '') + '</small></span>' + (n.valor ? '<b class="num">' + clpCorto(n.valor) + '</b>' : '') + '</button>'; }).join('') : '<div class="hint">Sin negociaciones con proveedores.</div>') + '</div>';
+  }
   else if (t === 'oport'){
     const f = S.cpF || 'todas', L = O.filter(o => f === 'todas' || (f === 'vende' && o.vende) || (f === 'piden' && o.piden) || o.prov === f);
     html += '<div class="cp-fil">' + [['todas', 'Todas'], ['vende', 'Las que vendes'], ['piden', 'Las que piden clientes']].concat(P.filter(p => O.some(o => o.prov === p.id)).map(p => [p.id, p.nombre])).map(x => '<button class="pill' + (x[0] === f ? ' on' : '') + '" data-cpf="' + esc(x[0]) + '">' + esc(x[1]) + '</button>').join('') + '</div>';
@@ -6220,6 +6309,7 @@ function viewCompras(){
   }
   $('#view').innerHTML = html;
   $$('[data-cpt2]').forEach(b => b.onclick = () => { S.cpTab = b.dataset.cpt2; render(); });
+  $$('[data-cpn]').forEach(b => b.onclick = () => { const n = negociosTodos().find(x => x.id === b.dataset.cpn); if (n) openDeal(n); });
   if (t === 'ventas') bindVentas();
   $$('[data-cpf]').forEach(b => b.onclick = () => { S.cpF = b.dataset.cpf; S.cpN = 18; render(); });
   if ($('#cpMas')) $('#cpMas').onclick = () => { S.cpN = (S.cpN || 18) + 18; render(); };
@@ -6303,7 +6393,16 @@ const SENALES = [
 const ACTIVIDADES = [['📞 Llamé', '📞 Llamada', 'Contactado'], ['💬 Le escribí', '💬 Mensaje', 'Contactado'], ['🏪 Vino a la tienda', '🏪 Visita', 'Prueba / visita'], ['🚵 Hizo test ride', '🚵 Test ride', 'Prueba / visita'], ['📄 Envié cotización', '📄 Cotización enviada', 'Cotización']];
 const clp = n => '$' + Math.round(n || 0).toLocaleString('es-CL');
 const clpCorto = n => n >= 1e6 ? '$' + (n / 1e6).toFixed(n >= 1e7 ? 0 : 1).replace('.', ',') + ' M' : n >= 1e3 ? '$' + Math.round(n / 1e3) + ' mil' : clp(n);
-function negocios(){ return (S.neg && S.neg.negocios) || []; }
+function negociosTodos(){ return (S.neg && S.neg.negocios) || []; }
+// Las negociaciones con proveedores (compras) no van al pipeline de ventas: se ven en Compras.
+const TIPOS_COMPRA = ['Proveedor'];
+function esNegCompra(n){ if (!n.contacto || !S.base) return false; const c = contactoPorId(n.contacto); return !!(c && TIPOS_COMPRA.includes(c.tipo)); }
+function negocios(){
+  const T = negociosTodos(), k = S._negF;
+  if (k && k.neg === S.neg && k.base === S.base && k.n === T.length) return k.v;
+  const v = T.filter(n => !esNegCompra(n)); S._negF = { neg: S.neg, base: S.base, n: T.length, v }; return v;
+}
+function negociosCompra(){ return negociosTodos().filter(esNegCompra); }
 function abiertos(){ return negocios().filter(n => n.estado === 'Abierta'); }
 // Archivada = sacada del pipeline porque ya no está activa (no es una venta perdida y no cuenta en esas cifras). Se puede reabrir.
 function esArchivada(n){ return n.estado === 'Perdida' && /^Archivad/i.test(String(n.motivo || '')); }
@@ -6400,7 +6499,7 @@ async function negAccion(acc, n, btn){
       if (acc === 'hecho-prox') await apiX('negocioNota', { id: n.id, texto: '✅ ' + n.proxima, tipo: '✅ Acción' });
       await apiX('negocio', { negocio: Object.assign({ id: n.id }, cambios) }); await loadNeg(true);
       toast(acc === 'hecho-prox' ? '✅ Registrado. Define el siguiente paso' : 'Actualizado ✓');
-      const n2 = negocios().find(x => x.id === n.id);
+      const n2 = negociosTodos().find(x => x.id === n.id);
       if (acc === 'hecho-prox' && n2) return openNegocio(n2, { foco: 'prox' });
       refrescarNeg(n2);
     } catch(e){ if (btn) btn.disabled = false; toast('No se pudo: ' + e.message); }
@@ -6452,7 +6551,7 @@ function openDeal(n, opt){
   const on = (id, f) => { const x = $('#' + id); if (x) x.onclick = f; };
   on('dx_act', () => openActividad(n)); on('dx_prox', () => openProximo(n)); on('dx_chat', () => irAlChat(c.id)); on('dx_prox2', () => openProximo(n));
   on('ng_win', () => moverEtapa(n, 'Ganada')); on('ng_lose', () => openPerdida(n)); on('ng_reopen', () => moverEtapa(n, 'Negociación')); on('ng_arch', async () => { if (!confirm('¿Archivar «' + n.titulo + '»? Sale del pipeline y no cuenta como venta perdida. La encuentras en el filtro Archivadas.')) return; try { await archivarNeg(n); closeSheet(); toast('🗄️ Archivada'); await loadNeg(true); render(); } catch(e){ toast('No se pudo archivar: ' + e.message); } }); on('ng_ent', () => moverEtapa(n, 'Entregada'));
-  on('dx_done', async () => { const b = $('#dx_done'); b.disabled = true; try { await apiX('negocioNota', { id: n.id, texto: '✅ ' + n.proxima, tipo: '✅ Acción' }); await apiX('negocio', { negocio: { id: n.id, proxima: '', fechaProx: '' } }); await loadNeg(true); toast('✓ Registrado. ¿Cuál es el siguiente paso?'); const n2 = negocios().find(x => x.id === n.id); openDeal(n2); openProximo(n2); } catch(e){ b.disabled = false; toast('No se pudo: ' + e.message); } });
+  on('dx_done', async () => { const b = $('#dx_done'); b.disabled = true; try { await apiX('negocioNota', { id: n.id, texto: '✅ ' + n.proxima, tipo: '✅ Acción' }); await apiX('negocio', { negocio: { id: n.id, proxima: '', fechaProx: '' } }); await loadNeg(true); toast('✓ Registrado. ¿Cuál es el siguiente paso?'); const n2 = negociosTodos().find(x => x.id === n.id); openDeal(n2); openProximo(n2); } catch(e){ b.disabled = false; toast('No se pudo: ' + e.message); } });
 }
 function dealTab(n, a, tab){
   const box = $('#dtab'), c = a.c, h = hoy();
@@ -6501,7 +6600,7 @@ function dealTab(n, a, tab){
     const vIn = $('#ng_v'); vIn.oninput = () => { const d = vIn.value.replace(/\D/g, ''); vIn.value = d ? (+d).toLocaleString('es-CL') : ''; };
     $('#dx_save').onclick = async () => {
       const b = $('#dx_save'); b.disabled = true;
-      try { await apiX('negocio', { negocio: { id: n.id, titulo: $('#ng_t').value.trim() || n.titulo, contacto: $('#ng_c').value, producto: $('#ng_p').value.trim(), valor: +($('#ng_v').value.replace(/\D/g, '')) || 0, cierre: $('#ng_ci').value, notas: $('#ng_n').value.trim() } }); await loadNeg(true); toast('Guardado ✓'); openDeal(negocios().find(x => x.id === n.id), { tab: 'datos' }); }
+      try { await apiX('negocio', { negocio: { id: n.id, titulo: $('#ng_t').value.trim() || n.titulo, contacto: $('#ng_c').value, producto: $('#ng_p').value.trim(), valor: +($('#ng_v').value.replace(/\D/g, '')) || 0, cierre: $('#ng_ci').value, notas: $('#ng_n').value.trim() } }); await loadNeg(true); toast('Guardado ✓'); openDeal(negociosTodos().find(x => x.id === n.id), { tab: 'datos' }); }
       catch(e){ b.disabled = false; toast('No se pudo guardar: ' + e.message); }
     };
   } else if (tab === 'stock'){
@@ -6538,7 +6637,7 @@ function openProximo(n, sug){
       await apiX('negocio', { negocio: { id: n.id, proxima: t, fechaProx: f } });
       if (m.el.querySelector('#px_k').checked) await api('add', { tarea: { tarea: '🤝 ' + t + ' – ' + n.titulo, area: 'Trabajo', categoria: (S.data.config.categorias.find(c => c.nombre === 'Ventas') || {}).nombre || '', proyecto: '', limite: f || h, urgente: 'No', importante: 'Sí', tamano: 'Pequeña', notas: negTag(n), estado: 'Pendiente' } });
       m.cerrar(); toast('➡️ Próximo paso guardado'); await loadNeg(true); if (m.el.querySelector('#px_k').checked) S.mutado = true;
-      refrescarNeg(negocios().find(x => x.id === n.id));
+      refrescarNeg(negociosTodos().find(x => x.id === n.id));
     } catch(err){ m.el.querySelector('#px_ok').disabled = false; toast('No se pudo guardar: ' + err.message); }
   };
 }
@@ -6550,7 +6649,7 @@ async function negRegistrar(n, tipo, texto, etapaSug){
     if (etapaSug && n.estado === 'Abierta' && iA >= 0 && iS > iA){ await apiX('negocio', { negocio: { id: n.id, etapa: etapaSug } }); toast('📝 Registrado · ➡️ avanzó a ' + etapaSug); }
     else toast('📝 Registrado');
     await Promise.all([loadNeg(true), loadBase(true)]);
-    refrescarNeg(negocios().find(x => x.id === n.id));
+    refrescarNeg(negociosTodos().find(x => x.id === n.id));
   } catch(e){ toast('No se pudo registrar: ' + e.message); }
 }
 async function moverEtapa(n, k, extra){
@@ -6566,7 +6665,7 @@ async function moverEtapa(n, k, extra){
     else if (k === 'Entregada') toast('✅ Entregada · postventa agendada: garantía, llamada a los 7 días, revisión de los 30 días y reseña');
     else toast((etapaDe(n).ic || '') + ' Movida a ' + k);
     await Promise.all([loadNeg(true), loadBase(true), POST_ETAPAS.includes(k) ? load() : null]);
-    const n2 = negocios().find(x => x.id === n.id);
+    const n2 = negociosTodos().find(x => x.id === n.id);
     refrescarNeg(n2);
     const et = ETAPAS[etapaIdx(k)];
     if (n2 && et && etapaIdx(k) > etapaIdx(antes)) openProximo(n2, { t: et.sig, d: et.sd || 1 });
@@ -6584,7 +6683,7 @@ function openGanada(n){
   const fPago = () => { const f = $('#gw_f').value; return /^\d{4}-\d{2}-\d{2}$/.test(f) && f <= h ? f : h; };
   $('#gw_si').onclick = () => { const f = fPago(); closeSheet(); moverEtapa(n, 'Entregada', { fechaGanada: f }); };
   $('#gw_no').onclick = () => { const f = fPago(), e = $('#gw_e').value; closeSheet(); moverEtapa(n, 'Ganada', { fechaEtapa: f, entrega: /^\d{4}-\d{2}-\d{2}$/.test(e) ? e : addDays(h, 3) }); };
-  $('#gw_x').onclick = () => { closeSheet(); refrescarNeg(negocios().find(x => x.id === n.id) || n); };
+  $('#gw_x').onclick = () => { closeSheet(); refrescarNeg(negociosTodos().find(x => x.id === n.id) || n); };
 }
 // Cierre por pérdida: un solo lugar para avisar que la venta se cayó. Cancela las tareas y los eventos que colgaban de ella,
 // apaga la idea de respuesta del Cerebro (y evita que la reabra), etiqueta al cliente y agenda el reintento si quieres.
@@ -6641,7 +6740,7 @@ function openPerdida(n, opt){
       }
       await Promise.all([load(), loadNeg(true), loadBase(true)]); render();
       const partes = [borradas ? borradas + (borradas === 1 ? ' tarea cancelada' : ' tareas canceladas') : '', r.eventos ? r.eventos + (r.eventos === 1 ? ' evento borrado' : ' eventos borrados') : '', reintento ? 'reintento el ' + fmtAnio(reintento) : ''].filter(Boolean);
-      aviso('❌ Venta perdida registrada' + (partes.length ? ': ' + partes.join(', ') : '') + '. ¡A la próxima! 💪' + (r.errores && r.errores.length ? ' Revisa a mano: ' + r.errores.join('; ') : ''), 'Ver', () => { const n2 = negocios().find(x => x.id === n.id); if (n2) openNegocio(n2); });
+      aviso('❌ Venta perdida registrada' + (partes.length ? ': ' + partes.join(', ') : '') + '. ¡A la próxima! 💪' + (r.errores && r.errores.length ? ' Revisa a mano: ' + r.errores.join('; ') : ''), 'Ver', () => { const n2 = negociosTodos().find(x => x.id === n.id); if (n2) openNegocio(n2); });
     } catch(e){ toast('No se pudo cerrar la venta: ' + e.message); }
   };
 }
@@ -6751,8 +6850,8 @@ function viewNegocios(){
   $('#ngNew').onclick = () => openNegocio(null);
   const st = $('#ngStock'); if (st) st.onclick = () => openStock('');
   const lp = $('#ngLimp'); if (lp) lp.onclick = () => empezarDeCero({ soloNeg: true });
-  $$('#view [data-neg]').forEach(b => b.onclick = () => openNegocio(negocios().find(x => x.id === b.dataset.neg)));
-  $$('[data-nmv]').forEach(b => b.onclick = e => { e.stopPropagation(); moverEtapa(negocios().find(x => x.id === b.dataset.nmv), b.dataset.k); });
+  $$('#view [data-neg]').forEach(b => b.onclick = () => openNegocio(negociosTodos().find(x => x.id === b.dataset.neg)));
+  $$('[data-nmv]').forEach(b => b.onclick = e => { e.stopPropagation(); moverEtapa(negociosTodos().find(x => x.id === b.dataset.nmv), b.dataset.k); });
   $$('[data-nf]').forEach(b => b.onclick = () => { S.nf = b.dataset.nf; viewNegocios(); });
   const nx = $('#netX'); if (nx) nx.onclick = () => { S.netapa = ''; viewNegocios(); };
   $$('[data-opc]').forEach(b => b.onclick = () => openNegocio(null, { contacto: b.dataset.opc }));
@@ -6762,7 +6861,7 @@ function viewNegocios(){
   $$('.kcol').forEach(col => {
     col.ondragover = e => { e.preventDefault(); col.classList.add('over'); };
     col.ondragleave = e => { if (!col.contains(e.relatedTarget)) col.classList.remove('over'); };
-    col.ondrop = e => { e.preventDefault(); col.classList.remove('over'); const n = negocios().find(x => x.id === e.dataTransfer.getData('text/plain')); if (n && n.etapa !== col.dataset.k) moverEtapa(n, col.dataset.k); };
+    col.ondrop = e => { e.preventDefault(); col.classList.remove('over'); const n = negociosTodos().find(x => x.id === e.dataTransfer.getData('text/plain')); if (n && n.etapa !== col.dataset.k) moverEtapa(n, col.dataset.k); };
   });
 }
 function resumenNegHTML(m){
@@ -6822,7 +6921,7 @@ function listaNegHTML(){
         '<td style="white-space:nowrap" data-info="dAct" data-ref="' + esc(n.id) + '">' + haceTxt(a.ultAct) + '</td></tr>'; }).join('') + '</tbody></table></div>' + pie;
 }
 /* ---------- ⓘ qué significa cada número ---------- */
-function negPorId(id){ return negocios().find(x => x.id === id); }
+function negPorId(id){ return negociosTodos().find(x => x.id === id); }
 function dec(x){ return x.toFixed(2).replace('.', ','); }
 function saludDesglose(n){
   const a = analizar(n), max = a.e.max || 7, h = hoy(), L = [['Parte en', '100']];
@@ -7786,7 +7885,7 @@ function fechaDeCol(k, h, t){
 function k3HTML(t, col){
   const h = hoy(), idx = S.data.tareas.indexOf(t), e = catEstilo(t), L = t.subtareas || [], q = quadOf(t);
   const n = String(t.notas || ''), mN = n.match(/\((N-[a-z0-9]+)\)/i), mC = n.match(/\[((?:wa:|c-)[^\]]+|[^\]\s]+@[^\]\s]+)\]/);
-  const c = mC ? contactoPorId(mC[1]) : null, neg = mN && S.neg ? negocios().find(x => x.id === mN[1]) : null;
+  const c = mC ? contactoPorId(mC[1]) : null, neg = mN && S.neg ? negociosTodos().find(x => x.id === mN[1]) : null;
   const hora = (n.match(/⏰\s*(\d{1,2}:\d{2})/) || [])[1];
   let fch = '';
   if (col === 'atr'){ const d = diffDays(t.limite, h); fch = '<span class="k3-d bad" title="Vencida el ' + esc(fmt(t.limite)) + '">' + d + ' d</span>'; }
@@ -8139,7 +8238,7 @@ function viewSemana(){
   $('#view').innerHTML = html; bindTasks($('#view')); bindPer();
   $$('[data-paso]').forEach(b => b.onclick = async () => { await guardarSemana(actual, true); S.sPaso = +b.dataset.paso; viewSemana(); window.scrollTo(0, 0); });
   $('#aiSem').onclick = () => revisionIA(actual);
-  $$('#view [data-neg]').forEach(b => b.onclick = () => { const n = negocios().find(x => x.id === b.dataset.neg); if (n) openProximo(n); });
+  $$('#view [data-neg]').forEach(b => b.onclick = () => { const n = negociosTodos().find(x => x.id === b.dataset.neg); if (n) openProximo(n); });
   const sv1 = $('#sv1'); if (sv1) sv1.onclick = e => reprogramar(vencidas(), proximoLibre(hoy()), e.target);
   $$('[data-chk]').forEach(b => b.onclick = async () => {
     const v = b.dataset.v === '1'; b.disabled = true;
@@ -8718,7 +8817,7 @@ function showSettings(){
     '<div class="card"><b>🧹 Empezar de cero</b><div class="hint">' + (inicioApp() ? 'Partiste de cero el ' + esc(fmtLong(inicioApp())) + '. ' : '') + 'Archiva las tareas viejas, archiva los negocios chicos o sin movimiento y deja como al día los mensajes anteriores. Antes de hacer nada te muestra la lista para que elijas.</div><div class="btns"><button class="btn sec" id="s_rein">Revisar qué se limpia</button></div></div>' +
     (S.ext && !S.ext.waHist && extNivel() >= 24 ? '<div class="card"><b>💬 Historial de WhatsApp</b><div class="hint">Todavía no llega el historial. Al conectar el número con «compartir historial», Meta lo envía por partes durante las primeras 24 horas y aquí verás el avance.</div></div>' : '') +
     (S.ext && S.ext.waHist ? '<div class="card"><b>💬 Historial de WhatsApp</b><div class="hint">' + (S.ext.waHist.rechazado ? 'No se compartió el historial al conectar el número (' + esc(S.ext.waHist.rechazado) + '). Para recibirlo hay que desconectar y volver a conectar el número aceptando «compartir historial».' : 'Recibidos ' + (S.ext.waHist.mensajes || 0).toLocaleString('es-CL') + ' mensajes de ' + (S.ext.waHist.chats || 0) + ' chats' + (S.ext.waHist.fases ? ' · avance por etapa: ' + Object.keys(S.ext.waHist.fases).sort().map(f => ['último día', 'hasta 90 días', 'hasta 180 días'][+f] + ' ' + S.ext.waHist.fases[f] + '%').join(', ') : S.ext.waHist.progreso != null ? ' · avance ' + S.ext.waHist.progreso + '%' : '') + ' · último envío ' + esc(haceTxt(String(S.ext.waHist.ultimo || '').slice(0, 10))) + '. El Cerebro arma el perfil de cada contacto en modo masivo (sin tareas ni negocios antiguos).') + '</div></div>' : '') +
-    '<div class="card"><b>🔢 Versiones</b><div class="hint">App: ' + esc(APP_VER) + ' · Script: ' + (S.extInactivo ? 'funciones extra no activadas' : 'versión ' + esc((S.ext && S.ext.version) || '?') + ' (nivel ' + extNivel() + ')') + (extNivel() < NIVEL_ULTIMO ? ' · <b style="color:var(--bad-ink)">hay una versión nueva del script</b>: pega el Extras.gs nuevo y crea una Nueva versión de la implementación.' : ' · al día ✓') + '</div></div>' +
+    (function(){ try { const u = LS.ultErr && JSON.parse(LS.ultErr); return u ? '<div class="card"><b>🐞 Último error</b><div class="hint">' + esc(u.f.replace('T', ' ') + ' · ' + u.tab + ' · ' + u.v) + '<br>' + esc(u.m) + '</div><pre class="err-st">' + esc(u.s) + '</pre><div class="hint">Si se repite, mándale un pantallazo de esto a Claude.</div></div>' : ''; } catch(e){ return ''; } })() + '<div class="card"><b>🔢 Versiones</b><div class="hint">App: ' + esc(APP_VER) + ' · Script: ' + (S.extInactivo ? 'funciones extra no activadas' : 'versión ' + esc((S.ext && S.ext.version) || '?') + ' (nivel ' + extNivel() + ')') + (extNivel() < NIVEL_ULTIMO ? ' · <b style="color:var(--bad-ink)">hay una versión nueva del script</b>: pega el Extras.gs nuevo y crea una Nueva versión de la implementación.' : ' · al día ✓') + '</div></div>' +
     (deferredInstall ? '<div class="btns"><button class="btn" id="s_inst">📲 Instalar app en este dispositivo</button></div>' : '') +
     '<div class="card"><b>🧠 Cerebro y fuentes</b><div class="hint">' + (extNivel() >= 16 ? 'Activo ✓ Un solo cerebro con 9 skills: arma el plan del día a las 7:00, sigue a tus clientes, planifica tareas, busca compras y elige fotos. Su chat (botón ✨ o la tecla /) responde con tus datos.' : 'Actualiza el script para activar el plan del día, el chat del Cerebro, Specialized Chile, noticias y avisos.') + '</div><div class="btns" style="margin-top:8px"><button class="btn sm" id="s_cb">🧠 Abrir el Cerebro</button><button class="btn sm sec" id="s_gd">❓ Guía de la app</button><button class="btn sm sec" id="s_fz">📊 Fuentes de información</button>' + (extNivel() >= 16 ? '<button class="btn sm sec" id="s_av">📣 Avisos</button>' : '') + '</div></div>' +
     '<div class="card"><b>✨ Funciones extra</b> <span class="hint">(calendario, correo, subtareas, repetir)</span><div class="hint">' + esc(gTxt) + '</div><button class="btn sm sec" id="s_g">' + (g && !g.inactivo ? 'Ver sugerencias' : 'Cómo activarlas') + '</button></div>' +
@@ -8747,7 +8846,7 @@ function showSettings(){
 }
 
 window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferredInstall = e; });
-window.addEventListener('error', e => toast('Error: ' + (e.error && e.error.message || e.message)));
+window.addEventListener('error', e => { const msg = e.error && e.error.message || e.message; try { LS.ultErr = JSON.stringify({ m: msg, s: String(e.error && e.error.stack || (e.filename || '') + ':' + (e.lineno || '')).slice(0, 600), tab: S.tab, v: APP_VER, f: new Date().toISOString().slice(0, 16) }); } catch(x){} toast('Error: ' + msg); });
 window.addEventListener('unhandledrejection', e => toast('Error: ' + (e.reason && e.reason.message || e.reason)));
 document.addEventListener('visibilitychange', () => { if (!document.hidden && LS.url && S.data){ load(); focusPill(); } });
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});

@@ -15,8 +15,8 @@
  * Para actualizar este archivo más adelante: reemplaza todo su contenido y repite los dos pasos anteriores.
  */
 
-const EX_VERSION = '2027-01-06';
-const EX_NIVEL = 41;      // la app lo usa para saber qué funciones tiene este script
+const EX_VERSION = '2027-01-08';
+const EX_NIVEL = 42;      // la app lo usa para saber qué funciones tiene este script
 const EX_HOJA = 'Tareas';
 const EX_PRIMERA = 4;
 const EX_ULTIMA = 400;
@@ -2368,6 +2368,9 @@ function ex_aplicarAgente_(id, ctx, a, opt) {
   // Venta perdida hace poco y el cliente no ha vuelto a escribir: no se reabre, ni se le sugiere responder ni se crean tareas.
   const perdida = ctx.neg ? null : (ctx.perdida !== undefined ? ctx.perdida : ex_perdidaReciente_(id));
   const sigueCerrada = !!perdida && !(met.ultimaCliente && met.ultimaCliente > perdida.fecha);
+  // Proveedores, instituciones y el equipo no son ventas: no se les abre negociación (las compras se ven en la pestaña Compras).
+  const tipoNoVenta = ['Proveedor', 'Institución', 'Equipo'].filter(function (t) { return t === String(c[1]) || t === String(ac.tipo || ''); })[0];
+  if (!ctx.neg && tipoNoVenta && (n.accion === 'crear' || abrir)) { abrir = false; n.accion = 'ninguna'; cambios.push('sin negociación: el contacto es ' + tipoNoVenta.toLowerCase()); }
   if (sigueCerrada) {
     if (abrir || n.accion === 'crear') cambios.push('negociación no reabierta (se perdió el ' + perdida.fecha + ' y el cliente no ha vuelto a escribir)');
     abrir = false; n.accion = 'ninguna'; a.esperando_respuesta = false; a.tareas = [];
@@ -3772,8 +3775,8 @@ const EX_COP_TOOLS = [
     nota: { type: 'string', description: 'Nota que queda en el historial de la negociación y del cliente' } }, required: ['id', 'titulo'] } },
   { name: 'proponer_nota_contacto', description: 'Propone registrar una nota en la ficha de un cliente o contacto (reclamos, garantías, acuerdos, datos nuevos). Gustavo la aprueba con un toque.', input_schema: { type: 'object', properties: { id: { type: 'string' }, titulo: { type: 'string' }, texto: { type: 'string' } }, required: ['id', 'titulo', 'texto'] } },
   { name: 'proponer_accion', description: 'Propone una acción para que Gustavo la apruebe con un toque. No ejecuta nada por sí sola. Úsala cuando haya un siguiente paso claro.', input_schema: { type: 'object', properties: {
-    tipo: { type: 'string', enum: ['crear_tarea', 'crear_aviso', 'whatsapp', 'crear_negocio', 'disenar_pieza', 'idea_contenido', 'abrir_producto', 'abrir_contacto'] },
-    titulo: { type: 'string', description: 'Texto del botón o título de la tarea, aviso, negociación o idea' },
+    tipo: { type: 'string', enum: ['crear_tarea', 'crear_aviso', 'whatsapp', 'crear_negocio', 'crear_contacto', 'disenar_pieza', 'idea_contenido', 'abrir_producto', 'abrir_contacto'] },
+    titulo: { type: 'string', description: 'Texto del botón o título de la tarea, aviso, negociación o idea. En crear_contacto: el nombre completo de la persona.' },
     detalle: { type: 'string', description: 'Detalle: notas de la tarea, texto del aviso, borrador del mensaje de WhatsApp, tema de la pieza' },
     fecha: { type: 'string', description: 'yyyy-MM-dd si aplica' },
     ref: { type: 'string', description: 'ID del contacto, producto o negociación relacionada, o teléfono' } }, required: ['tipo', 'titulo'] } }

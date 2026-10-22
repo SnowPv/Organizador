@@ -415,3 +415,9 @@ Basada en el análisis de unos 300 diseños de Dribbble (búsquedas: crm, crm-da
 - **Negocios → 🗄️ Limpiar** (Admin y Piso): lista con casillas; por defecto salen los abiertos **sin movimiento hace más de 21 días** o de **menos de $1.000.000** (el Piso no ve montos: solo días). Los ganados por entregar se quedan.
 - **Empezar de cero** ahora archiva en vez de eliminar, con los mismos criterios.
 - Las ventas **Entregadas** salen solas del tablero a los 30 días (antes se quedaban para siempre); Postventa a los 90.
+
+## Proveedores fuera del pipeline, voz al Cerebro y registro de errores (app v69 · script nivel 42)
+
+- **Proveedores**: las negociaciones cuyo contacto es **Proveedor** no aparecen en el pipeline ni en sus cifras (`negocios()` las filtra; `negociosTodos()` las incluye). Se ven en **Compras → 🤝 Con proveedores**. En el script, el agente ya no abre negociaciones a contactos Proveedor, Institución o Equipo.
+- **Voz al Cerebro**: botón 🎙️ en el chat del Cerebro y chip «Dictar actualización». Si el navegador permite dictado (Chrome), transcribe en vivo y envía al terminar; si no (iPhone en modo app), usa el micrófono del teclado y luego enviar. El mensaje va con instrucciones (`VOZ_PREF`/`VOZ_INSTR`) para responder **Entendí / Voy a hacer** y proponer cada acción. La respuesta se lee en voz alta (botón **🔊 Escuchar**; se desactiva con `LS.vozLeer = 'no'`) y trae **Confirmar todo**, que aplica de una vez: crear tarea, nota en la ficha, cambio de etapa/valor/próxima acción, negociación nueva y **contacto nuevo** (`crear_contacto`, tipo nuevo en `proponer_accion`).
+- **Último error**: los errores de pantalla se guardan (`LS.ultErr`) y se ven en Ajustes → 🐞 Último error, para diagnosticar.
