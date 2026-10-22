@@ -2383,7 +2383,7 @@ body.ui2{background:#F6F7F9!important}
 .rz-f input{width:18px;height:18px;flex:none;accent-color:var(--accent)}
 .rz-t{flex:1;min-width:0;display:flex;flex-direction:column}.rz-t b{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.rz-t small{font-size:12px;color:var(--muted)}
 .rz-d{font-weight:650;font-size:13.5px;font-variant-numeric:tabular-nums;white-space:nowrap}
-.rz-u{font-size:13px;color:var(--muted);margin-bottom:8px}.rz-u input{width:120px;padding:5px 8px;border:1px solid var(--line);border-radius:8px;font:inherit;font-weight:650;color:var(--ink)}
+.rz-u{font-size:13px;color:var(--muted);margin-bottom:8px}.rz-u input.rz-n{width:54px}.rz-u input{width:120px;padding:5px 8px;border:1px solid var(--line);border-radius:8px;font:inherit;font-weight:650;color:var(--ink)}
 </style>
 
 
@@ -2509,7 +2509,7 @@ async function apiX(op, extra){
 }
 // Nivel 2 del script Extras: recordatorios y base de contactos. Nivel 3: la base solo usa contacto@blacklinechile.cl. Nivel 4: eventos de varios días.
 function extNivel(){ return S.extInactivo ? 0 : (S.ext && S.ext.nivel) || 1; }
-const APP_VER = 'v67', NIVEL_ULTIMO = 41;
+const APP_VER = 'v68', NIVEL_ULTIMO = 41;
 function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < NIVEL_ULTIMO; }
 let sincTimer = null;
 // Después de cambiar tareas, el script actualiza los recordatorios del calendario (en segundo plano).
@@ -5519,7 +5519,7 @@ function abrirProducto(q){
    La sesión la firma el servidor; aquí solo se guarda y se envía en cada consulta. El servidor decide
    qué puede ver cada cuenta: esconder pestañas en la app es comodidad, no seguridad. */
 const TABS_SOLO_ADMIN = ['inicio', 'compras', 'cerebro'];
-const LS_CONSERVAR = ['url', 'token', 'ui', 'inicio', 'reinUmbral', 'usrActivos', 'rolUlt', 'guiaVista', 'guiaVistaP', 'waTienda', 'vista', 'extOff', 'rutinaItems', 'rutina', 'respondidos', 'respHoy'];
+const LS_CONSERVAR = ['url', 'token', 'ui', 'inicio', 'reinUmbral', 'reinDias', 'usrActivos', 'rolUlt', 'guiaVista', 'guiaVistaP', 'waTienda', 'vista', 'extOff', 'rutinaItems', 'rutina', 'respondidos', 'respHoy'];
 function rol(){ return LS.rol === 'piso' ? 'piso' : 'admin'; }
 function esPiso(){ return rol() === 'piso'; }
 function tabPermitida(t){ return !esPiso() || TABS_SOLO_ADMIN.indexOf(t) < 0; }
@@ -6305,6 +6305,9 @@ const clp = n => '$' + Math.round(n || 0).toLocaleString('es-CL');
 const clpCorto = n => n >= 1e6 ? '$' + (n / 1e6).toFixed(n >= 1e7 ? 0 : 1).replace('.', ',') + ' M' : n >= 1e3 ? '$' + Math.round(n / 1e3) + ' mil' : clp(n);
 function negocios(){ return (S.neg && S.neg.negocios) || []; }
 function abiertos(){ return negocios().filter(n => n.estado === 'Abierta'); }
+// Archivada = sacada del pipeline porque ya no está activa (no es una venta perdida y no cuenta en esas cifras). Se puede reabrir.
+function esArchivada(n){ return n.estado === 'Perdida' && /^Archivad/i.test(String(n.motivo || '')); }
+async function archivarNeg(n){ await apiX('negocio', { negocio: { id: n.id, etapa: 'Perdida', motivo: 'Archivada · ' + fmt(hoy()) + (esPiso() ? ' (Piso de venta)' : '') } }); n.estado = 'Perdida'; n.etapa = 'Perdida'; n.motivo = 'Archivada'; }
 function etapaIdx(k){ return ETAPAS.findIndex(e => e.k === k); }
 function etapaDe(n){ return ETAPA_FIN[n.etapa] || ETAPAS[Math.max(0, etapaIdx(n.etapa))]; }
 function historialDe(n){ return String(n.historial || '').split('|').filter(Boolean).map(x => { const i = x.indexOf(':'); return { f: x.slice(0, i), e: x.slice(i + 1) }; }); }
@@ -6424,7 +6427,7 @@ function openDeal(n, opt){
   if (a.abierta){
     html += '<div class="stepper">' + ETAPAS.map((x, i) => '<button class="' + (i === idx ? 'on' : i < idx ? 'ok' : '') + '" data-ngk="' + esc(x.k) + '" title="Mover a ' + esc(x.k) + '">' + x.corto + '</button>').join('') + '</div>' +
       '<div class="shint">Etapa actual: <b>' + esc(n.etapa) + '</b> · ' + a.dEtapa + ' días en esta etapa. Toca otra etapa para moverla.</div>' +
-      '<div class="dact">' + (c && extNivel() >= 28 ? '<button id="dx_chat">💬 Ver chat</button>' : '') + '<button id="dx_act">' + icon('note') + 'Registrar actividad</button><button id="dx_prox">' + icon('arrow') + 'Próximo paso</button><button class="win" id="ng_win">' + icon('trophy') + 'Ganada</button><button class="lose" id="ng_lose">' + icon('x') + 'Perdida</button></div>';
+      '<div class="dact">' + (c && extNivel() >= 28 ? '<button id="dx_chat">💬 Ver chat</button>' : '') + '<button id="dx_act">' + icon('note') + 'Registrar actividad</button><button id="dx_prox">' + icon('arrow') + 'Próximo paso</button><button class="win" id="ng_win">' + icon('trophy') + 'Ganada</button><button class="lose" id="ng_lose">' + icon('x') + 'Perdida</button><button id="ng_arch" title="Ya no está activa: sale del pipeline (se puede reabrir)">🗄️ Archivar</button></div>';
     const vencido = a.proxVencida || a.sinResponder != null || !n.proxima;
     html += '<div class="nextc' + (vencido ? ' bad' : '') + '"><div class="tx"><small>Próximo paso</small>' + (n.proxima ? '<b>' + esc(n.proxima) + '</b><span>' + (n.fechaProx ? (a.proxVencida ? 'Venció ' : '') + fmtLong(n.fechaProx) : 'sin fecha') + '</span>' : '<b>Sin próximo paso</b><span>Defínelo: los negocios sin siguiente paso son los que se pierden</span>') +
       (a.sinResponder != null ? '<span style="display:block">⚡ El cliente escribió ' + (a.sinResponder ? 'hace ' + a.sinResponder + ' d' : 'hoy') + ' y no hay respuesta</span>' : '') + '</div>' +
@@ -6437,7 +6440,8 @@ function openDeal(n, opt){
         '<div class="nextc"><div class="tx"><small>Próximo paso</small>' + (n.proxima ? '<b>' + esc(n.proxima) + '</b><span>' + (n.fechaProx ? fmtLong(n.fechaProx) : 'sin fecha') + '</span>' : '<b>Sin próximo paso</b><span>' + (n.etapa === 'Ganada' ? 'Define cuándo y cómo se entrega' : 'Postventa: revisión de los 30 días y reseña') + '</span>') + '</div>' +
         (n.proxima ? '<button class="btn sm" id="dx_done">✓ Hecho</button>' : '<button class="btn sm" id="dx_prox2">Definir</button>') + '</div>' +
         '<div class="btns">' + (n.etapa === 'Ganada' ? '<button class="btn" id="ng_ent">✅ Marcar entregada</button>' : '') + '<button class="btn sm sec" id="ng_reopen">Reabrir</button></div>';
-    } else html += '<div class="nextc bad"><div class="tx"><small>Estado</small><b>❌ Perdida</b><span>' + (n.motivo ? esc(n.motivo) : fmt(fechaCierre(n))) + '</span></div><button class="btn sm sec" id="ng_reopen">Reabrir</button></div>';
+    } else if (esArchivada(n)) html += '<div class="nextc"><div class="tx"><small>Estado</small><b>🗄️ Archivada</b><span>' + esc(n.motivo || '') + '</span></div><button class="btn sm sec" id="ng_reopen">Reabrir</button></div>';
+    else html += '<div class="nextc bad"><div class="tx"><small>Estado</small><b>❌ Perdida</b><span>' + (n.motivo ? esc(n.motivo) : fmt(fechaCierre(n))) + '</span></div><button class="btn sm sec" id="ng_reopen">Reabrir</button></div>';
   }
   const tabs = [['resumen', 'Resumen'], ['actividad', 'Actividad (' + I.length + ')'], ['etapas', 'Etapas'], ['datos', 'Datos']].concat(bsaleActivo() ? [['stock', 'Stock']] : []);
   html += '<div class="tabs">' + tabs.map(t => '<button class="' + (t[0] === tab ? 'on' : '') + '" data-dtab="' + t[0] + '">' + t[1] + '</button>').join('') + '</div><div id="dtab"></div>';
@@ -6447,7 +6451,7 @@ function openDeal(n, opt){
   $$('[data-ngk]').forEach(b => b.onclick = () => moverEtapa(n, b.dataset.ngk));
   const on = (id, f) => { const x = $('#' + id); if (x) x.onclick = f; };
   on('dx_act', () => openActividad(n)); on('dx_prox', () => openProximo(n)); on('dx_chat', () => irAlChat(c.id)); on('dx_prox2', () => openProximo(n));
-  on('ng_win', () => moverEtapa(n, 'Ganada')); on('ng_lose', () => openPerdida(n)); on('ng_reopen', () => moverEtapa(n, 'Negociación')); on('ng_ent', () => moverEtapa(n, 'Entregada'));
+  on('ng_win', () => moverEtapa(n, 'Ganada')); on('ng_lose', () => openPerdida(n)); on('ng_reopen', () => moverEtapa(n, 'Negociación')); on('ng_arch', async () => { if (!confirm('¿Archivar «' + n.titulo + '»? Sale del pipeline y no cuenta como venta perdida. La encuentras en el filtro Archivadas.')) return; try { await archivarNeg(n); closeSheet(); toast('🗄️ Archivada'); await loadNeg(true); render(); } catch(e){ toast('No se pudo archivar: ' + e.message); } }); on('ng_ent', () => moverEtapa(n, 'Entregada'));
   on('dx_done', async () => { const b = $('#dx_done'); b.disabled = true; try { await apiX('negocioNota', { id: n.id, texto: '✅ ' + n.proxima, tipo: '✅ Acción' }); await apiX('negocio', { negocio: { id: n.id, proxima: '', fechaProx: '' } }); await loadNeg(true); toast('✓ Registrado. ¿Cuál es el siguiente paso?'); const n2 = negocios().find(x => x.id === n.id); openDeal(n2); openProximo(n2); } catch(e){ b.disabled = false; toast('No se pudo: ' + e.message); } });
 }
 function dealTab(n, a, tab){
@@ -6487,7 +6491,7 @@ function dealTab(n, a, tab){
       '<label class="l">Valor estimado ($)</label><input type="text" id="ng_v" inputmode="numeric" value="' + (n.valor ? Math.round(n.valor).toLocaleString('es-CL') : '') + '">' +
       '<label class="l">Cierre esperado</label><input type="date" id="ng_ci" value="' + esc(n.cierre) + '">' +
       '<label class="l">Notas</label><textarea class="note" id="ng_n">' + esc(n.notas) + '</textarea><div class="btns"><button class="btn" id="dx_save">Guardar cambios</button></div>' +
-      (extNivel() >= 33 ? '<div class="btns" style="margin-top:14px"><button class="btn sm sec bad" id="dx_del">🗑 Eliminar negociación (duplicada o por error)</button></div>' : '');
+      (extNivel() >= 33 && !esPiso() ? '<div class="btns" style="margin-top:14px"><button class="btn sm sec bad" id="dx_del">🗑 Eliminar negociación (duplicada o por error)</button></div>' : '');
     const dDel = $('#dx_del'); if (dDel) dDel.onclick = async () => {
       if (!confirm('¿Eliminar «' + n.titulo + '»? Úsalo para duplicados o errores; si la venta se cayó, márcala como Perdida.')) return;
       dDel.disabled = true;
@@ -6645,7 +6649,7 @@ function openPerdida(n, opt){
 function metricasNeg(){
   const h = hoy(), N = negocios(), A = abiertos(), mes = h.slice(0, 7);
   const fechaFin = fechaCierre;
-  const ganadas = N.filter(n => n.estado === 'Ganada'), perdidas = N.filter(n => n.estado === 'Perdida');
+  const ganadas = N.filter(n => n.estado === 'Ganada'), perdidas = N.filter(n => n.estado === 'Perdida' && !esArchivada(n));
   const g90 = ganadas.filter(n => diffDays(fechaFin(n), h) <= 90), p90 = perdidas.filter(n => diffDays(fechaFin(n), h) <= 90);
   const gMes = ganadas.filter(n => (fechaFin(n) || '').slice(0, 7) === mes);
   const an = A.map(n => ({ n, a: analizar(n) }));
@@ -6690,7 +6694,7 @@ function requiereAtencion(a){ return a.abierta && (a.sinResponder != null || a.p
 function negFiltrados(){
   const q = norm(S.nq);
   let L = negocios().map(n => ({ n, a: analizar(n) }));
-  L = L.filter(x => S.nf === 'todas' ? true : S.nf === 'abiertas' ? x.a.abierta : S.nf === 'atencion' ? requiereAtencion(x.a) : S.nf === 'estancadas' ? x.a.estancada : S.nf === 'ganadas' ? x.n.estado === 'Ganada' : x.n.estado === 'Perdida');
+  L = L.filter(x => S.nf === 'todas' ? true : S.nf === 'abiertas' ? x.a.abierta : S.nf === 'atencion' ? requiereAtencion(x.a) : S.nf === 'estancadas' ? x.a.estancada : S.nf === 'ganadas' ? x.n.estado === 'Ganada' : S.nf === 'archivadas' ? esArchivada(x.n) : x.n.estado === 'Perdida' && !esArchivada(x.n));
   if (q) L = L.filter(x => norm([x.n.titulo, x.n.producto, x.n.notas, x.a.c && x.a.c.nombre, x.a.c && x.a.c.telefono, x.a.c && x.a.c.email].join(' ')).includes(q));
   if (S.netapa) L = L.filter(x => x.n.etapa === S.netapa);
   return L.sort((x, y) => y.a.prioridad - x.a.prioridad || (y.n.valor || 0) - (x.n.valor || 0));
@@ -6736,16 +6740,17 @@ function viewNegocios(){
   let html = '<div class="nkpis">' + kp('pipeline', '💼 Pipeline abierto', clpCorto(m.abiertoV), A.length + ' negocios abiertos') + kp('ponderado', '🔮 Pronóstico', clpCorto(m.ponderado), 'ponderado por probabilidad') +
     kp('ganadoMes', '🏆 Ganado este mes', clpCorto(m.gMesV), m.gMes.length + ' ventas') + kp('tasa', '🎯 Tasa de cierre', m.tasa == null ? '–' : Math.round(m.tasa * 100) + '%', 'últimos 90 días') + kp('atencion', '⚡ Requieren atención', aten, 'de ' + A.length + ' abiertos') + '</div>';
   const vistas = [['pipeline', '▦ Pipeline'], ['lista', '☰ Lista'], ['resumen', '📊 Resumen']];
-  const filtros = [['abiertas', 'Abiertas'], ['atencion', '⚡ Atención'], ['estancadas', '🧊 Estancadas'], ['ganadas', '🏆 Ganadas'], ['perdidas', '❌ Perdidas'], ['todas', 'Todas']];
+  const filtros = [['abiertas', 'Abiertas'], ['atencion', '⚡ Atención'], ['estancadas', '🧊 Estancadas'], ['ganadas', '🏆 Ganadas'], ['perdidas', '❌ Perdidas'], ['archivadas', '🗄️ Archivadas'], ['todas', 'Todas']];
   html += '<div class="ntool"><div class="views">' + vistas.map(v => '<button class="' + (S.nv === v[0] ? 'on' : '') + '" data-nv="' + v[0] + '">' + v[1] + '</button>').join('') + '</div>' +
     (S.nv !== 'resumen' ? '<input type="text" id="nq" placeholder="Buscar cliente, producto o teléfono…" value="' + esc(S.nq) + '">' : '<span class="grow"></span>') +
-    (bsaleActivo() ? '<button class="btn sm sec" id="ngStock">📦 Stock</button>' : '') + '<button class="btn sm" id="ngNew">＋ Nueva</button></div>';
+    (bsaleActivo() ? '<button class="btn sm sec" id="ngStock">📦 Stock</button>' : '') + '<button class="btn sm sec" id="ngLimp" title="Archivar negociaciones viejas o que ya no están activas">🗄️ Limpiar</button><button class="btn sm" id="ngNew">＋ Nueva</button></div>';
   if (S.nv !== 'resumen') html += '<div class="filters">' + filtros.map(f => '<button class="pill ' + (S.nf === f[0] ? 'on' : '') + '" data-nf="' + f[0] + '">' + f[1] + '</button>').join('') + (S.netapa ? '<button class="pill on" id="netX" title="Quitar el filtro de etapa">Etapa: ' + esc(S.netapa) + ' ✕</button>' : '') + '</div>';
   html += S.nv === 'pipeline' ? pipelineHTML() : S.nv === 'lista' ? listaNegHTML() : resumenNegHTML(m);
   $('#view').innerHTML = html;
   $$('[data-nv]').forEach(b => b.onclick = () => { S.nv = LS.nv2 = b.dataset.nv; viewNegocios(); });
   $('#ngNew').onclick = () => openNegocio(null);
   const st = $('#ngStock'); if (st) st.onclick = () => openStock('');
+  const lp = $('#ngLimp'); if (lp) lp.onclick = () => empezarDeCero({ soloNeg: true });
   $$('#view [data-neg]').forEach(b => b.onclick = () => openNegocio(negocios().find(x => x.id === b.dataset.neg)));
   $$('[data-nmv]').forEach(b => b.onclick = e => { e.stopPropagation(); moverEtapa(negocios().find(x => x.id === b.dataset.nmv), b.dataset.k); });
   $$('[data-nf]').forEach(b => b.onclick = () => { S.nf = b.dataset.nf; viewNegocios(); });
@@ -6786,8 +6791,8 @@ function oportunidadesHTML(){
 }
 function pipelineHTML(){
   const h = hoy(), L = negFiltrados(), dk = ANCHO();
-  const cols = ETAPAS.concat(POST_ETAPAS.map(k => ETAPA_FIN[k])).concat(['perdidas', 'todas'].includes(S.nf) ? [ETAPA_FIN.Perdida] : []);
-  const VENT = { Ganada: 120, Entregada: 9999, Postventa: 90 };
+  const cols = ETAPAS.concat(POST_ETAPAS.map(k => ETAPA_FIN[k])).concat(['perdidas', 'todas', 'archivadas'].includes(S.nf) ? [ETAPA_FIN.Perdida] : []);
+  const VENT = { Ganada: 120, Entregada: 30, Postventa: 90 };
   return '<div class="kb" style="--ncol:' + cols.length + '">' + cols.map((e, i) => {
     let C = L.filter(x => x.n.etapa === e.k);
     if (POST_ETAPAS.includes(e.k) && S.nf !== 'ganadas'){
@@ -7636,41 +7641,45 @@ function modoEnfoque(){
 }
 
 /* ---------- Empezar de cero: archiva tareas viejas y limpia el pipeline (con vista previa y selección) ---------- */
-async function empezarDeCero(){
-  if (esPiso()) return;
+async function empezarDeCero(opt){
+  opt = opt || {}; const soloNeg = !!opt.soloNeg;
+  if (esPiso() && !soloNeg) return;
   const h = hoy();
   if (!S.neg && extNivel() >= 5){ try { await loadNeg(true); } catch(e){} }
-  const T = pendientes().filter(t => t.row != null).map(t => ({ t, on: !t.repetir && (!t.limite || t.limite <= h) }));
-  const N = (S.neg ? negocios() : []).filter(n => n.estado === 'Abierta' || ['Ganada', 'Entregada', 'Postventa'].includes(n.etapa));
-  let umbral = +(LS.reinUmbral || 1000000);
-  const selN = {}; const reglaN = n => n.estado === 'Abierta' ? (+n.valor || 0) < umbral : n.etapa !== 'Ganada';
+  const T = soloNeg ? [] : pendientes().filter(t => t.row != null).map(t => ({ t, on: !t.repetir && (!t.limite || t.limite <= h) }));
+  // Negocios en juego: abiertos y ganados aún no entregados (los entregados salen solos del tablero después de 30 días).
+  const N = (S.neg ? negocios() : []).filter(n => n.estado === 'Abierta' || n.etapa === 'Ganada');
+  const AN = {}; N.forEach(n => AN[n.id] = analizar(n));
+  let umbral = esPiso() ? 0 : +(LS.reinUmbral || 1000000), dias = +(LS.reinDias || 21);
+  const selN = {}; const reglaN = n => n.estado === 'Abierta' && ((+n.valor || 0) < umbral || AN[n.id].dAct > dias);
   N.forEach(n => selN[n.id] = reglaN(n));
-  const m = modal('🧹 Empezar de cero', '<div id="rz"></div>', { wide: true }), box = m.el.querySelector('#rz');
+  const m = modal(soloNeg ? '🗄️ Limpiar pipeline' : '🧹 Empezar de cero', '<div id="rz"></div>', { wide: true }), box = m.el.querySelector('#rz');
   const nomN = n => { const c = n.contacto ? contactoPorId(n.contacto) : null; return (c && c.nombre) || n.titulo; };
   const fila = (k, on, tit, sub, der) => '<label class="rz-f"><input type="checkbox" data-' + k + (on ? ' checked' : '') + '><span class="rz-t"><b>' + esc(tit) + '</b>' + (sub ? '<small>' + esc(sub) + '</small>' : '') + '</span>' + (der ? '<span class="rz-d">' + der + '</span>' : '') + '</label>';
   const pintar = () => {
     const nT = T.filter(x => x.on).length, nN = N.filter(n => selN[n.id]).length, esp = esperanRespuesta().length;
     const quedan = N.filter(n => !selN[n.id]);
-    box.innerHTML = '<p class="hint" style="margin-top:0">Marca lo que quieres <b>sacar</b>. Nada se pierde: las tareas quedan archivadas en la planilla y cada negocio que se saca queda anotado en la ficha del cliente.</p>' +
-      '<div class="rz-s"><div class="rz-h"><b>Tareas pendientes</b><span>' + nT + ' de ' + T.length + ' se archivan</span><button class="link" data-todo="t">Todas</button><button class="link" data-nada="t">Ninguna</button></div>' +
-      '<div class="rz-l">' + (T.length ? T.map((x, i) => fila('ti="' + i + '"', x.on, x.t.tarea, x.t.limite ? (x.t.limite < h ? 'Vencida · ' : '') + fmt(x.t.limite) + (x.t.repetir ? ' · se repite' : '') : 'Sin fecha', '')).join('') : '<div class="hint">No hay tareas pendientes.</div>') + '</div></div>' +
+    box.innerHTML = '<p class="hint" style="margin-top:0">Marca lo que quieres <b>sacar</b>. Nada se pierde: ' + (soloNeg ? '' : 'las tareas quedan archivadas en la planilla y ') + 'los negocios quedan <b>archivados</b> (filtro «Archivadas»), no cuentan como ventas perdidas y se pueden reabrir.</p>' +
+      (soloNeg ? '' : '<div class="rz-s"><div class="rz-h"><b>Tareas pendientes</b><span>' + nT + ' de ' + T.length + ' se archivan</span><button class="link" data-todo="t">Todas</button><button class="link" data-nada="t">Ninguna</button></div>' +
+      '<div class="rz-l">' + (T.length ? T.map((x, i) => fila('ti="' + i + '"', x.on, x.t.tarea, x.t.limite ? (x.t.limite < h ? 'Vencida · ' : '') + fmt(x.t.limite) + (x.t.repetir ? ' · se repite' : '') : 'Sin fecha', '')).join('') : '<div class="hint">No hay tareas pendientes.</div>') + '</div></div>') +
       '<div class="rz-s"><div class="rz-h"><b>Negocios</b><span>' + nN + ' se sacan · ' + quedan.length + ' quedan</span></div>' +
-      '<div class="rz-u">Quedan los abiertos desde <input type="text" inputmode="numeric" id="rzU" value="' + umbral.toLocaleString('es-CL') + '"> y los ganados que aún no se entregan. Sale lo más chico y lo ya entregado.</div>' +
-      '<div class="rz-l">' + (N.length ? N.slice().sort((a, b) => (+b.valor || 0) - (+a.valor || 0)).map(n => fila('ni="' + esc(n.id) + '"', selN[n.id], nomN(n), (n.producto || n.titulo || '') + ' · ' + n.etapa, n.valor ? clpCorto(n.valor) : '<i>sin monto</i>')).join('') : '<div class="hint">No hay negocios abiertos.</div>') + '</div></div>' +
-      '<div class="rz-s"><label class="rz-f"><input type="checkbox" id="rzE" checked><span class="rz-t"><b>Dejar al día los mensajes anteriores a hoy</b><small>' + (esp ? esp + ' clientes aparecen esperando respuesta por mensajes viejos. ' : '') + 'Desde hoy solo cuentan los mensajes nuevos y lo que anoten.</small></span></label></div>' +
-      '<div class="btns"><button class="btn sec" id="rzX">Cancelar</button><button class="btn" id="rzOk"' + (nT + nN ? '' : ' disabled') + '>Limpiar ' + nT + ' tareas y ' + nN + ' negocios</button></div>';
+      '<div class="rz-u">Salen los abiertos <b>sin movimiento hace más de</b> <input type="text" inputmode="numeric" id="rzD" class="rz-n" value="' + dias + '"> días' + (esPiso() ? '' : ' o de <b>menos de</b> <input type="text" inputmode="numeric" id="rzU" value="' + umbral.toLocaleString('es-CL') + '">') + '. Los ganados por entregar se quedan.</div>' +
+      '<div class="rz-l">' + (N.length ? N.slice().sort((a, b) => (selN[b.id] ? 0 : 1) - (selN[a.id] ? 0 : 1) || AN[b.id].dAct - AN[a.id].dAct).map(n => fila('ni="' + esc(n.id) + '"', selN[n.id], nomN(n), (n.producto || n.titulo || '') + ' · ' + n.etapa + ' · ' + (AN[n.id].dAct ? 'sin movimiento hace ' + AN[n.id].dAct + ' d' : 'movida hoy'), esPiso() ? '' : n.valor ? clpCorto(n.valor) : '<i>sin monto</i>')).join('') : '<div class="hint">No hay negocios abiertos.</div>') + '</div></div>' +
+      (soloNeg ? '' : '<div class="rz-s"><label class="rz-f"><input type="checkbox" id="rzE" checked><span class="rz-t"><b>Dejar al día los mensajes anteriores a hoy</b><small>' + (esp ? esp + ' clientes aparecen esperando respuesta por mensajes viejos. ' : '') + 'Desde hoy solo cuentan los mensajes nuevos y lo que anoten.</small></span></label></div>') +
+      '<div class="btns"><button class="btn sec" id="rzX">Cancelar</button><button class="btn" id="rzOk"' + (nT + nN ? '' : ' disabled') + '>' + (soloNeg ? 'Archivar ' + nN + ' negocios' : 'Limpiar ' + nT + ' tareas y ' + nN + ' negocios') + '</button></div>';
     const $b = q => box.querySelector(q);
     box.querySelectorAll('[data-ti]').forEach(c => c.onchange = () => { T[+c.dataset.ti].on = c.checked; pintar(); });
     box.querySelectorAll('[data-ni]').forEach(c => c.onchange = () => { selN[c.dataset.ni] = c.checked; pintar(); });
     box.querySelectorAll('[data-todo]').forEach(b => b.onclick = () => { T.forEach(x => x.on = true); pintar(); });
     box.querySelectorAll('[data-nada]').forEach(b => b.onclick = () => { T.forEach(x => x.on = false); pintar(); });
-    $b('#rzU').onchange = e => { const v = +String(e.target.value).replace(/\D/g, ''); umbral = v || 0; LS.reinUmbral = umbral; N.forEach(n => selN[n.id] = reglaN(n)); pintar(); };
+    if ($b('#rzU')) $b('#rzU').onchange = e => { const v = +String(e.target.value).replace(/\D/g, ''); umbral = v || 0; LS.reinUmbral = umbral; N.forEach(n => selN[n.id] = reglaN(n)); pintar(); };
+    $b('#rzD').onchange = e => { const v = +String(e.target.value).replace(/\D/g, ''); dias = v || 0; LS.reinDias = dias; N.forEach(n => selN[n.id] = reglaN(n)); pintar(); };
     $b('#rzX').onclick = () => m.cerrar();
-    $b('#rzOk').onclick = () => ejecutar($b('#rzE').checked);
+    $b('#rzOk').onclick = () => ejecutar(!soloNeg && $b('#rzE').checked);
   };
   const ejecutar = async conInicio => {
     const LT = T.filter(x => x.on).map(x => x.t), LN = N.filter(n => selN[n.id]);
-    if (!confirm('Se archivan ' + LT.length + ' tareas y se sacan ' + LN.length + ' negocios. ¿Seguimos?')) return;
+    if (!confirm((soloNeg ? '' : 'Se archivan ' + LT.length + ' tareas. ') + 'Se archivan ' + LN.length + ' negocios. ¿Seguimos?')) return;
     const tot = LT.length + LN.length; let k = 0, err = 0;
     const avance = txt => { box.innerHTML = '<div class="empty"><span class="spin"></span>' + esc(txt) + '</div><div class="pb"><i style="width:' + (tot ? k / tot * 100 : 100) + '%"></i></div><p class="hint" style="text-align:center">' + k + ' de ' + tot + (err ? ' · ' + err + ' con error' : '') + '. No cierres la app.</p>'; };
     const nota = '🗄️ Archivada al empezar de cero (' + fmt(h) + ')';
@@ -7682,13 +7691,13 @@ async function empezarDeCero(){
     }
     for (const n of LN){
       avance('Limpiando el pipeline…');
-      try { await apiX('negocioBorrar', { id: n.id, motivo: 'Empezar de cero ' + fmt(h) + (n.valor ? ' · ' + clp(n.valor) : '') + ' · ' + n.etapa }); }
+      try { await archivarNeg(n); }
       catch(e){ err++; }
       k++;
     }
     if (conInicio){ LS.inicio = h; try { const r = await apiX('inicio', { fecha: h }); if (S.global) S.global.inicio = r.inicio; } catch(e){} }
-    box.innerHTML = '<div class="hy-fin">' + ringSVG(1, 84) + '<h3>¡Listo, partimos de cero!</h3><p>' + (LT.length ? LT.length + ' tareas archivadas. ' : '') + (LN.length ? LN.length + ' negocios fuera del pipeline. ' : '') + (err ? err + ' no se pudieron cambiar: vuelve a intentarlo más tarde. ' : '') + 'Desde ahora las tareas salen de los mensajes nuevos y de lo que anoten.</p><button class="btn" id="rzF">Ir a Hoy</button></div>';
-    box.querySelector('#rzF').onclick = () => { m.cerrar(); go('hoy'); };
+    box.innerHTML = '<div class="hy-fin">' + ringSVG(1, 84) + '<h3>' + (soloNeg ? '¡Pipeline al día!' : '¡Listo, partimos de cero!') + '</h3><p>' + (LT.length ? LT.length + ' tareas archivadas. ' : '') + (LN.length ? LN.length + ' negocios archivados. ' : '') + (err ? err + ' no se pudieron cambiar: vuelve a intentarlo más tarde. ' : '') + (soloNeg ? 'Si archivaste algo por error, búscalo en el filtro Archivadas y tócalo para reabrirlo.' : 'Desde ahora las tareas salen de los mensajes nuevos y de lo que anoten.') + '</p><button class="btn" id="rzF">' + (soloNeg ? 'Ver pipeline' : 'Ir a Hoy') + '</button></div>';
+    box.querySelector('#rzF').onclick = () => { m.cerrar(); go(soloNeg ? 'negocios' : 'hoy'); };
     try { await load(); } catch(e){}
     try { await loadNeg(true); } catch(e){}
     render();
@@ -8706,7 +8715,7 @@ function showSettings(){
   if (esPiso()){ sheet(ajustesPisoHTML()); $('#p_gd').onclick = () => { closeSheet(); openGuia(); }; $('#p_rt').onclick = () => { closeSheet(); editarRutina(); }; $('#p_out').onclick = () => { if (confirm('¿Cerrar la sesión en este dispositivo?')) cerrarSesion(); }; return; }
   const g = S.google, gTxt = S.extInactivo || (g && g.inactivo) ? 'No activadas' : !g ? 'Revisando…' : 'Activas ✓ · ' + (g.eventos || []).length + ' eventos · ' + (g.correos || []).length + ' correos' + (g.avisos && g.avisos.length ? ' · ⚠️ ' + g.avisos.join(' · ') : '');
   sheet('<h3>⚙️ Ajustes</h3><div class="hint">Conectado a tu Sheet del organizador.</div>' + usuariosCardHTML() +
-    '<div class="card"><b>🧹 Empezar de cero</b><div class="hint">' + (inicioApp() ? 'Partiste de cero el ' + esc(fmtLong(inicioApp())) + '. ' : '') + 'Archiva las tareas viejas, saca los negocios chicos o ya entregados y deja como al día los mensajes anteriores. Antes de hacer nada te muestra la lista para que elijas.</div><div class="btns"><button class="btn sec" id="s_rein">Revisar qué se limpia</button></div></div>' +
+    '<div class="card"><b>🧹 Empezar de cero</b><div class="hint">' + (inicioApp() ? 'Partiste de cero el ' + esc(fmtLong(inicioApp())) + '. ' : '') + 'Archiva las tareas viejas, archiva los negocios chicos o sin movimiento y deja como al día los mensajes anteriores. Antes de hacer nada te muestra la lista para que elijas.</div><div class="btns"><button class="btn sec" id="s_rein">Revisar qué se limpia</button></div></div>' +
     (S.ext && !S.ext.waHist && extNivel() >= 24 ? '<div class="card"><b>💬 Historial de WhatsApp</b><div class="hint">Todavía no llega el historial. Al conectar el número con «compartir historial», Meta lo envía por partes durante las primeras 24 horas y aquí verás el avance.</div></div>' : '') +
     (S.ext && S.ext.waHist ? '<div class="card"><b>💬 Historial de WhatsApp</b><div class="hint">' + (S.ext.waHist.rechazado ? 'No se compartió el historial al conectar el número (' + esc(S.ext.waHist.rechazado) + '). Para recibirlo hay que desconectar y volver a conectar el número aceptando «compartir historial».' : 'Recibidos ' + (S.ext.waHist.mensajes || 0).toLocaleString('es-CL') + ' mensajes de ' + (S.ext.waHist.chats || 0) + ' chats' + (S.ext.waHist.fases ? ' · avance por etapa: ' + Object.keys(S.ext.waHist.fases).sort().map(f => ['último día', 'hasta 90 días', 'hasta 180 días'][+f] + ' ' + S.ext.waHist.fases[f] + '%').join(', ') : S.ext.waHist.progreso != null ? ' · avance ' + S.ext.waHist.progreso + '%' : '') + ' · último envío ' + esc(haceTxt(String(S.ext.waHist.ultimo || '').slice(0, 10))) + '. El Cerebro arma el perfil de cada contacto en modo masivo (sin tareas ni negocios antiguos).') + '</div></div>' : '') +
     '<div class="card"><b>🔢 Versiones</b><div class="hint">App: ' + esc(APP_VER) + ' · Script: ' + (S.extInactivo ? 'funciones extra no activadas' : 'versión ' + esc((S.ext && S.ext.version) || '?') + ' (nivel ' + extNivel() + ')') + (extNivel() < NIVEL_ULTIMO ? ' · <b style="color:var(--bad-ink)">hay una versión nueva del script</b>: pega el Extras.gs nuevo y crea una Nueva versión de la implementación.' : ' · al día ✓') + '</div></div>' +

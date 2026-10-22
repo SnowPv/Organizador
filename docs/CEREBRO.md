@@ -407,3 +407,11 @@ Basada en el análisis de unos 300 diseños de Dribbble (búsquedas: crm, crm-da
   - **Negocios**: quedan los abiertos desde el monto que elijas (por defecto $1.000.000) y los **Ganados aún no entregados**; salen los abiertos más chicos o sin monto y los ya **Entregados / Postventa**. Se sacan con `negocioBorrar`, que deja anotado «🗑 Negociación eliminada» en la ficha del cliente. Las perdidas no se tocan.
   - **Mensajes anteriores**: guarda la fecha de inicio (`EX_INICIO`, op `inicio`, viene en `global.inicio`). «Clientes que esperan» solo cuenta ideas de respuesta desde esa fecha (`inicioApp`).
 - Las tareas nuevas siguen saliendo solas de los mensajes de WhatsApp que llegan (agente) y de lo que se anote.
+
+## Archivar negocios (app v68)
+
+- **Archivar** = sacar del pipeline lo que ya no está activo. Se guarda como etapa Perdida con motivo «Archivada · fecha» (op `negocio`, permitida al Piso de venta), pero **no cuenta como venta perdida** (fuera de tasa de cierre y motivos) — `esArchivada(n)`. Filtro nuevo **🗄️ Archivadas**; desde la ficha se puede **Reabrir**.
+- Botón **🗄️ Archivar** en las acciones de cada negocio abierto (Admin y Piso). **Eliminar** queda solo para el Admin (duplicados o errores).
+- **Negocios → 🗄️ Limpiar** (Admin y Piso): lista con casillas; por defecto salen los abiertos **sin movimiento hace más de 21 días** o de **menos de $1.000.000** (el Piso no ve montos: solo días). Los ganados por entregar se quedan.
+- **Empezar de cero** ahora archiva en vez de eliminar, con los mismos criterios.
+- Las ventas **Entregadas** salen solas del tablero a los 30 días (antes se quedaban para siempre); Postventa a los 90.
