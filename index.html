@@ -2376,6 +2376,14 @@ body.ui2{background:#F6F7F9!important}
   #mf .hy-facts #mfPos,#mf .hy-facts #mfEsp,#mf .hy-facts #mfPlay{font-size:13.5px;padding:0 4px}
 }
 @media (min-width:1000px) and (max-width:1560px){.ui2 .tp3 .tp3-al,.ui2 .tp3 .tp3-ok{display:none}.ui2 .tp3{gap:12px}}
+.rz-s{border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:12px 0}
+.rz-h{display:flex;align-items:center;gap:10px;margin-bottom:8px}.rz-h span{font-size:12.5px;color:var(--muted);margin-right:auto}.rz-h .link{padding:0;font-size:12.5px}
+.rz-l{max-height:260px;overflow:auto;display:flex;flex-direction:column}
+.rz-f{display:flex;align-items:center;gap:10px;padding:8px 2px;border-top:1px solid #F0F2F5;cursor:pointer}.rz-l .rz-f:first-child{border-top:0}
+.rz-f input{width:18px;height:18px;flex:none;accent-color:var(--accent)}
+.rz-t{flex:1;min-width:0;display:flex;flex-direction:column}.rz-t b{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.rz-t small{font-size:12px;color:var(--muted)}
+.rz-d{font-weight:650;font-size:13.5px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.rz-u{font-size:13px;color:var(--muted);margin-bottom:8px}.rz-u input{width:120px;padding:5px 8px;border:1px solid var(--line);border-radius:8px;font:inherit;font-weight:650;color:var(--ink)}
 </style>
 
 
@@ -2501,7 +2509,7 @@ async function apiX(op, extra){
 }
 // Nivel 2 del script Extras: recordatorios y base de contactos. Nivel 3: la base solo usa contacto@blacklinechile.cl. Nivel 4: eventos de varios días.
 function extNivel(){ return S.extInactivo ? 0 : (S.ext && S.ext.nivel) || 1; }
-const APP_VER = 'v65', NIVEL_ULTIMO = 40;
+const APP_VER = 'v66', NIVEL_ULTIMO = 41;
 function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < NIVEL_ULTIMO; }
 let sincTimer = null;
 // Después de cambiar tareas, el script actualiza los recordatorios del calendario (en segundo plano).
@@ -2646,7 +2654,9 @@ function render(){
 
 /* ---------- lógica: listas y prioridad inteligente ---------- */
 function pendientes(){ return S.data.tareas.filter(t => !t.hecho); }
-function esCancelada(t){ return /^❌ Cancelada/.test(String(t.notas || '')); }
+function esCancelada(t){ return /^(❌ Cancelada|🗄️ Archivada)/.test(String(t.notas || '')); }
+// Fecha desde la que la app parte de cero (Ajustes → Empezar de cero). Lo anterior no cuenta como pendiente.
+function inicioApp(){ const a = (S.global && S.global.inicio) || '', b = LS.inicio || ''; return a > b ? a : b; }
 function hechasEl(dia){ return S.data.tareas.filter(t => t.hecho && !esCancelada(t) && (t.cierre || '').slice(0, 10) === dia); }
 function vencidas(){ const h = hoy(); return pendientes().filter(t => t.limite && t.limite < h); }
 function paraHoy(){ const h = hoy(); return pendientes().filter(t => (t.limite && t.limite <= h) || t.estado === 'En curso'); }
@@ -3045,7 +3055,7 @@ function noticiasHome(){
 // Texto corto de lo que trae la versión nueva del script (el banner de actualización del Inicio).
 function novedadScript(){
   const n = extNivel();
-  return n >= 40 ? 'Ahora hay dos cuentas con contraseña: Admin (todo, como siempre) y Piso de venta (parte en un Hoy nuevo, sin cifras de la tienda). Créalas en ⚙️ Ajustes → Usuarios.' : n >= 39 ? 'La app ahora tiene un solo Cerebro con 9 skills (en vez de agentes sueltos): mira qué hace solo, cuánto gasta y paúsalo en la pestaña Cerebro.' : n >= 37 ? 'Las tareas automáticas ya no bloquean la app (por ejemplo, la lectura de ventas de Bsale).' : n >= 36 ? 'Cuando un cliente con negociación abierta compra en Bsale, la app te propone marcarla como ganada.' : n >= 35 ? 'Ventas del mes igual que en Bsale (solo boletas y facturas, menos notas de crédito) y noticias con foto de portada.' : n >= 34 ? 'Meta y gráfico de ventas del mes en el Inicio, con el avance diario desde Bsale.' : n >= 33 ? 'Une sola las negociaciones duplicadas de una venta ganada.' : n >= 32 ? 'Etapas después del pago: seguimiento, entrega y postventa.' : n >= 31 ? 'Venta perdida: cierra tareas, eventos y la idea de respuesta del Cerebro.' : 'Funciones nuevas para el Organizador.';
+  return n >= 41 ? 'Empezar de cero: la fecha de inicio se guarda en el script y la ven todos los equipos (Admin y Piso de venta).' : n >= 40 ? 'Ahora hay dos cuentas con contraseña: Admin (todo, como siempre) y Piso de venta (parte en un Hoy nuevo, sin cifras de la tienda). Créalas en ⚙️ Ajustes → Usuarios.' : n >= 39 ? 'La app ahora tiene un solo Cerebro con 9 skills (en vez de agentes sueltos): mira qué hace solo, cuánto gasta y paúsalo en la pestaña Cerebro.' : n >= 37 ? 'Las tareas automáticas ya no bloquean la app (por ejemplo, la lectura de ventas de Bsale).' : n >= 36 ? 'Cuando un cliente con negociación abierta compra en Bsale, la app te propone marcarla como ganada.' : n >= 35 ? 'Ventas del mes igual que en Bsale (solo boletas y facturas, menos notas de crédito) y noticias con foto de portada.' : n >= 34 ? 'Meta y gráfico de ventas del mes en el Inicio, con el avance diario desde Bsale.' : n >= 33 ? 'Une sola las negociaciones duplicadas de una venta ganada.' : n >= 32 ? 'Etapas después del pago: seguimiento, entrega y postventa.' : n >= 31 ? 'Venta perdida: cierra tareas, eventos y la idea de respuesta del Cerebro.' : 'Funciones nuevas para el Organizador.';
 }
 
 /* ---------- Ventas del mes: avance diario acumulado contra el mes anterior y la meta ---------- */
@@ -5509,7 +5519,7 @@ function abrirProducto(q){
    La sesión la firma el servidor; aquí solo se guarda y se envía en cada consulta. El servidor decide
    qué puede ver cada cuenta: esconder pestañas en la app es comodidad, no seguridad. */
 const TABS_SOLO_ADMIN = ['inicio', 'compras', 'cerebro'];
-const LS_CONSERVAR = ['url', 'token', 'ui', 'usrActivos', 'rolUlt', 'guiaVista', 'guiaVistaP', 'waTienda', 'vista', 'extOff', 'rutinaItems', 'rutina', 'respondidos', 'respHoy'];
+const LS_CONSERVAR = ['url', 'token', 'ui', 'inicio', 'reinUmbral', 'usrActivos', 'rolUlt', 'guiaVista', 'guiaVistaP', 'waTienda', 'vista', 'extOff', 'rutinaItems', 'rutina', 'respondidos', 'respHoy'];
 function rol(){ return LS.rol === 'piso' ? 'piso' : 'admin'; }
 function esPiso(){ return rol() === 'piso'; }
 function tabPermitida(t){ return !esPiso() || TABS_SOLO_ADMIN.indexOf(t) < 0; }
@@ -7332,7 +7342,8 @@ function respHoy(){ const r = lsGet('respHoy', {}); return r.dia === hoy() ? r :
 function esperanRespuesta(){
   if (!S.base) return [];
   const R = lsGet('respondidos', {});
-  return contactos().map(c => ({ c, g: agenteDe(c.id) })).filter(x => x.g.idea && R[x.c.id] !== x.g.idea.fecha + '|' + String(x.g.idea.detalle).slice(0, 24)).sort((a, b) => String(a.g.idea.fecha).localeCompare(String(b.g.idea.fecha)));
+  const ini = inicioApp();
+  return contactos().map(c => ({ c, g: agenteDe(c.id) })).filter(x => x.g.idea && (!ini || String(x.g.idea.fecha).slice(0, 10) >= ini) && R[x.c.id] !== x.g.idea.fecha + '|' + String(x.g.idea.detalle).slice(0, 24)).sort((a, b) => String(a.g.idea.fecha).localeCompare(String(b.g.idea.fecha)));
 }
 async function marcarRespondido(x, nota){
   const R = lsGet('respondidos', {}); R[x.c.id] = x.g.idea.fecha + '|' + String(x.g.idea.detalle).slice(0, 24); lsSet('respondidos', R);
@@ -7620,6 +7631,67 @@ function modoEnfoque(){
       $b('#mfOk').onclick = async () => { const tx = $b('#mfN').value.trim(); if (!tx){ $b('#mfN').focus(); toast('Escribe en una línea qué pasó'); return; } $b('#mfOk').disabled = true; await negRegistrar(q.x.n, '📝 Nota', tx); sig(true); };
       $b('#mfAb').onclick = () => { m.cerrar(); openDeal(q.x.n, { tab: 'actividad' }); };
     }
+  };
+  pintar();
+}
+
+/* ---------- Empezar de cero: archiva tareas viejas y limpia el pipeline (con vista previa y selección) ---------- */
+async function empezarDeCero(){
+  if (esPiso()) return;
+  const h = hoy();
+  if (!S.neg && extNivel() >= 5){ try { await loadNeg(true); } catch(e){} }
+  const T = pendientes().filter(t => t.row != null).map(t => ({ t, on: !t.repetir && (!t.limite || t.limite <= h) }));
+  const N = (S.neg ? negocios() : []).filter(n => n.estado === 'Abierta' || ['Ganada', 'Entregada', 'Postventa'].includes(n.etapa));
+  let umbral = +(LS.reinUmbral || 1000000);
+  const selN = {}; const reglaN = n => n.estado === 'Abierta' ? (+n.valor || 0) < umbral : n.etapa !== 'Ganada';
+  N.forEach(n => selN[n.id] = reglaN(n));
+  const m = modal('🧹 Empezar de cero', '<div id="rz"></div>', { wide: true }), box = m.el.querySelector('#rz');
+  const nomN = n => { const c = n.contacto ? contactoPorId(n.contacto) : null; return (c && c.nombre) || n.titulo; };
+  const fila = (k, on, tit, sub, der) => '<label class="rz-f"><input type="checkbox" data-' + k + (on ? ' checked' : '') + '><span class="rz-t"><b>' + esc(tit) + '</b>' + (sub ? '<small>' + esc(sub) + '</small>' : '') + '</span>' + (der ? '<span class="rz-d">' + der + '</span>' : '') + '</label>';
+  const pintar = () => {
+    const nT = T.filter(x => x.on).length, nN = N.filter(n => selN[n.id]).length, esp = esperanRespuesta().length;
+    const quedan = N.filter(n => !selN[n.id]);
+    box.innerHTML = '<p class="hint" style="margin-top:0">Marca lo que quieres <b>sacar</b>. Nada se pierde: las tareas quedan archivadas en la planilla y cada negocio que se saca queda anotado en la ficha del cliente.</p>' +
+      '<div class="rz-s"><div class="rz-h"><b>Tareas pendientes</b><span>' + nT + ' de ' + T.length + ' se archivan</span><button class="link" data-todo="t">Todas</button><button class="link" data-nada="t">Ninguna</button></div>' +
+      '<div class="rz-l">' + (T.length ? T.map((x, i) => fila('ti="' + i + '"', x.on, x.t.tarea, x.t.limite ? (x.t.limite < h ? 'Vencida · ' : '') + fmt(x.t.limite) + (x.t.repetir ? ' · se repite' : '') : 'Sin fecha', '')).join('') : '<div class="hint">No hay tareas pendientes.</div>') + '</div></div>' +
+      '<div class="rz-s"><div class="rz-h"><b>Negocios</b><span>' + nN + ' se sacan · ' + quedan.length + ' quedan</span></div>' +
+      '<div class="rz-u">Quedan los abiertos desde <input type="text" inputmode="numeric" id="rzU" value="' + umbral.toLocaleString('es-CL') + '"> y los ganados que aún no se entregan. Sale lo más chico y lo ya entregado.</div>' +
+      '<div class="rz-l">' + (N.length ? N.slice().sort((a, b) => (+b.valor || 0) - (+a.valor || 0)).map(n => fila('ni="' + esc(n.id) + '"', selN[n.id], nomN(n), (n.producto || n.titulo || '') + ' · ' + n.etapa, n.valor ? clpCorto(n.valor) : '<i>sin monto</i>')).join('') : '<div class="hint">No hay negocios abiertos.</div>') + '</div></div>' +
+      '<div class="rz-s"><label class="rz-f"><input type="checkbox" id="rzE" checked><span class="rz-t"><b>Dejar al día los mensajes anteriores a hoy</b><small>' + (esp ? esp + ' clientes aparecen esperando respuesta por mensajes viejos. ' : '') + 'Desde hoy solo cuentan los mensajes nuevos y lo que anoten.</small></span></label></div>' +
+      '<div class="btns"><button class="btn sec" id="rzX">Cancelar</button><button class="btn" id="rzOk"' + (nT + nN ? '' : ' disabled') + '>Limpiar ' + nT + ' tareas y ' + nN + ' negocios</button></div>';
+    const $b = q => box.querySelector(q);
+    box.querySelectorAll('[data-ti]').forEach(c => c.onchange = () => { T[+c.dataset.ti].on = c.checked; pintar(); });
+    box.querySelectorAll('[data-ni]').forEach(c => c.onchange = () => { selN[c.dataset.ni] = c.checked; pintar(); });
+    box.querySelectorAll('[data-todo]').forEach(b => b.onclick = () => { T.forEach(x => x.on = true); pintar(); });
+    box.querySelectorAll('[data-nada]').forEach(b => b.onclick = () => { T.forEach(x => x.on = false); pintar(); });
+    $b('#rzU').onchange = e => { const v = +String(e.target.value).replace(/\D/g, ''); umbral = v || 0; LS.reinUmbral = umbral; N.forEach(n => selN[n.id] = reglaN(n)); pintar(); };
+    $b('#rzX').onclick = () => m.cerrar();
+    $b('#rzOk').onclick = () => ejecutar($b('#rzE').checked);
+  };
+  const ejecutar = async conInicio => {
+    const LT = T.filter(x => x.on).map(x => x.t), LN = N.filter(n => selN[n.id]);
+    if (!confirm('Se archivan ' + LT.length + ' tareas y se sacan ' + LN.length + ' negocios. ¿Seguimos?')) return;
+    const tot = LT.length + LN.length; let k = 0, err = 0;
+    const avance = txt => { box.innerHTML = '<div class="empty"><span class="spin"></span>' + esc(txt) + '</div><div class="pb"><i style="width:' + (tot ? k / tot * 100 : 100) + '%"></i></div><p class="hint" style="text-align:center">' + k + ' de ' + tot + (err ? ' · ' + err + ' con error' : '') + '. No cierres la app.</p>'; };
+    const nota = '🗄️ Archivada al empezar de cero (' + fmt(h) + ')';
+    for (const t of LT){
+      avance('Archivando tareas…');
+      try { const nn = nota + (t.notas ? '\n' + t.notas : ''); await updateTask(t, { notas: nn }); t.notas = nn; await api('toggle', { row: t.row, tarea: t.tarea, hecho: true }); t.hecho = true; t.cierre = h + 'T' + new Date().toTimeString().slice(0, 5); }
+      catch(e){ err++; }
+      k++;
+    }
+    for (const n of LN){
+      avance('Limpiando el pipeline…');
+      try { await apiX('negocioBorrar', { id: n.id, motivo: 'Empezar de cero ' + fmt(h) + (n.valor ? ' · ' + clp(n.valor) : '') + ' · ' + n.etapa }); }
+      catch(e){ err++; }
+      k++;
+    }
+    if (conInicio){ LS.inicio = h; try { const r = await apiX('inicio', { fecha: h }); if (S.global) S.global.inicio = r.inicio; } catch(e){} }
+    box.innerHTML = '<div class="hy-fin">' + ringSVG(1, 84) + '<h3>¡Listo, partimos de cero!</h3><p>' + (LT.length ? LT.length + ' tareas archivadas. ' : '') + (LN.length ? LN.length + ' negocios fuera del pipeline. ' : '') + (err ? err + ' no se pudieron cambiar: vuelve a intentarlo más tarde. ' : '') + 'Desde ahora las tareas salen de los mensajes nuevos y de lo que anoten.</p><button class="btn" id="rzF">Ir a Hoy</button></div>';
+    box.querySelector('#rzF').onclick = () => { m.cerrar(); go('hoy'); };
+    try { await load(); } catch(e){}
+    try { await loadNeg(true); } catch(e){}
+    render();
   };
   pintar();
 }
@@ -8634,6 +8706,7 @@ function showSettings(){
   if (esPiso()){ sheet(ajustesPisoHTML()); $('#p_gd').onclick = () => { closeSheet(); openGuia(); }; $('#p_rt').onclick = () => { closeSheet(); editarRutina(); }; $('#p_out').onclick = () => { if (confirm('¿Cerrar la sesión en este dispositivo?')) cerrarSesion(); }; return; }
   const g = S.google, gTxt = S.extInactivo || (g && g.inactivo) ? 'No activadas' : !g ? 'Revisando…' : 'Activas ✓ · ' + (g.eventos || []).length + ' eventos · ' + (g.correos || []).length + ' correos' + (g.avisos && g.avisos.length ? ' · ⚠️ ' + g.avisos.join(' · ') : '');
   sheet('<h3>⚙️ Ajustes</h3><div class="hint">Conectado a tu Sheet del organizador.</div>' + usuariosCardHTML() +
+    '<div class="card"><b>🧹 Empezar de cero</b><div class="hint">' + (inicioApp() ? 'Partiste de cero el ' + esc(fmtLong(inicioApp())) + '. ' : '') + 'Archiva las tareas viejas, saca los negocios chicos o ya entregados y deja como al día los mensajes anteriores. Antes de hacer nada te muestra la lista para que elijas.</div><div class="btns"><button class="btn sec" id="s_rein">Revisar qué se limpia</button></div></div>' +
     (S.ext && !S.ext.waHist && extNivel() >= 24 ? '<div class="card"><b>💬 Historial de WhatsApp</b><div class="hint">Todavía no llega el historial. Al conectar el número con «compartir historial», Meta lo envía por partes durante las primeras 24 horas y aquí verás el avance.</div></div>' : '') +
     (S.ext && S.ext.waHist ? '<div class="card"><b>💬 Historial de WhatsApp</b><div class="hint">' + (S.ext.waHist.rechazado ? 'No se compartió el historial al conectar el número (' + esc(S.ext.waHist.rechazado) + '). Para recibirlo hay que desconectar y volver a conectar el número aceptando «compartir historial».' : 'Recibidos ' + (S.ext.waHist.mensajes || 0).toLocaleString('es-CL') + ' mensajes de ' + (S.ext.waHist.chats || 0) + ' chats' + (S.ext.waHist.fases ? ' · avance por etapa: ' + Object.keys(S.ext.waHist.fases).sort().map(f => ['último día', 'hasta 90 días', 'hasta 180 días'][+f] + ' ' + S.ext.waHist.fases[f] + '%').join(', ') : S.ext.waHist.progreso != null ? ' · avance ' + S.ext.waHist.progreso + '%' : '') + ' · último envío ' + esc(haceTxt(String(S.ext.waHist.ultimo || '').slice(0, 10))) + '. El Cerebro arma el perfil de cada contacto en modo masivo (sin tareas ni negocios antiguos).') + '</div></div>' : '') +
     '<div class="card"><b>🔢 Versiones</b><div class="hint">App: ' + esc(APP_VER) + ' · Script: ' + (S.extInactivo ? 'funciones extra no activadas' : 'versión ' + esc((S.ext && S.ext.version) || '?') + ' (nivel ' + extNivel() + ')') + (extNivel() < NIVEL_ULTIMO ? ' · <b style="color:var(--bad-ink)">hay una versión nueva del script</b>: pega el Extras.gs nuevo y crea una Nueva versión de la implementación.' : ' · al día ✓') + '</div></div>' +
@@ -8651,6 +8724,7 @@ function showSettings(){
   $('#s_g').onclick = () => g && !g.inactivo ? openSugerencias() : showExtrasSetup();
   const fz = $('#s_fz'); if (fz) fz.onclick = () => { closeSheet(); abrirFuentes(); };
   bindUsuariosCard();
+  if ($('#s_rein')) $('#s_rein').onclick = () => { closeSheet(); empezarDeCero(); };
   $('#s_cb').onclick = () => { closeSheet(); go('cerebro'); }; $('#s_gd').onclick = () => { closeSheet(); openGuia(); };
   const sav = $('#s_av'); if (sav) sav.onclick = () => { closeSheet(); abrirAvisos(); };
   $$('[data-ui]').forEach(b => b.onclick = () => { LS.ui = b.dataset.ui; document.body.classList.toggle('ui2', LS.ui !== 'clasico'); closeSheet(); render(); toast(LS.ui === 'clasico' ? 'Diseño clásico' : 'Diseño nuevo'); });

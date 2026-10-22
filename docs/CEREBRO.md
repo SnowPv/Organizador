@@ -399,3 +399,11 @@ Basada en el análisis de unos 300 diseños de Dribbble (búsquedas: crm, crm-da
 - **Negocios**: columnas en bandeja gris con una barra de color arriba; las etapas vacías se vuelven una franja vertical angosta (se abren al arrastrar). Tarjetas (`kc5`) con avatar, producto, monto destacado, próxima acción y «N d en etapa»; borde ámbar a los 7 días y rojo a los 14 o si requiere atención. El Piso de venta no ve montos.
 - **Tareas**: la franja superior queda en una sola línea.
 - **Cerebro**: recomendaciones con borde violeta. **Celular**: píldora detrás del ícono activo en la barra inferior.
+
+## Empezar de cero (app v66 · script nivel 41)
+
+- **Ajustes → 🧹 Empezar de cero** (solo Admin). Muestra la lista antes de hacer nada:
+  - **Tareas pendientes**: marcadas por defecto las vencidas, las de hoy y las sin fecha; las futuras y las que se repiten quedan sin marcar. Se **archivan** (se cierran con la nota «🗄️ Archivada al empezar de cero…»; no cuentan como hechas).
+  - **Negocios**: quedan los abiertos desde el monto que elijas (por defecto $1.000.000) y los **Ganados aún no entregados**; salen los abiertos más chicos o sin monto y los ya **Entregados / Postventa**. Se sacan con `negocioBorrar`, que deja anotado «🗑 Negociación eliminada» en la ficha del cliente. Las perdidas no se tocan.
+  - **Mensajes anteriores**: guarda la fecha de inicio (`EX_INICIO`, op `inicio`, viene en `global.inicio`). «Clientes que esperan» solo cuenta ideas de respuesta desde esa fecha (`inicioApp`).
+- Las tareas nuevas siguen saliendo solas de los mensajes de WhatsApp que llegan (agente) y de lo que se anote.

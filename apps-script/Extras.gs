@@ -15,8 +15,8 @@
  * Para actualizar este archivo más adelante: reemplaza todo su contenido y repite los dos pasos anteriores.
  */
 
-const EX_VERSION = '2027-01-02';
-const EX_NIVEL = 40;      // la app lo usa para saber qué funciones tiene este script
+const EX_VERSION = '2027-01-06';
+const EX_NIVEL = 41;      // la app lo usa para saber qué funciones tiene este script
 const EX_HOJA = 'Tareas';
 const EX_PRIMERA = 4;
 const EX_ULTIMA = 400;
@@ -240,6 +240,7 @@ function ex_ruta_(p) {
     case 'eventosContacto': return ex_eventosContacto_(p);
     case 'perderNegocio': return ex_perderNegocio_(p);
     case 'negocioBorrar': return ex_borrarNegocio_(p);
+    case 'inicio': { const f = String(p.fecha || ''); if (!/^\d{4}-\d{2}-\d{2}$/.test(f)) throw new Error('fecha inválida'); PropertiesService.getScriptProperties().setProperty('EX_INICIO', f); return { ok: true, inicio: f }; }
     case 'metaVentas': { const v = Math.max(0, Math.round(Number(p.valor) || 0)); PropertiesService.getScriptProperties().setProperty('EX_META_VENTAS', String(v)); return { ok: true, meta: v }; }
     case 'unirDuplicados': {
       const lk = LockService.getScriptLock();
@@ -4248,7 +4249,7 @@ function ex_rondaCerebro_() {
 }
 function ex_contextoGlobal_(p) {
   // Para la app: todo lo externo en una sola llamada (clima, Specialized, noticias, avisos, fuentes y el plan del día).
-  const out = { ok: true };
+  const out = { ok: true, inicio: PropertiesService.getScriptProperties().getProperty('EX_INICIO') || '' };   // fecha desde la que la app parte de cero (op inicio)
   try { out.clima = ex_clima_(); } catch (e) { out.climaError = e.message; }
   try { out.specialized = ex_spzResumen_(); } catch (e) { out.specializedError = e.message; }
   try { out.noticias = ex_noticias_(false); } catch (e) { out.noticiasError = e.message; }
