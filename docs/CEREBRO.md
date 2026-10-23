@@ -444,3 +444,9 @@ Basada en el análisis de unos 300 diseños de Dribbble (búsquedas: crm, crm-da
 - Un solo manejador global (`botonPrincipal`): en un campo de una línea, **Enter** activa el botón principal de esa ventana o tarjeta. En un cuadro de texto de una ventana chica (detalle de actividad, nota, mensaje), en computador **Enter envía** y **Shift+Enter** hace salto de línea. En notas largas de las fichas de edición, Enter hace salto de línea y **Ctrl/⌘+Enter guarda**. En el celular los cuadros de texto siempre hacen salto de línea.
 - Las ventanas emergentes abren con el cursor en el primer campo (en computador). Los botones principales muestran «↵» como pista.
 - Los campos que ya tenían su propio Enter (agregar tarea, buscadores, Cerebro) no cambian.
+
+## Ganada automática por lo que se anota (app v74)
+
+- `senalGanada(texto)` detecta venta cerrada en lo que se registra en una negociación abierta: «confirmó la compra», «pagó la reserva / un monto de reserva», «abonó $…», «transfirió el pie», «compró la Levo», «se la lleva», «emitimos la boleta», «pagó el saldo». Ignora frases negadas o en futuro («va a pagar», «todavía no compra», «preguntó por formas de pago», «la compra el sábado»).
+- `ganarPorTexto`: si hay señal, la negociación pasa sola a **Ganada · seguimiento** (fecha de hoy, entrega estimada en 3 días, tarea de entrega del script) con confeti y **Deshacer**. Aplica en la nota rápida de la ficha, en Registrar actividad, en la ronda de seguimiento y en Empezar mi día.
+- Enter también activa el botón de los campos con micrófono/«+» (`.smart`).

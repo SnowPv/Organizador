@@ -2521,7 +2521,7 @@ async function apiX(op, extra){
 }
 // Nivel 2 del script Extras: recordatorios y base de contactos. Nivel 3: la base solo usa contacto@blacklinechile.cl. Nivel 4: eventos de varios días.
 function extNivel(){ return S.extInactivo ? 0 : (S.ext && S.ext.nivel) || 1; }
-const APP_VER = 'v73', NIVEL_ULTIMO = 44;
+const APP_VER = 'v74', NIVEL_ULTIMO = 44;
 function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < NIVEL_ULTIMO; }
 let sincTimer = null;
 // Después de cambiar tareas, el script actualiza los recordatorios del calendario (en segundo plano).
@@ -2924,7 +2924,7 @@ function cerrarModales(){ $$('.pop-bg').forEach(x => x.remove()); }
 function botonPrincipal(el){
   const cont = el.closest('.pop, .sheet, form, .qadd, .smart, .cop-f, .card, .sec, .w, .rz-s') || document.body;
   const vis = b => b.offsetParent !== null && !b.disabled;
-  const L = [...cont.querySelectorAll('button.btn, button[type=submit]')].filter(b => vis(b) && !b.classList.contains('sec') && !b.classList.contains('bad') && !b.classList.contains('pill') && !/^(✕|×)$/.test(b.textContent.trim()));
+  const L = [...cont.querySelectorAll('button.btn, button[type=submit]' + (el.closest('.smart') ? ', .smart button' : ''))].filter(b => vis(b) && !b.classList.contains('sec') && !b.classList.contains('bad') && !b.classList.contains('pill') && !/^(✕|×)$/.test(b.textContent.trim()));
   return L.find(b => el.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING) || L[L.length - 1] || null;
 }
 document.addEventListener('keydown', e => {
@@ -6697,9 +6697,41 @@ function openProximo(n, sug){
   };
 }
 function refrescarNeg(n){ if ($('#layer').innerHTML && n && $('#ng_root') && $('#ng_root').dataset.id === n.id) openNegocio(n); else render(); }
+// Señal de venta cerrada en lo que se anota: «confirmó la compra», «pagó la reserva», «abonó», «transfirió», «se la lleva»…
+// Se ignoran frases en futuro o negadas («va a pagar», «todavía no compra», «quiere reservar»).
+function senalGanada(texto){
+  let t = ' ' + norm(texto).replace(/[.,;:!¡¿?()]/g, ' ').replace(/\s+/g, ' ') + ' ';
+  // Negado o en futuro: no es venta cerrada todavía.
+  if (/\b(no|todavia no|aun no|nunca|sin)\b[^.]{0,20}\b(compr|pag|abon|transfir|reserv|confirm|deposit)/.test(t)) return '';
+  if (/\b(va a|vamos a|iba a|van a|quiere|queria|quisiera|podria|pensando en|evaluando|cotizando|consulto|consulta|pregunto|pregunta)\b[^.]{0,20}\b(pagar|comprar|abonar|reservar|transferir|confirmar|pago|compra|reserva|cuotas)/.test(t)) return '';
+  if (/\b(pagara|comprara|abonara|reservara|confirmara|transferira)\b/.test(t)) return '';
+  if (/\b(compro|pago|abono|reservo|transfiere|paga)\b[^.]{0,20}\b(manana|pasado manana|el lunes|el martes|el miercoles|el jueves|el viernes|el sabado|el domingo|la proxima|la otra semana|en unos dias|despues|cuando)\b/.test(t)) return '';
+  const R = [
+    /\bconfirm(o|a|amos)\b[^.]{0,30}\b(la compra|la venta|el pedido|compra|que la lleva|que se la lleva)\b/, /\b(cerro|cerramos|concreto|concretamos)\b[^.]{0,20}\b(compra|venta|negocio|trato)\b/,
+    /\b(pago|abono|dejo|hizo|mando|transfirio|deposito)\b[^.]{0,25}\b(reserva|pie|anticipo|sena)\b/, /\b(monto|pago|abono) de (la )?reserva\b/, /\breservo\b[^.]{0,20}\b(bici|bicicleta|la|el|con)\b/,
+    /\bcompro\b[^.]{0,20}\b(la|el|una|un|bici|bicicleta|levo|kenevo|vado|stumpjumper|turbo)\b/, /\bya compro\b/,
+    /\b(ya )?pago\b[^.]{0,6}\b(el total|todo|la bici|la bicicleta|el saldo|\$|\d)/, /\bpago completo\b|\bpagado\b|\bpagada\b/,
+    /\babono\b[^.]{0,12}\b(\$|\d|el|la|un|una)/, /\btransfirio\b|\btransferencia (recibida|lista|hecha|confirmada)\b/, /\bdeposito\b[^.]{0,12}\b(\$|\d|el|la)/,
+    /\bse la (lleva|llevo)\b|\bse lo (lleva|llevo)\b/, /\bemiti(mos)? (la )?(boleta|factura)\b|\b(boleta|factura) (emitida|hecha)\b/
+  ];
+  for (const r of R){ const m = t.match(r); if (m) return m[0].trim(); }
+  return '';
+}
+// Si lo que se anotó dice que la venta se cerró, la negociación pasa sola a Ganada (en seguimiento hasta la entrega), con Deshacer.
+async function ganarPorTexto(n, texto){
+  if (!n || n.estado !== 'Abierta') return false;
+  const s = senalGanada(texto); if (!s) return false;
+  const antes = n.etapa, h = hoy();
+  await apiX('negocio', { negocio: { id: n.id, etapa: 'Ganada', fechaEtapa: h, entrega: addDays(h, 3) } });
+  n.etapa = 'Ganada'; n.estado = 'Ganada';
+  confetti(120); vibrar([60, 40, 120]);
+  toastUndo('🏆 Pasó a Ganada (detecté «' + s + '»). Queda en seguimiento hasta la entrega.', async () => { try { await apiX('negocio', { negocio: { id: n.id, etapa: antes } }); n.etapa = antes; n.estado = 'Abierta'; toast('Volvió a ' + antes); await loadNeg(true); render(); } catch(e){ toast('No se pudo deshacer: ' + e.message); } });
+  return true;
+}
 async function negRegistrar(n, tipo, texto, etapaSug){
   try {
     await apiX('negocioNota', { id: n.id, texto, tipo });
+    if (await ganarPorTexto(n, texto)){ await Promise.all([loadNeg(true), loadBase(true), load()]); refrescarNeg(negociosTodos().find(x => x.id === n.id)); return; }
     const iS = etapaIdx(etapaSug), iA = etapaIdx(n.etapa);
     if (etapaSug && n.estado === 'Abierta' && iA >= 0 && iS > iA){ await apiX('negocio', { negocio: { id: n.id, etapa: etapaSug } }); toast('📝 Registrado · ➡️ avanzó a ' + etapaSug); }
     else toast('📝 Registrado');
@@ -7719,6 +7751,7 @@ function rondaSeguimiento(t, opt){
         const txt = (act >= 0 ? ACTIVIDADES[act][0].replace(/^\S+\s/, '') : 'Seguimiento') + (det ? ': ' + det : '');
         await apiX('negocioNota', { id: n.id, texto: txt, tipo: act >= 0 ? ACTIVIDADES[act][1] : '📝 Seguimiento' });
         const cambios = { id: n.id }; let hay = false;
+        if (etapa === n.etapa && n.estado === 'Abierta' && senalGanada(det)){ etapa = 'Ganada'; cambios.fechaEtapa = h; cambios.entrega = addDays(h, 3); }
         if (etapa !== n.etapa){ cambios.etapa = etapa; hay = true; }
         if (etapa !== 'Ganada' && (px !== (n.proxima || '') || pf !== (n.fechaProx || ''))){ cambios.proxima = px; cambios.fechaProx = pf; hay = true; }
         if (hay) await apiX('negocio', { negocio: cambios });
