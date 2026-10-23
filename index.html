@@ -2522,7 +2522,7 @@ async function apiX(op, extra){
 }
 // Nivel 2 del script Extras: recordatorios y base de contactos. Nivel 3: la base solo usa contacto@blacklinechile.cl. Nivel 4: eventos de varios días.
 function extNivel(){ return S.extInactivo ? 0 : (S.ext && S.ext.nivel) || 1; }
-const APP_VER = 'v75', NIVEL_ULTIMO = 45;
+const APP_VER = 'v76', NIVEL_ULTIMO = 45;
 function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < NIVEL_ULTIMO; }
 let sincTimer = null;
 // Después de cambiar tareas, el script actualiza los recordatorios del calendario (en segundo plano).
@@ -2660,7 +2660,7 @@ function render(){
   const cf = $('#copFab'); if (cf && !cf.innerHTML) cf.innerHTML = icon('spark') + '<span>Cerebro</span>';
   const hc = $('#btnCop'); if (hc && !hc.innerHTML) hc.innerHTML = icon('spark') + ' Cerebro';
   if (!S.data){ $('#view').innerHTML = '<div class="empty"><span class="spin"></span>Cargando…</div>'; return; }
-  ({ inicio: viewInicio, hoy: () => esPiso() || S.vistaPiso || UI2() ? viewHoyPiso() : viewHoy(), tareas: viewTareas, habitos: () => S.subH === 'semana' ? viewSemana() : viewHabitos(), semana: () => S.per && S.per !== 'semana' ? viewPeriodo() : viewSemana(), proy: viewProy, base: viewBase, negocios: viewNegocios, redes: viewRedes, compras: viewCompras, cerebro: viewCerebro })[S.tab]();
+  ({ inicio: viewInicio, hoy: () => esPiso() || S.vistaPiso || UI2() ? viewHoyPiso() : viewHoy(), tareas: viewTareas, habitos: () => S.subH === 'semana' ? viewSemana() : viewHabitos(), semana: () => (S.per || 'mes') !== 'semana' ? (S.per || (S.per = 'mes'), viewPeriodo()) : viewSemana(), proy: viewProy, base: viewBase, negocios: viewNegocios, redes: viewRedes, compras: viewCompras, cerebro: viewCerebro })[S.tab]();
   if (!S.guiaAuto){ S.guiaAuto = 1; let v = '1'; try { v = LS[esPiso() ? 'guiaVistaP' : 'guiaVista']; } catch(e){} if (!v) setTimeout(() => { if (!$('.pop-bg')) openGuia(); }, 900); }
   focusPill(); imxPill();
 }
@@ -6223,7 +6223,7 @@ async function cargarEventosRango(ini, fin){
   S['_evp' + k] = 0; if (S.tab === 'semana') render();
 }
 function eventosEn(ini, fin){ const k = ini + '_' + fin; return (S.evR && S.evR[k]) || ((S.google && S.google.eventos) || []).filter(e => e.fecha >= ini && e.fecha <= fin); }
-function perTabs(){ return '<div class="views per-v">' + [['semana', 'Semana'], ['mes', 'Mes'], ['anio', 'Año']].map(v => '<button class="' + ((S.per || 'semana') === v[0] ? 'on' : '') + '" data-per="' + v[0] + '">' + v[1] + '</button>').join('') + '</div>'; }
+function perTabs(){ return '<div class="views per-v">' + [['mes', 'Mes'], ['semana', 'Semana'], ['anio', 'Año']].map(v => '<button class="' + ((S.per || 'mes') === v[0] ? 'on' : '') + '" data-per="' + v[0] + '">' + v[1] + '</button>').join('') + '</div>'; }
 function bindPer(){ $$('[data-per]').forEach(b => b.onclick = () => { S.per = b.dataset.per; S.perOff = 0; render(); window.scrollTo(0, 0); }); }
 function kpiCmp(L){ return '<div class="kcmp">' + L.filter(Boolean).map(k => '<div class="kc"><small>' + k.t + '</small><b>' + k.v + '</b>' + (k.d || '') + (k.s ? '<span class="kc-s">' + k.s + '</span>' : '') + '</div>').join('') + '</div>'; }
 function viewPeriodo(){
@@ -6233,7 +6233,7 @@ function viewPeriodo(){
   const vs = tipo === 'anio' ? 'vs ' + P.nombre : 'vs ' + MESES_C[P.m].toLowerCase();
   const minT = m => m == null ? '–' : m < 60 ? m + ' min' : (Math.round(m / 6) / 10) + ' h';
   let html = perTabs() + '<div class="per-h"><button class="icon-btn" data-off="-1" aria-label="Anterior">‹</button><h3>' + esc(R.nombre) + '</h3><button class="icon-btn" data-off="1" aria-label="Siguiente">›</button>' + (off ? '<button class="btn sm sec" data-off="0">Hoy</button>' : '') + '<span class="per-vs">Comparado ' + esc(vs) + '</span></div>';
-  html += kpiCmp([
+  const kpis = kpiCmp([
     { t: 'Tareas hechas', v: A.tareas, d: deltaTag(A.tareas, B.tareas) },
     S.neg && { t: 'Ventas', v: clpCorto(A.ventas), d: deltaTag(A.ventas, B.ventas), s: A.ganadas + ' cerradas' + (A.ticket ? ' · ticket ' + clpCorto(A.ticket) : '') },
     S.neg && { t: 'Tasa de cierre', v: A.tasa == null ? '–' : Math.round(A.tasa * 100) + '%', d: A.tasa != null && B.tasa != null ? deltaTag(A.tasa, B.tasa) : '', s: A.ganadas + ' ganadas · ' + A.perdidas + ' perdidas' },
@@ -6244,7 +6244,8 @@ function viewPeriodo(){
     A.alcance != null && { t: 'Instagram', v: A.segDelta != null ? (A.segDelta >= 0 ? '+' : '') + A.segDelta : (A.alcance || 0).toLocaleString('es-CL'), d: deltaTag(A.alcance, B.alcance, false, 'alcance'), s: A.segDelta != null ? 'seguidores · alcance ' + (A.alcance || 0).toLocaleString('es-CL') : 'alcance' },
     (A.posts != null || A.publicado) && { t: 'Publicaciones', v: A.posts != null ? A.posts : A.publicado, d: deltaTag(A.posts != null ? A.posts : A.publicado, B.posts != null ? B.posts : B.publicado), s: (A.leadsIG ? A.leadsIG + ' clientes desde Instagram' : '') }
   ]);
-  if (tipo === 'mes') html += mesHTML(R, A); else html += anioHTML(R, A);
+  // Mes: primero el calendario (panorama del mes) y después las cifras. Año: cifras y luego los meses.
+  if (tipo === 'mes') html += mesHTML(R, A) + '<div class="pv-lbl" style="margin-top:22px">Cifras del mes · ' + esc(vs) + '</div>' + kpis; else html += kpis + anioHTML(R, A);
   $('#view').innerHTML = html; bindPer(); bindTasks($('#view'));
   $$('[data-off]').forEach(b => b.onclick = () => { S.perOff = +b.dataset.off === 0 ? 0 : (S.perOff || 0) + +b.dataset.off; render(); });
   $$('[data-dia]').forEach(b => b.onclick = () => abrirDia(b.dataset.dia));
@@ -9043,6 +9044,7 @@ const DASH = {
 function ponerDash(tab){
   if ((esPiso() || S.vistaPiso || UI2()) && tab === 'hoy') return;
   if (tab === 'tareas' && UI2()) return;
+  if (tab === 'semana' && (S.per || 'mes') !== 'semana') return;   // Mes y Año ya traen sus cifras: el calendario va primero
   if (document.querySelector('#view .pv-hero')) return;   // las portadas nuevas ya resumen la pestaña   // Tareas tiene su propia franja compacta
   const v = $('#view'); if (!v || !DASH[tab] || v.querySelector(':scope > .dsh')) return;
   const f = v.firstElementChild; if (!f || (f.classList.contains('empty') && v.children.length === 1)) return;

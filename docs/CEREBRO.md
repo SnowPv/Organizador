@@ -457,3 +457,8 @@ Basada en el análisis de unos 300 diseños de Dribbble (búsquedas: crm, crm-da
 - **Script**: el Cerebro llama las herramientas que necesita **todas a la vez** en un mismo paso, y tiene un **tope de ~55 s**: pasado eso responde con lo que ya tiene (`tool_choice: none`).
 - **App**: si el script está ocupado, se reintenta sola (hasta ~50 s para el Cerebro). Si se corta la conexión, el chat lo explica y muestra **↻ Reintentar**.
 - **Dictado**: ya no repite la frase cuando Android la vuelve a entregar al reencender el micrófono, ni repite las palabras en que se unen dos frases.
+
+## Calendario: Mes primero (app v76)
+
+- La pestaña Calendario abre en **Mes** (antes Semana). Orden de las vistas: Mes · Semana · Año.
+- En Mes va primero la grilla del mes (tocar un día abre su detalle) y debajo «Cifras del mes» con la comparación. El resumen de 4 tarjetas de la semana ya no se muestra en Mes ni Año.
