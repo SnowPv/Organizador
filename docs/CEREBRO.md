@@ -438,3 +438,9 @@ Basada en el análisis de unos 300 diseños de Dribbble (búsquedas: crm, crm-da
 - Herramienta nueva del Cerebro `buscar_andes` (`ex_andesBuscar_`): usa el buscador público de la web de Andes Industrial (el mismo que ve cualquier visitante, sin iniciar sesión) para confirmar si un producto Shimano o Continental existe en el distribuidor. Devuelve nombres de producto, **sin precios ni stock** (eso queda en el portal con la sesión de Gustavo). Caché de 6 horas.
 - Regla: si el repuesto viene en variantes que solo cambian en un dato (largo de cable Di2, medida), el Cerebro propone el código y agrega a la tarea el paso para elegir la variante («medir en la bici el largo del cable actual antes de pedir a Andes»), sin inventar largos ni precios.
 - Disponible para Admin y Piso de venta (no muestra costos).
+
+## Enter en toda la app (app v73)
+
+- Un solo manejador global (`botonPrincipal`): en un campo de una línea, **Enter** activa el botón principal de esa ventana o tarjeta. En un cuadro de texto de una ventana chica (detalle de actividad, nota, mensaje), en computador **Enter envía** y **Shift+Enter** hace salto de línea. En notas largas de las fichas de edición, Enter hace salto de línea y **Ctrl/⌘+Enter guarda**. En el celular los cuadros de texto siempre hacen salto de línea.
+- Las ventanas emergentes abren con el cursor en el primer campo (en computador). Los botones principales muestran «↵» como pista.
+- Los campos que ya tenían su propio Enter (agregar tarea, buscadores, Cerebro) no cambian.

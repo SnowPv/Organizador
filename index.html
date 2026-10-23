@@ -2394,6 +2394,8 @@ body.ui2{background:#F6F7F9!important}
 .cm-say{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:5px 11px;font:inherit;font-size:12.5px;font-weight:600;color:var(--muted);display:inline-flex;align-items:center;gap:5px;cursor:pointer}.cm-say .ico{width:14px;height:14px}.cm-say.on{color:var(--accent-ink);border-color:var(--accent)}
 .cm-all{margin-left:auto}.cm-acc .btn.ok{background:#E3F6EE!important;color:var(--ok-ink)!important;border-color:#E3F6EE!important}
 .cop-dic{border-color:#F5C2C4!important;color:#B4232A!important;font-weight:600}.cop-dic .ico{width:14px;height:14px;vertical-align:-2px}
+.pop textarea::placeholder{color:#98A2B3}
+@media (pointer:fine){.pop .btns .btn:not(.sec):not(.bad)::after{content:'↵';font-size:11px;opacity:.6;margin-left:6px}}
 </style>
 
 
@@ -2519,7 +2521,7 @@ async function apiX(op, extra){
 }
 // Nivel 2 del script Extras: recordatorios y base de contactos. Nivel 3: la base solo usa contacto@blacklinechile.cl. Nivel 4: eventos de varios días.
 function extNivel(){ return S.extInactivo ? 0 : (S.ext && S.ext.nivel) || 1; }
-const APP_VER = 'v72', NIVEL_ULTIMO = 44;
+const APP_VER = 'v73', NIVEL_ULTIMO = 44;
 function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < NIVEL_ULTIMO; }
 let sincTimer = null;
 // Después de cambiar tareas, el script actualiza los recordatorios del calendario (en segundo plano).
@@ -2909,9 +2911,38 @@ function modal(titulo, cuerpo, opt){
   const cerrar = () => bg.remove();
   bg.onclick = e => { if (e.target === bg || e.target.closest('.px')) cerrar(); };
   document.body.appendChild(bg);
+  // Computador: el cursor queda listo en el primer campo para escribir sin tocar el mouse.
+  if (!opt.sinFoco && matchMedia('(pointer:fine)').matches) setTimeout(() => { const f = bg.querySelector('.pop textarea, .pop input[type=text], .pop input[type=search], .pop input:not([type])'); const ae = document.activeElement; if (f && !f.disabled && !(ae && /INPUT|TEXTAREA|SELECT/.test(ae.tagName) && !bg.contains(ae))) f.focus(); }, 60);
   return { el: bg.querySelector('.pop'), cerrar };
 }
 function cerrarModales(){ $$('.pop-bg').forEach(x => x.remove()); }
+
+/* ---------- Enter en toda la app ----------
+   Campo de una línea: Enter = el botón principal de esa ventana o tarjeta.
+   Cuadro de texto en una ventana chica (detalle de actividad, nota, mensaje): Enter envía y Shift+Enter hace salto de línea (en computador).
+   Notas largas (fichas de edición): Enter hace salto de línea y Ctrl/⌘+Enter guarda. En el celular los cuadros de texto siempre hacen salto de línea. */
+function botonPrincipal(el){
+  const cont = el.closest('.pop, .sheet, form, .qadd, .smart, .cop-f, .card, .sec, .w, .rz-s') || document.body;
+  const vis = b => b.offsetParent !== null && !b.disabled;
+  const L = [...cont.querySelectorAll('button.btn, button[type=submit]')].filter(b => vis(b) && !b.classList.contains('sec') && !b.classList.contains('bad') && !b.classList.contains('pill') && !/^(✕|×)$/.test(b.textContent.trim()));
+  return L.find(b => el.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING) || L[L.length - 1] || null;
+}
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Enter' || e.isComposing || e.keyCode === 229 || e.altKey || e.defaultPrevented) return;
+  const el = e.target; if (!el || !el.tagName) return;
+  const esTA = el.tagName === 'TEXTAREA', esIn = el.tagName === 'INPUT' && /^(text|search|number|tel|email|url|date|time|)$/.test(el.getAttribute('type') || '');
+  if (!esTA && !esIn) return;
+  if (el.onkeydown || el.dataset.enter === 'no' || el.id === 'copQ') return;   // ya tiene su propio Enter
+  const mod = e.metaKey || e.ctrlKey, fino = matchMedia('(pointer:fine)').matches;
+  if (esTA){
+    if (e.shiftKey) return;
+    const largo = !!el.closest('.sheet') && !el.closest('.pop');
+    if (!mod && (largo || !fino)) return;   // salto de línea normal
+  }
+  if (el.form && !el.closest('.pop, .sheet')){ e.preventDefault(); el.form.requestSubmit ? el.form.requestSubmit() : el.form.submit(); return; }
+  const b = botonPrincipal(el);
+  if (b){ e.preventDefault(); b.click(); }
+});
 /* ---------- gráficos simples (SVG) ---------- */
 function ringSVG(p, size, color){
   size = size || 92; const r = size / 2 - 7, c = 2 * Math.PI * r;
