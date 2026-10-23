@@ -2513,15 +2513,16 @@ async function api(action, extra){
 // Si el script está ocupado (otra tarea tiene el candado), se reintenta solo un par de veces antes de mostrar el error.
 // Es seguro reintentar: cuando falla el candado, la consulta todavía no se ejecutó.
 async function apiX(op, extra){
-  const esperas = [3000, 7000];
+  // Mientras el Cerebro trabaja (hasta ~1 min) el script atiende de a una consulta: se espera más antes de rendirse.
+  const esperas = op === 'copiloto' ? [6000, 15000, 30000] : [3000, 7000, 15000];
   for (let k = 0; ; k++){
     try { return await api('extra', Object.assign({ op }, extra || {})); }
-    catch(e){ if (k >= esperas.length || !/bloqueo|lock timeout|lock/i.test(String(e && e.message))) throw e; await new Promise(r => setTimeout(r, esperas[k])); }
+    catch(e){ if (k >= esperas.length || !/bloqueo|lock timeout|lock|candado|ocupad/i.test(String(e && e.message))) throw e; await new Promise(r => setTimeout(r, esperas[k])); }
   }
 }
 // Nivel 2 del script Extras: recordatorios y base de contactos. Nivel 3: la base solo usa contacto@blacklinechile.cl. Nivel 4: eventos de varios días.
 function extNivel(){ return S.extInactivo ? 0 : (S.ext && S.ext.nivel) || 1; }
-const APP_VER = 'v74', NIVEL_ULTIMO = 44;
+const APP_VER = 'v75', NIVEL_ULTIMO = 45;
 function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < NIVEL_ULTIMO; }
 let sincTimer = null;
 // Después de cambiar tareas, el script actualiza los recordatorios del calendario (en segundo plano).
@@ -3097,7 +3098,7 @@ function noticiasHome(){
 // Texto corto de lo que trae la versión nueva del script (el banner de actualización del Inicio).
 function novedadScript(){
   const n = extNivel();
-  return n >= 44 ? 'El Cerebro confirma en el catálogo de Andes Industrial si un repuesto Shimano o Continental existe en el distribuidor.' : n >= 43 ? 'El Cerebro entiende mejor el ciclismo (Di2, AXS, modelos) y busca opciones de compra cuando una tarea es conseguir un repuesto.' : n >= 42 ? 'Proveedores fuera del pipeline (el agente ya no les abre negociaciones) y el Cerebro puede agregar contactos nuevos cuando le dictas.' : n >= 41 ? 'Empezar de cero: la fecha de inicio se guarda en el script y la ven todos los equipos (Admin y Piso de venta).' : n >= 40 ? 'Ahora hay dos cuentas con contraseña: Admin (todo, como siempre) y Piso de venta (parte en un Hoy nuevo, sin cifras de la tienda). Créalas en ⚙️ Ajustes → Usuarios.' : n >= 39 ? 'La app ahora tiene un solo Cerebro con 9 skills (en vez de agentes sueltos): mira qué hace solo, cuánto gasta y paúsalo en la pestaña Cerebro.' : n >= 37 ? 'Las tareas automáticas ya no bloquean la app (por ejemplo, la lectura de ventas de Bsale).' : n >= 36 ? 'Cuando un cliente con negociación abierta compra en Bsale, la app te propone marcarla como ganada.' : n >= 35 ? 'Ventas del mes igual que en Bsale (solo boletas y facturas, menos notas de crédito) y noticias con foto de portada.' : n >= 34 ? 'Meta y gráfico de ventas del mes en el Inicio, con el avance diario desde Bsale.' : n >= 33 ? 'Une sola las negociaciones duplicadas de una venta ganada.' : n >= 32 ? 'Etapas después del pago: seguimiento, entrega y postventa.' : n >= 31 ? 'Venta perdida: cierra tareas, eventos y la idea de respuesta del Cerebro.' : 'Funciones nuevas para el Organizador.';
+  return n >= 45 ? 'El Cerebro responde más rápido (busca en varias fuentes a la vez y tiene un tope de tiempo) y no deja a la app esperando tanto.' : n >= 44 ? 'El Cerebro confirma en el catálogo de Andes Industrial si un repuesto Shimano o Continental existe en el distribuidor.' : n >= 43 ? 'El Cerebro entiende mejor el ciclismo (Di2, AXS, modelos) y busca opciones de compra cuando una tarea es conseguir un repuesto.' : n >= 42 ? 'Proveedores fuera del pipeline (el agente ya no les abre negociaciones) y el Cerebro puede agregar contactos nuevos cuando le dictas.' : n >= 41 ? 'Empezar de cero: la fecha de inicio se guarda en el script y la ven todos los equipos (Admin y Piso de venta).' : n >= 40 ? 'Ahora hay dos cuentas con contraseña: Admin (todo, como siempre) y Piso de venta (parte en un Hoy nuevo, sin cifras de la tienda). Créalas en ⚙️ Ajustes → Usuarios.' : n >= 39 ? 'La app ahora tiene un solo Cerebro con 9 skills (en vez de agentes sueltos): mira qué hace solo, cuánto gasta y paúsalo en la pestaña Cerebro.' : n >= 37 ? 'Las tareas automáticas ya no bloquean la app (por ejemplo, la lectura de ventas de Bsale).' : n >= 36 ? 'Cuando un cliente con negociación abierta compra en Bsale, la app te propone marcarla como ganada.' : n >= 35 ? 'Ventas del mes igual que en Bsale (solo boletas y facturas, menos notas de crédito) y noticias con foto de portada.' : n >= 34 ? 'Meta y gráfico de ventas del mes en el Inicio, con el avance diario desde Bsale.' : n >= 33 ? 'Une sola las negociaciones duplicadas de una venta ganada.' : n >= 32 ? 'Etapas después del pago: seguimiento, entrega y postventa.' : n >= 31 ? 'Venta perdida: cierra tareas, eventos y la idea de respuesta del Cerebro.' : 'Funciones nuevas para el Organizador.';
 }
 
 /* ---------- Ventas del mes: avance diario acumulado contra el mes anterior y la meta ---------- */
@@ -5909,7 +5910,7 @@ function copiloto(pregunta){
 function copPintar(){
   const H = copHist(), m = $('#copM'), s = $('#copS'); if (!m) return;
   m.innerHTML = H.length ? H.map((x, i) => x.rol === 'yo' ? '<div class="cm yo">' + esc(x.texto) + '</div>' :
-    '<div class="cm ia' + (x.error ? ' err' : '') + '">' + (x.pensando ? '<span class="cop-dots"><i></i><i></i><i></i></span> Revisando tus fuentes…' : copMd(x.texto)) +
+    '<div class="cm ia' + (x.error ? ' err' : '') + '">' + (x.pensando ? '<span class="cop-dots"><i></i><i></i><i></i></span> Revisando tus fuentes…' : copMd(x.texto)) + (x.error && x.reintentar && i === H.length - 1 ? '<div class="cm-tl"><button class="btn sm" data-reint="' + i + '">↻ Reintentar</button></div>' : '') +
     ((x.acciones || []).length ? '<div class="cm-acc">' + x.acciones.map((a, k) => '<button class="btn sm' + (k ? ' sec' : '') + (a.hecha ? ' ok' : '') + '" data-cpa="' + i + ':' + k + '"' + (a.hecha ? ' disabled' : '') + '>' + (a.hecha ? '✓ ' : '') + esc(a.titulo || a.tipo) + '</button>').join('') + '</div>' : '') +
     (!x.pensando && !x.error && x.texto ? '<div class="cm-tl"><button class="cm-say" data-say="' + i + '">' + icon('volume') + ' Escuchar</button>' + ((x.acciones || []).filter(a => !a.hecha && ACC_DIRECTA.includes(a.tipo)).length ? '<button class="btn sm cm-all" data-all="' + i + '">' + icon('check') + ' Confirmar todo (' + x.acciones.filter(a => !a.hecha && ACC_DIRECTA.includes(a.tipo)).length + ')</button>' : '') + '</div>' : '') +
     ((x.fuentes || []).length ? '<div class="cm-f">' + x.fuentes.filter(f => f !== 'proponer_accion' && f !== 'leer_skill').map(f => /^skill /.test(f) ? '<span class="sk">Skill: ' + esc(SKILL_NOM[f.slice(6)] || f.slice(6)) + '</span>' : '<span>' + esc(f.replace(/_/g, ' ')) + '</span>').join('') + '</div>' : '') + '</div>').join('') :
@@ -5919,6 +5920,7 @@ function copPintar(){
   const dc = s.querySelector('[data-dic]'); if (dc) dc.onclick = () => copMic($('#copMic'));
   m.querySelectorAll('[data-cpa]').forEach(b => b.onclick = () => { const [i, k] = b.dataset.cpa.split(':').map(Number), a = H[i].acciones[k]; ejecutarAccion(a); if (innerWidth < 1000) $('#cop').classList.remove('on'); });
   m.querySelectorAll('[data-say]').forEach(b => b.onclick = () => decir(H[+b.dataset.say].texto, b));
+  m.querySelectorAll('[data-reint]').forEach(b => b.onclick = () => { const i = +b.dataset.reint, x = H[i]; if (!x || !x.reintentar) return; const rr = x.reintentar; H.splice(i - 1, 2); S.copHist = H; copEnviar(rr.texto, { voz: rr.voz }); });
   m.querySelectorAll('[data-all]').forEach(b => b.onclick = () => confirmarTodo(H[+b.dataset.all], b));
   const ult = H[H.length - 1]; if (ult && ult.voz && ult.rol === 'ia' && !ult.pensando && !ult.leida && !ult.error){ ult.leida = true; if (LS.vozLeer !== 'no') decir(ult.texto); }
   m.scrollTop = m.scrollHeight;
@@ -5926,7 +5928,7 @@ function copPintar(){
 
 /* ---------- Voz: dictar actualizaciones al Cerebro, confirmar y escuchar ---------- */
 const VOZ_PREF = '[ACTUALIZACIÓN DICTADA POR VOZ — interprétala y conviértela en acciones de la app]\n';
-const VOZ_INSTR = '\n[Ojo: es dictado por voz y el dictado escribe mal términos de ciclismo: «de dos/di dos/D2/dedos» = Di2 (transmisión electrónica Shimano), «a x s» = AXS de SRAM, «lebo» = Levo, «que nevo» = Kenevo, «stump» = Stumpjumper. Si la tarea es conseguir un repuesto o producto (ej. un cable Di2), además de proponerla busca en el mismo turno opciones de compra con stock_tienda, buscar_en_proveedores, buscar_en_planillas y correos_proveedores, y muéstralas (proveedor, código, precio, disponibilidad) también en el detalle de la tarea; si es Shimano o Continental, confirma con buscar_andes que Andes Industrial lo tiene (si el script aún no la tiene, dilo) y, si viene en variantes que solo cambian en el largo o la medida, agrega a la tarea el paso «medir en la bici el largo/medida antes de pedir a Andes» sin inventar largos ni precios. Si falta un dato para elegir (grupo, largo), igual crea la tarea y pregunta.]\n[Cómo responder: primero ubica a cada cliente y su negociación con buscar_clientes y ver_negociaciones. Responde muy breve, en dos partes: «**Entendí:**» (1 a 3 líneas) y «**Voy a hacer:**» (una línea por acción). Propón CADA acción con tus herramientas: proponer_nota_contacto para novedades o datos del cliente; proponer_cambio_negocio para mover de etapa, cambiar valor o próxima acción; proponer_accion tipo crear_tarea (con fecha yyyy-MM-dd y el nombre del cliente en el título), crear_negocio (ref = id del contacto) o crear_contacto si la persona no está en la base (titulo = nombre, ref = teléfono si lo dije, detalle = lo que se sabe). Nada se hace sin que yo confirme. No inventes datos que no dije; si algo es ambiguo (por ejemplo dos clientes con el mismo nombre), pregúntalo en vez de proponerlo.]';
+const VOZ_INSTR = '\n[Rapidez: llama las herramientas que necesites todas a la vez en un mismo paso, no una por una; usa solo las necesarias.]\n[Ojo: es dictado por voz y el dictado escribe mal términos de ciclismo: «de dos/di dos/D2/dedos» = Di2 (transmisión electrónica Shimano), «a x s» = AXS de SRAM, «lebo» = Levo, «que nevo» = Kenevo, «stump» = Stumpjumper. Si la tarea es conseguir un repuesto o producto (ej. un cable Di2), además de proponerla busca en el mismo turno opciones de compra con stock_tienda, buscar_en_proveedores, buscar_en_planillas y correos_proveedores, y muéstralas (proveedor, código, precio, disponibilidad) también en el detalle de la tarea; si es Shimano o Continental, confirma con buscar_andes que Andes Industrial lo tiene (si el script aún no la tiene, dilo) y, si viene en variantes que solo cambian en el largo o la medida, agrega a la tarea el paso «medir en la bici el largo/medida antes de pedir a Andes» sin inventar largos ni precios. Si falta un dato para elegir (grupo, largo), igual crea la tarea y pregunta.]\n[Cómo responder: primero ubica a cada cliente y su negociación con buscar_clientes y ver_negociaciones. Responde muy breve, en dos partes: «**Entendí:**» (1 a 3 líneas) y «**Voy a hacer:**» (una línea por acción). Propón CADA acción con tus herramientas: proponer_nota_contacto para novedades o datos del cliente; proponer_cambio_negocio para mover de etapa, cambiar valor o próxima acción; proponer_accion tipo crear_tarea (con fecha yyyy-MM-dd y el nombre del cliente en el título), crear_negocio (ref = id del contacto) o crear_contacto si la persona no está en la base (titulo = nombre, ref = teléfono si lo dije, detalle = lo que se sabe). Nada se hace sin que yo confirme. No inventes datos que no dije; si algo es ambiguo (por ejemplo dos clientes con el mismo nombre), pregúntalo en vez de proponerlo.]';
 const ACC_DIRECTA = ['crear_tarea', 'editar_negocio', 'nota_contacto', 'crear_negocio', 'crear_contacto'];
 function copMic(btn){
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition, p = $('#cop'), q = $('#copQ');
@@ -5942,10 +5944,16 @@ function copMic(btn){
   const pintar = tmp => { q.value = (fin + (tmp ? ' ' + tmp : '')).trim(); q.style.height = 'auto'; q.style.height = Math.min(140, q.scrollHeight) + 'px'; };
   const agregar = t => {
     t = t.trim(); if (!t) return;
-    const n = norm(t), nu = norm(ult);
-    if (nu && (n === nu || nu.includes(n))) return;
-    if (nu && n.startsWith(nu)) fin = fin.slice(0, Math.max(0, fin.length - ult.length)).trim() + (fin.length > ult.length ? ' ' : '') + t;
-    else fin = (fin ? fin + ' ' : '') + t;
+    const nt = norm(t), nf = norm(fin), nu = norm(ult);
+    if (nt.length >= 6 && nf.includes(nt)) return;                         // ya está (Android repite al reencender)
+    if (nf && nt.startsWith(nf)) { fin = t; ult = t; return; }             // trae todo lo anterior + lo nuevo
+    if (nu && nt.startsWith(nu)) fin = fin.slice(0, Math.max(0, fin.length - ult.length)).trim() + (fin.length > ult.length ? ' ' : '') + t;
+    else {
+      // Si la frase nueva empieza con las mismas palabras con que terminó la anterior, no las repite.
+      const wf = fin.split(/\s+/), wt = t.split(/\s+/); let k = Math.min(6, wf.length, wt.length);
+      for (; k >= 2; k--) if (norm(wf.slice(-k).join(' ')) === norm(wt.slice(0, k).join(' '))) break;
+      fin = (fin ? fin + ' ' : '') + (k >= 2 ? wt.slice(k).join(' ') : t);
+    }
     ult = t;
   };
   let cerrado = false;
@@ -5959,7 +5967,7 @@ function copMic(btn){
     const r = new SR(); r.lang = 'es-CL'; r.interimResults = true; r.continuous = false; r.maxAlternatives = 1;
     r.onresult = e => { let tmp = ''; for (let i = e.resultIndex; i < e.results.length; i++){ const x = e.results[i]; if (x.isFinal) agregar(x[0].transcript); else tmp = x[0].transcript; } pintar(tmp); };
     r.onerror = e => { if (e.error === 'not-allowed' || e.error === 'service-not-allowed'){ parado = true; toast('Permite el micrófono para dictar (o usa el micrófono del teclado)'); } else if (e.error !== 'no-speech' && e.error !== 'aborted') toast('No se pudo escuchar (' + e.error + ')'); };
-    r.onend = () => { if (cerrado || (S._rec && S._rec.r !== r)) return; ult = ''; if (!parado && Date.now() - t0 < 180000){ try { iniciar(); return; } catch(x){} } terminar(); };
+    r.onend = () => { if (cerrado || (S._rec && S._rec.r !== r)) return; if (!parado && Date.now() - t0 < 180000){ try { iniciar(); return; } catch(x){} } terminar(); };
     S._rec.r = r; r.start();
   };
   S._rec = { r: null, parar: () => { parado = true; try { S._rec.r.stop(); } catch(x){ terminar(); } } };
@@ -6030,7 +6038,11 @@ async function copEnviar(texto, opt){
     if (!iaDisponible()) throw new Error('Falta la clave de Claude (ANTHROPIC_API_KEY) en las propiedades del script.');
     const res = await apiX('copiloto', { mensajes: H.filter(x => !x.pensando && !x.error).slice(-12).map(x => ({ rol: x.rol, texto: x.voz && x.rol === 'yo' ? VOZ_PREF + x.texto + VOZ_INSTR : x.texto })), pestana: TITLES[S.tab] || S.tab, contexto: contextoPantalla() });
     Object.assign(r, { texto: res.texto, acciones: res.acciones || [], fuentes: res.fuentes || [], pensando: false });
-  } catch(e){ Object.assign(r, { texto: e.message, error: true, pensando: false }); }
+  } catch(e){
+    const m = String(e && e.message || e);
+    const corte = /failed to fetch|networkerror|load failed|network/i.test(m), ocupado = /candado|lock|ocupad/i.test(m);
+    Object.assign(r, { texto: corte ? 'Se cortó la conexión mientras el Cerebro trabajaba (puede que siga terminando). Espera un momento y toca Reintentar.' : ocupado ? 'El Cerebro todavía está terminando lo anterior. Toca Reintentar en unos segundos.' : m, error: true, pensando: false, reintentar: { texto, voz: !!opt.voz } });
+  }
   S.copHist = H.slice(-30); lsSet('copHist', S.copHist.filter(x => !x.pensando)); copPintar();
 }
 

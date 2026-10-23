@@ -450,3 +450,10 @@ Basada en el análisis de unos 300 diseños de Dribbble (búsquedas: crm, crm-da
 - `senalGanada(texto)` detecta venta cerrada en lo que se registra en una negociación abierta: «confirmó la compra», «pagó la reserva / un monto de reserva», «abonó $…», «transfirió el pie», «compró la Levo», «se la lleva», «emitimos la boleta», «pagó el saldo». Ignora frases negadas o en futuro («va a pagar», «todavía no compra», «preguntó por formas de pago», «la compra el sábado»).
 - `ganarPorTexto`: si hay señal, la negociación pasa sola a **Ganada · seguimiento** (fecha de hoy, entrega estimada en 3 días, tarea de entrega del script) con confeti y **Deshacer**. Aplica en la nota rápida de la ficha, en Registrar actividad, en la ronda de seguimiento y en Empezar mi día.
 - Enter también activa el botón de los campos con micrófono/«+» (`.smart`).
+
+## Cerebro más rápido y sin trabas (app v75 · script nivel 45)
+
+- **Por qué fallaba**: el WebApp atiende las consultas de a una (candado del script). Si el Cerebro tarda mucho (varias herramientas una tras otra), la conexión del celular puede cortarse («Failed to fetch») y la consulta siguiente queda esperando hasta agotarse («candado»).
+- **Script**: el Cerebro llama las herramientas que necesita **todas a la vez** en un mismo paso, y tiene un **tope de ~55 s**: pasado eso responde con lo que ya tiene (`tool_choice: none`).
+- **App**: si el script está ocupado, se reintenta sola (hasta ~50 s para el Cerebro). Si se corta la conexión, el chat lo explica y muestra **↻ Reintentar**.
+- **Dictado**: ya no repite la frase cuando Android la vuelve a entregar al reencender el micrófono, ni repite las palabras en que se unen dos frases.

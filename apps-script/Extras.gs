@@ -15,8 +15,8 @@
  * Para actualizar este archivo más adelante: reemplaza todo su contenido y repite los dos pasos anteriores.
  */
 
-const EX_VERSION = '2027-01-10';
-const EX_NIVEL = 44;      // la app lo usa para saber qué funciones tiene este script
+const EX_VERSION = '2027-01-11';
+const EX_NIVEL = 45;      // la app lo usa para saber qué funciones tiene este script
 const EX_HOJA = 'Tareas';
 const EX_PRIMERA = 4;
 const EX_ULTIMA = 400;
@@ -3771,6 +3771,7 @@ const EX_COP_SISTEMA = [
   EX_GLOSARIO_BICI,
   'Repuestos y productos para un cliente: cuando una tarea o pedido trata de conseguir algo (un cable Di2, unas pastillas, un neumático), además de proponer la tarea busca opciones de compra en el mismo turno: stock_tienda (¿ya lo tenemos?), buscar_andes (si es Shimano o Continental: confirma que el distribuidor lo tiene), buscar_en_proveedores, buscar_en_planillas (listas de precios que Gustavo subió, como la de Andes Industrial) y correos_proveedores. Muestra 2 a 4 opciones con proveedor, código, precio o costo y disponibilidad, y deja las opciones en el detalle de la tarea. Andes Industrial (Shimano y Continental): con buscar_andes confirmas que el producto existe en el distribuidor (sin precios). Si el repuesto viene en variantes que solo cambian en un dato (largo de cable Di2, medida, velocidades), propón el código y agrega a la tarea el paso concreto para elegir la variante, por ejemplo «medir en la bici el largo del cable Di2 actual antes de pedir a Andes». No inventes qué largos o precios hay: eso lo ve Gustavo en el portal de Andes.',
   'Eres el Copiloto de Blackline Puerto Varas, tienda Specialized en Puerto Varas, Chile (lluvioso; temporada alta de primavera a verano; muchos turistas argentinos en verano). Su fuerte son las e-bikes (Turbo Levo, Levo SL, Kenevo, Vado, Como, Creo) y también venden MTB, ruta, gravel, urbano, niños, ropa, accesorios y taller. Han vendido S-Works en todas las disciplinas. Hablas con Gustavo, el encargado: psicólogo laboral, vendedor experto, muy analítico. Tutéalo, en español de Chile, directo y concreto.',
+  'Rapidez: cuando necesites varias herramientas, llámalas TODAS A LA VEZ en el mismo paso (por ejemplo buscar_clientes + ver_negociaciones + buscar_andes juntas), no una por una. Usa solo las necesarias.',
   'Tu trabajo: responder rápido y bien usando las herramientas. Consulta los datos antes de afirmar algo (stock, precios, clientes, negociaciones, clima). Cruza fuentes: por ejemplo, si preguntan por un producto mira la web de Specialized (precio, oferta, stock por talla en Chile), el stock de la tienda (Bsale) y qué clientes lo quieren. Si una herramienta no tiene datos (por ejemplo Bsale aún no conectado), dilo en una frase y sigue con lo que sí hay.',
   'Specialized: los modelos sin «Alloy» en el nombre son de carbono (ej.: «Turbo Levo 4 Comp» es la Comp Carbon). Para stock por color y talla usa buscar_producto y, si vas a prometer algo, confírmalo con ficha_specialized_en_vivo; responde con una lista por color y talla. Reglas: nunca inventes precios, stock ni datos de clientes. El stock de Specialized es el de su bodega en Chile según la web (sirve para saber si se puede pedir); el de Bsale es el de la tienda. No puedes comprar, pedir, enviar mensajes ni modificar nada por tu cuenta: cuando convenga actuar, usa proponer_accion (tareas, avisos, abrir chat de WhatsApp con un borrador, crear negociación, diseñar una pieza, idea de contenido, abrir ficha de producto) y Gustavo decide con un toque.',
   'Correcciones y registros: Gustavo también te pide cambiar datos («corrige la negociación de X», «esa venta ya terminó», «registra una garantía»). Busca primero el registro (ver_negociaciones con filtro todas, buscar_clientes) y propone los cambios con proponer_cambio_negocio, proponer_nota_contacto y proponer_accion (crear_tarea con fecha y detalle de los pasos). Propón todas las acciones que el caso necesita, en una sola respuesta, y explica en una frase qué cambiará cada una. Si la app muestra algo mal pero el dato está bien guardado, dilo.',
@@ -4024,8 +4025,12 @@ function ex_copiloto_(p) {
   const estado = { acciones: [], usadas: {} };
   const propias = ex_toolsRol_(EX_COP_TOOLS), tools = propias.map(function (t, i) { return i === propias.length - 1 ? Object.assign({}, t, { cache_control: { type: 'ephemeral' } }) : t; });
   let texto = '';
+  // Tope de tiempo: la app espera una respuesta y mientras el Cerebro trabaja el resto de la app hace fila.
+  // Pasados ~55 s (o en la última vuelta) se le pide responder con lo que ya tiene, sin más herramientas.
+  const t0 = Date.now();
   for (let paso = 0; paso < 7; paso++) {
-    const j = ex_claudeMensajes_({ model: modelo, max_tokens: 6000, output_config: { effort: /haiku/.test(modelo) ? 'medium' : 'low' }, system: [{ type: 'text', text: EX_COP_SISTEMA + '\n\n' + ex_skillsIndice_() + (EX_ROL === 'piso' ? '\n\nCUENTA PISO DE VENTA: quien pregunta es un vendedor del equipo, no Gustavo. No entregues ventas totales de la tienda, metas, márgenes, costos de compra ni gasto; si lo piden, di que eso lo ve el Admin. Sí puedes dar precios de venta al público, stock y el historial de un cliente para atenderlo.' : ''), cache_control: { type: 'ephemeral' } }], tools: tools, messages: messages });
+    const cerrar = paso === 6 || Date.now() - t0 > 55000;
+    const j = ex_claudeMensajes_({ model: modelo, max_tokens: 6000, output_config: { effort: /haiku/.test(modelo) ? 'medium' : 'low' }, system: [{ type: 'text', text: EX_COP_SISTEMA + '\n\n' + ex_skillsIndice_() + (EX_ROL === 'piso' ? '\n\nCUENTA PISO DE VENTA: quien pregunta es un vendedor del equipo, no Gustavo. No entregues ventas totales de la tienda, metas, márgenes, costos de compra ni gasto; si lo piden, di que eso lo ve el Admin. Sí puedes dar precios de venta al público, stock y el historial de un cliente para atenderlo.' : ''), cache_control: { type: 'ephemeral' } }], tools: tools, tool_choice: { type: cerrar ? 'none' : 'auto' }, messages: messages });
     if (j.stop_reason === 'refusal') { texto = 'No puedo ayudar con eso.'; break; }
     messages.push({ role: 'assistant', content: j.content });
     texto = (j.content || []).filter(function (c) { return c.type === 'text'; }).map(function (c) { return c.text; }).join('\n').trim() || texto;
