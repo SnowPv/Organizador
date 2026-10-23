@@ -467,3 +467,8 @@ Basada en el análisis de unos 300 diseños de Dribbble (búsquedas: crm, crm-da
 
 - En las ventanas chicas (Registrar actividad, notas, mensajes) **Enter envía también en el celular**. Las notas largas de las fichas siguen con salto de línea (⌘/Ctrl+Enter guarda).
 - Android/iPhone: cuando el teclado está sugiriendo palabras, Enter llega como «salto de línea» (`beforeinput insertLineBreak`) y no como tecla; ahora eso también envía en esas ventanas. El teclado muestra la tecla «Enviar» (`enterkeyhint`).
+
+## Cliente en cada tarea y contactos internos (app v78 · script nivel 46)
+
+- **Tareas**: cada tarjeta del tablero (y cada fila de la lista) muestra arriba, en chico, el **cliente** relacionado (`clienteDeTarea`: el de la nota `[id]`, el de su negociación o el que se nombra en el texto).
+- **Contactos internos**: los de tipo **Equipo** o cuyo nombre/empresa dice «Blackline» (ej. «Blackline Servicio Técnico») son comunicación interna. El agente ya no les crea negociaciones, tareas ni «espera respuesta» (`ex_esInterno_`; se pueden sumar nombres con la propiedad `CONTACTOS_INTERNOS`, separados por coma). En la app, sus negociaciones no aparecen en el pipeline y no salen en «Clientes que esperan».

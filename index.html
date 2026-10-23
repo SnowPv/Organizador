@@ -2396,6 +2396,8 @@ body.ui2{background:#F6F7F9!important}
 .cop-dic{border-color:#F5C2C4!important;color:#B4232A!important;font-weight:600}.cop-dic .ico{width:14px;height:14px;vertical-align:-2px}
 .pop textarea::placeholder{color:#98A2B3}
 @media (pointer:fine){.pop .btns .btn:not(.sec):not(.bad)::after{content:'↵';font-size:11px;opacity:.6;margin-left:6px}}
+.k3-cl,.t-cl{display:flex;align-items:center;gap:4px;font-size:11px;font-weight:600;color:var(--accent-ink);text-transform:uppercase;letter-spacing:.03em;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.k3-cl .ico,.t-cl .ico{width:12px;height:12px;flex:none}
+@media (min-width:1000px) and (max-width:1420px){.ui2 .tp3 #tPlan{font-size:0;width:36px;padding:0;justify-content:center}.ui2 .tp3 #tPlan .ico{width:17px;height:17px;margin:0}.ui2 .tp3-r span,.ui2 .tp3-k span{font-size:10px}}
 </style>
 
 
@@ -2522,7 +2524,7 @@ async function apiX(op, extra){
 }
 // Nivel 2 del script Extras: recordatorios y base de contactos. Nivel 3: la base solo usa contacto@blacklinechile.cl. Nivel 4: eventos de varios días.
 function extNivel(){ return S.extInactivo ? 0 : (S.ext && S.ext.nivel) || 1; }
-const APP_VER = 'v77', NIVEL_ULTIMO = 45;
+const APP_VER = 'v78', NIVEL_ULTIMO = 46;
 function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < NIVEL_ULTIMO; }
 let sincTimer = null;
 // Después de cambiar tareas, el script actualiza los recordatorios del calendario (en segundo plano).
@@ -2746,7 +2748,7 @@ function taskHTML(t, opt){
   if (opt.card && q === 1 && !t.hecho) meta.unshift('🔥 Urgente');
   return '<div class="task ' + (t.hecho ? 'done' : '') + (opt.card ? ' tc" style="--cc:' + (t.area === 'Personal' ? 'var(--personal)' : 'var(--trabajo)') : '') + '">' +
     '<button class="chk ' + (t.hecho ? 'on' : '') + '" style="--q:' + (q === 1 ? 'var(--bad)' : '#C5CBD5') + '" data-tog="' + idx + '" aria-label="Marcar como hecha">' + (t.hecho ? '✓' : '') + '</button>' +
-    '<div class="grow" data-open="' + idx + '"><div class="t">' + esc(t.tarea) + '</div>' +
+    '<div class="grow" data-open="' + idx + '">' + (function(){ const cl = clienteDeTarea(t); return cl ? '<div class="t-cl">' + icon('users') + esc(cl.nombre || cl.empresa || cl.telefono || '') + '</div>' : ''; })() + '<div class="t">' + esc(t.tarea) + '</div>' +
     (opt.why ? '<div class="why">' + esc(opt.why) + '</div>' : '') +
     (opt.compact ? '' : (f[1] || meta.length || vinculosTarea(t) ? '<div class="tm">' + (f[1] ? '<span class="d ' + f[0] + '">' + f[1] + '</span>' : '') + meta.map(m => '<span' + (m === '🔥 Urgente' ? ' class="q1"' : '') + '>' + esc(m) + '</span>').join('') + vinculosTarea(t) + '</div>' : '')) +
     '</div>' + (!t.hecho && opt.play ? '<button class="play" data-focus="' + idx + '" aria-label="Enfocarme en esta tarea">▶</button>' : '') + '</div>';
@@ -3108,7 +3110,7 @@ function noticiasHome(){
 // Texto corto de lo que trae la versión nueva del script (el banner de actualización del Inicio).
 function novedadScript(){
   const n = extNivel();
-  return n >= 45 ? 'El Cerebro responde más rápido (busca en varias fuentes a la vez y tiene un tope de tiempo) y no deja a la app esperando tanto.' : n >= 44 ? 'El Cerebro confirma en el catálogo de Andes Industrial si un repuesto Shimano o Continental existe en el distribuidor.' : n >= 43 ? 'El Cerebro entiende mejor el ciclismo (Di2, AXS, modelos) y busca opciones de compra cuando una tarea es conseguir un repuesto.' : n >= 42 ? 'Proveedores fuera del pipeline (el agente ya no les abre negociaciones) y el Cerebro puede agregar contactos nuevos cuando le dictas.' : n >= 41 ? 'Empezar de cero: la fecha de inicio se guarda en el script y la ven todos los equipos (Admin y Piso de venta).' : n >= 40 ? 'Ahora hay dos cuentas con contraseña: Admin (todo, como siempre) y Piso de venta (parte en un Hoy nuevo, sin cifras de la tienda). Créalas en ⚙️ Ajustes → Usuarios.' : n >= 39 ? 'La app ahora tiene un solo Cerebro con 9 skills (en vez de agentes sueltos): mira qué hace solo, cuánto gasta y paúsalo en la pestaña Cerebro.' : n >= 37 ? 'Las tareas automáticas ya no bloquean la app (por ejemplo, la lectura de ventas de Bsale).' : n >= 36 ? 'Cuando un cliente con negociación abierta compra en Bsale, la app te propone marcarla como ganada.' : n >= 35 ? 'Ventas del mes igual que en Bsale (solo boletas y facturas, menos notas de crédito) y noticias con foto de portada.' : n >= 34 ? 'Meta y gráfico de ventas del mes en el Inicio, con el avance diario desde Bsale.' : n >= 33 ? 'Une sola las negociaciones duplicadas de una venta ganada.' : n >= 32 ? 'Etapas después del pago: seguimiento, entrega y postventa.' : n >= 31 ? 'Venta perdida: cierra tareas, eventos y la idea de respuesta del Cerebro.' : 'Funciones nuevas para el Organizador.';
+  return n >= 46 ? 'Los contactos internos (Blackline Servicio Técnico, el equipo) ya no generan tareas, negociaciones ni «espera respuesta».' : n >= 45 ? 'El Cerebro responde más rápido (busca en varias fuentes a la vez y tiene un tope de tiempo) y no deja a la app esperando tanto.' : n >= 44 ? 'El Cerebro confirma en el catálogo de Andes Industrial si un repuesto Shimano o Continental existe en el distribuidor.' : n >= 43 ? 'El Cerebro entiende mejor el ciclismo (Di2, AXS, modelos) y busca opciones de compra cuando una tarea es conseguir un repuesto.' : n >= 42 ? 'Proveedores fuera del pipeline (el agente ya no les abre negociaciones) y el Cerebro puede agregar contactos nuevos cuando le dictas.' : n >= 41 ? 'Empezar de cero: la fecha de inicio se guarda en el script y la ven todos los equipos (Admin y Piso de venta).' : n >= 40 ? 'Ahora hay dos cuentas con contraseña: Admin (todo, como siempre) y Piso de venta (parte en un Hoy nuevo, sin cifras de la tienda). Créalas en ⚙️ Ajustes → Usuarios.' : n >= 39 ? 'La app ahora tiene un solo Cerebro con 9 skills (en vez de agentes sueltos): mira qué hace solo, cuánto gasta y paúsalo en la pestaña Cerebro.' : n >= 37 ? 'Las tareas automáticas ya no bloquean la app (por ejemplo, la lectura de ventas de Bsale).' : n >= 36 ? 'Cuando un cliente con negociación abierta compra en Bsale, la app te propone marcarla como ganada.' : n >= 35 ? 'Ventas del mes igual que en Bsale (solo boletas y facturas, menos notas de crédito) y noticias con foto de portada.' : n >= 34 ? 'Meta y gráfico de ventas del mes en el Inicio, con el avance diario desde Bsale.' : n >= 33 ? 'Une sola las negociaciones duplicadas de una venta ganada.' : n >= 32 ? 'Etapas después del pago: seguimiento, entrega y postventa.' : n >= 31 ? 'Venta perdida: cierra tareas, eventos y la idea de respuesta del Cerebro.' : 'Funciones nuevas para el Organizador.';
 }
 
 /* ---------- Ventas del mes: avance diario acumulado contra el mes anterior y la meta ---------- */
@@ -6478,9 +6480,24 @@ function esNegCompra(n){ if (!n.contacto || !S.base) return false; const c = con
 function negocios(){
   const T = negociosTodos(), k = S._negF;
   if (k && k.neg === S.neg && k.base === S.base && k.n === T.length) return k.v;
-  const v = T.filter(n => !esNegCompra(n)); S._negF = { neg: S.neg, base: S.base, n: T.length, v }; return v;
+  const v = T.filter(n => !esNegCompra(n) && !esNegInterna(n)); S._negF = { neg: S.neg, base: S.base, n: T.length, v }; return v;
 }
 function negociosCompra(){ return negociosTodos().filter(esNegCompra); }
+// Contactos internos (Blackline Servicio Técnico, el equipo): sin negociaciones, sin «espera respuesta».
+function esInterno(c){ if (!c) return false; return c.tipo === 'Equipo' || /\bblackline\b/.test(norm((c.nombre || '') + ' ' + (c.empresa || ''))); }
+function esNegInterna(n){ if (!n.contacto || !S.base) return false; return esInterno(contactoPorId(n.contacto)); }
+// Cliente de una tarea: el que va en la nota [id], el de su negociación (N-…) o el que se nombra en el texto.
+function clienteDeTarea(t){
+  if (!S.base) return null;
+  const n = String(t.notas || ''), mC = n.match(/\[((?:wa:|c-)[^\]]+|[^\]\s]+@[^\]\s]+)\]/), mN = n.match(/\((N-[a-z0-9]+)\)/i);
+  let c = mC ? contactoPorId(mC[1]) : null;
+  if (!c && mN && S.neg){ const ng = negociosTodos().find(x => x.id === mN[1]); if (ng && ng.contacto) c = contactoPorId(ng.contacto); }
+  if (c) return c;
+  const k = t.tarea + '|' + n.length;
+  if (!S._cliT || S._cliT.base !== S.base) S._cliT = { base: S.base, m: new Map() };
+  if (!S._cliT.m.has(k)){ let x = null; try { x = contactosDe(t)[0] || null; } catch(e){} S._cliT.m.set(k, x); }
+  return S._cliT.m.get(k);
+}
 function abiertos(){ return negocios().filter(n => n.estado === 'Abierta'); }
 // Archivada = sacada del pipeline porque ya no está activa (no es una venta perdida y no cuenta en esas cifras). Se puede reabrir.
 function esArchivada(n){ return n.estado === 'Perdida' && /^Archivad/i.test(String(n.motivo || '')); }
@@ -7557,7 +7574,7 @@ function esperanRespuesta(){
   if (!S.base) return [];
   const R = lsGet('respondidos', {});
   const ini = inicioApp();
-  return contactos().map(c => ({ c, g: agenteDe(c.id) })).filter(x => x.g.idea && (!ini || String(x.g.idea.fecha).slice(0, 10) >= ini) && R[x.c.id] !== x.g.idea.fecha + '|' + String(x.g.idea.detalle).slice(0, 24)).sort((a, b) => String(a.g.idea.fecha).localeCompare(String(b.g.idea.fecha)));
+  return contactos().filter(c => !esInterno(c)).map(c => ({ c, g: agenteDe(c.id) })).filter(x => x.g.idea && (!ini || String(x.g.idea.fecha).slice(0, 10) >= ini) && R[x.c.id] !== x.g.idea.fecha + '|' + String(x.g.idea.detalle).slice(0, 24)).sort((a, b) => String(a.g.idea.fecha).localeCompare(String(b.g.idea.fecha)));
 }
 async function marcarRespondido(x, nota){
   const R = lsGet('respondidos', {}); R[x.c.id] = x.g.idea.fecha + '|' + String(x.g.idea.detalle).slice(0, 24); lsSet('respondidos', R);
@@ -8011,7 +8028,7 @@ function k3HTML(t, col){
   return '<div class="k3' + (t.hecho ? ' done' : '') + (q === 1 && !t.hecho ? ' q1' : '') + '" draggable="' + !t.hecho + '" data-k3="' + idx + '">' +
     '<button class="k3-ck" data-tog="' + idx + '" aria-label="Marcar como hecha">' + (t.hecho ? '✓' : '') + '</button>' +
     '<span class="k3-ic" style="--c:' + e.c + ';--bg:' + e.bg + '" title="' + esc(t.categoria || t.area || 'Sin categoría') + '">' + icon(e.ic) + '</span>' +
-    '<div class="k3-b" data-open="' + idx + '"><div class="k3-t">' + esc(t.tarea) + '</div>' + (fch || sig ? '<div class="k3-m">' + fch + sig + '</div>' : '') + '</div>' +
+    '<div class="k3-b" data-open="' + idx + '">' + (function(){ const cl = clienteDeTarea(t); return cl ? '<div class="k3-cl">' + icon('users') + esc(cl.nombre || cl.empresa || cl.telefono || '') + '</div>' : ''; })() + '<div class="k3-t">' + esc(t.tarea) + '</div>' + (fch || sig ? '<div class="k3-m">' + fch + sig + '</div>' : '') + '</div>' +
     (t.hecho ? '' : '<div class="k3-a">' + (col !== 'man' ? '<button data-k3m="' + idx + '" title="Pasar a mañana" aria-label="Pasar a mañana">↷</button>' : '<button data-k3h="' + idx + '" title="Pasar a hoy" aria-label="Pasar a hoy">↶</button>') + '<button data-focus="' + idx + '" title="Enfocarme" aria-label="Enfocarme">▶</button></div>') + '</div>';
 }
 function planTareasHTML(P){

@@ -15,8 +15,8 @@
  * Para actualizar este archivo más adelante: reemplaza todo su contenido y repite los dos pasos anteriores.
  */
 
-const EX_VERSION = '2027-01-11';
-const EX_NIVEL = 45;      // la app lo usa para saber qué funciones tiene este script
+const EX_VERSION = '2027-01-12';
+const EX_NIVEL = 46;      // la app lo usa para saber qué funciones tiene este script
 const EX_HOJA = 'Tareas';
 const EX_PRIMERA = 4;
 const EX_ULTIMA = 400;
@@ -936,6 +936,15 @@ function ex_ganadaReciente_(id) {
 }
 
 // Última negociación perdida del contacto en los últimos 180 días: el agente no la reabre si el cliente no ha vuelto a escribir.
+// Interno = del equipo de Blackline: tipo «Equipo» o el nombre/empresa dice «Blackline» (ej. «Blackline Servicio Técnico»).
+// También se pueden agregar nombres con la propiedad CONTACTOS_INTERNOS (separados por coma).
+function ex_esInterno_(c, ac) {
+  const tx = ex_norm_([c && c[2], c && c[3], ac && ac.nombre, ac && ac.empresa].join(' '));
+  if (String(c && c[1]) === 'Equipo') return true;
+  if (/\bblackline\b/.test(tx)) return true;
+  const extra = String(PropertiesService.getScriptProperties().getProperty('CONTACTOS_INTERNOS') || '').split(',').map(function (x) { return ex_norm_(x).trim(); }).filter(Boolean);
+  return extra.some(function (x) { return tx.indexOf(x) >= 0; });
+}
 function ex_perdidaReciente_(id) {
   const tz = ex_tz_(), lim = ex_ymd_(new Date(Date.now() - 180 * 86400000), tz);
   let mejor = null;
@@ -2371,6 +2380,8 @@ function ex_aplicarAgente_(id, ctx, a, opt) {
   // Proveedores, instituciones y el equipo no son ventas: no se les abre negociación (las compras se ven en la pestaña Compras).
   const tipoNoVenta = ['Proveedor', 'Institución', 'Equipo'].filter(function (t) { return t === String(c[1]) || t === String(ac.tipo || ''); })[0];
   if (!ctx.neg && tipoNoVenta && (n.accion === 'crear' || abrir)) { abrir = false; n.accion = 'ninguna'; cambios.push('sin negociación: el contacto es ' + tipoNoVenta.toLowerCase()); }
+  // Contactos internos (Blackline Servicio Técnico, el equipo): conversación interna, sin negociaciones, tareas ni «espera respuesta».
+  if (ex_esInterno_(c, ac)) { abrir = false; n.accion = 'ninguna'; a.tareas = []; a.esperando_respuesta = false; cambios.push('contacto interno: sin negociación ni tareas'); }
   if (sigueCerrada) {
     if (abrir || n.accion === 'crear') cambios.push('negociación no reabierta (se perdió el ' + perdida.fecha + ' y el cliente no ha vuelto a escribir)');
     abrir = false; n.accion = 'ninguna'; a.esperando_respuesta = false; a.tareas = [];
