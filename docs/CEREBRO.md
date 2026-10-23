@@ -462,3 +462,8 @@ Basada en el análisis de unos 300 diseños de Dribbble (búsquedas: crm, crm-da
 
 - La pestaña Calendario abre en **Mes** (antes Semana). Orden de las vistas: Mes · Semana · Año.
 - En Mes va primero la grilla del mes (tocar un día abre su detalle) y debajo «Cifras del mes» con la comparación. El resumen de 4 tarjetas de la semana ya no se muestra en Mes ni Año.
+
+## Enter también en el celular (app v77)
+
+- En las ventanas chicas (Registrar actividad, notas, mensajes) **Enter envía también en el celular**. Las notas largas de las fichas siguen con salto de línea (⌘/Ctrl+Enter guarda).
+- Android/iPhone: cuando el teclado está sugiriendo palabras, Enter llega como «salto de línea» (`beforeinput insertLineBreak`) y no como tecla; ahora eso también envía en esas ventanas. El teclado muestra la tecla «Enviar» (`enterkeyhint`).

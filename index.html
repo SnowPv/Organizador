@@ -2522,7 +2522,7 @@ async function apiX(op, extra){
 }
 // Nivel 2 del script Extras: recordatorios y base de contactos. Nivel 3: la base solo usa contacto@blacklinechile.cl. Nivel 4: eventos de varios días.
 function extNivel(){ return S.extInactivo ? 0 : (S.ext && S.ext.nivel) || 1; }
-const APP_VER = 'v76', NIVEL_ULTIMO = 45;
+const APP_VER = 'v77', NIVEL_ULTIMO = 45;
 function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < NIVEL_ULTIMO; }
 let sincTimer = null;
 // Después de cambiar tareas, el script actualiza los recordatorios del calendario (en segundo plano).
@@ -2912,6 +2912,7 @@ function modal(titulo, cuerpo, opt){
   const cerrar = () => bg.remove();
   bg.onclick = e => { if (e.target === bg || e.target.closest('.px')) cerrar(); };
   document.body.appendChild(bg);
+  bg.querySelectorAll('.pop textarea, .pop input[type=text], .pop input:not([type])').forEach(x => { if (!x.getAttribute('enterkeyhint')) x.setAttribute('enterkeyhint', x.tagName === 'TEXTAREA' ? 'send' : 'done'); });
   // Computador: el cursor queda listo en el primer campo para escribir sin tocar el mouse.
   if (!opt.sinFoco && matchMedia('(pointer:fine)').matches) setTimeout(() => { const f = bg.querySelector('.pop textarea, .pop input[type=text], .pop input[type=search], .pop input:not([type])'); const ae = document.activeElement; if (f && !f.disabled && !(ae && /INPUT|TEXTAREA|SELECT/.test(ae.tagName) && !bg.contains(ae))) f.focus(); }, 60);
   return { el: bg.querySelector('.pop'), cerrar };
@@ -2929,6 +2930,7 @@ function botonPrincipal(el){
   return L.find(b => el.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING) || L[L.length - 1] || null;
 }
 document.addEventListener('keydown', e => {
+  if (e.key === 'Enter') S._shiftEnter = e.shiftKey;
   if (e.key !== 'Enter' || e.isComposing || e.keyCode === 229 || e.altKey || e.defaultPrevented) return;
   const el = e.target; if (!el || !el.tagName) return;
   const esTA = el.tagName === 'TEXTAREA', esIn = el.tagName === 'INPUT' && /^(text|search|number|tel|email|url|date|time|)$/.test(el.getAttribute('type') || '');
@@ -2938,11 +2940,19 @@ document.addEventListener('keydown', e => {
   if (esTA){
     if (e.shiftKey) return;
     const largo = !!el.closest('.sheet') && !el.closest('.pop');
-    if (!mod && (largo || !fino)) return;   // salto de línea normal
+    if (!mod && (largo || (!fino && !el.closest('.pop')))) return;   // notas largas: salto de línea normal
   }
   if (el.form && !el.closest('.pop, .sheet')){ e.preventDefault(); el.form.requestSubmit ? el.form.requestSubmit() : el.form.submit(); return; }
   const b = botonPrincipal(el);
   if (b){ e.preventDefault(); b.click(); }
+});
+// Celular (Android/iPhone): mientras el teclado sugiere palabras, Enter no llega como tecla sino como «salto de línea».
+// En los cuadros de las ventanas chicas eso también envía (en las notas largas sigue siendo salto de línea).
+document.addEventListener('beforeinput', e => {
+  if (e.inputType !== 'insertLineBreak' && e.inputType !== 'insertParagraph') return;
+  const el = e.target; if (!el || el.tagName !== 'TEXTAREA' || !el.closest('.pop') || el.id === 'copQ' || el.dataset.enter === 'no') return;
+  if (S._shiftEnter){ S._shiftEnter = false; return; }
+  const b = botonPrincipal(el); if (b){ e.preventDefault(); b.click(); }
 });
 /* ---------- gráficos simples (SVG) ---------- */
 function ringSVG(p, size, color){
