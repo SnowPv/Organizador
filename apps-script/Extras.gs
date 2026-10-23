@@ -3764,7 +3764,8 @@ const EX_GLOSARIO_BICI = 'Glosario de ciclismo (úsalo para interpretar, sobre t
   'Shimano: Di2 = transmisión electrónica de Shimano (el dictado lo escribe «de dos», «di dos», «D2», «dedos», «di 2»); grupos XTR, XT, SLX, Deore (MTB), Dura-Ace, Ultegra, 105, GRX (ruta/gravel); ' +
   'cables Di2 = cables E-TUBE: EW-SD50 (Di2 de 11 velocidades: Ultegra 6870/R8050, Dura-Ace 9070/9150, XT M8050) y EW-SD300 (Di2 de 12 velocidades: Dura-Ace R9250, Ultegra R8150, 105 R7150, XT Di2 M8150 de e-bikes con motor EP801/EP6); se piden por largo en mm; también uniones/junction (EW-JC) y baterías BT-DN. ' +
   'SRAM: AXS = inalámbrico («a x s», «axes»); Eagle, Transmission (T-Type), GX, X0, XX; RockShox (Lyrik, Pike, ZEB, Super Deluxe). Fox (36, 38, Float X, DHX). ' +
-  'Specialized: Turbo Levo («levo», «lebo»), Levo SL, Kenevo («kenevo», «que nevo»), Vado, Como, Creo, Stumpjumper («stump jumper», «stump»), Epic, Chisel, Tarmac, Aethos, Diverge; motores Turbo (Brose/Specialized 2.2/3.1), baterías de 700 Wh, Mission Control. ' +
+  'Specialized: Turbo Levo («levo», «lebo», «lego», «levor»; «Lego cuatro» = Levo 4), Levo SL, Kenevo («kenevo», «que nevo»), Vado, Como, Creo, Stumpjumper («stump jumper», «stump»), Epic, Chisel, Tarmac, Aethos, Diverge; motores Turbo (Brose/Specialized 2.2/3.1), baterías de 700 Wh, Mission Control. ' +
+  'Marcas y proveedores que el dictado escribe mal: «evoc/ivoc» = EVOC (bolsos, mochilas y fundas), «mkr/emekar» = proveedor MKR, «specialize» = Specialized. ' +
   'Repuestos frecuentes: pastillas (Shimano usa códigos como N03A/D03S), discos, cadena, cassette, desviador, shifter, cubiertas (neumáticos), tubeless, sellante, bielas, pedaleras, rodamientos, puños, tija telescópica (dropper). ' +
   'Si una palabra no calza, pregúntate qué término de ciclismo suena parecido antes de responder.';
 const EX_COP_SISTEMA = [
