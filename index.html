@@ -2519,7 +2519,7 @@ async function apiX(op, extra){
 }
 // Nivel 2 del script Extras: recordatorios y base de contactos. Nivel 3: la base solo usa contacto@blacklinechile.cl. Nivel 4: eventos de varios días.
 function extNivel(){ return S.extInactivo ? 0 : (S.ext && S.ext.nivel) || 1; }
-const APP_VER = 'v70', NIVEL_ULTIMO = 43;
+const APP_VER = 'v71', NIVEL_ULTIMO = 43;
 function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < NIVEL_ULTIMO; }
 let sincTimer = null;
 // Después de cambiar tareas, el script actualiza los recordatorios del calendario (en segundo plano).
@@ -5900,16 +5900,40 @@ const ACC_DIRECTA = ['crear_tarea', 'editar_negocio', 'nota_contacto', 'crear_ne
 function copMic(btn){
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition, p = $('#cop'), q = $('#copQ');
   if (!q) return;
+  if (S._rec){ S._rec.parar(); return; }
   S._modoVoz = true; p.classList.add('voz');
   if (!SR){ q.focus(); toast('Toca el micrófono del teclado y dicta. Luego envía: el Cerebro te confirma antes de hacer algo.'); return; }
-  if (S._rec){ S._rec.stop(); return; }
-  const r = new SR(); r.lang = 'es-CL'; r.interimResults = true; r.continuous = true;
-  let fin = q.value.trim() ? q.value.trim() + ' ' : '';
-  r.onresult = e => { let tmp = ''; for (let i = e.resultIndex; i < e.results.length; i++){ const x = e.results[i]; if (x.isFinal) fin += x[0].transcript + ' '; else tmp += x[0].transcript; } q.value = (fin + tmp).trim(); q.style.height = 'auto'; q.style.height = Math.min(140, q.scrollHeight) + 'px'; };
-  r.onerror = e => { if (e.error !== 'no-speech' && e.error !== 'aborted') toast(e.error === 'not-allowed' ? 'Permite el micrófono para dictar (o usa el micrófono del teclado)' : 'No se pudo escuchar (' + e.error + ')'); };
-  r.onend = () => { S._rec = null; if (btn) btn.classList.remove('rec'); const t = q.value.trim(); if (t){ q.value = ''; q.style.height = 'auto'; S._modoVoz = false; p.classList.remove('voz'); copEnviar(t, { voz: true }); } };
-  S._rec = r; if (btn) btn.classList.add('rec');
-  try { r.start(); toast('Te escucho… habla y toca el micrófono para terminar'); } catch(e){ S._rec = null; if (btn) btn.classList.remove('rec'); q.focus(); }
+  // Escucha frase por frase y se vuelve a encender sola en las pausas: así no corta mientras piensas.
+  // Solo termina cuando tocas el micrófono de nuevo (o a los 3 minutos). Cada frase se agrega una vez (en Android
+  // el navegador repite el texto acumulado; aquí se descarta lo repetido).
+  let fin = q.value.trim(), ult = '', parado = false, nuevo = false;
+  const t0 = Date.now();
+  const pintar = tmp => { q.value = (fin + (tmp ? ' ' + tmp : '')).trim(); q.style.height = 'auto'; q.style.height = Math.min(140, q.scrollHeight) + 'px'; };
+  const agregar = t => {
+    t = t.trim(); if (!t) return;
+    const n = norm(t), nu = norm(ult);
+    if (nu && (n === nu || nu.includes(n))) return;
+    if (nu && n.startsWith(nu)) fin = fin.slice(0, Math.max(0, fin.length - ult.length)).trim() + (fin.length > ult.length ? ' ' : '') + t;
+    else fin = (fin ? fin + ' ' : '') + t;
+    ult = t;
+  };
+  let cerrado = false;
+  const terminar = () => {
+    if (cerrado) return; cerrado = true;
+    S._rec = null; if (btn) btn.classList.remove('rec'); pintar('');
+    const t = q.value.trim();
+    if (t){ q.value = ''; q.style.height = 'auto'; S._modoVoz = false; p.classList.remove('voz'); copEnviar(t, { voz: true }); }
+  };
+  const iniciar = () => {
+    const r = new SR(); r.lang = 'es-CL'; r.interimResults = true; r.continuous = false; r.maxAlternatives = 1;
+    r.onresult = e => { let tmp = ''; for (let i = e.resultIndex; i < e.results.length; i++){ const x = e.results[i]; if (x.isFinal) agregar(x[0].transcript); else tmp = x[0].transcript; } pintar(tmp); };
+    r.onerror = e => { if (e.error === 'not-allowed' || e.error === 'service-not-allowed'){ parado = true; toast('Permite el micrófono para dictar (o usa el micrófono del teclado)'); } else if (e.error !== 'no-speech' && e.error !== 'aborted') toast('No se pudo escuchar (' + e.error + ')'); };
+    r.onend = () => { if (cerrado || (S._rec && S._rec.r !== r)) return; ult = ''; if (!parado && Date.now() - t0 < 180000){ try { iniciar(); return; } catch(x){} } terminar(); };
+    S._rec.r = r; r.start();
+  };
+  S._rec = { r: null, parar: () => { parado = true; try { S._rec.r.stop(); } catch(x){ terminar(); } } };
+  if (btn) btn.classList.add('rec');
+  try { iniciar(); toast('Te escucho… puedes hacer pausas. Toca el micrófono cuando termines.'); } catch(e){ S._rec = null; if (btn) btn.classList.remove('rec'); q.focus(); }
 }
 function decir(texto, btn){
   if (!('speechSynthesis' in window)){ toast('Este equipo no puede leer en voz alta'); return; }

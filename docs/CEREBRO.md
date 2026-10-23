@@ -427,3 +427,8 @@ Basada en el análisis de unos 300 diseños de Dribbble (búsquedas: crm, crm-da
 - `EX_GLOSARIO_BICI` va primero en las instrucciones del Cerebro: Di2 (y cómo lo escribe mal el dictado: «de dos», «D2»…), cables E-TUBE EW-SD50 (11 v) y EW-SD300 (12 v), AXS, modelos Specialized, repuestos comunes.
 - Regla nueva: si una tarea es conseguir un repuesto o producto, el Cerebro busca en el mismo turno opciones de compra (stock de la tienda, catálogos de proveedores, planillas subidas y correos de proveedores) y las deja en el detalle de la tarea. Andes Industrial (Shimano) no tiene catálogo web abierto: para que aparezcan sus productos, sube su lista de precios como Google Sheets o CSV a la carpeta de Drive «Fuentes» (o conéctala en Inicio → Fuentes).
 - La versión corta de esto también va en las instrucciones del dictado (`VOZ_INSTR`), así que funciona aunque el script aún no esté actualizado. El Piso de venta no tiene las herramientas de proveedores y costos.
+
+## Dictado sin cortes ni repeticiones (app v71)
+
+- El micrófono del Cerebro escucha frase por frase y se vuelve a encender solo en las pausas: no corta mientras piensas. Termina cuando tocas el micrófono otra vez (o a los 3 minutos) y recién ahí envía.
+- En Android el navegador repetía el texto acumulado y el mensaje salía duplicado muchas veces; ahora cada frase se agrega una sola vez y el envío es único.
