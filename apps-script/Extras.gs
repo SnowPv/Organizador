@@ -15,8 +15,8 @@
  * Para actualizar este archivo más adelante: reemplaza todo su contenido y repite los dos pasos anteriores.
  */
 
-const EX_VERSION = '2027-01-09';
-const EX_NIVEL = 43;      // la app lo usa para saber qué funciones tiene este script
+const EX_VERSION = '2027-01-10';
+const EX_NIVEL = 44;      // la app lo usa para saber qué funciones tiene este script
 const EX_HOJA = 'Tareas';
 const EX_PRIMERA = 4;
 const EX_ULTIMA = 400;
@@ -3736,6 +3736,28 @@ function ex_interesados_(texto, max) {
   return out.sort(function (a, b) { return (b.prob || 0) - (a.prob || 0); }).slice(0, max || 10);
 }
 
+
+// Andes Industrial (Shimano y Continental): su web muestra a cualquier visitante un buscador público de productos
+// (sin precios ni stock; eso queda en el portal con la sesión de Gustavo). Se usa solo para confirmar que algo existe
+// en el distribuidor. Pocas consultas y con caché de 6 horas.
+function ex_andesBuscar_(q) {
+  q = String(q || '').trim();
+  if (q.length < 3) return 'Para buscar en Andes escribe al menos 3 letras (mejor el código Shimano, ej. EW-SD50).';
+  const cache = CacheService.getScriptCache(), k = 'andes:' + ex_norm_(q).slice(0, 80), c = cache.get(k);
+  if (c) return c;
+  let out;
+  try {
+    const r = UrlFetchApp.fetch('https://apiandes.andesindustrial.cl/web/Api/v1/Catalogo/Buscar/10/1/0/' + encodeURIComponent(q), { muteHttpExceptions: true, headers: { 'User-Agent': 'Mozilla/5.0 (Organizador Blackline Puerto Varas)' } });
+    if (r.getResponseCode() !== 200) return 'No pude consultar el catálogo público de Andes (HTTP ' + r.getResponseCode() + '). Revísalo en su portal.';
+    const j = JSON.parse(r.getContentText() || '{}'), vistos = {};
+    const L = (j.ListadoPalabras || []).map(function (x) { return String(x.encontradas || '').trim(); }).filter(function (x) { const n = ex_norm_(x); if (!x || vistos[n]) return false; vistos[n] = 1; return true; });
+    out = L.length
+      ? 'Andes Industrial SÍ tiene productos que coinciden con «' + q + '» en su catálogo: ' + L.join(' · ') + '. (Catálogo público: confirma que existe en el distribuidor; precio, stock y variantes exactas —por ejemplo largos de cable— se ven en el portal de Andes con la sesión de Gustavo.)'
+      : 'Andes Industrial no muestra coincidencias para «' + q + '» en su catálogo público. Prueba con el código Shimano exacto o un nombre más corto.';
+  } catch (e) { return 'No pude consultar Andes: ' + e.message; }
+  cache.put(k, out, 21600);
+  return out;
+}
 /* ---------- Copiloto: un agente que consulta todas las fuentes y propone acciones ---------- */
 // Glosario de ciclismo para entender a Gustavo (también cuando dicta por voz y el dictado escribe mal los términos).
 const EX_GLOSARIO_BICI = 'Glosario de ciclismo (úsalo para interpretar, sobre todo mensajes dictados por voz, donde el dictado escribe mal los nombres): ' +
@@ -3747,7 +3769,7 @@ const EX_GLOSARIO_BICI = 'Glosario de ciclismo (úsalo para interpretar, sobre t
   'Si una palabra no calza, pregúntate qué término de ciclismo suena parecido antes de responder.';
 const EX_COP_SISTEMA = [
   EX_GLOSARIO_BICI,
-  'Repuestos y productos para un cliente: cuando una tarea o pedido trata de conseguir algo (un cable Di2, unas pastillas, un neumático), además de proponer la tarea busca opciones de compra en el mismo turno: stock_tienda (¿ya lo tenemos?), buscar_en_proveedores, buscar_en_planillas (listas de precios que Gustavo subió, como la de Andes Industrial) y correos_proveedores. Muestra 2 a 4 opciones con proveedor, código, precio o costo y disponibilidad, y deja las opciones en el detalle de la tarea. Andes Industrial (Shimano y Continental) no tiene catálogo web abierto: si no aparece en planillas ni correos, dilo en una línea y propone pedir cotización a Andes con el modelo exacto (y pregunta el grupo o largo si falta para elegir bien).',
+  'Repuestos y productos para un cliente: cuando una tarea o pedido trata de conseguir algo (un cable Di2, unas pastillas, un neumático), además de proponer la tarea busca opciones de compra en el mismo turno: stock_tienda (¿ya lo tenemos?), buscar_andes (si es Shimano o Continental: confirma que el distribuidor lo tiene), buscar_en_proveedores, buscar_en_planillas (listas de precios que Gustavo subió, como la de Andes Industrial) y correos_proveedores. Muestra 2 a 4 opciones con proveedor, código, precio o costo y disponibilidad, y deja las opciones en el detalle de la tarea. Andes Industrial (Shimano y Continental): con buscar_andes confirmas que el producto existe en el distribuidor (sin precios). Si el repuesto viene en variantes que solo cambian en un dato (largo de cable Di2, medida, velocidades), propón el código y agrega a la tarea el paso concreto para elegir la variante, por ejemplo «medir en la bici el largo del cable Di2 actual antes de pedir a Andes». No inventes qué largos o precios hay: eso lo ve Gustavo en el portal de Andes.',
   'Eres el Copiloto de Blackline Puerto Varas, tienda Specialized en Puerto Varas, Chile (lluvioso; temporada alta de primavera a verano; muchos turistas argentinos en verano). Su fuerte son las e-bikes (Turbo Levo, Levo SL, Kenevo, Vado, Como, Creo) y también venden MTB, ruta, gravel, urbano, niños, ropa, accesorios y taller. Han vendido S-Works en todas las disciplinas. Hablas con Gustavo, el encargado: psicólogo laboral, vendedor experto, muy analítico. Tutéalo, en español de Chile, directo y concreto.',
   'Tu trabajo: responder rápido y bien usando las herramientas. Consulta los datos antes de afirmar algo (stock, precios, clientes, negociaciones, clima). Cruza fuentes: por ejemplo, si preguntan por un producto mira la web de Specialized (precio, oferta, stock por talla en Chile), el stock de la tienda (Bsale) y qué clientes lo quieren. Si una herramienta no tiene datos (por ejemplo Bsale aún no conectado), dilo en una frase y sigue con lo que sí hay.',
   'Specialized: los modelos sin «Alloy» en el nombre son de carbono (ej.: «Turbo Levo 4 Comp» es la Comp Carbon). Para stock por color y talla usa buscar_producto y, si vas a prometer algo, confírmalo con ficha_specialized_en_vivo; responde con una lista por color y talla. Reglas: nunca inventes precios, stock ni datos de clientes. El stock de Specialized es el de su bodega en Chile según la web (sirve para saber si se puede pedir); el de Bsale es el de la tienda. No puedes comprar, pedir, enviar mensajes ni modificar nada por tu cuenta: cuando convenga actuar, usa proponer_accion (tareas, avisos, abrir chat de WhatsApp con un borrador, crear negociación, diseñar una pieza, idea de contenido, abrir ficha de producto) y Gustavo decide con un toque.',
@@ -3775,6 +3797,7 @@ const EX_COP_TOOLS = [
   { name: 'buscar_en_planillas', description: 'Busca en las planillas y archivos que Gustavo conectó como fuentes (listas de precios, exportaciones del B2B, metas, proveedores, etc.).', input_schema: { type: 'object', properties: { consulta: { type: 'string' } }, required: ['consulta'] } },
   { name: 'ver_instagram', description: 'Resumen de Instagram: alcance y seguidores recientes, últimas publicaciones y su rendimiento, contenido planificado y piezas del estudio.', input_schema: { type: 'object', properties: {} } },
   { name: 'ver_avisos', description: 'Avisos internos activos de la tienda (lo que viene, cosas importantes).', input_schema: { type: 'object', properties: {} } },
+  { name: 'buscar_andes', description: 'Confirma si un producto Shimano o Continental existe en el catálogo de Andes Industrial, el distribuidor de Shimano en Chile (catálogo público: nombres de producto, sin precios ni stock). Busca por código (EW-SD50, EW-SD300, N03A, CN-M8100) o un nombre corto. Úsala siempre que se hable de un repuesto Shimano o Continental para proponer la solución inmediata.', input_schema: { type: 'object', properties: { consulta: { type: 'string' } }, required: ['consulta'] } },
   { name: 'buscar_en_proveedores', description: 'Busca un producto en los catálogos públicos de los proveedores (y Specialized): precio público, precio de oferta, disponibilidad y costo para Blackline con su descuento. Útil cuando un cliente pide algo que no está en la tienda (ej. "fox 36 grip x2", "hope tech 4", "garmin edge 1050", "schwalbe magic mary 29").', input_schema: { type: 'object', properties: { consulta: { type: 'string' } }, required: ['consulta'] } },
   { name: 'oportunidades_compra', description: 'Productos en oferta en la web de los proveedores que conviene comprar ahora para vender a precio normal: margen extra, si la tienda los vende, si los piden clientes y cuántos días lleva la oferta.', input_schema: { type: 'object', properties: {} } },
   { name: 'correos_proveedores', description: 'Correos recientes de los proveedores (promociones, lanzamientos, llegadas, listas de precios).', input_schema: { type: 'object', properties: {} } },
@@ -3827,6 +3850,7 @@ function ex_copHerramienta_(nombre, inp, estado) {
     case 'ver_agenda': { const n = Math.min(14, inp.dias || 7), lim = ex_ymd_(new Date(Date.now() + n * 86400000), tz); return ex_json_(int_eventos_(tz).filter(function (e) { return e.fecha <= lim; }).map(function (e) { return { fecha: e.fecha, inicio: e.inicio, fin: e.fin, titulo: e.titulo, lugar: e.lugar }; })); }
     case 'ver_clima': return ex_climaTexto_(ex_clima_());
     case 'ver_noticias': return ex_json_(ex_noticias_(false).items.map(function (x) { return { titulo: x.titulo, por_que: x.por_que, fuente: x.fuente, fecha: (x.fecha || '').slice(0, 10), link: x.link }; }));
+    case 'buscar_andes': return ex_andesBuscar_(inp.consulta);
     case 'stock_tienda': if (!ex_bsaleToken_()) return 'Bsale aún no está conectado: no hay stock de la tienda disponible.'; return String(ex_bsaleParaAgente_(inp.consulta) || 'sin coincidencias en Bsale');
     case 'ventas_tienda': if (!ex_bsaleToken_()) return 'Bsale aún no está conectado.'; return ex_bsaleVentasTexto_(inp.consulta, inp.dias);
     case 'compras_cliente': { if (!ex_bsaleToken_()) return 'Bsale aún no está conectado.'; const L = ex_bsaleCompras_(inp); return L.length ? ex_json_(L, 7000) : 'Sin compras en Bsale para ese cliente (revisa email, teléfono o RUT).'; }

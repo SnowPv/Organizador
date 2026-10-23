@@ -432,3 +432,9 @@ Basada en el análisis de unos 300 diseños de Dribbble (búsquedas: crm, crm-da
 
 - El micrófono del Cerebro escucha frase por frase y se vuelve a encender solo en las pausas: no corta mientras piensas. Termina cuando tocas el micrófono otra vez (o a los 3 minutos) y recién ahí envía.
 - En Android el navegador repetía el texto acumulado y el mensaje salía duplicado muchas veces; ahora cada frase se agrega una sola vez y el envío es único.
+
+## Andes Industrial: confirmar que un repuesto existe (app v72 · script nivel 44)
+
+- Herramienta nueva del Cerebro `buscar_andes` (`ex_andesBuscar_`): usa el buscador público de la web de Andes Industrial (el mismo que ve cualquier visitante, sin iniciar sesión) para confirmar si un producto Shimano o Continental existe en el distribuidor. Devuelve nombres de producto, **sin precios ni stock** (eso queda en el portal con la sesión de Gustavo). Caché de 6 horas.
+- Regla: si el repuesto viene en variantes que solo cambian en un dato (largo de cable Di2, medida), el Cerebro propone el código y agrega a la tarea el paso para elegir la variante («medir en la bici el largo del cable actual antes de pedir a Andes»), sin inventar largos ni precios.
+- Disponible para Admin y Piso de venta (no muestra costos).
