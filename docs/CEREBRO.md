@@ -472,3 +472,11 @@ Basada en el análisis de unos 300 diseños de Dribbble (búsquedas: crm, crm-da
 
 - **Tareas**: cada tarjeta del tablero (y cada fila de la lista) muestra arriba, en chico, el **cliente** relacionado (`clienteDeTarea`: el de la nota `[id]`, el de su negociación o el que se nombra en el texto).
 - **Contactos internos**: los de tipo **Equipo** o cuyo nombre/empresa dice «Blackline» (ej. «Blackline Servicio Técnico») son comunicación interna. El agente ya no les crea negociaciones, tareas ni «espera respuesta» (`ex_esInterno_`; se pueden sumar nombres con la propiedad `CONTACTOS_INTERNOS`, separados por coma). En la app, sus negociaciones no aparecen en el pipeline y no salen en «Clientes que esperan».
+
+## Productos de cada negociación (app v79 · script nivel 47)
+
+- **Dónde**: ficha de la negociación → Resumen → «Productos que se negocian». Cada fila: nombre (editable), origen (Bsale / Manual / Encargo / Estimado, con SKU, stock y costo), cantidad − +, precio unitario con IVA (editable) y subtotal; ✕ quita; ✎ abre el detalle (nombre, cantidad, precio, costo neto, origen, SKU, nota).
+- **Agregar**: «De Bsale» busca en el catálogo (precio y stock en vivo y, para el Admin, el **costo promedio** de Bsale `/variants/{id}/costs.json`); «A mano» agrega cualquier producto (por ejemplo un encargo). Si la negociación no tiene productos pero sí un producto anotado, ofrece agregarlo con un toque.
+- **Cálculos**: total (con IVA) = valor de la negociación (se actualiza solo); para el Admin: costo, ganancia y margen sobre el precio sin IVA (los productos sin costo no cuentan, y se avisa). El Piso de venta ve solo el total y, si edita, los costos que había se conservan.
+- **Guardado**: columna nueva Q «Productos (JSON)» de la hoja de negociaciones (`ex_itemsNeg_`). Las negociaciones nuevas con producto parten con ese producto como «Estimado».
+- **Cerebro**: ve los productos en `ver_negociaciones` y los propone con `proponer_productos_negocio` (busca precio y SKU en Bsale; lo que no hay va como encargo). Se aprueban con un toque o con «Confirmar todo».

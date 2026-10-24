@@ -15,8 +15,8 @@
  * Para actualizar este archivo más adelante: reemplaza todo su contenido y repite los dos pasos anteriores.
  */
 
-const EX_VERSION = '2027-01-12';
-const EX_NIVEL = 46;      // la app lo usa para saber qué funciones tiene este script
+const EX_VERSION = '2027-01-14';
+const EX_NIVEL = 47;      // la app lo usa para saber qué funciones tiene este script
 const EX_HOJA = 'Tareas';
 const EX_PRIMERA = 4;
 const EX_ULTIMA = 400;
@@ -44,7 +44,7 @@ const EX_DIAS_ESCANEO_INICIAL = 90;     // la primera vez revisa 90 días hacia 
 const EX_IGNORAR_RE = /no-?reply|no-?responder|notific|mailer|newsletter|bounce|news@|marketing@|alerts?@|calendar-|ofertas@|promo|mensajeria@|transferencias@|serviciodetransferencias|facturacion@|factura|boleta|cobranza|recordatorios@|dte|@.*(mailchimp|sendgrid|hubspot|shopifyemail|mercadopago|mercadolibre|facebookmail|instagram|linkedin|tiktok|google\.com|apple\.com|microsoft|amazon|paypal|bci\.cl|santander|bancochile|bancoestado|scotiabank|itau|bancofalabella|bancoripley|bice|security\.cl|transbank|webpay|flow\.cl|khipu|entel|movistar|claro\.cl|wom\.cl|vtr|sii\.cl|duemint|desis|bsale)/i;
 // Negociaciones (pipeline de ventas).
 const EX_HOJA_NEG = 'Negociaciones';
-const EX_CAB_NEG = ['ID', 'Negociación', 'Contacto (ID)', 'Etapa', 'Valor ($)', 'Producto / interés', 'Creada', 'Cierre esperado', 'Próxima acción', 'Fecha próxima acción', 'Estado', 'Motivo de pérdida', 'Notas', 'Historial de etapas', 'Última actividad', 'Origen'];
+const EX_CAB_NEG = ['ID', 'Negociación', 'Contacto (ID)', 'Etapa', 'Valor ($)', 'Producto / interés', 'Creada', 'Cierre esperado', 'Próxima acción', 'Fecha próxima acción', 'Estado', 'Motivo de pérdida', 'Notas', 'Historial de etapas', 'Última actividad', 'Origen', 'Productos (JSON)'];
 const EX_CAMPOS_NEG = { titulo: 2, contacto: 3, valor: 5, producto: 6, cierre: 8, proxima: 9, fechaProx: 10, motivo: 12, notas: 13, origen: 16 };
 // WhatsApp Business (mensajes que llegan desde el puente: Meta → Cloudflare Worker → este script).
 const EX_HOJA_WA = 'WhatsApp';
@@ -180,6 +180,7 @@ function ex_filtrarPiso_(op, r) {
   if (op === 'google') delete r.correos;
   if (op === 'extras') { delete r.agente; delete r.waHist; }
   if (op === 'negocios' && r.metaVentas !== undefined) delete r.metaVentas;
+  if (op === 'negocios' && Array.isArray(r.negocios)) r.negocios.forEach(function (n) { (n.items || []).forEach(function (x) { delete x.costo; }); });   // costos: solo Admin
   return r;
 }
 
@@ -695,10 +696,12 @@ function ex_recalcular_(cs, is) {
 }
 
 /* ---------- negociaciones ---------- */
+let EX_NEG_COLQ = false;
 function ex_hojaNeg_() {
   const ss = SpreadsheetApp.getActive();
   let sh = ss.getSheetByName(EX_HOJA_NEG);
   if (!sh) { sh = ss.insertSheet(EX_HOJA_NEG); sh.appendRow(EX_CAB_NEG); sh.setFrozenRows(1); }
+  else if (!EX_NEG_COLQ) { EX_NEG_COLQ = true; const k = sh.getRange(1, EX_CAB_NEG.length); if (!k.getValue()) k.setValue(EX_CAB_NEG[EX_CAB_NEG.length - 1]); }
   return sh;
 }
 
@@ -710,11 +713,28 @@ function ex_filasNeg_(sh) {
 function ex_leerNegocios_() {
   const tz = ex_tz_(), f = function (d) { return d instanceof Date ? ex_ymd_(d, tz) : (d ? String(d) : ''); };
   const negocios = ex_filasNeg_(ex_hojaNeg_()).filter(function (r) { return r[0]; }).map(function (r) {
-    return { id: String(r[0]), titulo: r[1], contacto: String(r[2] || ''), etapa: r[3] || 'Nuevo', valor: Number(r[4]) || 0, producto: r[5], creada: f(r[6]), cierre: f(r[7]), proxima: r[8], fechaProx: f(r[9]), estado: r[10] || 'Abierta', motivo: r[11], notas: r[12], historial: String(r[13] || ''), actividad: f(r[14]), origen: r[15] };
+    const it = ex_itemsNeg_(r[16]);
+    return { items: it, id: String(r[0]), titulo: r[1], contacto: String(r[2] || ''), etapa: r[3] || 'Nuevo', valor: Number(r[4]) || 0, producto: r[5], creada: f(r[6]), cierre: f(r[7]), proxima: r[8], fechaProx: f(r[9]), estado: r[10] || 'Abierta', motivo: r[11], notas: r[12], historial: String(r[13] || ''), actividad: f(r[14]), origen: r[15] };
   });
   return { ok: true, negocios: negocios };
 }
 
+// Productos de una negociación (columna Q, JSON): { nombre, cant, precio (unitario con IVA), costo (unitario neto, opcional),
+// sku, vid (variante Bsale), origen: bsale | manual | encargo | estimado, nota }.
+function ex_itemsNeg_(v) {
+  if (!v) return [];
+  let L; try { L = typeof v === 'string' ? JSON.parse(v) : v; } catch (e) { return []; }
+  if (!Array.isArray(L)) return [];
+  const num = function (x) { const n = Number(x); return isFinite(n) ? n : 0; };
+  return L.slice(0, 40).map(function (x) {
+    x = x || {};
+    const o = { nombre: String(x.nombre || '').slice(0, 140), cant: Math.max(0, num(x.cant) || 1), precio: Math.max(0, Math.round(num(x.precio))) };
+    if (x.costo !== undefined && x.costo !== null && x.costo !== '') o.costo = Math.max(0, Math.round(num(x.costo)));
+    ['sku', 'vid', 'origen', 'nota'].forEach(function (k) { if (x[k]) o[k] = String(x[k]).slice(0, 160); });
+    return o;
+  }).filter(function (x) { return x.nombre; });
+}
+function ex_totalItems_(L) { return L.reduce(function (s, x) { return s + (x.cant || 0) * (x.precio || 0); }, 0); }
 // Crea o actualiza una negociación. Cada cambio de etapa queda en el historial y en el historial del contacto.
 function ex_guardarNegocio_(n) {
   const sh = ex_hojaNeg_(), filas = ex_filasNeg_(sh), tz = ex_tz_(), hoy = ex_hoyYmd_(tz);
@@ -731,6 +751,16 @@ function ex_guardarNegocio_(n) {
     const c = EX_CAMPOS_NEG[k] - 1;
     r[c] = (k === 'cierre' || k === 'fechaProx') ? fecha(n[k]) : k === 'valor' ? (Number(n[k]) || 0) : n[k];
   });
+  // Productos: si llegan, se guardan y el valor pasa a ser el total (salvo que también venga un valor).
+  if (n.items !== undefined) {
+    const L = ex_itemsNeg_(n.items);
+    // El Piso de venta no ve costos: al guardar se conservan los costos que ya tenían esos productos.
+    if (EX_ROL === 'piso') { const prev = ex_itemsNeg_(r[16]); L.forEach(function (x) { delete x.costo; const m = prev.filter(function (y) { return (x.sku && y.sku === x.sku) || ex_norm_(y.nombre) === ex_norm_(x.nombre); })[0]; if (m && m.costo !== undefined) x.costo = m.costo; }); }
+    r[16] = L.length ? JSON.stringify(L).slice(0, 45000) : '';
+    if (n.valor === undefined && L.length) r[4] = ex_totalItems_(L);
+  } else if (i < 0 && r[5] && !r[16]) {
+    r[16] = JSON.stringify([{ nombre: String(r[5]).slice(0, 140), cant: 1, precio: Number(r[4]) || 0, origen: 'estimado' }]);
+  }
   const etapa = n.etapa || r[3] || 'Nuevo', fEtapa = /^\d{4}-\d{2}-\d{2}$/.test(String(n.fechaEtapa || '')) ? n.fechaEtapa : hoy;
   const ganadaAntes = EX_ETAPAS_GANADA.indexOf(antes) >= 0, ganadaAhora = EX_ETAPAS_GANADA.indexOf(etapa) >= 0;
   if (i < 0 || etapa !== antes) {
@@ -1378,8 +1408,14 @@ function probarBsale() {
 function ex_bsale_(p) {
   if (!ex_bsaleToken_()) return { ok: true, activo: false };
   if (p.sinc) return { ok: true, activo: true, catalogo: ex_bsaleSincCatalogo_() };
-  const v = ex_bsaleBuscar_(String(p.q || ''), Math.min(+p.max || 12, 25));
-  return { ok: true, activo: true, items: ex_bsaleStock_(v), sinc: PropertiesService.getScriptProperties().getProperty('EX_BSALE_SINC') || '' };
+  const v = ex_bsaleBuscar_(String(p.q || ''), Math.min(+p.max || 12, 25)), items = ex_bsaleStock_(v);
+  if (p.costos && EX_ROL !== 'piso' && items.length) {
+    try {
+      const C = ex_bsaleVarias_(items.map(function (x) { return '/variants/' + x.id + '/costs.json'; }));
+      items.forEach(function (x, k) { const c = C[k] || {}; const v2 = Number(c.averageCost); if (isFinite(v2) && v2 > 0) x.costo = Math.round(v2); });
+    } catch (e) {}
+  }
+  return { ok: true, activo: true, items: items, sinc: PropertiesService.getScriptProperties().getProperty('EX_BSALE_SINC') || '' };
 }
 // Para el agente: productos del catálogo que se nombran en la conversación (por las palabras más distintivas de cada nombre).
 function ex_bsaleParaAgente_(texto) {
@@ -3781,6 +3817,7 @@ const EX_GLOSARIO_BICI = 'Glosario de ciclismo (úsalo para interpretar, sobre t
   'Si una palabra no calza, pregúntate qué término de ciclismo suena parecido antes de responder.';
 const EX_COP_SISTEMA = [
   EX_GLOSARIO_BICI,
+  'Productos de una negociación: cuando Gustavo diga qué productos se están negociando («agrega a la negociación de X dos bolsos EVOC y un cargador»), ubica la negociación con ver_negociaciones, busca cada producto en stock_tienda (precio y sku de Bsale) y propón la lista con proponer_productos_negocio; lo que no esté en la tienda va como origen encargo con el precio que encuentres en Specialized o proveedores (o 0 si no hay, y dilo).',
   'Repuestos y productos para un cliente: cuando una tarea o pedido trata de conseguir algo (un cable Di2, unas pastillas, un neumático), además de proponer la tarea busca opciones de compra en el mismo turno: stock_tienda (¿ya lo tenemos?), buscar_andes (si es Shimano o Continental: confirma que el distribuidor lo tiene), buscar_en_proveedores, buscar_en_planillas (listas de precios que Gustavo subió, como la de Andes Industrial) y correos_proveedores. Muestra 2 a 4 opciones con proveedor, código, precio o costo y disponibilidad, y deja las opciones en el detalle de la tarea. Andes Industrial (Shimano y Continental): con buscar_andes confirmas que el producto existe en el distribuidor (sin precios). Si el repuesto viene en variantes que solo cambian en un dato (largo de cable Di2, medida, velocidades), propón el código y agrega a la tarea el paso concreto para elegir la variante, por ejemplo «medir en la bici el largo del cable Di2 actual antes de pedir a Andes». No inventes qué largos o precios hay: eso lo ve Gustavo en el portal de Andes.',
   'Eres el Copiloto de Blackline Puerto Varas, tienda Specialized en Puerto Varas, Chile (lluvioso; temporada alta de primavera a verano; muchos turistas argentinos en verano). Su fuerte son las e-bikes (Turbo Levo, Levo SL, Kenevo, Vado, Como, Creo) y también venden MTB, ruta, gravel, urbano, niños, ropa, accesorios y taller. Han vendido S-Works en todas las disciplinas. Hablas con Gustavo, el encargado: psicólogo laboral, vendedor experto, muy analítico. Tutéalo, en español de Chile, directo y concreto.',
   'Rapidez: cuando necesites varias herramientas, llámalas TODAS A LA VEZ en el mismo paso (por ejemplo buscar_clientes + ver_negociaciones + buscar_andes juntas), no una por una. Usa solo las necesarias.',
@@ -3819,6 +3856,10 @@ const EX_COP_TOOLS = [
     etapa: { type: 'string', enum: ['Nuevo', 'Contactado', 'Prueba / visita', 'Cotización', 'Negociación', 'Ganada', 'Entregada', 'Postventa', 'Perdida'] }, fecha_etapa: { type: 'string', description: 'yyyy-MM-dd en que ocurrió el cambio de etapa, si no fue hoy' },
     valor: { type: 'integer' }, proxima: { type: 'string', description: 'Próxima acción (vacío para quitarla)' }, fecha_proxima: { type: 'string' }, motivo: { type: 'string', description: 'Motivo de pérdida' },
     nota: { type: 'string', description: 'Nota que queda en el historial de la negociación y del cliente' } }, required: ['id', 'titulo'] } },
+  { name: 'proponer_productos_negocio', description: 'Propone agregar (o reemplazar) los productos que se están negociando en una negociación: nombre, cantidad, precio unitario con IVA y de dónde sale. Antes busca el precio y stock con stock_tienda (origen "bsale", incluye sku) y, si no está en la tienda, el precio en Specialized o proveedores (origen "encargo"). Gustavo lo aprueba con un toque. Busca antes el id con ver_negociaciones.', input_schema: { type: 'object', properties: {
+    id: { type: 'string', description: 'ID de la negociación (N-...)' }, titulo: { type: 'string', description: 'Texto del botón, ej. «Agregar 2 bolsos EVOC y 2 cargadores»' },
+    reemplazar: { type: 'boolean', description: 'true si la lista reemplaza a la actual; false (por defecto) para agregar' },
+    productos: { type: 'array', items: { type: 'object', properties: { nombre: { type: 'string' }, cant: { type: 'integer' }, precio: { type: 'integer', description: 'Precio unitario con IVA en CLP' }, sku: { type: 'string' }, origen: { type: 'string', enum: ['bsale', 'manual', 'encargo'] }, nota: { type: 'string' } }, required: ['nombre', 'cant'] } } }, required: ['id', 'titulo', 'productos'] } },
   { name: 'proponer_nota_contacto', description: 'Propone registrar una nota en la ficha de un cliente o contacto (reclamos, garantías, acuerdos, datos nuevos). Gustavo la aprueba con un toque.', input_schema: { type: 'object', properties: { id: { type: 'string' }, titulo: { type: 'string' }, texto: { type: 'string' } }, required: ['id', 'titulo', 'texto'] } },
   { name: 'proponer_accion', description: 'Propone una acción para que Gustavo la apruebe con un toque. No ejecuta nada por sí sola. Úsala cuando haya un siguiente paso claro.', input_schema: { type: 'object', properties: {
     tipo: { type: 'string', enum: ['crear_tarea', 'crear_aviso', 'whatsapp', 'crear_negocio', 'crear_contacto', 'disenar_pieza', 'idea_contenido', 'abrir_producto', 'abrir_contacto'] },
@@ -3850,7 +3891,7 @@ function ex_copHerramienta_(nombre, inp, estado) {
       if (f === 'perdidas_30d') L = L.filter(function (n) { return n.estado === 'Perdida' && d(n.actividad) <= 30; });
       if (f === 'ganadas') L = L.filter(function (n) { return n.estado === 'Ganada'; });
       if (inp.consulta) { const q = ex_norm_(inp.consulta); L = L.filter(function (n) { return ex_norm_(n.titulo + ' ' + n.producto + ' ' + n.notas + ' ' + n.contacto).indexOf(q) >= 0; }); }
-      return ex_json_(L.slice(0, 25).map(function (n) { return { id: n.id, titulo: n.titulo, contacto: n.contacto, etapa: n.etapa, estado: n.estado, historial: n.historial, valor: n.valor, producto: n.producto, proxima: n.proxima, fechaProx: n.fechaProx, actividad: n.actividad, notas: String(n.notas || '').slice(0, 160) }; }));
+      return ex_json_(L.slice(0, 25).map(function (n) { return { id: n.id, titulo: n.titulo, contacto: n.contacto, etapa: n.etapa, estado: n.estado, historial: n.historial, valor: n.valor, producto: n.producto, productos: (n.items || []).map(function (x) { return x.cant + '× ' + x.nombre + ' $' + x.precio + (x.origen ? ' (' + x.origen + ')' : ''); }), proxima: n.proxima, fechaProx: n.fechaProx, actividad: n.actividad, notas: String(n.notas || '').slice(0, 160) }; }));
     }
     case 'ver_tareas': {
       let L = ex_tareasAbiertas_(); const f = inp.filtro || 'hoy', fin = ex_ymd_(new Date(Date.now() + 7 * 86400000), tz);
@@ -3885,6 +3926,7 @@ function ex_copHerramienta_(nombre, inp, estado) {
       estado.acciones.push({ tipo: 'editar_negocio', titulo: String(inp.titulo || 'Actualizar negociación').slice(0, 160), ref: String(inp.id || ''), cambios: cambios, detalle: String(inp.nota || '').slice(0, 1500) });
       return 'Cambio propuesto. Gustavo lo verá como botón para aprobar.';
     }
+    case 'proponer_productos_negocio': estado.acciones.push({ tipo: 'items_negocio', titulo: String(inp.titulo || 'Agregar productos').slice(0, 160), ref: String(inp.id || ''), reemplazar: !!inp.reemplazar, items: ex_itemsNeg_(inp.productos || []) }); return 'Productos propuestos. Gustavo los verá como botón para aprobar.';
     case 'proponer_nota_contacto': estado.acciones.push({ tipo: 'nota_contacto', titulo: String(inp.titulo || 'Guardar nota').slice(0, 160), ref: String(inp.id || ''), detalle: String(inp.texto || '').slice(0, 1500) }); return 'Nota propuesta. Gustavo la verá como botón.';
     case 'leer_skill': estado.usadas['skill ' + inp.skill] = 1; return ex_leerSkill_(String(inp.skill || ''));
     case 'proponer_accion': estado.acciones.push({ tipo: inp.tipo, titulo: String(inp.titulo || '').slice(0, 160), detalle: String(inp.detalle || '').slice(0, 1500), fecha: inp.fecha || '', ref: inp.ref || '' }); return 'Acción propuesta. Gustavo la verá como botón.';
