@@ -2589,7 +2589,7 @@ async function apiX(op, extra){
 // Nivel 2 del script Extras: recordatorios y base de contactos. Nivel 3: la base solo usa contacto@blacklinechile.cl. Nivel 4: eventos de varios días.
 function enCurso(k, fn){ S._p = S._p || {}; if (S._p[k]) return S._p[k]; const pr = Promise.resolve().then(fn).finally(() => { if (S._p[k] === pr) delete S._p[k]; }); S._p[k] = pr; return pr; }
 function extNivel(){ return S.extInactivo ? 0 : (S.ext && S.ext.nivel) || 1; }
-const APP_VER = 'v84', NIVEL_ULTIMO = 49;
+const APP_VER = 'v85', NIVEL_ULTIMO = 49;
 function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < NIVEL_ULTIMO; }
 let sincTimer = null;
 // Después de cambiar tareas, el script actualiza los recordatorios del calendario (en segundo plano).
@@ -2645,6 +2645,7 @@ async function load(){
     // «Sin conexión» solo si de verdad no hay internet; si el script respondió con error u ocupado, se dice eso.
     const red = !navigator.onLine || e instanceof TypeError || /failed to fetch|networkerror|load failed/i.test(String(e && e.message));
     S.offline = red; S.srvErr = red ? '' : String(e && e.message || 'error');
+    S.redErr = red ? String(e && e.message || e) : '';
     if (!red){ try { LS.ultErr = JSON.stringify({ f: new Date().toISOString().slice(0, 16), tab: S.tab, v: APP_VER, m: 'Cargar la planilla: ' + S.srvErr, s: '' }); } catch(_){} }
     if (!S.data && LS.cache) S.data = JSON.parse(LS.cache);
   }
@@ -2673,6 +2674,33 @@ async function loadGoogle(forzar){
   S.googleBusy = false;
   if (S.tab === 'inicio' && !$('#layer').innerHTML) render();
 }
+// «Sin conexión» con internet funcionando casi siempre es el script: quedó con un error, pide permisos o cambió su URL.
+// Google responde esas páginas de error sin permiso para la app, y el navegador lo informa como falla de red.
+async function diagConexion(){
+  const enLinea = navigator.onLine;
+  sheet('<h3 style="margin:0 0 6px">No puedo hablar con tu planilla</h3><div class="hint" id="dgEst"><span class="spin"></span>Revisando…</div><div id="dgCuerpo"></div>');
+  let gTxt = '';
+  try { const r = await fetch('https://www.google.com/generate_204', { mode: 'no-cors', cache: 'no-store' }); gTxt = 'ok'; } catch(e){ gTxt = 'no'; }
+  let sTxt = '';
+  try { const r = await fetch(LS.url, { method: 'POST', body: JSON.stringify({ token: LS.token, action: 'ping', ses: LS.ses || '' }) }); const t = await r.text(); sTxt = 'responde: ' + t.slice(0, 160); }
+  catch(e){ sTxt = 'no responde (' + String(e && e.message || e) + ')'; }
+  const internet = enLinea && gTxt === 'ok', scriptOk = /^responde/.test(sTxt);
+  const est = $('#dgEst'); if (!est) return;
+  est.innerHTML = (internet ? '✅ Internet funciona' : '❌ Este equipo no tiene internet') + '<br>' + (scriptOk ? '✅ El script responde' : '❌ El script de Google no responde') + '<br><small>App ' + esc(APP_VER) + ' · ' + esc(sTxt) + '</small>';
+  $('#dgCuerpo').innerHTML = !internet ? '<p>Revisa el wifi o los datos y vuelve a intentar.</p><div class="btns"><button class="btn" id="dgRe">Reintentar</button></div>'
+    : scriptOk ? '<p>Ahora sí responde. Toca reintentar.</p><div class="btns"><button class="btn" id="dgRe">Reintentar</button></div>'
+    : '<p style="line-height:1.5">Hay internet, pero el script no contesta. Toca <b>Abrir el script</b>: se abre una pestaña con el mensaje de Google. Según lo que diga:</p>' +
+      '<ul style="line-height:1.5;padding-left:18px;margin:0 0 12px">' +
+      '<li><b>«No se encontró la función… doGet»</b> o un texto con <b>ok</b>: el script está bien; vuelve aquí y toca Reintentar.</li>' +
+      '<li><b>Un error con «línea» y «archivo»</b> (por ejemplo «has already been declared» o «Unexpected end of input»): el código pegado quedó duplicado o incompleto. Vuelve a pegar Extras.gs completo, reemplazando todo lo que había en ese archivo.</li>' +
+      '<li><b>«Se requiere autorización»</b>: en el editor de Apps Script ejecuta (▶) cualquier función, por ejemplo <b>sincronizarVentasBsale</b>, y acepta los permisos.</li>' +
+      '<li><b>«No se encontró la página» o «no se puede abrir el archivo»</b>: la URL de la implementación cambió. Toca <b>Cambiar link</b> y pega la URL nueva (termina en /exec); la clave ya queda puesta.</li></ul>' +
+      '<div class="btns"><button class="btn sec" id="dgRe">Reintentar</button><button class="btn sec" id="dgUrl">Cambiar link</button><button class="btn" id="dgAb">Abrir el script</button></div>';
+  if ($('#dgRe')) $('#dgRe').onclick = () => { closeSheet(); load(); };
+  if ($('#dgUrl')) $('#dgUrl').onclick = showSetup;
+  if ($('#dgAb')) $('#dgAb').onclick = () => window.open(LS.url, '_blank');
+  try { LS.ultErr = JSON.stringify({ f: new Date().toISOString().slice(0, 16), tab: S.tab, v: APP_VER, m: 'Conexión: ' + (internet ? 'internet ok' : 'sin internet') + ' · script ' + sTxt + (S.redErr ? ' · ' + S.redErr : ''), s: '' }); } catch(_){}
+}
 async function updateTask(t, cambios){
   const campos = Object.assign({ nuevoTexto: t.tarea, estado: t.estado || 'Pendiente', limite: t.limite || '', urgente: t.urgente || 'No', importante: t.importante || 'No', tamano: t.tamano || '', notas: t.notas || '' }, cambios);
   return api('update', { row: t.row, tarea: t.tarea, campos });
@@ -2681,7 +2709,8 @@ async function updateTask(t, cambios){
 /* ---------- cabecera y navegación ---------- */
 const TITLES = { inicio: 'Inicio', hoy: 'Hoy', tareas: 'Tareas', habitos: 'Hábitos', semana: 'Calendario', proy: 'Proyectos', base: 'Contactos', redes: 'Redes sociales', negocios: 'Negociaciones', compras: 'Compras y proveedores', cerebro: 'Cerebro' };
 function head(){
-  $('#hTitle').innerHTML = (S.tab === 'inicio' && S.data ? saludoTxt() : TITLES[S.tab]) + (S.offline ? '<span class="chip-off">sin conexión</span>' : S.srvErr ? '<button class="chip-off" id="srvChip" title="' + esc(S.srvErr) + '">planilla ocupada · reintentar</button>' : '');
+  $('#hTitle').innerHTML = (S.tab === 'inicio' && S.data ? saludoTxt() : TITLES[S.tab]) + (S.offline ? '<button class="chip-off" id="offChip">sin conexión · ver por qué</button>' : S.srvErr ? '<button class="chip-off" id="srvChip" title="' + esc(S.srvErr) + '">planilla ocupada · reintentar</button>' : '');
+  if ($('#offChip')) $('#offChip').onclick = diagConexion;
   if ($('#srvChip')) $('#srvChip').onclick = () => { toast('El script respondió: ' + S.srvErr.slice(0, 120) + ' · reintentando…'); load(); };
   $('#hSub').innerHTML = S.busy ? '<span class="spin"></span>Actualizando…' : fmtLong(hoy()) + (UI2() && PROPOSITO[S.tab] ? '<span class="h-prop"> · ' + PROPOSITO[S.tab] + '</span>' : '');
   $$('nav.bottom button').forEach(b => b.classList.toggle('on', b.dataset.tab === S.tab || (b.id === 'nbMas' && ['semana', 'compras', 'proy', 'redes', 'cerebro'].includes(S.tab))));

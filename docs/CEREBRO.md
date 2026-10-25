@@ -523,3 +523,6 @@ Revisión con tres análisis en paralelo (diseño y uso, eficiencia y errores, u
 - Cada tarjeta muestra el stock de la tienda: el mismo producto, uno parecido, o «sin stock: conviene pedir antes de escribir».
 - Mensaje listo y editable; lo envía una persona por WhatsApp o correo. Enviado u omitido queda guardado en el script (lo ven Admin y Piso) y no vuelve a aparecer hasta el próximo ciclo. Sin descuentos.
 - El Cerebro tiene la herramienta `recompra_consumibles` («¿a quién le toca cambiar pastillas?»).
+
+## v85 · Diagnóstico de conexión
+- El aviso «sin conexión · ver por qué» se puede tocar: revisa si hay internet y si el script responde, y explica qué hacer según el mensaje que muestre Google al abrir el script (código pegado incompleto o duplicado, permisos pendientes o URL de implementación cambiada). Incluye botones para reintentar, cambiar el link y abrir el script.
