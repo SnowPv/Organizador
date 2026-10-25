@@ -38,6 +38,7 @@ header.top h1{font-size:24px;margin:0;font-weight:800;letter-spacing:-.02em}
 header.top small{display:block;color:var(--muted);font-size:13px;margin-top:2px;font-weight:500}
 .icon-btn{border:0;background:var(--card);box-shadow:var(--shadow-sm);width:40px;height:40px;border-radius:13px;font-size:17px;color:var(--ink)}
 button.chip-off{cursor:pointer}
+.chip-sv{display:inline-flex;align-items:center;gap:5px;background:var(--soft);color:var(--muted);border-radius:999px;padding:3px 10px;font-size:11px;margin-left:8px;font-weight:700;vertical-align:middle}.chip-sv .spin{width:10px;height:10px}
 .chip-off{border:0;font-family:inherit;cursor:default;background:rgba(245,165,36,.16);color:var(--warn-ink);border-radius:999px;padding:3px 10px;font-size:11px;margin-left:8px;font-weight:700;vertical-align:middle}
 .card{background:var(--card);border-radius:22px;padding:18px;margin:14px 0;box-shadow:var(--shadow-sm)}
 .card h2{font-size:14px;letter-spacing:.01em;color:var(--ink);margin:0 0 12px;font-weight:800;display:flex;align-items:center;gap:8px}
@@ -2589,7 +2590,7 @@ async function apiX(op, extra){
 // Nivel 2 del script Extras: recordatorios y base de contactos. Nivel 3: la base solo usa contacto@blacklinechile.cl. Nivel 4: eventos de varios días.
 function enCurso(k, fn){ S._p = S._p || {}; if (S._p[k]) return S._p[k]; const pr = Promise.resolve().then(fn).finally(() => { if (S._p[k] === pr) delete S._p[k]; }); S._p[k] = pr; return pr; }
 function extNivel(){ return S.extInactivo ? 0 : (S.ext && S.ext.nivel) || 1; }
-const APP_VER = 'v86', NIVEL_ULTIMO = 49;
+const APP_VER = 'v87', NIVEL_ULTIMO = 50;
 function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < NIVEL_ULTIMO; }
 let sincTimer = null;
 // Después de cambiar tareas, el script actualiza los recordatorios del calendario (en segundo plano).
@@ -2599,11 +2600,42 @@ function sincPronto(){
   sincTimer = setTimeout(() => apiX('sinc').catch(() => {}), 2500);
 }
 // Si ya hay una carga en curso se reutiliza (el script atiende de a una consulta).
+/* ---------- Guardar en segundo plano ----------
+   La pantalla cambia al tiro (aplicar) y el script guarda detrás, en orden (uno a la vez, como atiende el script).
+   Si falla, se deshace el cambio y aparece «Reintentar». Al terminar, se relee la planilla una sola vez. */
+S.cola = Promise.resolve(); S.pend = 0; S.wseq = 0;
+function guardarFondo(o){
+  if (o.aplicar) o.aplicar();
+  S.wseq++; S.pend++; head();
+  S.cola = S.cola.then(() => o.guardar()).then(r => { if (o.listo) try { o.listo(r); } catch(_){} refrescoFondo(o.recargar); },
+    e => { if (o.deshacer) try { o.deshacer(); } catch(_){} if (!$('#layer').innerHTML) render(); aviso('⚠️ ' + (o.error || 'No se guardó') + ': ' + e.message, 'Reintentar', () => guardarFondo(o)); })
+    .finally(() => { S.pend--; head(); });
+  return S.cola;
+}
+// Nota local (aparece al tiro en la ficha); la definitiva llega al releer la planilla.
+function notaLocal(id, tipo, detalle, neg){
+  const b = S.base; if (!b) return () => {};
+  const I = b.interacciones = b.interacciones || [], x = { fecha: hoy(), id: id || '', tipo, detalle, neg: neg || '', link: '' };
+  I.push(x); S._intX = null;
+  const c = contactoPorId(id); if (c) c.ultima = hoy();
+  return () => { const k = I.indexOf(x); if (k >= 0) I.splice(k, 1); S._intX = null; };
+}
+function refrescoFondo(que){
+  S._rfQ = Object.assign(S._rfQ || {}, que || { neg: 1, base: 1 });
+  clearTimeout(S._rfT);
+  S._rfT = setTimeout(async () => {
+    if (S.pend) return refrescoFondo();
+    const q = S._rfQ; S._rfQ = null;
+    await Promise.all([q.neg ? loadNeg(true) : null, q.base ? loadBase(true) : null, q.state ? load() : null]);
+    if (!$('#layer').innerHTML && !$('.pop-bg')) render();
+  }, 1200);
+}
+addEventListener('beforeunload', e => { if (S.pend){ e.preventDefault(); e.returnValue = ''; } });
 function loadBase(forzar){ return enCurso('base', () => _loadBase(forzar)); }
 async function _loadBase(forzar){
   if (extNivel() < 2) return;
   if (!forzar && S.base && Date.now() - S.baseAt < 10 * 60000) return;
-  try { const b = await apiX('base'); S.base = b; S.baseAt = Date.now(); lsSet('baseCache', b); }
+  try { const w0 = S.wseq, b = await apiX('base'); if (w0 !== S.wseq && S.base){ refrescoFondo({ base: 1 }); return; } S.base = b; S.baseAt = Date.now(); lsSet('baseCache', b); }
   catch(e){ if (!S.base) S.base = lsGet('baseCache', null); }
 }
 const REPETIR = ['Diaria', 'Días hábiles', 'Semanal', 'Quincenal', 'Mensual', 'Anual'];
@@ -2709,7 +2741,7 @@ async function updateTask(t, cambios){
 /* ---------- cabecera y navegación ---------- */
 const TITLES = { inicio: 'Inicio', hoy: 'Hoy', tareas: 'Tareas', habitos: 'Hábitos', semana: 'Calendario', proy: 'Proyectos', base: 'Contactos', redes: 'Redes sociales', negocios: 'Negociaciones', compras: 'Compras y proveedores', cerebro: 'Cerebro' };
 function head(){
-  $('#hTitle').innerHTML = (S.tab === 'inicio' && S.data ? saludoTxt() : TITLES[S.tab]) + (S.offline ? '<button class="chip-off" id="offChip">sin conexión · ver por qué</button>' : S.srvErr ? '<button class="chip-off" id="srvChip" title="' + esc(S.srvErr) + '">planilla ocupada · reintentar</button>' : '');
+  $('#hTitle').innerHTML = (S.tab === 'inicio' && S.data ? saludoTxt() : TITLES[S.tab]) + (S.pend ? '<span class="chip-sv"><span class="spin"></span>guardando</span>' : '') + (S.offline ? '<button class="chip-off" id="offChip">sin conexión · ver por qué</button>' : S.srvErr ? '<button class="chip-off" id="srvChip" title="' + esc(S.srvErr) + '">planilla ocupada · reintentar</button>' : '');
   if ($('#offChip')) $('#offChip').onclick = diagConexion;
   if ($('#srvChip')) $('#srvChip').onclick = () => { toast('El script respondió: ' + S.srvErr.slice(0, 120) + ' · reintentando…'); load(); };
   $('#hSub').innerHTML = S.busy ? '<span class="spin"></span>Actualizando…' : fmtLong(hoy()) + (UI2() && PROPOSITO[S.tab] ? '<span class="h-prop"> · ' + PROPOSITO[S.tab] + '</span>' : '');
@@ -3229,7 +3261,7 @@ function noticiasHome(){
 // Texto corto de lo que trae la versión nueva del script (el banner de actualización del Inicio).
 function novedadScript(){
   const n = extNivel();
-  return n >= 49 ? 'Recompra de consumibles: la app detecta quién debería cambiar pastillas, cadena o cubiertas según sus compras en Bsale, con el stock para ofrecer y el mensaje listo (Contactos → Campañas).' : n >= 48 ? 'La revisión de los 30 días sugiere los accesorios que el cliente no compró (asesoría, sin descuentos).' : n >= 47 ? 'Cada negociación tiene su lista de productos (desde Bsale o a mano) con precios, costo, ganancia y margen; el Cerebro también los puede agregar.' : n >= 46 ? 'Los contactos internos (Blackline Servicio Técnico, el equipo) ya no generan tareas, negociaciones ni «espera respuesta».' : n >= 45 ? 'El Cerebro responde más rápido (busca en varias fuentes a la vez y tiene un tope de tiempo) y no deja a la app esperando tanto.' : n >= 44 ? 'El Cerebro confirma en el catálogo de Andes Industrial si un repuesto Shimano o Continental existe en el distribuidor.' : n >= 43 ? 'El Cerebro entiende mejor el ciclismo (Di2, AXS, modelos) y busca opciones de compra cuando una tarea es conseguir un repuesto.' : n >= 42 ? 'Proveedores fuera del pipeline (el agente ya no les abre negociaciones) y el Cerebro puede agregar contactos nuevos cuando le dictas.' : n >= 41 ? 'Empezar de cero: la fecha de inicio se guarda en el script y la ven todos los equipos (Admin y Piso de venta).' : n >= 40 ? 'Ahora hay dos cuentas con contraseña: Admin (todo, como siempre) y Piso de venta (parte en un Hoy nuevo, sin cifras de la tienda). Créalas en ⚙️ Ajustes → Usuarios.' : n >= 39 ? 'La app ahora tiene un solo Cerebro con 9 skills (en vez de agentes sueltos): mira qué hace solo, cuánto gasta y paúsalo en la pestaña Cerebro.' : n >= 37 ? 'Las tareas automáticas ya no bloquean la app (por ejemplo, la lectura de ventas de Bsale).' : n >= 36 ? 'Cuando un cliente con negociación abierta compra en Bsale, la app te propone marcarla como ganada.' : n >= 35 ? 'Ventas del mes igual que en Bsale (solo boletas y facturas, menos notas de crédito) y noticias con foto de portada.' : n >= 34 ? 'Meta y gráfico de ventas del mes en el Inicio, con el avance diario desde Bsale.' : n >= 33 ? 'Une sola las negociaciones duplicadas de una venta ganada.' : n >= 32 ? 'Etapas después del pago: seguimiento, entrega y postventa.' : n >= 31 ? 'Venta perdida: cierra tareas, eventos y la idea de respuesta del Cerebro.' : 'Funciones nuevas para el Organizador.';
+  return n >= 50 ? 'Guardar notas y mover negociaciones es más rápido: el script actualiza solo el contacto afectado.' : n >= 49 ? 'Recompra de consumibles: la app detecta quién debería cambiar pastillas, cadena o cubiertas según sus compras en Bsale, con el stock para ofrecer y el mensaje listo (Contactos → Campañas).' : n >= 48 ? 'La revisión de los 30 días sugiere los accesorios que el cliente no compró (asesoría, sin descuentos).' : n >= 47 ? 'Cada negociación tiene su lista de productos (desde Bsale o a mano) con precios, costo, ganancia y margen; el Cerebro también los puede agregar.' : n >= 46 ? 'Los contactos internos (Blackline Servicio Técnico, el equipo) ya no generan tareas, negociaciones ni «espera respuesta».' : n >= 45 ? 'El Cerebro responde más rápido (busca en varias fuentes a la vez y tiene un tope de tiempo) y no deja a la app esperando tanto.' : n >= 44 ? 'El Cerebro confirma en el catálogo de Andes Industrial si un repuesto Shimano o Continental existe en el distribuidor.' : n >= 43 ? 'El Cerebro entiende mejor el ciclismo (Di2, AXS, modelos) y busca opciones de compra cuando una tarea es conseguir un repuesto.' : n >= 42 ? 'Proveedores fuera del pipeline (el agente ya no les abre negociaciones) y el Cerebro puede agregar contactos nuevos cuando le dictas.' : n >= 41 ? 'Empezar de cero: la fecha de inicio se guarda en el script y la ven todos los equipos (Admin y Piso de venta).' : n >= 40 ? 'Ahora hay dos cuentas con contraseña: Admin (todo, como siempre) y Piso de venta (parte en un Hoy nuevo, sin cifras de la tienda). Créalas en ⚙️ Ajustes → Usuarios.' : n >= 39 ? 'La app ahora tiene un solo Cerebro con 9 skills (en vez de agentes sueltos): mira qué hace solo, cuánto gasta y paúsalo en la pestaña Cerebro.' : n >= 37 ? 'Las tareas automáticas ya no bloquean la app (por ejemplo, la lectura de ventas de Bsale).' : n >= 36 ? 'Cuando un cliente con negociación abierta compra en Bsale, la app te propone marcarla como ganada.' : n >= 35 ? 'Ventas del mes igual que en Bsale (solo boletas y facturas, menos notas de crédito) y noticias con foto de portada.' : n >= 34 ? 'Meta y gráfico de ventas del mes en el Inicio, con el avance diario desde Bsale.' : n >= 33 ? 'Une sola las negociaciones duplicadas de una venta ganada.' : n >= 32 ? 'Etapas después del pago: seguimiento, entrega y postventa.' : n >= 31 ? 'Venta perdida: cierra tareas, eventos y la idea de respuesta del Cerebro.' : 'Funciones nuevas para el Organizador.';
 }
 
 /* ---------- Ventas del mes: avance diario acumulado contra el mes anterior y la meta ---------- */
@@ -4029,8 +4061,8 @@ function openContacto(c, opt){
     const anotar = async () => {
       const tx = $('#c_nota').value.trim(); if (!tx) return;
       $('#c_nota_ok').disabled = true;
-      try { await apiX('nota', { id: c.id, texto: tx }); toast('📝 Anotado'); await loadBase(true); openContacto(contactoPorId(c.id)); }
-      catch(e){ $('#c_nota_ok').disabled = false; toast('No se pudo anotar: ' + e.message); }
+      let quitar; guardarFondo({ aplicar: () => { quitar = notaLocal(c.id, '📝 Nota', tx); }, guardar: () => apiX('nota', { id: c.id, texto: tx }), deshacer: () => quitar && quitar(), error: 'No se pudo anotar', recargar: { base: 1 } });
+      toast('📝 Anotado'); openContacto(contactoPorId(c.id) || c);
     };
     $('#c_nota_ok').onclick = anotar; 
   }
@@ -4094,7 +4126,8 @@ function ctoTab(c, tab){
     box.innerHTML = '<form class="smart" style="margin-bottom:10px"><input type="text" id="c_nota" enterkeyhint="send" placeholder="Anotar algo (vino a la tienda, pidió precio…)" autocomplete="off"><button type="submit" class="mic" id="c_nota_ok" aria-label="Anotar">＋</button></form>' +
       (inter.length ? '<div class="wl">' + inter.slice(0, 50).map(i => '<div class="tl"><span class="ic">' + icTl(i.tipo) + '</span><div class="grow"><div style="font-size:14px;font-weight:600;line-height:1.4">' + esc(i.detalle) + '</div><div class="hint" style="margin:2px 0 0">' + esc(i.tipo) + ' · ' + (i.fecha ? fmtRel(i.fecha) : '') + (i.link ? ' · <a href="' + esc(i.link) + '" target="_blank" style="color:var(--accent-ink)">abrir</a>' : '') + '</div></div></div>').join('') + '</div>' : '<div class="empty">Aquí aparecen los mensajes, correos, notas y reuniones.</div>');
     const anotar = async () => { const tx = $('#c_nota').value.trim(); if (!tx) return; $('#c_nota_ok').disabled = true;
-      try { await apiX('nota', { id: c.id, texto: tx }); toast('📝 Anotado'); await loadBase(true); openCto(contactoPorId(c.id) || c, { tab: 'actividad' }); } catch(e){ $('#c_nota_ok').disabled = false; toast('No se pudo anotar: ' + e.message); } };
+      let quitar; guardarFondo({ aplicar: () => { quitar = notaLocal(c.id, '📝 Nota', tx); }, guardar: () => apiX('nota', { id: c.id, texto: tx }), deshacer: () => quitar && quitar(), error: 'No se pudo anotar', recargar: { base: 1 } });
+      toast('📝 Anotado'); openCto(contactoPorId(c.id) || c, { tab: 'actividad' }); };
     $('#c_nota_ok').onclick = anotar; 
   } else if (tab === 'negocios'){
     const negs = negocios().filter(x => x.contacto === c.id);
@@ -6636,6 +6669,12 @@ function clienteDeTarea(t){
 function abiertos(){ return negocios().filter(n => n.estado === 'Abierta'); }
 // Archivada = sacada del pipeline porque ya no está activa (no es una venta perdida y no cuenta en esas cifras). Se puede reabrir.
 function esArchivada(n){ return n.estado === 'Perdida' && /^Archivad/i.test(String(n.motivo || '')); }
+// Archivar al instante (con Deshacer); la planilla se actualiza detrás.
+function archivarFondo(n){
+  const antes = { estado: n.estado, etapa: n.etapa, motivo: n.motivo }, motivo = 'Archivada · ' + fmt(hoy()) + (esPiso() ? ' (Piso de venta)' : '');
+  guardarFondo({ aplicar: () => Object.assign(n, { estado: 'Perdida', etapa: 'Perdida', motivo }), guardar: () => apiX('negocio', { negocio: { id: n.id, etapa: 'Perdida', motivo } }), deshacer: () => Object.assign(n, antes), error: 'No se pudo archivar', recargar: { neg: 1 } });
+  toastUndo('🗄️ Archivada', () => { guardarFondo({ aplicar: () => Object.assign(n, antes), guardar: () => apiX('negocio', { negocio: { id: n.id, etapa: antes.etapa, motivo: '' } }), error: 'No se pudo deshacer', recargar: { neg: 1 } }); render(); });
+}
 async function archivarNeg(n){ await apiX('negocio', { negocio: { id: n.id, etapa: 'Perdida', motivo: 'Archivada · ' + fmt(hoy()) + (esPiso() ? ' (Piso de venta)' : '') } }); n.estado = 'Perdida'; n.etapa = 'Perdida'; n.motivo = 'Archivada'; }
 function etapaIdx(k){ return ETAPAS.findIndex(e => e.k === k); }
 function etapaDe(n){ return ETAPA_FIN[n.etapa] || ETAPAS[Math.max(0, etapaIdx(n.etapa))]; }
@@ -6653,7 +6692,7 @@ function loadNeg(forzar){ return enCurso('neg', () => _loadNeg(forzar)); }
 async function _loadNeg(forzar){
   if (extNivel() < 5) return;
   if (!forzar && S.neg && Date.now() - S.negAt < 5 * 60000) return;
-  try { S.neg = await apiX('negocios'); S.negAt = Date.now(); lsSet('negCache', S.neg); }
+  try { const w0 = S.wseq, r = await apiX('negocios'); if (w0 !== S.wseq && S.neg){ refrescoFondo({ neg: 1 }); return; } S.neg = r; S.negAt = Date.now(); lsSet('negCache', S.neg); }
   catch(e){ if (!S.neg) S.neg = lsGet('negCache', null); }
   // Una vez por sesión: une las negociaciones abiertas que duplican una venta ganada del mismo cliente.
   if (extNivel() >= 34 && !S.dupRevisado){
@@ -6730,16 +6769,12 @@ async function negAccion(acc, n, btn){
   if (acc === 'perdida') return openPerdida(n);
   if (acc === 'prox' || acc === 'reagendar' || acc === 'cierre14' || acc === 'hecho-prox'){
     if (acc === 'prox') return openNegocio(n, { foco: 'prox' });
-    if (btn) btn.disabled = true;
     const cambios = acc === 'reagendar' ? { fechaProx: addDays(hoy(), 2) } : acc === 'cierre14' ? { cierre: addDays(hoy(), 14) } : { proxima: '', fechaProx: '' };
-    try {
-      if (acc === 'hecho-prox') await apiX('negocioNota', { id: n.id, texto: '✅ ' + n.proxima, tipo: '✅ Acción' });
-      await apiX('negocio', { negocio: Object.assign({ id: n.id }, cambios) }); await loadNeg(true);
-      toast(acc === 'hecho-prox' ? '✅ Registrado. Define el siguiente paso' : 'Actualizado ✓');
-      const n2 = negociosTodos().find(x => x.id === n.id);
-      if (acc === 'hecho-prox' && n2) return openNegocio(n2, { foco: 'prox' });
-      refrescarNeg(n2);
-    } catch(e){ if (btn) btn.disabled = false; toast('No se pudo: ' + e.message); }
+    const ant = {}, prox = n.proxima; Object.keys(cambios).forEach(k => ant[k] = n[k]);
+    guardarFondo({ aplicar: () => Object.assign(n, cambios), guardar: async () => { if (acc === 'hecho-prox') await apiX('negocioNota', { id: n.id, texto: '✅ ' + prox, tipo: '✅ Acción' }); await apiX('negocio', { negocio: Object.assign({ id: n.id }, cambios) }); }, deshacer: () => Object.assign(n, ant), error: 'No se pudo actualizar' });
+    toast(acc === 'hecho-prox' ? '✅ Registrado. Define el siguiente paso' : 'Actualizado ✓');
+    if (acc === 'hecho-prox') return openNegocio(n, { foco: 'prox' });
+    refrescarNeg(n);
     return;
   }
   if (acc === 'testride'){
@@ -6787,8 +6822,8 @@ function openDeal(n, opt){
   $$('[data-ngk]').forEach(b => b.onclick = () => moverEtapa(n, b.dataset.ngk));
   const on = (id, f) => { const x = $('#' + id); if (x) x.onclick = f; };
   on('dx_act', () => openActividad(n)); on('dx_prox', () => openProximo(n)); on('dx_chat', () => irAlChat(c.id)); on('dx_prox2', () => openProximo(n));
-  on('ng_win', () => moverEtapa(n, 'Ganada')); on('ng_lose', () => openPerdida(n)); on('ng_reopen', () => moverEtapa(n, 'Negociación')); on('ng_arch', async () => { if (!confirm('¿Archivar «' + n.titulo + '»? Sale del pipeline y no cuenta como venta perdida. La encuentras en el filtro Archivadas.')) return; try { await archivarNeg(n); closeSheet(); toast('🗄️ Archivada'); await loadNeg(true); render(); } catch(e){ toast('No se pudo archivar: ' + e.message); } }); on('ng_ent', () => moverEtapa(n, 'Entregada'));
-  on('dx_done', async () => { const b = $('#dx_done'); b.disabled = true; try { await apiX('negocioNota', { id: n.id, texto: '✅ ' + n.proxima, tipo: '✅ Acción' }); await apiX('negocio', { negocio: { id: n.id, proxima: '', fechaProx: '' } }); await loadNeg(true); toast('✓ Registrado. ¿Cuál es el siguiente paso?'); const n2 = negociosTodos().find(x => x.id === n.id); openDeal(n2); openProximo(n2); } catch(e){ b.disabled = false; toast('No se pudo: ' + e.message); } });
+  on('ng_win', () => moverEtapa(n, 'Ganada')); on('ng_lose', () => openPerdida(n)); on('ng_reopen', () => moverEtapa(n, 'Negociación')); on('ng_arch', () => { if (!confirm('¿Archivar «' + n.titulo + '»? Sale del pipeline y no cuenta como venta perdida. La encuentras en el filtro Archivadas.')) return; archivarFondo(n); closeSheet(); render(); }); on('ng_ent', () => moverEtapa(n, 'Entregada'));
+  on('dx_done', () => { const ant = { proxima: n.proxima, fechaProx: n.fechaProx }; guardarFondo({ aplicar: () => Object.assign(n, { proxima: '', fechaProx: '' }), guardar: async () => { await apiX('negocioNota', { id: n.id, texto: '✅ ' + ant.proxima, tipo: '✅ Acción' }); await apiX('negocio', { negocio: { id: n.id, proxima: '', fechaProx: '' } }); }, deshacer: () => Object.assign(n, ant), error: 'No se pudo registrar' }); toast('✓ Registrado. ¿Cuál es el siguiente paso?'); openDeal(n); openProximo(n); });
 }
 
 
@@ -7042,35 +7077,33 @@ async function ganarPorTexto(n, texto){
   toastUndo('🏆 Pasó a Ganada (detecté «' + s + '»). Queda en seguimiento hasta la entrega.', async () => { try { await apiX('negocio', { negocio: { id: n.id, etapa: antes } }); n.etapa = antes; n.estado = 'Abierta'; toast('Volvió a ' + antes); await loadNeg(true); render(); } catch(e){ toast('No se pudo deshacer: ' + e.message); } });
   return true;
 }
-async function negRegistrar(n, tipo, texto, etapaSug){
-  try {
-    await apiX('negocioNota', { id: n.id, texto, tipo });
-    if (await ganarPorTexto(n, texto)){ await Promise.all([loadNeg(true), loadBase(true), load()]); refrescarNeg(negociosTodos().find(x => x.id === n.id)); return; }
-    const iS = etapaIdx(etapaSug), iA = etapaIdx(n.etapa);
-    if (etapaSug && n.estado === 'Abierta' && iA >= 0 && iS > iA){ await apiX('negocio', { negocio: { id: n.id, etapa: etapaSug } }); toast('📝 Registrado · ➡️ avanzó a ' + etapaSug); }
-    else toast('📝 Registrado');
-    await Promise.all([loadNeg(true), loadBase(true)]);
-    refrescarNeg(negociosTodos().find(x => x.id === n.id));
-  } catch(e){ toast('No se pudo registrar: ' + e.message); }
+function negRegistrar(n, tipo, texto, etapaSug){
+  const iS = etapaIdx(etapaSug), iA = etapaIdx(n.etapa), antes = n.etapa;
+  const gana = n.estado === 'Abierta' && !!senalGanada(texto), avanza = !gana && etapaSug && n.estado === 'Abierta' && iA >= 0 && iS > iA;
+  let quitar;
+  guardarFondo({
+    aplicar: () => { quitar = notaLocal(n.contacto, tipo, texto, n.id); n.actividad = hoy(); if (avanza) n.etapa = etapaSug; },
+    guardar: async () => { await apiX('negocioNota', { id: n.id, texto, tipo }); if (gana) await ganarPorTexto(n, texto); else if (avanza) await apiX('negocio', { negocio: { id: n.id, etapa: etapaSug } }); },
+    deshacer: () => { if (quitar) quitar(); n.etapa = antes; },
+    error: 'No se pudo registrar', recargar: gana ? { neg: 1, base: 1, state: 1 } : { neg: 1, base: 1 }
+  });
+  toast(avanza ? '📝 Registrado · ➡️ avanzó a ' + etapaSug : '📝 Registrado');
+  refrescarNeg(n);
 }
 async function moverEtapa(n, k, extra){
   if (k === 'Perdida') return openPerdida(n);
   if (k === n.etapa) return;
   // Al ganar se pregunta si ya se la llevó: si no, queda en seguimiento hasta la entrega.
   if (k === 'Ganada' && n.estado !== 'Ganada' && !extra) return openGanada(n);
-  const antes = n.etapa, eraAbierta = n.estado === 'Abierta'; n.etapa = k; if (POST_ETAPAS.includes(k)) n.estado = 'Ganada';
+  const antes = n.etapa, eraAbierta = n.estado === 'Abierta', estAnt = n.estado;
+  guardarFondo({ aplicar: () => { n.etapa = k; if (POST_ETAPAS.includes(k)) n.estado = 'Ganada'; }, guardar: () => apiX('negocio', { negocio: Object.assign({ id: n.id, etapa: k }, extra || {}) }),
+    deshacer: () => { n.etapa = antes; n.estado = estAnt; }, error: 'No se pudo mover a ' + k, recargar: { neg: 1, base: 1, state: POST_ETAPAS.includes(k) ? 1 : 0 } });
+  if (POST_ETAPAS.includes(k) && eraAbierta){ confetti(140); vibrar([60, 40, 120]); toast('🏆 ¡Venta ganada! ' + clp(n.valor) + (k === 'Entregada' ? ' · postventa agendada' : ' · queda en seguimiento hasta la entrega')); }
+  else if (k === 'Entregada') toast('✅ Entregada · postventa agendada: garantía, llamada a los 7 días, revisión de los 30 días y reseña');
+  else toast((etapaDe(n).ic || '') + ' Movida a ' + k);
   refrescarNeg(n);
-  try {
-    await apiX('negocio', { negocio: Object.assign({ id: n.id, etapa: k }, extra || {}) });
-    if (POST_ETAPAS.includes(k) && eraAbierta){ confetti(140); vibrar([60, 40, 120]); toast('🏆 ¡Venta ganada! ' + clp(n.valor) + (k === 'Entregada' ? ' · postventa agendada' : ' · queda en seguimiento hasta la entrega')); }
-    else if (k === 'Entregada') toast('✅ Entregada · postventa agendada: garantía, llamada a los 7 días, revisión de los 30 días y reseña');
-    else toast((etapaDe(n).ic || '') + ' Movida a ' + k);
-    await Promise.all([loadNeg(true), loadBase(true), POST_ETAPAS.includes(k) ? load() : null]);
-    const n2 = negociosTodos().find(x => x.id === n.id);
-    refrescarNeg(n2);
-    const et = ETAPAS[etapaIdx(k)];
-    if (n2 && et && etapaIdx(k) > etapaIdx(antes)) openProximo(n2, { t: et.sig, d: et.sd || 1 });
-  } catch(e){ n.etapa = antes; if (eraAbierta) n.estado = 'Abierta'; refrescarNeg(n); toast('No se pudo mover: ' + e.message); }
+  const et = ETAPAS[etapaIdx(k)];
+  if (et && etapaIdx(k) > etapaIdx(antes)) openProximo(n, { t: et.sig, d: et.sd || 1 });
 }
 function openGanada(n){
   const a = analizar(n), nom = a.c ? a.c.nombre : 'el cliente', h = hoy();
@@ -9751,10 +9784,10 @@ async function chatTab(c, box, forzar){
   $('#chRef').onclick = () => chatTab(c, box, true);
   box.querySelectorAll('[data-impc]').forEach(b => b.onclick = () => openImportar({ contacto: b.dataset.impc }));
   box.querySelectorAll('[data-chtipo]').forEach(b => b.onclick = async () => {
-    const tipo = b.dataset.chtipo; b.disabled = true;
-    try { await apiX('contacto', { contacto: { id: c.id, tipo } }); toast(tipo === 'Ignorar' ? '🚫 No volverá a aparecer' : '✓ Clasificado como ' + tipo); await loadBase(true);
-      if (pane){ S.chats = S.chats; viewBase(); } else if (tipo === 'Ignorar'){ closeSheet(); render(); } else openCto(contactoPorId(c.id) || c); }
-    catch(e){ b.disabled = false; toast('No se pudo: ' + e.message); }
+    const tipo = b.dataset.chtipo, cc = contactoPorId(c.id), ant = cc ? cc.tipo : null;
+    guardarFondo({ aplicar: () => { if (cc) cc.tipo = tipo; }, guardar: () => apiX('contacto', { contacto: { id: c.id, tipo } }), deshacer: () => { if (cc) cc.tipo = ant; }, error: 'No se pudo clasificar', recargar: { base: 1 } });
+    toast(tipo === 'Ignorar' ? '🚫 No volverá a aparecer' : '✓ Clasificado como ' + tipo);
+    if (pane) viewBase(); else if (tipo === 'Ignorar'){ closeSheet(); render(); } else openCto(cc || Object.assign({}, c, { tipo }));
   });
 }
 
@@ -9777,9 +9810,9 @@ function bindSinGuardar(){
   $$('[data-sns]').forEach(b => b.onclick = async () => {
     const i = +b.dataset.sns, c = L[i], nom = $('[data-snn="' + i + '"]').value.trim();
     if (!nom) return toast('Escribe el nombre');
-    b.disabled = true; b.innerHTML = '<span class="spin"></span>';
-    try { await apiX('contacto', { contacto: { id: c.id, nombre: nom } }); toast('✓ ' + nom + ' guardado'); await loadBase(true); viewBase(); }
-    catch(e){ b.disabled = false; b.textContent = 'Guardar'; toast('No se pudo: ' + e.message); }
+    const ant = c.nombre;
+    guardarFondo({ aplicar: () => { c.nombre = nom; }, guardar: () => apiX('contacto', { contacto: { id: c.id, nombre: nom } }), deshacer: () => { c.nombre = ant; }, error: 'No se pudo guardar ' + nom, recargar: { base: 1 } });
+    toast('✓ ' + nom + ' guardado'); viewBase();
   });
   $$('[data-snn]').forEach(x => x.onkeydown = e => { if (e.key === 'Enter') $('[data-sns="' + x.dataset.snn + '"]').click(); });
   $$('[data-snp]').forEach(b => b.onclick = () => { const c = L[+b.dataset.snp]; window.open('https://wa.me/' + telWA(c) + '?text=' + encodeURIComponent('¡Hola! Te escribe Gustavo de Blackline Puerto Varas 🙌 Para tenerte bien registrado, ¿me recuerdas tu nombre?'), '_blank'); });

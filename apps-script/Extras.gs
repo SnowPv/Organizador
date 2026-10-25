@@ -15,8 +15,8 @@
  * Para actualizar este archivo más adelante: reemplaza todo su contenido y repite los dos pasos anteriores.
  */
 
-const EX_VERSION = '2027-01-23';
-const EX_NIVEL = 49;      // la app lo usa para saber qué funciones tiene este script
+const EX_VERSION = '2027-01-30';
+const EX_NIVEL = 50;      // la app lo usa para saber qué funciones tiene este script
 const EX_HOJA = 'Tareas';
 const EX_PRIMERA = 4;
 const EX_ULTIMA = 400;
@@ -503,7 +503,7 @@ function ex_nota_(p) {
   const b = ex_baseHojas_(), texto = String(p.texto || '').trim();
   if (!p.id || !texto) throw new Error('falta el contacto o el texto');
   b.is.appendRow([new Date(), String(p.id), '📝 Nota', texto, '', 'n:' + Date.now()]);
-  ex_recalcular_(b.cs, b.is);
+  ex_recalcularUno_(b.cs, String(p.id));
   return { ok: true };
 }
 
@@ -686,6 +686,17 @@ function ex_escanearBase_() {
 }
 
 // Recalcula "Última interacción" e "Interacciones" de cada contacto.
+// Una interacción nueva de un solo contacto: se actualiza solo su fila (última actividad = ahora, conteo + 1),
+// en vez de releer todo el historial. Es lo que hace rápido guardar una nota o mover una negociación.
+function ex_recalcularUno_(cs, id) {
+  EX_BASE_MEMO = null;
+  id = String(id || ''); const nc = cs.getLastRow() - 1; if (!id || nc < 1) return;
+  const ids = cs.getRange(2, 1, nc, 1).getValues(); let k = -1;
+  for (let j = 0; j < ids.length; j++) if (String(ids[j][0]) === id) { k = j; break; }
+  if (k < 0) return;
+  const g = cs.getRange(k + 2, 9, 1, 2), v = g.getValues()[0];
+  g.setValues([[new Date(), (+v[1] || 0) + 1]]);
+}
 function ex_recalcular_(cs, is) {
   EX_BASE_MEMO = null;
   const nc = cs.getLastRow() - 1;
@@ -789,7 +800,7 @@ function ex_guardarNegocio_(n) {
     const b = ex_baseHojas_();
     const det = i < 0 ? 'Nueva negociación: ' + r[1] : r[1] + ': ' + antes + ' → ' + etapa + (etapa === 'Perdida' && r[11] ? ' (' + r[11] + ')' : '');
     b.is.appendRow([new Date(), String(r[2]), ganadaAhora && !ganadaAntes ? '🏆 Venta ganada' : etapa === 'Entregada' ? '✅ Producto entregado' : '🤝 Negociación', det, '', 'd:' + r[0] + ':' + Date.now()]);
-    ex_recalcular_(b.cs, b.is);
+    ex_recalcularUno_(b.cs, String(r[2]));
   }
   return { ok: true, id: String(r[0]) };
 }
@@ -952,7 +963,7 @@ function ex_perderNegocio_(p) {
     }
     const det = [res.eventos ? res.eventos + (res.eventos === 1 ? ' evento borrado' : ' eventos borrados') : '', Number(p.tareas) ? p.tareas + (Number(p.tareas) === 1 ? ' tarea cancelada' : ' tareas canceladas') : '', reintento ? 'reintentar el ' + reintento : 'sin reintento'].filter(String).join(' · ');
     b.is.appendRow([new Date(), contacto, '❌ Venta perdida', String(r[1]) + ' · ' + motivo + (det ? ' · ' + det : ''), '', 'lost:' + r[0] + ':' + Date.now()]);
-    ex_recalcular_(b.cs, b.is);
+    ex_recalcularUno_(b.cs, contacto);
     if (reintento && typeof app_agregar_ === 'function') {
       const nombre = (cf[i] && cf[i][2]) || String(r[1]);
       app_agregar_({ tarea: { tarea: '♻️ Retomar a ' + nombre + ': ¿sigue buscando ' + String(r[5] || 'bici') + '? (se perdió por: ' + motivo.split(' · ')[0] + ')', area: 'Trabajo', categoria: 'Ventas', proyecto: '', limite: reintento, urgente: 'No', importante: 'Sí', tamano: 'Pequeña', notas: '⏰ 10:00 · ♻️ Reintento · ' + nombre + ' [' + contacto + '] (' + r[0] + ')', estado: 'Pendiente' } });
@@ -1006,7 +1017,7 @@ function ex_notaNegocio_(p) {
   sh.getRange(i + 2, 15).setValue(new Date());
   const b = ex_baseHojas_();
   b.is.appendRow([new Date(), String(filas[i][2] || ''), p.tipo || '📝 Actividad', texto, '', 'd:' + filas[i][0] + ':' + Date.now()]);
-  if (filas[i][2]) ex_recalcular_(b.cs, b.is);
+  if (filas[i][2]) ex_recalcularUno_(b.cs, String(filas[i][2]));
   return { ok: true };
 }
 
@@ -2489,7 +2500,7 @@ function ex_registrarAgente_(id, c, a, cambios) {
   b.is.appendRow([new Date(), id, '🧠 Agente', a.resumen + (a.contacto && a.contacto.datos_clave ? ' · ' + a.contacto.datos_clave : ''), '', 'ai:' + id + ':' + Date.now()]);
   if (a.esperando_respuesta && a.idea_respuesta && !(a._masivo && a._met && a._met.diasCliente > EX_PERF_DIAS_IDEA) && !(a._perfil && /personal|spam/.test(a._perfil.relacion))) b.is.appendRow([new Date(), id, '🧠 Idea de respuesta', a.idea_respuesta, '', 'ai:' + id + ':r' + Date.now()]);
   ex_hojaAg_().appendRow([new Date(), id, (a.contacto && a.contacto.nombre) || c[2], a.resumen, a.temperatura, cambios.join(' · '), a.esperando_respuesta ? a.idea_respuesta : '']);
-  ex_recalcular_(b.cs, b.is);
+  ex_recalcularUno_(b.cs, String(id));
   PropertiesService.getScriptProperties().setProperty('EX_AG_ULTIMO', new Date().toISOString());
   return { ok: true, id: id, nombre: (a.contacto && a.contacto.nombre) || c[2], tipo: (a.contacto && a.contacto.tipo) || c[1], resumen: a.resumen, temperatura: a.temperatura, cambios: cambios, esperando: a.esperando_respuesta, idea: a.idea_respuesta, perfil: a._perfil || null, negocio: !!a._negAbierta };
 }

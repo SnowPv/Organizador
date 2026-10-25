@@ -530,3 +530,9 @@ Revisión con tres análisis en paralelo (diseño y uso, eficiencia y errores, u
 ## v86 · Enter en notas rápidas y «Ver chat» más certero
 - Los cuadros rápidos (nota de la negociación, nota del contacto, pasos de una tarea) son formularios: Enter en el computador o «Enviar» en el teclado del celular siempre registran, sin depender del botón ＋.
 - «Ver chat» busca la conversación por id del contacto, luego por teléfono y al final por nombre, y la abre aunque haya filtros o búsquedas activas en Chats. Si no existe, avisa en vez de quedar en la lista.
+
+## v87 · Más rápido (script nivel 50)
+- Guardar en segundo plano: archivar, mover de etapa, registrar actividad o nota, marcar «Hecho» el próximo paso, reagendar, clasificar un chat y nombrar un contacto se ven al instante. El script guarda detrás, de a uno y en orden; arriba aparece «guardando» mientras tanto.
+- Si algo falla, el cambio se deshace en pantalla y aparece «Reintentar». Si intentas cerrar la app con cambios pendientes, el navegador avisa.
+- Después de guardar, la app relee la planilla una sola vez (no en cada acción), y una lectura vieja ya no pisa un cambio recién hecho.
+- Script: las notas y cambios de etapa actualizan solo la fila del contacto afectado (antes recontaba el historial completo de todos los contactos).
