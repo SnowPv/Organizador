@@ -1623,36 +1623,48 @@ body:has(.selbar) .fab,body:has(.selbar) .fab2{display:none}
 .hm-bars{position:relative;display:flex;align-items:flex-end;gap:4px;height:84px;margin-top:4px}
 .hm-bars i{flex:1;background:#C9D8EE;border-radius:5px 5px 2px 2px;min-height:3px}.hm-bars i.hit{background:linear-gradient(180deg,#2A78D6,#1B57A6)}
 .hm-bars u{position:absolute;left:0;right:0;border-top:1.5px dashed #9AA6B8;text-decoration:none}
-/* héroe de ventas (oscuro) */
-.hm-hero{background:radial-gradient(120% 140% at 100% 0%,#24457E 0%,#15264A 45%,#0E1A33 100%);color:#fff;border:0;padding:20px 22px;overflow:hidden;box-shadow:0 22px 44px -22px rgba(14,26,51,.75)}
-.hm-hero::after{content:"";position:absolute;right:-80px;top:-90px;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(125,183,255,.22),transparent 70%);pointer-events:none}
-.hh-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;position:relative;z-index:1}
-.hh-k{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#9CC3FF}
-.hh-k .ico{width:15px;height:15px}
-.hh-v{font-size:40px;font-weight:800;letter-spacing:-.035em;line-height:1.05;margin:6px 0 4px;font-variant-numeric:tabular-nums}
-.hh-d{font-size:13px;color:rgba(255,255,255,.7);font-weight:600}
-.hh-d span{font-weight:800;padding:2px 7px;border-radius:999px;margin-right:4px}.hh-d .up{background:rgba(52,211,153,.18);color:#6EE7B7}.hh-d .down{background:rgba(248,113,113,.18);color:#FCA5A5}
-.hh-meta{border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.08);color:#fff;border-radius:14px;padding:8px 12px;text-align:right;cursor:pointer;flex:none}
-.hh-meta:hover{background:rgba(255,255,255,.14)}
-.hh-meta small{display:block;font-size:10.5px;font-weight:700;color:#9CC3FF;text-transform:uppercase;letter-spacing:.05em}.hh-meta b{font-size:18px}
-.hh-prog{margin:16px 0 4px;position:relative;z-index:1}
-.hh-bar{position:relative;height:10px;border-radius:99px;background:rgba(255,255,255,.12)}
-.hh-bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#5AA2FF,#9CD1FF)}
-.hh-bar u{position:absolute;top:-4px;bottom:-4px;width:3px;margin-left:-1.5px;border-radius:2px;background:#fff;box-shadow:0 0 0 2px rgba(14,26,51,.6)}
-.hh-pl{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 6px;font-size:12.5px;color:rgba(255,255,255,.75);margin-top:8px}
-.hh-pl b{color:#fff;font-size:15px}.hh-pl span{margin-left:auto;font-size:11px;color:rgba(255,255,255,.5)}
-.hh-chart{position:relative;height:124px;margin:14px -4px 0;cursor:crosshair}
-.hh-chart svg{width:100%;height:100%;display:block}
-.hh-dot{position:absolute;width:11px;height:11px;margin:-5.5px 0 0 -5.5px;border-radius:50%;background:#fff;box-shadow:0 0 0 4px rgba(142,197,255,.35)}
-.hh-tip{position:absolute;top:0;width:150px;background:rgba(255,255,255,.96);color:var(--ink);border-radius:10px;padding:7px 9px;font-size:12px;box-shadow:0 8px 20px -8px rgba(0,0,0,.5);pointer-events:none}
-.hh-tip b{display:block;font-size:12px}.hh-tip span{display:block;font-weight:700}.hh-tip span.a{color:var(--muted);font-weight:600}
-.hh-leg{display:flex;gap:14px;font-size:11.5px;color:rgba(255,255,255,.65);font-weight:600;margin-top:6px}
-.hh-leg span{display:flex;align-items:center;gap:6px}.hh-leg i{width:16px;height:3px;border-radius:2px;background:#8EC5FF}.hh-leg i.ant{background:none;border-top:2px dashed rgba(255,255,255,.5);height:0}.hh-leg i.mt{background:none;border-top:2px dotted #FFD66B;height:0}
-.hh-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
-.hh-chips span{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:6px 11px;font-size:12px;color:rgba(255,255,255,.7);font-weight:600}
-.hh-chips b{color:#fff;margin-left:3px}
-.hh-src{position:absolute;right:18px;bottom:14px;font-size:10.5px;color:rgba(255,255,255,.4)}
-.hh-empty{margin-top:12px;color:rgba(255,255,255,.8);font-size:14px}
+/* héroe de ventas: claro como el resto; se destaca por jerarquía (cifra grande, acento azul) y no por un fondo oscuro */
+.hm-hero{background:var(--card);color:var(--ink);padding:20px 22px 16px;overflow:hidden;border:1px solid rgba(16,24,40,.06);box-shadow:0 1px 2px rgba(16,24,40,.04),0 16px 36px -20px rgba(16,24,40,.28)}
+.hm-hero::before{content:"";position:absolute;left:0;top:0;right:0;height:3px;background:linear-gradient(90deg,#2A78D6,#6198DF 60%,rgba(97,152,223,0))}
+.hh-head{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.hh-k{display:flex;align-items:center;gap:9px;font-size:14px;font-weight:800;color:var(--ink)}
+.hh-ic{width:28px;height:28px;border-radius:9px;background:var(--accent-soft);color:var(--accent-ink);display:inline-flex;align-items:center;justify-content:center}.hh-ic .ico{width:15px;height:15px}
+.hh-k em{font-style:normal;font-size:11.5px;font-weight:700;color:var(--muted);background:var(--soft);border-radius:999px;padding:2px 8px}
+.hh-meta{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:6px 12px;font:inherit;font-size:12px;font-weight:700;cursor:pointer;flex:none}
+.hh-meta:hover{background:var(--soft)}
+.hh-main{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:24px;align-items:end;margin-top:14px}
+.hh-v{font-size:48px;font-weight:800;letter-spacing:-.04em;line-height:1;color:var(--ink)}
+.hh-d{display:flex;align-items:center;flex-wrap:wrap;gap:6px;font-size:13px;color:var(--muted);font-weight:600;margin-top:10px}
+.hh-d span{font-weight:800;padding:2px 8px;border-radius:999px;font-size:12px}.hh-d .up{background:#E7F6EF;color:var(--ok-ink)}.hh-d .down{background:#FDECEA;color:var(--bad-ink)}
+.hh-prog{margin-top:16px;max-width:560px}
+.hh-bar{position:relative;height:8px;border-radius:99px;background:var(--accent-soft)}
+.hh-bar i{display:block;height:100%;border-radius:99px;background:var(--accent)}.hh-bar i.ok{background:var(--ok)}
+.hh-bar u{position:absolute;top:-5px;bottom:-5px;width:2px;margin-left:-1px;border-radius:2px;background:var(--ink)}
+.hh-pl{display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px 12px;font-size:12.5px;color:var(--muted);margin-top:8px;font-weight:600}
+.hh-pl b{color:var(--ink);font-size:14px}
+.hh-rit{display:inline-flex;align-items:center;gap:6px}.hh-rit i{width:2px;height:12px;background:var(--ink);border-radius:2px}
+.hh-kps{display:flex;flex-direction:column;min-width:190px;border-left:1px solid var(--line);padding-left:20px}
+.hh-kp{display:grid;grid-template-columns:1fr auto;align-items:baseline;gap:2px 14px;padding:8px 0;border-top:1px solid var(--line)}.hh-kp:first-child{border-top:0;padding-top:0}
+.hh-kp small{font-size:12px;color:var(--muted);font-weight:700}.hh-kp b{font-size:18px;letter-spacing:-.02em;text-align:right}
+.hh-kp span{grid-column:1/-1;font-size:11.5px;color:var(--muted);font-weight:600}.hh-kp span i{font-style:normal}.hh-kp span i.up{color:var(--ok-ink)}.hh-kp span i.down{color:var(--bad-ink)}
+.hh-chart{position:relative;height:132px;margin:18px 0 0 46px;cursor:crosshair}
+.hh-chart svg{width:100%;height:100%;display:block;overflow:visible}
+.hh-y{position:absolute;left:-46px;width:40px;text-align:right;transform:translateY(-50%);font-size:10.5px;color:#98A2B3;font-weight:700}
+.hh-dot{position:absolute;width:10px;height:10px;margin:-5px 0 0 -5px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 3px #fff,0 0 0 6px rgba(42,120,214,.18)}
+.hh-cross{position:absolute;top:0;bottom:0;width:1px;background:#D0D5DD;pointer-events:none}
+.hh-hov{position:absolute;width:8px;height:8px;margin:-4px 0 0 -4px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 2px #fff;pointer-events:none}.hh-hov.ant{background:#98A2B3}
+.hh-tip{position:absolute;top:-6px;width:168px;background:#16213A;color:#fff;border-radius:10px;padding:8px 10px;font-size:12px;box-shadow:0 10px 24px -10px rgba(16,24,40,.5);pointer-events:none;z-index:2}
+.hh-tip b{display:block;font-size:11.5px;color:#B9C3D3;margin-bottom:3px}.hh-tip span{display:flex;align-items:center;gap:6px;font-weight:600}.hh-tip em{font-style:normal;font-weight:800;margin-left:auto}
+.hh-tip i{width:10px;height:2px;background:#6FA8EC;border-radius:2px}.hh-tip span.a{color:#B9C3D3}.hh-tip span.a i{background:none;border-top:2px dashed #98A2B3;height:0}
+.hh-leg{display:flex;flex-wrap:wrap;gap:14px;font-size:11.5px;color:var(--muted);font-weight:700}
+.hh-leg span{display:flex;align-items:center;gap:6px}.hh-leg i{width:16px;height:2px;border-radius:2px;background:var(--accent)}.hh-leg i.ant{background:none;border-top:2px dashed #98A2B3;height:0}.hh-leg i.mt{background:none;border-top:2px dotted #9A6700;height:0}
+.hh-x{position:relative;height:14px;margin:4px 0 0 46px;font-size:10.5px;color:#98A2B3;font-weight:700}
+.hh-x span{position:absolute;transform:translateX(-50%)}.hh-x span:first-child{transform:none}
+.hh-bot{display:flex;align-items:center;justify-content:space-between;gap:8px 12px;margin-top:12px;flex-wrap:wrap}
+.hh-src{font-size:11px;color:#98A2B3;font-weight:600}
+.hh-lk{all:unset;cursor:pointer;color:var(--accent-ink);font-weight:800}.hh-lk:hover{text-decoration:underline}
+.hh-empty{margin-top:14px;color:var(--muted);font-size:14px}
+@media (max-width:760px){.hh-k em{display:none}.hh-main{grid-template-columns:1fr;gap:14px}.hh-kps{border-left:0;padding-left:0;min-width:0;flex-direction:row;gap:8px}.hh-kp{flex:1;display:flex;flex-direction:column;align-items:flex-start;gap:2px;border:0;padding:8px 10px;background:var(--soft);border-radius:12px}.hh-kp:first-child{padding-top:8px}.hh-kp b{font-size:15px;text-align:left}.hh-kp span{font-size:10.5px}.hh-v{font-size:38px}}
 /* post-it de avisos */
 .hm-postit{background:linear-gradient(170deg,#FFF6B8 0%,#FFEC85 100%);border:0;border-radius:6px 6px 22px 6px;box-shadow:0 2px 3px rgba(120,90,0,.08),0 18px 30px -18px rgba(120,90,0,.55);transform:rotate(-.6deg);padding:22px 18px 16px;color:#3B3000}
 .pi-tape{position:absolute;top:-9px;left:50%;width:92px;height:22px;margin-left:-46px;background:rgba(255,255,255,.55);border:1px solid rgba(0,0,0,.04);transform:rotate(2deg);box-shadow:0 1px 2px rgba(0,0,0,.06)}
@@ -1708,12 +1720,7 @@ body:has(.selbar) .fab,body:has(.selbar) .fab2{display:none}
 /* Inicio v2: piezas internas */
 .home.fit .hm-hero{padding:18px 22px 14px}
 .home.fit .hh-chart{flex:1;height:auto;min-height:70px}
-.hh-x{position:relative;height:14px;margin:2px 2px 0;font-size:10.5px;color:rgba(255,255,255,.45);font-weight:700}
-.hh-x span{position:absolute;transform:translateX(-50%)}.hh-x span:first-child{transform:none}
-.hh-bot{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:10px;flex-wrap:wrap}
-.hh-bot .hh-chips{margin:0}.hh-bot .hh-leg{margin:0}
-.hm-hero .hh-src{right:22px;top:auto;bottom:auto;position:static;text-align:right;margin-top:6px}
-.home.fit .hh-v{font-size:38px}.home.fit .hh-prog{margin:12px 0 2px}
+.home.fit .hh-v{font-size:44px}.home.fit .hh-prog{margin-top:12px}
 .home.fit .hm-postit{padding:20px 16px 12px}
 .home.fit .pi-n{flex:1;min-height:0;overflow:hidden}
 .home.fit .tl{flex:1;min-height:0;overflow:hidden}
@@ -1753,8 +1760,9 @@ body:has(.selbar) .fab,body:has(.selbar) .fab2{display:none}
 .nh-c{display:flex;flex-direction:column;background:var(--card);border-radius:18px;overflow:hidden;text-decoration:none;color:var(--ink);box-shadow:0 1px 2px rgba(16,24,40,.04),0 10px 30px -18px rgba(16,24,40,.22);transition:transform .15s,box-shadow .15s}
 .nh-c:hover{transform:translateY(-2px);box-shadow:0 2px 4px rgba(16,24,40,.06),0 16px 34px -18px rgba(16,24,40,.3)}
 .nh-img{position:relative;aspect-ratio:16/9;background:linear-gradient(135deg,#E7EDF6,#F3F6FA);display:block}
-.nh-img img{width:100%;height:100%;object-fit:cover;display:block}
-.nh-ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#A7B2C3}.nh-ph .ico{width:30px;height:30px}
+.nh-img img.nh-foto{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.nh-ph{position:absolute;inset:0;display:flex;flex-direction:column;gap:10px;align-items:center;justify-content:center;color:#7A8699;background:radial-gradient(120% 90% at 50% 0%,#FFFFFF 0%,#EEF2F8 60%,#E4EAF3 100%)}.nh-ph .ico{width:30px;height:30px;color:#A7B2C3}
+.nh-fav{width:44px;height:44px;border-radius:12px;background:#fff;padding:8px;box-shadow:0 6px 18px -8px rgba(16,24,40,.35)}.nh-ph small{font-size:12px;font-weight:700;letter-spacing:.01em;max-width:85%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .nh-img em{position:absolute;left:10px;top:10px;font-style:normal;font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;background:rgba(255,255,255,.92);color:var(--ink);padding:3px 8px;border-radius:999px}
 .nh-img em.hi{background:#16213A;color:#fff}.nh-img em.bad{background:#C4283F;color:#fff}
 .nh-b{padding:12px 14px 14px;display:flex;flex-direction:column;gap:6px}
@@ -1834,13 +1842,13 @@ header.top h1{letter-spacing:-.025em}
 .home.fit .a-pipe .pp3{margin-top:auto}
 .a-pipe.cmp .pp2-dn .dn,.a-pipe.cmp .pp2-dn svg{width:128px!important;height:128px!important}.a-pipe.cmp .pp2-l{gap:0}.a-pipe.cmp .pp2-i{padding:2px 8px}.a-pipe.cmp .pp3-c small{display:none}.a-pipe.cmp .pp3{margin-top:8px;padding-top:8px}
 .a-pipe.sin3 .pp3{display:none}
-.hm-hero.cmp .hh-src{display:none}.hm-hero.cmp2 .hh-leg{display:none}
+.hm-hero.cmp .hh-bot{display:none}.hm-hero.cmp2 .hh-kp span{display:none}
 @media (max-width:760px){.pp3-g{grid-template-columns:1fr}}
 /* ===== Acabado premium ===== */
 body{background:radial-gradient(1100px 520px at 78% -8%,#E6EFFB 0%,rgba(230,239,251,0) 62%),radial-gradient(800px 420px at 10% 110%,#EEF2F8 0%,rgba(238,242,248,0) 60%),var(--bg);background-attachment:fixed}
 header.top{background:rgba(244,245,247,.88)!important;-webkit-backdrop-filter:saturate(1.5) blur(14px);backdrop-filter:saturate(1.5) blur(14px);box-shadow:0 0 0 100vmax rgba(244,245,247,.88);clip-path:inset(0 -100vmax 0 -36px);z-index:20;transition:border-color .2s}
 header.top.scr{border-bottom:1px solid rgba(16,24,40,.08)}
-.hm-big,.hh-v,.dt-big,.wbig,.hm-rc b,.pp2-i b,.pp-k b,.yr-now b{font-variant-numeric:tabular-nums;letter-spacing:-.035em}
+.hm-big,.dt-big,.wbig,.hm-rc b,.pp2-i b,.pp-k b,.yr-now b{font-variant-numeric:tabular-nums;letter-spacing:-.035em}
 .hm{transition:box-shadow .2s,transform .2s}
 .hm:not(.hm-hero):not(.hm-postit):hover{box-shadow:0 2px 4px rgba(16,24,40,.05),0 18px 40px -20px rgba(16,24,40,.28)}
 .hm-h{font-size:13.5px}.hm-ic{border-radius:11px}
@@ -2590,7 +2598,7 @@ async function apiX(op, extra){
 // Nivel 2 del script Extras: recordatorios y base de contactos. Nivel 3: la base solo usa contacto@blacklinechile.cl. Nivel 4: eventos de varios días.
 function enCurso(k, fn){ S._p = S._p || {}; if (S._p[k]) return S._p[k]; const pr = Promise.resolve().then(fn).finally(() => { if (S._p[k] === pr) delete S._p[k]; }); S._p[k] = pr; return pr; }
 function extNivel(){ return S.extInactivo ? 0 : (S.ext && S.ext.nivel) || 1; }
-const APP_VER = 'v88', NIVEL_ULTIMO = 50;
+const APP_VER = 'v89', NIVEL_ULTIMO = 50;
 function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < NIVEL_ULTIMO; }
 let sincTimer = null;
 // Después de cambiar tareas, el script actualiza los recordatorios del calendario (en segundo plano).
@@ -3254,11 +3262,18 @@ function yrWidget(){
 }
 
 /* ---------- Noticias (complementario, debajo del tablero): tarjetas con imagen de portada ---------- */
+// Sin foto (o si la foto no carga): logo y nombre del medio sobre un fondo suave, en vez de un ícono gris.
+function nhPortada(x){
+  let host = ''; try { host = new URL(x.link).hostname.replace(/^www\./, ''); } catch(e){}
+  const google = /news\.google\./.test(host), nom = google ? (x.fuente || '') : host;
+  const ph = '<span class="nh-ph">' + (host && !google ? '<img class="nh-fav" src="https://www.google.com/s2/favicons?domain=' + encodeURIComponent(host) + '&sz=64" alt="" loading="lazy" onerror="this.remove()">' : icon('note')) + '<small>' + esc(nom) + '</small></span>';
+  return ph + (x.img ? '<img class="nh-foto" src="' + esc(x.img) + '" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">' : '');
+}
 function noticiasHome(){
   const L = noticias().slice(0, 8);
   if (!L.length) return '';
   return '<section class="nh"><div class="nh-h"><span>' + icon('note') + ' Noticias del mundo bike</span><small>Complementario</small>' + (noticias().length > 8 ? '<button class="btn sm sec" id="ntAll">Ver todas</button>' : '') + '</div><div class="nh-g">' +
-    L.map(x => '<a class="nh-c" href="' + esc(x.link) + '" target="_blank" rel="noopener"><span class="nh-img">' + (x.img ? '<img src="' + esc(x.img) + '" alt="" loading="lazy" referrerpolicy="no-referrer">' : '<span class="nh-ph">' + icon('note') + '</span>') + (x.tipo ? '<em class="' + (x.tipo === 'lanzamiento' || x.tipo === 'specialized' ? 'hi' : x.tipo === 'seguridad' ? 'bad' : '') + '">' + esc(NT_TIPO[x.tipo] || x.tipo) + '</em>' : '') + '</span>' +
+    L.map(x => '<a class="nh-c" href="' + esc(x.link) + '" target="_blank" rel="noopener"><span class="nh-img">' + nhPortada(x) + (x.tipo ? '<em class="' + (x.tipo === 'lanzamiento' || x.tipo === 'specialized' ? 'hi' : x.tipo === 'seguridad' ? 'bad' : '') + '">' + esc(NT_TIPO[x.tipo] || x.tipo) + '</em>' : '') + '</span>' +
       '<span class="nh-b"><b>' + esc(x.titulo) + '</b><small>' + esc(x.fuente || '') + (x.fecha ? ' · ' + esc(fmtRel(x.fecha.slice(0, 10))) : '') + '</small></span></a>').join('') + '</div></section>';
 }
 // Texto corto de lo que trae la versión nueva del script (el banner de actualización del Inicio).
@@ -3290,43 +3305,62 @@ function ventasMes(){
 }
 function ventasHeroHTML(){
   const v = ventasMes();
-  if (v && v.espera) return '<div class="hm a-ventas hm-hero"><div class="hh-k">' + icon('trophy') + 'Ventas de ' + esc(v.nombre) + '</div><div class="hh-empty">' + (v.error ? 'No pude leer las ventas de Bsale (' + esc(v.error) + ').<br><button class="btn sm" id="hhRetry" style="margin-top:12px">Reintentar</button>' : v.vacio ? 'Las ventas de Bsale todavía se están copiando (primera sincronización).' : '<span class="spin"></span> Leyendo las ventas de Bsale…') + '</div></div>';
-  if (!v) return '<div class="hm a-ventas hm-hero"><div class="hh-k">' + icon('trophy') + 'Ventas del mes</div><div class="hh-empty">Conecta Bsale (⚙️ Ajustes) para ver aquí cómo van las ventas del mes, día a día.</div></div>';
+  const cab = t => '<div class="hh-head"><div class="hh-k"><span class="hh-ic">' + icon('trophy') + '</span>' + t + '</div></div>';
+  if (v && v.espera) return '<div class="hm a-ventas hm-hero">' + cab('Ventas de ' + esc(v.nombre)) + '<div class="hh-empty">' + (v.error ? 'No pude leer las ventas de Bsale (' + esc(v.error) + ').<br><button class="btn sm" id="hhRetry" style="margin-top:12px">Reintentar</button>' : v.vacio ? 'Las ventas de Bsale todavía se están copiando (primera sincronización).' : '<span class="spin"></span> Leyendo las ventas de Bsale…') + '</div></div>';
+  if (!v) return '<div class="hm a-ventas hm-hero">' + cab('Ventas del mes') + '<div class="hh-empty">Conecta Bsale (⚙️ Ajustes) para ver aquí cómo van las ventas del mes, día a día.</div></div>';
   const pct = v.ref ? v.total / v.ref : 0, ritmo = v.dia / v.dim, d = v.antFecha ? (v.total - v.antFecha) / v.antFecha : null;
-  const chips = [v.hoyV != null ? '<span>Hoy <b>' + clpCorto(v.hoyV) + '</b></span>' : '', v.semV != null ? '<span>Semana <b>' + clpCorto(v.semV) + '</b></span>' : '', '<span>Proyección <b>' + clpCorto(v.proy) + '</b></span>'].join('');
-  return '<div class="hm a-ventas hm-hero"><div class="hh-top"><div><div class="hh-k">' + icon('trophy') + 'Ventas de ' + esc(v.nombre) + '</div>' +
+  const vaBien = pct >= ritmo, refTx = v.refMeta ? 'de la meta (' + clpCorto(v.meta) + ')' : 'del mes anterior completo (' + clpCorto(v.antTotal) + ')';
+  const kpi = (l, val, sub) => '<div class="hh-kp"><small>' + l + '</small><b>' + val + '</b>' + (sub ? '<span>' + sub + '</span>' : '') + '</div>';
+  return '<div class="hm a-ventas hm-hero">' +
+    '<div class="hh-head"><div class="hh-k"><span class="hh-ic">' + icon('trophy') + '</span>Ventas de ' + esc(v.nombre) + '<em>Día ' + v.dia + ' de ' + v.dim + '</em></div>' +
+      '<button class="hh-meta" id="hmMeta" title="Fijar la meta de ventas del mes">' + (v.refMeta ? 'Meta ' + clpCorto(v.meta) + ' · editar' : '＋ Fijar meta') + '</button></div>' +
+    '<div class="hh-main"><div class="hh-num">' +
       '<div class="hh-v">' + clp(v.total) + '</div>' +
-      '<div class="hh-d">' + (d != null && isFinite(d) ? '<span class="' + (d >= 0 ? 'up' : 'down') + '">' + (d >= 0 ? '▲' : '▼') + ' ' + Math.round(Math.abs(d) * 100) + '%</span> vs. el mes anterior a la fecha' : 'Día ' + v.dia + ' de ' + v.dim) + '</div></div>' +
-      '<button class="hh-meta" id="hmMeta" title="Fijar la meta de ventas del mes"><small>' + (v.refMeta ? 'Meta del mes' : 'Fijar meta') + '</small><b>' + (v.refMeta ? clpCorto(v.meta) : '＋') + '</b></button></div>' +
-    '<div class="hh-prog"><div class="hh-bar"><i style="width:' + Math.min(100, pct * 100).toFixed(1) + '%"></i><u style="left:' + (ritmo * 100).toFixed(1) + '%" title="Dónde deberías ir hoy para llegar"></u></div>' +
-      '<div class="hh-pl"><b>' + Math.round(pct * 100) + '%</b> ' + (v.refMeta ? 'de la meta' : 'del mes anterior completo (' + clpCorto(v.antTotal) + ')') + '<span>la marca blanca es el ritmo para llegar</span></div></div>' +
-    (v.cA ? '<div class="hh-chart" id="hhChart">' + ventasSVG(v) + '<div class="hh-tip" id="hhTip" hidden></div></div><div class="hh-x">' + [1, 8, 15, 22, 29].filter(d => d <= v.dim).map(d => '<span style="left:' + ((d - 1) / (v.dim - 1) * 100).toFixed(1) + '%">' + d + '</span>').join('') + '</div>' : '') +
-    '<div class="hh-bot"><div class="hh-chips">' + chips + '</div>' + (v.cA ? '<div class="hh-leg"><span><i></i>' + esc(v.nombre) + '</span><span><i class="ant"></i>Mes anterior</span>' + (v.refMeta ? '<span><i class="mt"></i>Meta</span>' : '') + '</div>' : '') + '</div>' +
-    '<div class="hh-src" title="Boletas y facturas, menos notas de crédito">Fuente: ' + esc(v.fuente === 'Bsale' ? 'Bsale · boletas y facturas' : v.fuente) + (v.fuente === 'Bsale' ? ' · <button class="hh-lk" id="hhGo">Ver ventas y rotación ›</button>' : '') + '</div></div>';
+      '<div class="hh-d">' + (d != null && isFinite(d) ? '<span class="' + (d >= 0 ? 'up' : 'down') + '">' + (d >= 0 ? '▲' : '▼') + ' ' + Math.round(Math.abs(d) * 100) + '%</span>vs. el mes anterior a la fecha (' + clpCorto(v.antFecha) + ')' : 'Primer mes con datos') + '</div>' +
+      '<div class="hh-prog"><div class="hh-bar"><i class="' + (vaBien ? 'ok' : '') + '" style="width:' + Math.min(100, pct * 100).toFixed(1) + '%"></i><u style="left:' + (ritmo * 100).toFixed(1) + '%" title="Dónde deberías ir hoy para llegar"></u></div>' +
+        '<div class="hh-pl"><span><b>' + Math.round(pct * 100) + '%</b> ' + refTx + '</span><span class="hh-rit"><i></i>ritmo para llegar hoy: ' + Math.round(ritmo * 100) + '%</span></div></div>' +
+    '</div><div class="hh-kps">' +
+      (v.hoyV != null ? kpi('Hoy', clpCorto(v.hoyV)) : '') + (v.semV != null ? kpi('Esta semana', clpCorto(v.semV)) : '') +
+      kpi('Proyección del mes', clpCorto(v.proy), v.ref ? (v.proy >= v.ref ? '<i class="up">▲</i> sobre ' : '<i class="down">▼</i> bajo ') + (v.refMeta ? 'la meta' : 'el mes anterior') : '') +
+    '</div></div>' +
+    (v.cA ? '<div class="hh-chart" id="hhChart">' + ventasSVG(v) + '<span class="hh-cross" id="hhCross" hidden></span><span class="hh-hov" id="hhHov" hidden></span><div class="hh-tip" id="hhTip" hidden></div></div><div class="hh-x">' + [1, 8, 15, 22, 29].filter(d => d <= v.dim).map(d => '<span style="left:' + ((d - 1) / (v.dim - 1) * 100).toFixed(1) + '%">' + d + '</span>').join('') + '</div>' : '') +
+    '<div class="hh-bot">' + (v.cA ? '<div class="hh-leg"><span><i></i>' + esc(v.nombre) + ' (acumulado)</span><span><i class="ant"></i>Mes anterior</span>' + (v.refMeta ? '<span><i class="mt"></i>Meta</span>' : '') + '</div>' : '<span></span>') +
+      '<div class="hh-src" title="Boletas y facturas, menos notas de crédito">' + esc(v.fuente === 'Bsale' ? 'Bsale · boletas y facturas' : v.fuente) + (v.fuente === 'Bsale' ? ' · <button class="hh-lk" id="hhGo">Ver ventas y rotación ›</button>' : '') + '</div></div></div>';
 }
-// Acumulado del mes (línea con área) contra el acumulado del mes anterior (punteada) y la meta (línea fina). Un solo eje.
+// Acumulado del mes (línea con área suave) contra el acumulado del mes anterior (punteada gris) y la meta (línea fina). Un solo eje,
+// con 3 líneas guía rotuladas en pesos; el punto de hoy marcado.
+function ventasEscala(v){
+  const top = Math.max(v.cA[v.dia - 1] || 0, v.cP[v.cP.length - 1] || 0, v.meta || 0, 1);
+  const paso = (() => { const r = top / 3, p = Math.pow(10, Math.floor(Math.log10(r))), m = r / p; return (m <= 1 ? 1 : m <= 2 ? 2 : m <= 2.5 ? 2.5 : m <= 5 ? 5 : 10) * p; })();
+  return { max: Math.max(paso * 3, top * 1.04), paso };
+}
 function ventasSVG(v){
-  const W = 640, H = 150, P = 6, n = v.dim, max = Math.max(v.cA[v.dia - 1] || 0, v.cP[v.cP.length - 1] || 0, v.meta || 0, v.proy * 0.6, 1) * 1.1;
-  const x = i => P + i / (n - 1) * (W - 2 * P), yv = val => H - 4 - val / max * (H - 18);
+  const W = 640, H = 150, n = v.dim, E = ventasEscala(v), max = E.max;
+  const x = i => i / (n - 1) * W, yv = val => H - 2 - val / max * (H - 12);
   const lin = (L, k) => L.slice(0, k).map((val, i) => (i ? 'L' : 'M') + x(i).toFixed(1) + ' ' + yv(val).toFixed(1)).join(' ');
   const pa = lin(v.cA, v.dia), pp = lin(v.cP.slice(0, n), Math.min(n, v.cP.length));
-  const area = pa + ' L' + x(v.dia - 1).toFixed(1) + ' ' + (H - 4) + ' L' + x(0).toFixed(1) + ' ' + (H - 4) + ' Z';
-  return '<svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="none" role="img" aria-label="Ventas acumuladas del mes"><defs><linearGradient id="hhA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7DB7FF" stop-opacity=".45"/><stop offset="1" stop-color="#7DB7FF" stop-opacity="0"/></linearGradient></defs>' +
-    '<line x1="0" x2="' + W + '" y1="' + (H - 4) + '" y2="' + (H - 4) + '" stroke="rgba(255,255,255,.18)" vector-effect="non-scaling-stroke"/>' +
-    (v.meta ? '<line x1="0" x2="' + W + '" y1="' + yv(v.meta).toFixed(1) + '" y2="' + yv(v.meta).toFixed(1) + '" stroke="#FFD66B" stroke-width="1.2" stroke-dasharray="2 4" vector-effect="non-scaling-stroke"/>' : '') +
-    '<path d="' + pp + '" fill="none" stroke="rgba(255,255,255,.45)" stroke-width="1.6" stroke-dasharray="5 5" vector-effect="non-scaling-stroke"/>' +
-    '<path d="' + area + '" fill="url(#hhA)"/><path d="' + pa + '" fill="none" stroke="#8EC5FF" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>' +
-    '</svg><span class="hh-dot" style="left:' + (x(v.dia - 1) / W * 100).toFixed(2) + '%;top:' + (yv(v.cA[v.dia - 1]) / H * 100).toFixed(2) + '%"></span>';
+  const area = pa + ' L' + x(v.dia - 1).toFixed(1) + ' ' + (H - 2) + ' L0 ' + (H - 2) + ' Z';
+  let grid = '', labs = '';
+  for (let k = 1; k * E.paso <= max; k++){ const y = yv(k * E.paso); grid += '<line x1="0" x2="' + W + '" y1="' + y.toFixed(1) + '" y2="' + y.toFixed(1) + '" stroke="#E9EDF3" vector-effect="non-scaling-stroke"/>'; labs += '<span class="hh-y" style="top:' + (y / H * 100).toFixed(2) + '%">' + clpCorto(k * E.paso) + '</span>'; }
+  return '<svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="none" role="img" aria-label="Ventas acumuladas del mes"><defs><linearGradient id="hhA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2A78D6" stop-opacity=".16"/><stop offset="1" stop-color="#2A78D6" stop-opacity="0"/></linearGradient></defs>' + grid +
+    '<line x1="0" x2="' + W + '" y1="' + (H - 2) + '" y2="' + (H - 2) + '" stroke="#D0D5DD" vector-effect="non-scaling-stroke"/>' +
+    (v.meta ? '<line x1="0" x2="' + W + '" y1="' + yv(v.meta).toFixed(1) + '" y2="' + yv(v.meta).toFixed(1) + '" stroke="#9A6700" stroke-width="1.2" stroke-dasharray="2 4" vector-effect="non-scaling-stroke"/>' : '') +
+    '<path d="' + pp + '" fill="none" stroke="#98A2B3" stroke-width="1.6" stroke-dasharray="5 5" vector-effect="non-scaling-stroke"/>' +
+    '<path d="' + area + '" fill="url(#hhA)"/><path d="' + pa + '" fill="none" stroke="#2A78D6" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>' +
+    '</svg>' + labs + '<span class="hh-dot" style="left:' + (x(v.dia - 1) / W * 100).toFixed(2) + '%;top:' + (yv(v.cA[v.dia - 1]) / H * 100).toFixed(2) + '%"></span>';
 }
 function bindVentasHero(root){
-  const ch = root.querySelector('#hhChart'), tip = root.querySelector('#hhTip'); if (!ch) return;
+  const ch = root.querySelector('#hhChart'), tip = root.querySelector('#hhTip'), cr = root.querySelector('#hhCross'), hv = root.querySelector('#hhHov'); if (!ch) return;
   const v = ventasMes(); if (!v || !v.cA) return;
+  const E = ventasEscala(v), H = 150, yv = val => (H - 2 - val / E.max * (H - 12)) / H * 100;
   ch.onmousemove = e => {
-    const r = ch.getBoundingClientRect(), i = Math.max(0, Math.min(v.dim - 1, Math.round((e.clientX - r.left) / r.width * (v.dim - 1))));
-    tip.hidden = false; tip.style.left = Math.min(r.width - 150, Math.max(0, e.clientX - r.left - 70)) + 'px';
-    tip.innerHTML = '<b>Día ' + (i + 1) + '</b>' + (i < v.dia ? '<span>' + esc(v.nombre) + ': ' + clp(v.cA[i]) + '</span>' : '') + (v.cP[i] != null ? '<span class="a">Mes anterior: ' + clp(v.cP[i]) + '</span>' : '');
+    const r = ch.getBoundingClientRect(), i = Math.max(0, Math.min(v.dim - 1, Math.round((e.clientX - r.left) / r.width * (v.dim - 1)))), px = i / (v.dim - 1) * r.width;
+    cr.hidden = false; cr.style.left = px + 'px';
+    const val = i < v.dia ? v.cA[i] : v.cP[i]; if (val != null){ hv.hidden = false; hv.className = 'hh-hov' + (i < v.dia ? '' : ' ant'); hv.style.left = px + 'px'; hv.style.top = yv(val) + '%'; } else hv.hidden = true;
+    tip.hidden = false; tip.style.left = Math.min(r.width - 168, Math.max(0, px + (px > r.width / 2 ? -178 : 10))) + 'px';
+    tip.innerHTML = '<b>Día ' + (i + 1) + '</b>' + (i < v.dia ? '<span><i></i>' + esc(v.nombre) + ' <em>' + clp(v.cA[i]) + '</em></span>' : '') + (v.cP[i] != null ? '<span class="a"><i></i>Mes anterior <em>' + clp(v.cP[i]) + '</em></span>' : '');
   };
-  ch.onmouseleave = () => { tip.hidden = true; };
+  ch.onmouseleave = () => { tip.hidden = true; cr.hidden = true; hv.hidden = true; };
 }
 function editarMetaVentas(){
   const v = ventasMes() || {};

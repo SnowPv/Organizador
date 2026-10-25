@@ -536,3 +536,8 @@ Revisión con tres análisis en paralelo (diseño y uso, eficiencia y errores, u
 - Si algo falla, el cambio se deshace en pantalla y aparece «Reintentar». Si intentas cerrar la app con cambios pendientes, el navegador avisa.
 - Después de guardar, la app relee la planilla una sola vez (no en cada acción), y una lectura vieja ya no pisa un cambio recién hecho.
 - Script: las notas y cambios de etapa actualizan solo la fila del contacto afectado (antes recontaba el historial completo de todos los contactos).
+
+## v89 · Ventas del mes rediseñadas y fotos de noticias (script nivel 51)
+- Tarjeta de ventas clara como el resto del Inicio: se destaca por la cifra grande y el acento azul, no por un fondo oscuro. A la derecha, Hoy / Esta semana / Proyección (con si queda sobre o bajo la referencia). Barra de avance verde cuando vas sobre el ritmo; la marca negra es el ritmo para llegar.
+- Gráfico con valores en pesos en el eje, línea guía y punto al pasar el mouse, y un recuadro con el acumulado del día y el del mes anterior.
+- Noticias de Google Noticias: el script pide el link original de la nota, así trae su foto de portada y al tocarla se abre directo. Si no hay foto, la tarjeta muestra el logo y nombre del medio.

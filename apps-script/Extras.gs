@@ -15,8 +15,8 @@
  * Para actualizar este archivo más adelante: reemplaza todo su contenido y repite los dos pasos anteriores.
  */
 
-const EX_VERSION = '2027-01-30';
-const EX_NIVEL = 50;      // la app lo usa para saber qué funciones tiene este script
+const EX_VERSION = '2027-02-06';
+const EX_NIVEL = 51;      // la app lo usa para saber qué funciones tiene este script
 const EX_HOJA = 'Tareas';
 const EX_PRIMERA = 4;
 const EX_ULTIMA = 400;
@@ -3700,7 +3700,7 @@ const EX_NOT_ESQUEMA = { type: 'object', additionalProperties: false, required: 
   tipo: { type: 'string', enum: ['lanzamiento', 'specialized', 'ebike', 'tendencia', 'competencia', 'seguridad', 'industria', 'carrera', 'local'] }, relevancia: { type: 'integer', enum: [1, 2, 3] } } } } } };
 function ex_noticias_(forzar) {
   const pr = PropertiesService.getScriptProperties(), guardado = JSON.parse(pr.getProperty('NOTICIAS') || 'null');
-  if (!forzar && guardado && guardado.v === 2 && Date.now() - Date.parse(guardado.fecha) < 6 * 3600000) return guardado;   // v2: con imagen de portada
+  if (!forzar && guardado && guardado.v === 3 && Date.now() - Date.parse(guardado.fecha) < 6 * 3600000) return guardado;   // v2: con imagen de portada
   const rs = UrlFetchApp.fetchAll(EX_NOT_FUENTES.map(function (f) { return { url: f[1], muteHttpExceptions: true, followRedirects: true }; }));
   let todos = [];
   rs.forEach(function (r, k) { if (r.getResponseCode() === 200) todos = todos.concat(ex_rssItems_(r.getContentText(), EX_NOT_FUENTES[k][0]).slice(0, k < 2 ? 20 : 12)); });
@@ -3717,14 +3717,39 @@ function ex_noticias_(forzar) {
   if (!items.length) items = todos.filter(function (x) { return /specialized|levo|kenevo|vado|e-?bike|emtb|launch|lanz/i.test(x.titulo + ' ' + x.resumen); }).concat(todos).filter(function (x, i, a) { return a.indexOf(x) === i; }).slice(0, 6);
   ex_portadasNoticias_(items);
   items.forEach(function (x) { x.resumen = String(x.resumen || '').slice(0, 160); });
-  const out = { v: 2, fecha: new Date().toISOString(), items: items, total: todos.length };
+  const out = { v: 3, fecha: new Date().toISOString(), items: items, total: todos.length };
   let txt = JSON.stringify(out); while (txt.length > 8800 && out.items.length > 3) { out.items.pop(); txt = JSON.stringify(out); }
   pr.setProperty('NOTICIAS', txt);
   return out;
 }
 
+// Google Noticias no entrega el link de la nota sino uno propio: se pide a Google el link original (dos pasos públicos)
+// para poder leer su foto de portada y que al tocar la noticia se abra la nota directamente. Si falla, queda como estaba.
+function ex_linksGoogleNews_(items) {
+  const G = items.filter(function (x) { return /news\.google\.[^/]+\/(rss\/)?articles\//.test(x.link || ''); }).slice(0, 8);
+  if (!G.length) return;
+  try {
+    const ua = { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124 Safari/537.36' };
+    const ids = G.map(function (x) { return (/articles\/([^?/]+)/.exec(x.link) || [])[1]; });
+    const r1 = UrlFetchApp.fetchAll(G.map(function (x, i) { return { url: 'https://news.google.com/rss/articles/' + ids[i], muteHttpExceptions: true, headers: ua }; }));
+    const pedidos = [], cuales = [];
+    r1.forEach(function (r, i) {
+      if (r.getResponseCode() !== 200) return;
+      const h = r.getContentText(), sg = /data-n-a-sg="([^"]+)"/.exec(h), ts = /data-n-a-ts="([^"]+)"/.exec(h); if (!sg || !ts) return;
+      const req = [[['Fbv4je', JSON.stringify(['garturlreq', [['X', 'X', ['X', 'X'], null, null, 1, 1, 'US:en', null, 1, null, null, null, null, null, 0, 1], 'X', 'X', 1, [1, 1, 1], 1, 1, null, 0, 0, null, 0], ids[i], +ts[1], sg[1]]), null, 'generic']]];
+      pedidos.push({ url: 'https://news.google.com/_/DotsSplashUi/data/batchexecute', method: 'post', contentType: 'application/x-www-form-urlencoded;charset=UTF-8', payload: 'f.req=' + encodeURIComponent(JSON.stringify(req)), muteHttpExceptions: true, headers: ua });
+      cuales.push(G[i]);
+    });
+    if (!pedidos.length) return;
+    UrlFetchApp.fetchAll(pedidos).forEach(function (r, i) {
+      const m = /garturlres\\",\\"(https?:[^"\\]+)/.exec(r.getContentText());
+      if (m) cuales[i].link = m[1];
+    });
+  } catch (e) { console.log('links Google News: ' + e.message); }
+}
 // Las noticias sin foto en el feed toman la imagen de portada de la propia nota (og:image), como cuando se comparte un link.
 function ex_portadasNoticias_(items) {
+  ex_linksGoogleNews_(items);
   const sin = items.filter(function (x) { return !x.img && /^https?:/.test(x.link) && !/news\.google\./.test(x.link); }).slice(0, 8);
   if (!sin.length) return;
   try {
