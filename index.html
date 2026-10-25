@@ -2419,6 +2419,11 @@ body.ui2{background:#F6F7F9!important}
 .itn-n{font-size:11.5px;color:var(--muted);margin-top:6px}
 .ie-g{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.kc5-ni{font-size:11.5px;font-weight:500;color:var(--muted)}
 @media (max-width:600px){.itn-r{grid-template-columns:auto minmax(0,1fr) auto auto;grid-template-areas:'a a a x' 'c p st st';row-gap:6px}.itn-a{grid-area:a}.itn-x{grid-area:x}.itn-c{grid-area:c}.itn-pw{grid-area:p}.itn-st{grid-area:st}.itn-t{grid-template-columns:repeat(2,1fr)}.ie-g{grid-template-columns:1fr 1fr}.itn-b{margin-left:0}}
+.ctp{position:relative}.ctp input[type=text]{width:100%}
+.ctp-l{position:absolute;left:0;right:0;top:calc(100% + 4px);background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:0 12px 28px rgba(15,23,42,.14);z-index:30;max-height:300px;overflow:auto;padding:4px}
+.ctp-o{display:flex;align-items:center;gap:10px;width:100%;border:0;background:none;padding:8px;border-radius:8px;text-align:left;font:inherit;color:inherit;cursor:pointer}.ctp-o span{display:flex;flex-direction:column;min-width:0}.ctp-o small{color:var(--muted);font-size:12px}.ctp-o .pv-av{width:28px;height:28px;font-size:11px;flex:none}
+.ctp-o.on,.ctp-o:hover{background:var(--soft)}.ctp-o.nuevo{color:var(--accent-ink);font-weight:600;border-top:1px solid var(--line);border-radius:0 0 8px 8px}
+.ctp-h{font-size:12px;color:var(--ok-ink);margin-top:4px;min-height:16px}.ctp-h.nuevo{color:var(--accent-ink)}
 </style>
 
 
@@ -2545,7 +2550,7 @@ async function apiX(op, extra){
 }
 // Nivel 2 del script Extras: recordatorios y base de contactos. Nivel 3: la base solo usa contacto@blacklinechile.cl. Nivel 4: eventos de varios días.
 function extNivel(){ return S.extInactivo ? 0 : (S.ext && S.ext.nivel) || 1; }
-const APP_VER = 'v79', NIVEL_ULTIMO = 47;
+const APP_VER = 'v80', NIVEL_ULTIMO = 47;
 function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < NIVEL_ULTIMO; }
 let sincTimer = null;
 // Después de cambiar tareas, el script actualiza los recordatorios del calendario (en segundo plano).
@@ -5962,7 +5967,7 @@ function copPintar(){
 
 /* ---------- Voz: dictar actualizaciones al Cerebro, confirmar y escuchar ---------- */
 const VOZ_PREF = '[ACTUALIZACIÓN DICTADA POR VOZ — interprétala y conviértela en acciones de la app]\n';
-const VOZ_INSTR = '\n[Rapidez: llama las herramientas que necesites todas a la vez en un mismo paso, no una por una; usa solo las necesarias.]\n[Ojo: es dictado por voz y el dictado escribe mal términos de ciclismo: «de dos/di dos/D2/dedos» = Di2 (transmisión electrónica Shimano), «a x s» = AXS de SRAM, «lebo/lego/levor» = Levo (ej. «Lego cuatro» = Levo 4), «que nevo» = Kenevo, «stump» = Stumpjumper, «evoc/ivoc» = EVOC (bolsos y mochilas), «mkr/emekar» = el proveedor MKR, «specialize» = Specialized. Si la tarea es conseguir un repuesto o producto (ej. un cable Di2), además de proponerla busca en el mismo turno opciones de compra con stock_tienda, buscar_en_proveedores, buscar_en_planillas y correos_proveedores, y muéstralas (proveedor, código, precio, disponibilidad) también en el detalle de la tarea; si es Shimano o Continental, confirma con buscar_andes que Andes Industrial lo tiene (si el script aún no la tiene, dilo) y, si viene en variantes que solo cambian en el largo o la medida, agrega a la tarea el paso «medir en la bici el largo/medida antes de pedir a Andes» sin inventar largos ni precios. Si falta un dato para elegir (grupo, largo), igual crea la tarea y pregunta.]\n[Cómo responder: primero ubica a cada cliente y su negociación con buscar_clientes y ver_negociaciones. Responde muy breve, en dos partes: «**Entendí:**» (1 a 3 líneas) y «**Voy a hacer:**» (una línea por acción). Propón CADA acción con tus herramientas: proponer_nota_contacto para novedades o datos del cliente; proponer_cambio_negocio para mover de etapa, cambiar valor o próxima acción; proponer_accion tipo crear_tarea (con fecha yyyy-MM-dd y el nombre del cliente en el título), crear_negocio (ref = id del contacto) o crear_contacto si la persona no está en la base (titulo = nombre, ref = teléfono si lo dije, detalle = lo que se sabe). Nada se hace sin que yo confirme. No inventes datos que no dije; si algo es ambiguo (por ejemplo dos clientes con el mismo nombre), pregúntalo en vez de proponerlo.]';
+const VOZ_INSTR = '\n[Moneda: todo en pesos chilenos (CLP), nunca dólares; escribe $1.234.567.]\n[Rapidez: llama las herramientas que necesites todas a la vez en un mismo paso, no una por una; usa solo las necesarias.]\n[Ojo: es dictado por voz y el dictado escribe mal términos de ciclismo: «de dos/di dos/D2/dedos» = Di2 (transmisión electrónica Shimano), «a x s» = AXS de SRAM, «lebo/lego/levor» = Levo (ej. «Lego cuatro» = Levo 4), «que nevo» = Kenevo, «stump» = Stumpjumper, «evoc/ivoc» = EVOC (bolsos y mochilas), «mkr/emekar» = el proveedor MKR, «specialize» = Specialized. Si la tarea es conseguir un repuesto o producto (ej. un cable Di2), además de proponerla busca en el mismo turno opciones de compra con stock_tienda, buscar_en_proveedores, buscar_en_planillas y correos_proveedores, y muéstralas (proveedor, código, precio, disponibilidad) también en el detalle de la tarea; si es Shimano o Continental, confirma con buscar_andes que Andes Industrial lo tiene (si el script aún no la tiene, dilo) y, si viene en variantes que solo cambian en el largo o la medida, agrega a la tarea el paso «medir en la bici el largo/medida antes de pedir a Andes» sin inventar largos ni precios. Si falta un dato para elegir (grupo, largo), igual crea la tarea y pregunta.]\n[Cómo responder: primero ubica a cada cliente y su negociación con buscar_clientes y ver_negociaciones. Responde muy breve, en dos partes: «**Entendí:**» (1 a 3 líneas) y «**Voy a hacer:**» (una línea por acción). Propón CADA acción con tus herramientas: proponer_nota_contacto para novedades o datos del cliente; proponer_cambio_negocio para mover de etapa, cambiar valor o próxima acción; proponer_accion tipo crear_tarea (con fecha yyyy-MM-dd y el nombre del cliente en el título), crear_negocio (ref = id del contacto) o crear_contacto si la persona no está en la base (titulo = nombre, ref = teléfono si lo dije, detalle = lo que se sabe). Nada se hace sin que yo confirme. No inventes datos que no dije; si algo es ambiguo (por ejemplo dos clientes con el mismo nombre), pregúntalo en vez de proponerlo.]';
 const ACC_DIRECTA = ['crear_tarea', 'editar_negocio', 'nota_contacto', 'crear_negocio', 'crear_contacto', 'items_negocio'];
 function copMic(btn){
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition, p = $('#cop'), q = $('#copQ');
@@ -6012,7 +6017,9 @@ function decir(texto, btn){
   if (!('speechSynthesis' in window)){ toast('Este equipo no puede leer en voz alta'); return; }
   const ss = window.speechSynthesis;
   if (ss.speaking){ ss.cancel(); return; }
-  const limpio = String(texto || '').replace(/\*\*|__|`|#+ /g, '').replace(/\[([^\]]+)\]\([^)]+\)/g, '$1').replace(/^[-•]\s*/gm, '').replace(/\n+/g, '. ').slice(0, 1200);
+  // Montos en pesos: el lector del celular dice «dólares» al ver «$»; aquí se cambia por «pesos».
+  const pesos = t => t.replace(/US\$\s?([\d.,]+)/g, '$1 dólares').replace(/\$\s?([\d.,]+)\s?(M|mill(?:ones)?)\b/gi, '$1 millones de pesos').replace(/\$\s?([\d.,]+)\s?mil\b/gi, '$1 mil pesos').replace(/\$\s?([\d][\d.]*(?:,\d+)?)/g, (m, n) => n.replace(/\./g, '') + ' pesos').replace(/\bCLP\b/g, 'pesos');
+  const limpio = pesos(String(texto || '')).replace(/\*\*|__|`|#+ /g, '').replace(/\[([^\]]+)\]\([^)]+\)/g, '$1').replace(/^[-•]\s*/gm, '').replace(/\n+/g, '. ').slice(0, 1200);
   const u = new SpeechSynthesisUtterance(limpio); u.lang = 'es-CL'; u.rate = 1.05;
   const v = ss.getVoices().find(x => /^es[-_](CL|419|MX|US)/i.test(x.lang)) || ss.getVoices().find(x => /^es/i.test(x.lang)); if (v) u.voice = v;
   if (btn){ btn.classList.add('on'); u.onend = u.onerror = () => btn.classList.remove('on'); }
@@ -6678,6 +6685,50 @@ function openDeal(n, opt){
   on('dx_done', async () => { const b = $('#dx_done'); b.disabled = true; try { await apiX('negocioNota', { id: n.id, texto: '✅ ' + n.proxima, tipo: '✅ Acción' }); await apiX('negocio', { negocio: { id: n.id, proxima: '', fechaProx: '' } }); await loadNeg(true); toast('✓ Registrado. ¿Cuál es el siguiente paso?'); const n2 = negociosTodos().find(x => x.id === n.id); openDeal(n2); openProximo(n2); } catch(e){ b.disabled = false; toast('No se pudo: ' + e.message); } });
 }
 
+
+/* ---------- Elegir cliente escribiendo: busca mientras escribes y, si no existe, crea la ficha al guardar ---------- */
+function ctoPickerHTML(id){
+  const c = id ? contactoPorId(id) : null;
+  return '<div class="ctp"><input type="text" id="ng_cq" value="' + esc(c ? (c.nombre || c.email || c.telefono || '') : '') + '" placeholder="Escribe el nombre del cliente…" autocomplete="off" data-enter="no"><input type="hidden" id="ng_c" value="' + esc(c ? c.id : '') + '"><div class="ctp-l" id="ng_cl" hidden></div><div class="ctp-h" id="ng_ch"></div></div>';
+}
+function bindCtoPicker(alElegir){
+  const q = $('#ng_cq'), hid = $('#ng_c'), L = $('#ng_cl'), H = $('#ng_ch'); if (!q) return;
+  let opc = [], sel = -1;
+  const ayuda = () => { const t = q.value.trim(); H.innerHTML = !t ? '' : hid.value ? '✓ Cliente de tu base' : '＋ No está en tus contactos: al guardar se crea la ficha de «' + esc(t) + '»'; H.className = 'ctp-h' + (t && !hid.value ? ' nuevo' : ''); };
+  const elegir = c => { hid.value = c ? c.id : ''; if (c) q.value = c.nombre || c.email || c.telefono || ''; L.hidden = true; ayuda(); if (alElegir) alElegir(c); };
+  const pintar = () => {
+    const t = norm(q.value.trim());
+    if (!t){ L.hidden = true; return; }
+    opc = contactos().filter(c => norm([c.nombre, c.empresa, c.telefono, c.email].join(' ')).includes(t)).sort((a, b) => (norm(a.nombre).startsWith(t) ? 0 : 1) - (norm(b.nombre).startsWith(t) ? 0 : 1)).slice(0, 7);
+    sel = opc.length ? 0 : -1;
+    L.innerHTML = opc.map((c, k) => '<button type="button" class="ctp-o' + (k === sel ? ' on' : '') + '" data-k="' + k + '">' + avTenue(c.nombre || c.telefono) + '<span><b>' + esc(c.nombre || c.email || c.telefono) + '</b><small>' + esc([c.tipo, c.telefono, c.empresa].filter(Boolean).join(' · ')) + '</small></span></button>').join('') +
+      '<button type="button" class="ctp-o nuevo" data-k="-1">＋ Crear «' + esc(q.value.trim()) + '» como contacto nuevo</button>';
+    L.hidden = false;
+    L.querySelectorAll('[data-k]').forEach(b => b.onmousedown = e => { e.preventDefault(); const k = +b.dataset.k; elegir(k >= 0 ? opc[k] : null); });
+  };
+  q.oninput = () => { hid.value = ''; pintar(); ayuda(); if (alElegir) alElegir(null); };
+  q.onfocus = () => { if (q.value.trim() && !hid.value) pintar(); };
+  q.onblur = () => setTimeout(() => { L.hidden = true; }, 150);
+  q.onkeydown = e => {
+    if (L.hidden) return;
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp'){ e.preventDefault(); sel = Math.max(-1, Math.min(opc.length - 1, sel + (e.key === 'ArrowDown' ? 1 : -1))); L.querySelectorAll('.ctp-o').forEach((b, k) => b.classList.toggle('on', k === sel)); }
+    if (e.key === 'Enter'){ e.preventDefault(); elegir(sel >= 0 ? opc[sel] : null); }
+    if (e.key === 'Escape'){ L.hidden = true; }
+  };
+  ayuda();
+}
+// Al guardar: si se escribió un nombre que no está en la base, se crea la ficha y se devuelve su id.
+async function contactoDelPicker(){
+  const q = $('#ng_cq'), hid = $('#ng_c'); if (!q) return hid ? hid.value : '';
+  if (hid.value) return hid.value;
+  const t = q.value.trim(); if (!t) return '';
+  const igual = contactos().find(c => norm(c.nombre) === norm(t)); if (igual) return igual.id;
+  const tel = /^\+?[\d\s-]{8,}$/.test(t) ? t.replace(/[^\d+]/g, '') : '';
+  const r = await apiX('contacto', { contacto: tel ? { telefono: tel, tipo: 'Cliente' } : { nombre: t, tipo: 'Cliente', notas: '✍️ Creado al abrir una negociación' } });
+  loadBase(true).catch(() => {});
+  toast('👤 Ficha creada: ' + t);
+  return r.id || '';
+}
 /* ---------- Productos de una negociación (con Bsale o a mano) ---------- */
 const ORIG_TX = { bsale: 'Bsale', manual: 'Manual', encargo: 'Encargo', estimado: 'Estimado' };
 function itemsTot(L){
@@ -6796,7 +6847,7 @@ function dealTab(n, a, tab){
   } else if (tab === 'datos'){
     const C = contactos().slice().sort((x, y) => String(x.nombre).localeCompare(String(y.nombre)));
     box.innerHTML = '<label class="l" style="margin-top:0">Nombre de la negociación</label><input type="text" id="ng_t" value="' + esc(n.titulo) + '">' +
-      '<label class="l">Cliente</label><select id="ng_c"><option value="">— sin contacto —</option>' + C.map(x => '<option value="' + esc(x.id) + '"' + (x.id === n.contacto ? ' selected' : '') + '>' + esc(x.nombre || x.email) + '</option>').join('') + '</select>' +
+      '<label class="l">Cliente</label>' + ctoPickerHTML(n.contacto) +
       '<label class="l">Producto / interés</label><input type="text" id="ng_p" value="' + esc(n.producto) + '">' +
       '<label class="l">Valor estimado ($)</label><input type="text" id="ng_v" inputmode="numeric" value="' + (n.valor ? Math.round(n.valor).toLocaleString('es-CL') : '') + '">' +
       '<label class="l">Cierre esperado</label><input type="date" id="ng_ci" value="' + esc(n.cierre) + '">' +
@@ -6809,9 +6860,10 @@ function dealTab(n, a, tab){
       catch(e){ dDel.disabled = false; toast('No se pudo eliminar: ' + e.message); }
     };
     const vIn = $('#ng_v'); vIn.oninput = () => { const d = vIn.value.replace(/\D/g, ''); vIn.value = d ? (+d).toLocaleString('es-CL') : ''; };
+    bindCtoPicker();
     $('#dx_save').onclick = async () => {
       const b = $('#dx_save'); b.disabled = true;
-      try { await apiX('negocio', { negocio: { id: n.id, titulo: $('#ng_t').value.trim() || n.titulo, contacto: $('#ng_c').value, producto: $('#ng_p').value.trim(), valor: +($('#ng_v').value.replace(/\D/g, '')) || 0, cierre: $('#ng_ci').value, notas: $('#ng_n').value.trim() } }); await loadNeg(true); toast('Guardado ✓'); openDeal(negociosTodos().find(x => x.id === n.id), { tab: 'datos' }); }
+      try { const cto = await contactoDelPicker(); await apiX('negocio', { negocio: { id: n.id, titulo: $('#ng_t').value.trim() || n.titulo, contacto: cto, producto: $('#ng_p').value.trim(), valor: +($('#ng_v').value.replace(/\D/g, '')) || 0, cierre: $('#ng_ci').value, notas: $('#ng_n').value.trim() } }); await loadNeg(true); toast('Guardado ✓'); openDeal(negociosTodos().find(x => x.id === n.id), { tab: 'datos' }); }
       catch(e){ b.disabled = false; toast('No se pudo guardar: ' + e.message); }
     };
   } else if (tab === 'stock'){
@@ -7285,7 +7337,7 @@ function openNegocio(n, opt){
   const I = nuevo ? [] : a.I.slice().reverse();
   const icTl = t => /perdida/i.test(t) ? '❌' : /agente|idea/i.test(t) ? '🧠' : /whatsapp/i.test(t) ? '💬' : /correo/i.test(t) ? '✉️' : /reuni/i.test(t) ? '📅' : /tarea|acci/i.test(t) ? '✅' : /venta/i.test(t) ? '🏆' : /negoci/i.test(t) ? '🤝' : String(t || '').match(/\p{Extended_Pictographic}/u) ? String(t).match(/\p{Extended_Pictographic}/u)[0] : '📝';
   const campos = '<label class="l">Negociación</label><input type="text" id="ng_t" value="' + esc(n.titulo) + '" placeholder="Ej.: Juan Pérez – Turbo Levo">' +
-    '<label class="l">Cliente</label><select id="ng_c"><option value="">— sin contacto —</option>' + C.map(c => '<option value="' + esc(c.id) + '"' + (c.id === n.contacto ? ' selected' : '') + '>' + esc(c.nombre || c.email) + (c.empresa ? ' · ' + esc(c.empresa) : '') + '</option>').join('') + '</select>' +
+    '<label class="l">Cliente</label>' + ctoPickerHTML(n.contacto) +
     '<label class="l">Producto / interés</label><input type="text" id="ng_p" value="' + esc(n.producto) + '" placeholder="Ej.: Turbo Levo Comp talla M">' +
     '<label class="l">Valor estimado ($)</label><input type="text" id="ng_v" inputmode="numeric" value="' + (n.valor ? Math.round(n.valor).toLocaleString('es-CL') : '') + '" placeholder="Ej.: 6.990.000">' +
     '<label class="l">Cierre esperado</label><input type="date" id="ng_ci" value="' + esc(n.cierre) + '">' +
@@ -7310,7 +7362,7 @@ function openNegocio(n, opt){
   if (nuevo) bindPills('ng_e');
   $$('[data-pfd]').forEach(b => b.onclick = () => { $('#ng_pf').value = addDays(h, +b.dataset.pfd); });
   const vIn = $('#ng_v'); if (vIn) vIn.oninput = () => { const d = vIn.value.replace(/\D/g, ''); vIn.value = d ? (+d).toLocaleString('es-CL') : ''; };
-  const cSel = $('#ng_c'); if (cSel && nuevo) cSel.onchange = () => { const c = contactoPorId(cSel.value); if (c && !$('#ng_t').value.trim()) $('#ng_t').value = (c.nombre || c.email) + ($('#ng_p').value ? ' – ' + $('#ng_p').value : ''); };
+  bindCtoPicker(c => { const t = $('#ng_t'); if (!nuevo || !t) return; if (!c){ if (t.dataset.auto){ t.value = ''; delete t.dataset.auto; } return; } if (!t.value.trim() || t.dataset.auto){ t.value = (c.nombre || c.email) + ($('#ng_p').value ? ' – ' + $('#ng_p').value : ''); t.dataset.auto = '1'; } });
   if (opt.foco === 'prox') setTimeout(() => { const x = $('#ng_px'); if (x){ x.scrollIntoView({ block: 'center' }); x.focus(); } }, 120);
   else if (nuevo) setTimeout(() => $('#ng_t').focus(), 100);
   if (!nuevo){
@@ -7328,7 +7380,9 @@ function openNegocio(n, opt){
     $('#ng_nota_ok').onclick = nota; $('#ng_nota').onkeydown = ev => { if (ev.key === 'Enter') nota(); };
   }
   $('#ng_ok').onclick = async () => {
-    const d = { id: n.id || undefined, titulo: $('#ng_t').value.trim(), contacto: $('#ng_c').value, producto: $('#ng_p').value.trim(), valor: +($('#ng_v').value.replace(/\D/g, '')) || 0, cierre: $('#ng_ci').value, notas: $('#ng_n').value.trim(), proxima: $('#ng_px').value.trim(), fechaProx: $('#ng_pf').value };
+    const qn = ($('#ng_cq') || {}).value || '';
+    let cto = ''; try { cto = await contactoDelPicker(); } catch(e){ toast('No se pudo crear la ficha: ' + e.message); return; }
+    const d = { id: n.id || undefined, titulo: $('#ng_t').value.trim() || (qn.trim() && !$('#ng_c').value ? qn.trim() + ($('#ng_p').value.trim() ? ' – ' + $('#ng_p').value.trim() : '') : ''), contacto: cto, producto: $('#ng_p').value.trim(), valor: +($('#ng_v').value.replace(/\D/g, '')) || 0, cierre: $('#ng_ci').value, notas: $('#ng_n').value.trim(), proxima: $('#ng_px').value.trim(), fechaProx: $('#ng_pf').value };
     if (nuevo) d.etapa = val('ng_e') || 'Nuevo';
     if (!d.titulo){ const c = contactoPorId(d.contacto); d.titulo = c ? (c.nombre || c.email) + (d.producto ? ' – ' + d.producto : '') : d.producto; }
     if (!d.titulo){ toast('Ponle un nombre o elige un cliente'); return; }

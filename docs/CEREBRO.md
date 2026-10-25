@@ -480,3 +480,8 @@ Basada en el análisis de unos 300 diseños de Dribbble (búsquedas: crm, crm-da
 - **Cálculos**: total (con IVA) = valor de la negociación (se actualiza solo); para el Admin: costo, ganancia y margen sobre el precio sin IVA (los productos sin costo no cuentan, y se avisa). El Piso de venta ve solo el total y, si edita, los costos que había se conservan.
 - **Guardado**: columna nueva Q «Productos (JSON)» de la hoja de negociaciones (`ex_itemsNeg_`). Las negociaciones nuevas con producto parten con ese producto como «Estimado».
 - **Cerebro**: ve los productos en `ver_negociaciones` y los propone con `proponer_productos_negocio` (busca precio y SKU en Bsale; lo que no hay va como encargo). Se aprueban con un toque o con «Confirmar todo».
+
+## Pesos chilenos y cliente escrito a mano (app v80 · script nivel 47)
+
+- **Moneda**: el Cerebro tiene la regla de escribir todo en pesos chilenos ($1.234.567), nunca dólares. Al leer en voz alta, «$54.990» se dice «54990 pesos», «$9,0 M» «9,0 millones de pesos», «$180 mil» «180 mil pesos» (`decir` → `pesos`).
+- **Nueva negociación / Datos**: el campo Cliente es un buscador (`ctoPickerHTML`/`bindCtoPicker`): busca por nombre, empresa, teléfono o correo mientras escribes, se elige con toque, flechas y Enter. Si el nombre no está, al guardar se **crea la ficha** (tipo Cliente) y se liga (`contactoDelPicker`); si es un teléfono, crea el contacto con ese número.
