@@ -1514,6 +1514,8 @@ body:has(.selbar) .fab,body:has(.selbar) .fab2{display:none}
 .ccard:hover{border-color:var(--s3);box-shadow:var(--shadow-md)}
 .ccard .cic{font-size:24px}.ccard b{font-size:15px}.ccard small{color:var(--muted);font-size:13px;line-height:1.4}.ccard .cn{margin-top:auto;padding-top:8px;font-size:12.5px;font-weight:700;color:var(--accent-ink)}
 .cmsg{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:8px}
+.rc-ch .chip{cursor:pointer}.rc-ch .chip.on{background:var(--ink);color:var(--card)}
+.rc-st{display:inline-block;font-size:12px;font-weight:700;border-radius:8px;padding:3px 8px;align-self:flex-start}.rc-st.ok{background:rgba(19,179,134,.14);color:var(--ok-ink,#0B7A5B)}.rc-st.mid{background:rgba(245,165,36,.16);color:var(--warn-ink)}.rc-st.no{background:rgba(196,40,63,.1);color:var(--bad-ink,#C4283F)}
 .cmsg small{display:block;color:var(--muted);font-size:12px}.cmsg.ok{opacity:.6}
 /* Cambios propuestos por el Cerebro */
 .cmb{display:grid;grid-template-columns:120px 1fr 1fr;gap:8px;font-size:14px;padding:7px 0;border-top:1px solid var(--line);align-items:baseline}
@@ -2587,7 +2589,7 @@ async function apiX(op, extra){
 // Nivel 2 del script Extras: recordatorios y base de contactos. Nivel 3: la base solo usa contacto@blacklinechile.cl. Nivel 4: eventos de varios días.
 function enCurso(k, fn){ S._p = S._p || {}; if (S._p[k]) return S._p[k]; const pr = Promise.resolve().then(fn).finally(() => { if (S._p[k] === pr) delete S._p[k]; }); S._p[k] = pr; return pr; }
 function extNivel(){ return S.extInactivo ? 0 : (S.ext && S.ext.nivel) || 1; }
-const APP_VER = 'v83', NIVEL_ULTIMO = 48;
+const APP_VER = 'v84', NIVEL_ULTIMO = 49;
 function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < NIVEL_ULTIMO; }
 let sincTimer = null;
 // Después de cambiar tareas, el script actualiza los recordatorios del calendario (en segundo plano).
@@ -2643,7 +2645,7 @@ async function load(){
     // «Sin conexión» solo si de verdad no hay internet; si el script respondió con error u ocupado, se dice eso.
     const red = !navigator.onLine || e instanceof TypeError || /failed to fetch|networkerror|load failed/i.test(String(e && e.message));
     S.offline = red; S.srvErr = red ? '' : String(e && e.message || 'error');
-    if (!red){ try { LS.ultErr = JSON.stringify({ t: new Date().toISOString(), m: 'state: ' + S.srvErr }); } catch(_){} }
+    if (!red){ try { LS.ultErr = JSON.stringify({ f: new Date().toISOString().slice(0, 16), tab: S.tab, v: APP_VER, m: 'Cargar la planilla: ' + S.srvErr, s: '' }); } catch(_){} }
     if (!S.data && LS.cache) S.data = JSON.parse(LS.cache);
   }
   applyExtras();
@@ -3195,7 +3197,7 @@ function noticiasHome(){
 // Texto corto de lo que trae la versión nueva del script (el banner de actualización del Inicio).
 function novedadScript(){
   const n = extNivel();
-  return n >= 48 ? 'La revisión de los 30 días sugiere los accesorios que el cliente no compró (asesoría, sin descuentos).' : n >= 47 ? 'Cada negociación tiene su lista de productos (desde Bsale o a mano) con precios, costo, ganancia y margen; el Cerebro también los puede agregar.' : n >= 46 ? 'Los contactos internos (Blackline Servicio Técnico, el equipo) ya no generan tareas, negociaciones ni «espera respuesta».' : n >= 45 ? 'El Cerebro responde más rápido (busca en varias fuentes a la vez y tiene un tope de tiempo) y no deja a la app esperando tanto.' : n >= 44 ? 'El Cerebro confirma en el catálogo de Andes Industrial si un repuesto Shimano o Continental existe en el distribuidor.' : n >= 43 ? 'El Cerebro entiende mejor el ciclismo (Di2, AXS, modelos) y busca opciones de compra cuando una tarea es conseguir un repuesto.' : n >= 42 ? 'Proveedores fuera del pipeline (el agente ya no les abre negociaciones) y el Cerebro puede agregar contactos nuevos cuando le dictas.' : n >= 41 ? 'Empezar de cero: la fecha de inicio se guarda en el script y la ven todos los equipos (Admin y Piso de venta).' : n >= 40 ? 'Ahora hay dos cuentas con contraseña: Admin (todo, como siempre) y Piso de venta (parte en un Hoy nuevo, sin cifras de la tienda). Créalas en ⚙️ Ajustes → Usuarios.' : n >= 39 ? 'La app ahora tiene un solo Cerebro con 9 skills (en vez de agentes sueltos): mira qué hace solo, cuánto gasta y paúsalo en la pestaña Cerebro.' : n >= 37 ? 'Las tareas automáticas ya no bloquean la app (por ejemplo, la lectura de ventas de Bsale).' : n >= 36 ? 'Cuando un cliente con negociación abierta compra en Bsale, la app te propone marcarla como ganada.' : n >= 35 ? 'Ventas del mes igual que en Bsale (solo boletas y facturas, menos notas de crédito) y noticias con foto de portada.' : n >= 34 ? 'Meta y gráfico de ventas del mes en el Inicio, con el avance diario desde Bsale.' : n >= 33 ? 'Une sola las negociaciones duplicadas de una venta ganada.' : n >= 32 ? 'Etapas después del pago: seguimiento, entrega y postventa.' : n >= 31 ? 'Venta perdida: cierra tareas, eventos y la idea de respuesta del Cerebro.' : 'Funciones nuevas para el Organizador.';
+  return n >= 49 ? 'Recompra de consumibles: la app detecta quién debería cambiar pastillas, cadena o cubiertas según sus compras en Bsale, con el stock para ofrecer y el mensaje listo (Contactos → Campañas).' : n >= 48 ? 'La revisión de los 30 días sugiere los accesorios que el cliente no compró (asesoría, sin descuentos).' : n >= 47 ? 'Cada negociación tiene su lista de productos (desde Bsale o a mano) con precios, costo, ganancia y margen; el Cerebro también los puede agregar.' : n >= 46 ? 'Los contactos internos (Blackline Servicio Técnico, el equipo) ya no generan tareas, negociaciones ni «espera respuesta».' : n >= 45 ? 'El Cerebro responde más rápido (busca en varias fuentes a la vez y tiene un tope de tiempo) y no deja a la app esperando tanto.' : n >= 44 ? 'El Cerebro confirma en el catálogo de Andes Industrial si un repuesto Shimano o Continental existe en el distribuidor.' : n >= 43 ? 'El Cerebro entiende mejor el ciclismo (Di2, AXS, modelos) y busca opciones de compra cuando una tarea es conseguir un repuesto.' : n >= 42 ? 'Proveedores fuera del pipeline (el agente ya no les abre negociaciones) y el Cerebro puede agregar contactos nuevos cuando le dictas.' : n >= 41 ? 'Empezar de cero: la fecha de inicio se guarda en el script y la ven todos los equipos (Admin y Piso de venta).' : n >= 40 ? 'Ahora hay dos cuentas con contraseña: Admin (todo, como siempre) y Piso de venta (parte en un Hoy nuevo, sin cifras de la tienda). Créalas en ⚙️ Ajustes → Usuarios.' : n >= 39 ? 'La app ahora tiene un solo Cerebro con 9 skills (en vez de agentes sueltos): mira qué hace solo, cuánto gasta y paúsalo en la pestaña Cerebro.' : n >= 37 ? 'Las tareas automáticas ya no bloquean la app (por ejemplo, la lectura de ventas de Bsale).' : n >= 36 ? 'Cuando un cliente con negociación abierta compra en Bsale, la app te propone marcarla como ganada.' : n >= 35 ? 'Ventas del mes igual que en Bsale (solo boletas y facturas, menos notas de crédito) y noticias con foto de portada.' : n >= 34 ? 'Meta y gráfico de ventas del mes en el Inicio, con el avance diario desde Bsale.' : n >= 33 ? 'Une sola las negociaciones duplicadas de una venta ganada.' : n >= 32 ? 'Etapas después del pago: seguimiento, entrega y postventa.' : n >= 31 ? 'Venta perdida: cierra tareas, eventos y la idea de respuesta del Cerebro.' : 'Funciones nuevas para el Organizador.';
 }
 
 /* ---------- Ventas del mes: avance diario acumulado contra el mes anterior y la meta ---------- */
@@ -9770,12 +9772,19 @@ const CAMPANAS = [
     quien: () => { if (!S.neg) return []; const ids = new Set(negocios().filter(n => n.estado === 'Ganada' && diffDays(fechaCierre(n), hoy()) <= 90).map(n => n.contacto)); return contactos().filter(c => ids.has(c.id) && telWA(c)); },
     msg: c => 'Hola ' + primerNombre(c) + '! ¿Cómo te ha ido con tu bici nueva? 😄 Nos encantaría conocer tu experiencia: si te animas, mándanos una foto en ruta o déjanos una reseña. Con tu permiso la compartimos con la comunidad Blackline 🙌' }
 ];
+function recompraCard(){
+  if (!rcListo()) return '';
+  if (!S.rc) loadRecompra().then(() => { if (S.tab === 'base' && !S.campK && $('[data-camp=recompra]')) viewBase(); });
+  const n = S.rc && !S.rc.error ? (S.rc.lista || []).length : null;
+  return '<button class="ccard" data-camp="recompra"><span class="cic">🔁</span><b>Recompra de consumibles</b><small>Quién debería cambiar pastillas, cadena, cubiertas o sellante según sus compras en Bsale, con el stock para ofrecer.</small><span class="cn">' + (n == null ? '<span class="spin"></span>' : n + ' ' + (n === 1 ? 'cliente' : 'clientes')) + '</span></button>';
+}
 function campEnviados(k){ return lsGet('camp_' + k, {}); }
 function campanasHTML(){
   if (!perfiles().length && !S.neg) return '<div class="sec"><div class="empty">Cuando el Cerebro perfile tus chats, aquí podrás armar campañas personalizadas por segmento.</div></div>';
   const k = S.campK;
   if (!k) return '<div class="wsub" style="margin:0 2px 12px">Elige un objetivo. La app arma la lista y un mensaje personal para cada cliente; tú lo revisas y lo envías por WhatsApp con un toque. Cada envío queda en la ficha del cliente.</div>' +
-    '<div class="cgrid">' + CAMPANAS.map(x => { const n = x.quien().length, env = Object.keys(campEnviados(x.k)).length; return '<button class="ccard" data-camp="' + x.k + '"><span class="cic">' + x.ic + '</span><b>' + esc(x.t) + '</b><small>' + esc(x.d) + '</small><span class="cn">' + n + ' ' + (n === 1 ? 'cliente' : 'clientes') + (env ? ' · ' + env + ' enviados' : '') + '</span></button>'; }).join('') + '</div>';
+    '<div class="cgrid">' + recompraCard() + CAMPANAS.map(x => { const n = x.quien().length, env = Object.keys(campEnviados(x.k)).length; return '<button class="ccard" data-camp="' + x.k + '"><span class="cic">' + x.ic + '</span><b>' + esc(x.t) + '</b><small>' + esc(x.d) + '</small><span class="cn">' + n + ' ' + (n === 1 ? 'cliente' : 'clientes') + (env ? ' · ' + env + ' enviados' : '') + '</span></button>'; }).join('') + '</div>';
+  if (k === 'recompra') return recompraHTML();
   const C = CAMPANAS.find(x => x.k === k), L = C.quien(), env = campEnviados(k), hechos = L.filter(c => env[c.id]).length;
   return '<div class="ihead"><button class="btn sm sec" id="campBack">‹ Campañas</button><div class="grow"><b>' + C.ic + ' ' + esc(C.t) + '</b><div class="wsub">' + hechos + ' de ' + L.length + ' enviados</div></div><button class="btn sm sec" id="campReset">Empezar de nuevo</button></div>' +
     '<div class="meter" style="margin:0 0 14px"><i style="width:' + (L.length ? hechos / L.length * 100 : 0) + '%;background:var(--ok)"></i><i style="flex:1;background:var(--soft)"></i></div>' +
@@ -9787,11 +9796,78 @@ function bindCampanas(){
   $$('[data-camp]').forEach(b => b.onclick = () => { S.campK = b.dataset.camp; viewBase(); window.scrollTo(0, 0); });
   const bk = $('#campBack'); if (bk) bk.onclick = () => { S.campK = null; viewBase(); };
   const k = S.campK; if (!k) return;
+  if (k === 'recompra') return bindRecompra();
   const C = CAMPANAS.find(x => x.k === k), L = C.quien();
   const rs = $('#campReset'); if (rs) rs.onclick = () => { if (confirm('¿Volver a mostrar a todos como pendientes?')){ lsSet('camp_' + k, {}); viewBase(); } };
   const marcar = (c, nota) => { const e = campEnviados(k); e[c.id] = hoy(); lsSet('camp_' + k, e); if (nota) apiX('nota', { id: c.id, texto: '📣 Campaña «' + C.t + '»: ' + nota }).catch(() => {}); };
   $$('[data-csend]').forEach(b => b.onclick = () => { const i = +b.dataset.csend, c = L[i], m = $('[data-cm="' + i + '"]').value; window.open('https://wa.me/' + telWA(c) + '?text=' + encodeURIComponent(m), '_blank'); marcar(c, m.slice(0, 300)); setTimeout(viewBase, 400); });
   $$('[data-cskip]').forEach(b => b.onclick = () => { marcar(L[+b.dataset.cskip], ''); viewBase(); });
+}
+
+/* ---------- Recompra de consumibles (Bsale): quién debería cambiar pastillas, cadena, cubiertas… ---------- */
+// El script calcula cada cuánto recompra la gente de la tienda cada familia y quién ya pasó ese tiempo, con el stock para ofrecer.
+// Aquí se arma el mensaje y una persona lo envía, uno por uno. Política de marca: asesorar, nunca descuentos.
+function rcListo(){ return bsvListo() && extNivel() >= 49; }
+function loadRecompra(forzar){
+  if (!rcListo()) return Promise.resolve(null);
+  if (!forzar && S.rc && !S.rc.error && Date.now() - (S.rcAt || 0) < 15 * 60000) return Promise.resolve(S.rc);
+  return enCurso('rc', () => apiX('recompra', forzar ? { fresco: true } : {}).then(r => { S.rc = r; S.rcAt = Date.now(); return r; }).catch(e => { if (!S.rc || S.rc.error) S.rc = { error: e.message }; return null; }));
+}
+function rcContacto(x){
+  const t8 = String(x.telefono || '').slice(-8);
+  return contactos().find(c => (x.email && String(c.email || '').toLowerCase() === x.email) || (t8.length === 8 && String(c.telefono || '').replace(/\D/g, '').slice(-8) === t8)) || null;
+}
+const RC_TX = {
+  pastillas: ['ya es buen momento de revisar las pastillas de freno: gastadas frenan menos y pueden dañar el disco', '¿Te dejo un par reservado o prefieres pasar y las revisamos?'],
+  cadena: ['conviene medir la cadena: con los kilómetros se estira y empieza a gastar el cassette y los platos', '¿Te la dejo reservada o prefieres pasar y la medimos?'],
+  cubiertas: ['vale la pena revisar el desgaste de las cubiertas y que no tengan cortes antes de la próxima salida', '¿Te dejo unas reservadas o prefieres pasar y las revisamos?'],
+  sellante: ['seguramente el sellante tubeless ya se secó: con los meses deja de sellar los pinchazos', '¿Te dejo uno reservado?'],
+  lubricante: ['probablemente se te esté acabando el lubricante de cadena', '¿Te dejo uno reservado?'],
+  cassette: ['si la transmisión salta o cambiaste cadena hace poco, conviene revisar el cassette', '¿Quieres pasar y lo revisamos?'],
+  limpieza: ['probablemente se te estén acabando los productos de limpieza', '¿Te dejo algo reservado?']
+};
+const rcCorto = s => { let t = String(s || '').replace(/\s+/g, ' ').trim().slice(0, 60); if (t && t === t.toUpperCase() && /[A-ZÁÉÍÓÚÑ]{3}/.test(t)) t = t.toLowerCase().replace(/^./, m => m.toUpperCase()).replace(/\b(sram|xt|xtr|slx|gx|nx|eagle|axs|di2|shimano|maxxis|muc-off|specialized|evoc|fox|rockshox)\b/gi, w => /^(sram|xt|xtr|slx|gx|nx|axs|di2)$/i.test(w) ? w.toUpperCase() : w.charAt(0).toUpperCase() + w.slice(1)); return t; };
+function rcMsg(x, c){
+  const t = RC_TX[x.fam] || ['quizás ya toque reponerlo', '¿Te lo dejo reservado?'], m = Math.max(1, Math.round(x.dias / 30));
+  const yo = LS.rol === 'piso' ? 'Te escribimos de Blackline Puerto Varas' : 'Te escribe ' + ((((S.data || {}).config || {}).params || {})['Tu nombre (para el saludo)'] || 'Gustavo') + ' de Blackline Puerto Varas';
+  const st = x.stock_mismo ? 'Tenemos ' + rcCorto(x.stock_mismo.producto) + ' en la tienda. ' : (x.alternativas || []).length ? 'En la tienda tenemos opciones como ' + rcCorto(x.alternativas[0].producto) + '. ' : '';
+  return 'Hola ' + (primerNombre(c || x) || '') + '! ' + yo + ' 🙌 Hace unos ' + m + (m === 1 ? ' mes' : ' meses') + ' llevaste ' + rcCorto(x.producto) + ' y, por el tiempo que ha pasado, ' + t[0] + '. ' + st + t[1];
+}
+function recompraHTML(){
+  const r = S.rc;
+  const cab = '<div class="ihead"><button class="btn sm sec" id="campBack">‹ Campañas</button><div class="grow"><b>🔁 Recompra de consumibles</b><div class="wsub">Según las compras en Bsale y cada cuánto se repone en la tienda</div></div><button class="btn sm sec" id="rcSinc">↻</button></div>';
+  if (!r){ loadRecompra().then(() => { if (S.tab === 'base' && S.campK === 'recompra') viewBase(); }); return cab + '<div class="empty"><span class="spin"></span>Revisando las compras de Bsale…</div>'; }
+  if (r.error) return cab + '<div class="empty">No se pudo leer: ' + esc(r.error) + '</div>';
+  if (!r.activo) return cab + '<div class="empty">Falta conectar Bsale.</div>';
+  const F = S.rcF || '', L = (r.lista || []).filter(x => !F || x.fam === F).map(x => ({ x, c: rcContacto(x) })).filter(o => !(o.c && (esInterno(o.c) || o.c.tipo === 'Proveedor')));
+  const chips = '<div class="row rc-ch" style="gap:6px;flex-wrap:wrap;margin:0 0 12px"><button class="chip' + (!F ? ' on' : '') + '" data-rcf="">Todas · ' + (r.lista || []).length + '</button>' + (r.familias || []).map(f => { const n = (r.lista || []).filter(x => x.fam === f.k).length; return n ? '<button class="chip' + (F === f.k ? ' on' : '') + '" data-rcf="' + f.k + '" title="Cada ' + f.intervalo + ' días (' + (f.fuente === 'tienda' ? 'según tus clientes, ' + f.datos + ' recompras' : 'valor estándar: aún hay pocos datos') + ')">' + esc(f.t) + ' · ' + n + '</button>' : ''; }).join('') + '</div>';
+  const fam = F && (r.familias || []).find(f => f.k === F);
+  const nota = '<div class="wsub" style="margin:-4px 2px 12px">' + (fam ? esc(fam.t) + ': se repone cada ~' + Math.round(fam.intervalo / 30) + ' meses (' + (fam.fuente === 'tienda' ? 'calculado con tus clientes' : 'valor estándar; se ajusta solo cuando haya más compras') + ').' : 'Revisa el mensaje y envíalo; cada envío queda en la ficha y no vuelve a aparecer hasta el próximo ciclo.') + '</div>';
+  const stockTx = x => x.stock_mismo ? '<span class="rc-st ok">✓ En stock: ' + esc(rcCorto(x.stock_mismo.producto)) + ' (' + x.stock_mismo.stock + ' u)</span>'
+    : (x.alternativas || []).length ? '<span class="rc-st mid">Parecido en stock: ' + esc(rcCorto(x.alternativas[0].producto)) + ' (' + x.alternativas[0].stock + ' u)</span>'
+    : '<span class="rc-st no">Sin stock en tienda: conviene pedir antes de escribir</span>';
+  S._rcL = L;
+  return cab + chips + nota + (L.length ? '<div class="opgrid">' + L.slice(0, 40).map((o, i) => { const x = o.x, c = o.c, tel = telWA(c && c.telefono ? c : x);
+    return '<div class="cmsg"><div class="row" style="gap:10px;align-items:center">' + avatar(c || { nombre: x.nombre }, 34) + '<div class="grow"><b>' + esc((c && c.nombre) || x.nombre) + '</b><small>' + esc(x.familia + ' · compró ' + fmt(x.fecha) + ' (hace ' + x.dias + ' días; se repone cada ~' + x.intervalo + ')' + (x.veces > 1 ? ' · ' + x.veces + ' compras' : '')) + '</small></div></div>' +
+      '<div class="wsub" style="margin:6px 0 4px">' + esc(x.producto + (x.variante ? ' · ' + x.variante : '')) + '</div>' + stockTx(x) +
+      '<textarea class="note" rows="4" data-rcm="' + i + '">' + esc(rcMsg(x, c)) + '</textarea><div class="btns" style="margin-top:6px"><button class="btn sm sec" data-rcskip="' + i + '">Omitir</button>' + (c ? '<button class="btn sm sec" data-rcfic="' + i + '">Ficha</button>' : '') +
+      (tel ? '<button class="btn sm" data-rcsend="' + i + '">💬 Enviar por WhatsApp</button>' : x.email ? '<button class="btn sm" data-rcmail="' + i + '">✉️ Enviar por correo</button>' : '<span class="wsub">Sin teléfono ni correo</span>') + '</div></div>'; }).join('') + '</div>'
+    : '<div class="sec"><div class="empty">Nadie pendiente por ahora ✓</div></div>');
+}
+function bindRecompra(){
+  const sc = $('#rcSinc'); if (sc) sc.onclick = async () => { sc.disabled = true; sc.innerHTML = '<span class="spin"></span>'; S.rc = null; await loadRecompra(true); viewBase(); };
+  $$('[data-rcf]').forEach(b => b.onclick = () => { S.rcF = b.dataset.rcf; viewBase(); });
+  const L = S._rcL || [];
+  const marcar = (o, estado, texto) => {
+    const x = o.x; S.rc.lista = (S.rc.lista || []).filter(y => !(y.clave === x.clave && y.fam === x.fam));
+    apiX('recompraMarca', { clave: x.clave, fam: x.fam, estado }).catch(() => toast('No se pudo guardar en la planilla; puede volver a aparecer'));
+    if (o.c && texto) apiX('nota', { id: o.c.id, texto: '🔁 Recompra (' + x.familia + '): ' + texto }).catch(() => {});
+    viewBase();
+  };
+  $$('[data-rcsend]').forEach(b => b.onclick = () => { const i = +b.dataset.rcsend, o = L[i], m = $('[data-rcm="' + i + '"]').value; window.open('https://wa.me/' + telWA(o.c && o.c.telefono ? o.c : o.x) + '?text=' + encodeURIComponent(m), '_blank'); marcar(o, 'enviado', m.slice(0, 300)); });
+  $$('[data-rcmail]').forEach(b => b.onclick = () => { const i = +b.dataset.rcmail, o = L[i], m = $('[data-rcm="' + i + '"]').value; location.href = 'mailto:' + encodeURIComponent(o.x.email) + '?subject=' + encodeURIComponent(o.x.familia + ' · Blackline Puerto Varas') + '&body=' + encodeURIComponent(m); marcar(o, 'enviado', m.slice(0, 300)); });
+  $$('[data-rcskip]').forEach(b => b.onclick = () => marcar(L[+b.dataset.rcskip], 'omitido', ''));
+  $$('[data-rcfic]').forEach(b => b.onclick = () => { const o = L[+b.dataset.rcfic]; if (o.c) openContacto(o.c); });
 }
 
 /* ---------- Ventas reales (Bsale): resumen, rotación, stock quieto y compras por cliente ---------- */

@@ -15,8 +15,8 @@
  * Para actualizar este archivo más adelante: reemplaza todo su contenido y repite los dos pasos anteriores.
  */
 
-const EX_VERSION = '2027-01-16';
-const EX_NIVEL = 48;      // la app lo usa para saber qué funciones tiene este script
+const EX_VERSION = '2027-01-23';
+const EX_NIVEL = 49;      // la app lo usa para saber qué funciones tiene este script
 const EX_HOJA = 'Tareas';
 const EX_PRIMERA = 4;
 const EX_ULTIMA = 400;
@@ -114,7 +114,7 @@ var EX_ROL = 'admin';
 // Lo único que puede pedir el Piso de Venta (todo lo demás responde «solo Admin»).
 const EX_OPS_PISO = ['extras', 'google', 'subtareas', 'repetir', 'siguiente', 'base', 'contacto', 'chat', 'chats', 'nota', 'negocios', 'negocio', 'negocioNota',
   'eventosContacto', 'perderNegocio', 'agente', 'bsale', 'instagram', 'contenido', 'perfilCorregir', 'oportunidad', 'leadsCanal', 'specialized', 'noticias', 'clima',
-  'avisos', 'copiloto', 'global', 'tareaIA', 'eventoCrear', 'eventos', 'sesion', 'salir'];
+  'avisos', 'copiloto', 'global', 'tareaIA', 'eventoCrear', 'eventos', 'sesion', 'salir', 'recompra', 'recompraMarca'];
 // Herramientas del Cerebro que muestran números de la tienda o costos: el Piso de Venta no las tiene.
 const EX_TOOLS_SOLO_ADMIN = ['ventas_tienda', 'buscar_en_proveedores', 'oportunidades_compra', 'correos_proveedores', 'buscar_en_planillas', 'buscar_correos'];
 const EX_SES_DIAS = { admin: 30, piso: 14 };
@@ -282,6 +282,8 @@ function ex_ruta_(p) {
     case 'proveedores': return ex_proveedores_(p);
     case 'tareaIA':    return ex_tareaIA_(p);
     case 'bsaleVentas': return ex_bsaleVentas_(p);
+    case 'recompra':   return ex_recompra_(p);
+    case 'recompraMarca': return ex_recompraMarca_(p);
     case 'eventoCrear': return ex_eventoCrear_(p);
     case 'eventos':    return { ok: true, eventos: int_eventosRango_(ex_tz_(), String(p.desde || ''), String(p.hasta || '')) };
     default:           return { ok: false, error: 'op desconocida: ' + p.op };
@@ -2985,6 +2987,90 @@ function ex_bsaleVentas_(p) {
   const res = ex_bsaleVentasResumen_(); res.meta = Number(PropertiesService.getScriptProperties().getProperty('EX_META_VENTAS')) || 0;   // meta de ventas del mes (la fija Gustavo en el Inicio)
   return res;
 }
+/* ---------- Recompra de consumibles: quién debería cambiar pastillas, cadena, cubiertas… según sus compras en Bsale ---------- */
+// Para cada familia se calcula cada cuánto vuelven a comprar los clientes de la tienda (mediana entre compras); si hay pocos
+// datos se usa un intervalo estándar. Sale en la lista quien ya pasó ese intervalo (y no tanto como para darlo por perdido),
+// con el stock de la tienda para ofrecer. Los mensajes los envía una persona, uno por uno: nada sale solo.
+const EX_RC_FAM = [
+  { k: 'lubricante', t: 'Lubricante', dias: 90, re: /lubric|\blube\b|aceite.*cadena|chain ?(oil|wax|lube)|\bcera\b|wet ?lube|dry ?lube/ },
+  { k: 'sellante', t: 'Sellante tubeless', dias: 120, re: /sellante|sealant|liquido.*tubeless|tubeless.*liquido/ },
+  { k: 'limpieza', t: 'Limpieza', dias: 120, re: /muc.?off|limpiador|shampoo|cleaner|desengras|degreaser|bike ?wash/ },
+  { k: 'pastillas', t: 'Pastillas de freno', dias: 180, re: /pastilla|brake ?pad|disc ?pad|\bpads?\b/ },
+  { k: 'cadena', t: 'Cadena', dias: 270, re: /cadena|\bchain\b/, no: /guia|guide|checker|medidor|herramienta|tool|tronchacadena|eslabon|power ?(link|lock)|quick ?link|missing ?link|candado|lock|protector|stay/ },
+  { k: 'cubiertas', t: 'Cubiertas', dias: 300, re: /neumatico|cubierta|\btire\b|\btyre\b|\bneum\b/, no: /camara|\btube\b|parche|valvula|insert|cushcore|palanca|lever/ },
+  { k: 'cassette', t: 'Cassette', dias: 540, re: /cassette|casete|\bpinon(es)?\b|sprocket/, no: /herramienta|tool|lockring|extractor/ }
+];
+function ex_rcFamilia_(tx) {
+  const t = ex_norm_(tx);
+  for (let i = 0; i < EX_RC_FAM.length; i++) { const f = EX_RC_FAM[i]; if (f.re.test(t) && !(f.no && f.no.test(t))) return f; }
+  return null;
+}
+function ex_rcEnviados_() { return JSON.parse(PropertiesService.getScriptProperties().getProperty('EX_RECOMPRA_ENV') || '{}'); }
+function ex_recompra_(p) {
+  if (!ex_bsaleToken_()) return { ok: true, activo: false };
+  const cache = CacheService.getScriptCache(), c0 = !p.fresco && cache.get('rc1'); if (c0) return JSON.parse(c0);
+  const tz = ex_tz_(), ahora = Date.now(), env = ex_rcEnviados_(), DIA = 86400000;
+  const generico = /consumidor final|cliente (general|boleta|varios|ocasional)|sin nombre|^cliente$|^varios$|blackline|specialized|servicio tecnico/;
+  const cli = {}, gaps = {};
+  ex_bsvFilas_().forEach(function (r) {
+    if (!ex_bsvEsVenta_(r[2]) || /cr[eé]dito/i.test(String(r[2])) || !(+r[13] > 0) || !(+r[14] > 0)) return;
+    const nom = String(r[5] || '').trim(); if (!nom || generico.test(ex_norm_(nom))) return;
+    const f = ex_rcFamilia_(r[10] + ' ' + r[11]); if (!f) return;
+    const email = String(r[6] || '').toLowerCase().trim(), tel = String(r[7] || '').replace(/\D/g, ''), rut = String(r[8] || '').replace(/[^0-9kK]/g, '').toLowerCase();
+    const key = email || (tel.length >= 8 ? 't' + tel.slice(-8) : '') || (rut ? 'r' + rut : '') || (r[4] ? 'c' + r[4] : ''); if (!key) return;
+    const c = cli[key] = cli[key] || { nombre: nom, email: email, telefono: tel, rut: rut, fam: {} };
+    if (!c.telefono && tel) c.telefono = tel;
+    (c.fam[f.k] = c.fam[f.k] || []).push({ t: r[0].getTime(), producto: String(r[10] || ''), variante: String(r[11] || ''), vid: String(r[9] || ''), q: +r[13] || 1 });
+  });
+  // Intervalo típico de la tienda por familia: días entre compras de un mismo cliente (más de 20 días, para no contar el mismo pedido).
+  Object.keys(cli).forEach(function (k) { Object.keys(cli[k].fam).forEach(function (fk) {
+    const d = cli[k].fam[fk].map(function (x) { return x.t; }).sort(function (a, b) { return a - b; });
+    for (let i = 1; i < d.length; i++) { const g = (d[i] - d[i - 1]) / DIA; if (g > 20) (gaps[fk] = gaps[fk] || []).push(g); }
+  }); });
+  const fams = {};
+  EX_RC_FAM.forEach(function (f) {
+    const g = (gaps[f.k] || []).sort(function (a, b) { return a - b; }), n = g.length;
+    const med = n ? (n % 2 ? g[(n - 1) / 2] : (g[n / 2 - 1] + g[n / 2]) / 2) : 0;
+    const usa = n >= 6 ? Math.round(Math.min(f.dias * 2, Math.max(f.dias * 0.5, med))) : f.dias;
+    fams[f.k] = { k: f.k, t: f.t, intervalo: usa, fuente: n >= 6 ? 'tienda' : 'estándar', datos: n };
+  });
+  // Stock de la tienda por familia (para ofrecer lo mismo que compró, o algo parecido).
+  const stock = {}; try { const sh = SpreadsheetApp.getActive().getSheetByName(EX_HOJA_BSTOCK); if (sh && sh.getLastRow() > 1) sh.getRange(2, 1, sh.getLastRow() - 1, 2).getValues().forEach(function (r) { stock[String(r[0])] = +r[1] || 0; }); } catch (e) {}
+  const enStock = {}; try { ex_bsaleCatalogo_Leer_().forEach(function (v) { if (!(stock[v.id] > 0)) return; const f = ex_rcFamilia_(v.producto + ' ' + v.variante); if (f) (enStock[f.k] = enStock[f.k] || []).push({ vid: v.id, producto: v.producto, variante: v.variante, stock: stock[v.id] }); }); } catch (e) {}
+  const palabras = function (s) { return ex_norm_(s).split(/[^a-z0-9]+/).filter(function (w) { return w.length >= 3; }); };
+  const lista = [];
+  Object.keys(cli).forEach(function (k) {
+    const c = cli[k];
+    Object.keys(c.fam).forEach(function (fk) {
+      const L = c.fam[fk].sort(function (a, b) { return b.t - a.t; }), u = L[0], F = fams[fk], dias = Math.floor((ahora - u.t) / DIA);
+      if (dias < F.intervalo * 0.9 || dias > F.intervalo * 2.5) return;
+      const e = env[k + '|' + fk]; if (e && (ahora - Date.parse(e.f)) / DIA < F.intervalo) return;
+      const S = enStock[fk] || [], w = palabras(u.producto);
+      const mismo = S.filter(function (x) { return x.vid === u.vid; })[0] || S.filter(function (x) { return x.producto === u.producto; })[0];
+      const alt = mismo ? [] : S.map(function (x) { const t = ex_norm_(x.producto + ' ' + x.variante); return { x: x, p: w.filter(function (y) { return t.indexOf(y) >= 0; }).length }; })
+        .sort(function (a, b) { return b.p - a.p || b.x.stock - a.x.stock; }).slice(0, 2).map(function (y) { return y.x; });
+      lista.push({ clave: k, fam: fk, familia: F.t, nombre: c.nombre, email: c.email, telefono: c.telefono,
+        producto: u.producto, variante: u.variante, fecha: ex_ymd_(new Date(u.t), tz), dias: dias, intervalo: F.intervalo, veces: L.length,
+        stock_mismo: mismo ? { producto: mismo.producto, variante: mismo.variante, stock: mismo.stock } : null,
+        alternativas: alt.map(function (x) { return { producto: x.producto, variante: x.variante, stock: x.stock }; }) });
+    });
+  });
+  // Primero quien está más "a punto" (cerca de 1,0–1,5 veces su intervalo) y con stock para ofrecer.
+  lista.sort(function (a, b) { const pa = Math.abs(a.dias / a.intervalo - 1.2) - (a.stock_mismo ? 0.3 : 0), pb = Math.abs(b.dias / b.intervalo - 1.2) - (b.stock_mismo ? 0.3 : 0); return pa - pb; });
+  const res = { ok: true, activo: true, familias: EX_RC_FAM.map(function (f) { return fams[f.k]; }), lista: lista.slice(0, 80), total: lista.length, generado: new Date().toISOString() };
+  try { const s = JSON.stringify(res); if (s.length < 90000) cache.put('rc1', s, 1800); } catch (e) {}
+  return res;
+}
+// Marca un recordatorio como enviado u omitido: no vuelve a aparecer hasta que se cumpla otro intervalo.
+function ex_recompraMarca_(p) {
+  const k = String(p.clave || '') + '|' + String(p.fam || ''); if (k.length < 3) return { ok: false, error: 'falta clave' };
+  const pr = PropertiesService.getScriptProperties(), env = ex_rcEnviados_(), lim = Date.now() - 400 * 86400000;
+  Object.keys(env).forEach(function (x) { if (Date.parse(env[x].f) < lim) delete env[x]; });
+  if (p.deshacer) delete env[k]; else env[k] = { f: new Date().toISOString(), e: p.estado === 'omitido' ? 'omitido' : 'enviado', por: EX_ROL };
+  pr.setProperty('EX_RECOMPRA_ENV', JSON.stringify(env));
+  CacheService.getScriptCache().remove('rc1');
+  return { ok: true };
+}
 // Texto para el Copiloto, el agente de tareas y el Cerebro.
 function ex_bsaleVentasTexto_(consulta, dias) {
   const r = ex_bsaleVentasResumen_(); if (!r.activo) return 'Bsale aún no está conectado.'; if (r.vacio) return 'Las ventas de Bsale todavía se están copiando (primera sincronización).';
@@ -3857,6 +3943,7 @@ const EX_COP_TOOLS = [
   { name: 'ver_noticias', description: 'Noticias del mundo bike seleccionadas (Pinkbike, Vital MTB, Specialized en la prensa, ciclismo en Chile).', input_schema: { type: 'object', properties: {} } },
   { name: 'stock_tienda', description: 'Stock de la tienda en Bsale para un producto (nombre, SKU o código).', input_schema: { type: 'object', properties: { consulta: { type: 'string' } }, required: ['consulta'] } },
   { name: 'ventas_tienda', description: 'Ventas reales de la tienda según Bsale. Sin consulta: ventas por mes, hoy, semana y mes (con comparación), lo más vendido, lo que hay que reponer pronto (cobertura de stock), el stock quieto y los mejores clientes. Con consulta (ej. "muc-off", "casco", "levo"): unidades y monto vendidos de esos productos en los últimos N días.', input_schema: { type: 'object', properties: { consulta: { type: 'string' }, dias: { type: 'integer' } } } },
+  { name: 'recompra_consumibles', description: 'Clientes a quienes por tiempo ya les toca reponer un consumible (pastillas, cadena, cubiertas, sellante, lubricante, cassette, limpieza) según sus compras en Bsale, con el stock de la tienda para ofrecer. Los mensajes se envían desde Contactos → Campañas → Recompra.', input_schema: { type: 'object', properties: { familia: { type: 'string', description: 'pastillas, cadena, cubiertas, sellante, lubricante, cassette o limpieza; vacío para todas' } } } },
   { name: 'compras_cliente', description: 'Historial de compras de un cliente en Bsale (boletas y facturas con productos), buscando por email, teléfono, RUT o nombre exacto.', input_schema: { type: 'object', properties: { email: { type: 'string' }, telefono: { type: 'string' }, rut: { type: 'string' }, nombre: { type: 'string' } } } },
   { name: 'buscar_en_planillas', description: 'Busca en las planillas y archivos que Gustavo conectó como fuentes (listas de precios, exportaciones del B2B, metas, proveedores, etc.).', input_schema: { type: 'object', properties: { consulta: { type: 'string' } }, required: ['consulta'] } },
   { name: 'ver_instagram', description: 'Resumen de Instagram: alcance y seguidores recientes, últimas publicaciones y su rendimiento, contenido planificado y piezas del estudio.', input_schema: { type: 'object', properties: {} } },
@@ -3921,6 +4008,7 @@ function ex_copHerramienta_(nombre, inp, estado) {
     case 'buscar_andes': return ex_andesBuscar_(inp.consulta);
     case 'stock_tienda': if (!ex_bsaleToken_()) return 'Bsale aún no está conectado: no hay stock de la tienda disponible.'; return String(ex_bsaleParaAgente_(inp.consulta) || 'sin coincidencias en Bsale');
     case 'ventas_tienda': if (!ex_bsaleToken_()) return 'Bsale aún no está conectado.'; return ex_bsaleVentasTexto_(inp.consulta, inp.dias);
+    case 'recompra_consumibles': { const r = ex_recompra_({}); if (!r.activo) return 'Bsale aún no está conectado.'; const f = ex_norm_(inp.familia || ''); const L = (r.lista || []).filter(function (x) { return !f || x.fam.indexOf(f) === 0; }).slice(0, 25).map(function (x) { return { cliente: x.nombre, familia: x.familia, ultimo: x.producto, fecha: x.fecha, dias: x.dias, se_repone_cada: x.intervalo, stock: x.stock_mismo ? 'mismo producto: ' + x.stock_mismo.stock + ' u' : (x.alternativas[0] ? 'parecido: ' + x.alternativas[0].producto : 'sin stock') }; }); return L.length ? ex_json_({ intervalos: r.familias, clientes: L }, 7000) : 'Nadie pendiente de recompra por ahora.'; }
     case 'compras_cliente': { if (!ex_bsaleToken_()) return 'Bsale aún no está conectado.'; const L = ex_bsaleCompras_(inp); return L.length ? ex_json_(L, 7000) : 'Sin compras en Bsale para ese cliente (revisa email, teléfono o RUT).'; }
     case 'buscar_en_planillas': { const L = ex_fuentesLista_(); if (!L.length) return 'No hay planillas conectadas como fuentes todavía.'; return ex_json_(ex_fuenteBuscar_(inp.consulta, 15), 9000); }
     case 'ver_instagram': {

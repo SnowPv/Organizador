@@ -515,3 +515,11 @@ Revisión con tres análisis en paralelo (diseño y uso, eficiencia y errores, u
 - «Sin conexión» aparece solo si de verdad no hay internet. Si el script está ocupado o responde con error, la app reintenta sola (≈2, 6 y 12 s) y, si sigue fallando, muestra «planilla ocupada · reintentar» (tocable; el detalle queda en Ajustes → último error).
 - Al volver internet, la app recarga sola.
 - Inicio en pantallas grandes: el Pipeline se compacta (y si hace falta oculta «Más cerca de cerrar») para que nada se monte; lo mismo con la tarjeta de ventas.
+
+## v84 · Recompra de consumibles (script nivel 49)
+- Contactos → Campañas → «🔁 Recompra de consumibles»: clientes a quienes por tiempo ya les toca reponer pastillas, cadena, cubiertas, sellante, lubricante, cassette o limpieza, según sus compras en Bsale.
+- El intervalo de cada familia se calcula con tus clientes (mediana entre recompras, con al menos 6 casos); si hay pocos datos usa un valor estándar (pastillas 6 meses, cadena 9, cubiertas 10, sellante 4, lubricante 3, cassette 18, limpieza 4).
+- Aparece quien pasó ese intervalo (hasta 2,5 veces; más que eso se da por perdido). Excluye «consumidor final», contactos internos y proveedores.
+- Cada tarjeta muestra el stock de la tienda: el mismo producto, uno parecido, o «sin stock: conviene pedir antes de escribir».
+- Mensaje listo y editable; lo envía una persona por WhatsApp o correo. Enviado u omitido queda guardado en el script (lo ven Admin y Piso) y no vuelve a aparecer hasta el próximo ciclo. Sin descuentos.
+- El Cerebro tiene la herramienta `recompra_consumibles` («¿a quién le toca cambiar pastillas?»).
