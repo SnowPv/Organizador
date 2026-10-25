@@ -2425,6 +2425,36 @@ body.ui2{background:#F6F7F9!important}
 .ctp-o.on,.ctp-o:hover{background:var(--soft)}.ctp-o.nuevo{color:var(--accent-ink);font-weight:600;border-top:1px solid var(--line);border-radius:0 0 8px 8px}
 .ctp-h{font-size:12px;color:var(--ok-ink);margin-top:4px;min-height:16px}.ctp-h.nuevo{color:var(--accent-ink)}
 .org-t{width:100%;border-collapse:collapse;font-size:13.5px}.org-t th{text-align:left;font-size:11.5px;color:var(--muted);font-weight:600;padding:6px 4px;border-bottom:1px solid var(--line)}.org-t td{padding:8px 4px;border-bottom:1px solid #F0F2F5;font-variant-numeric:tabular-nums}
+
+/* ===== v82 · Ajustes de la revisión de diseño (celular primero) ===== */
+@media (max-width:999px){
+  main,#view{padding-bottom:calc(230px + env(safe-area-inset-bottom))}
+  nav.bottom button{font-size:11px}
+}
+@media (max-width:720px){
+  .pv-ss{white-space:normal!important;line-height:1.25;overflow:visible!important;text-overflow:clip!important}
+  .pv-steps .pv-s{padding-right:12px!important}.pv-steps .pv-s > .ico{display:none}
+  .pv-hr .hy-wx{white-space:normal}
+  .dact{grid-template-columns:repeat(3,1fr)!important}
+  .stepper button{font-size:10.5px;padding-left:4px}
+  .sheet .tabs{overflow-x:auto;flex-wrap:nowrap;scrollbar-width:none;-webkit-mask-image:linear-gradient(90deg,#000 88%,transparent)}
+  .sheet .tabs::-webkit-scrollbar{display:none}.sheet .tabs button{flex:none}
+  .d2-now{font-size:13px;flex-wrap:wrap}
+}
+/* Acciones de la negociación: Ganada / Perdida / Archivar más discretas */
+.dact .win,.dact .lose,.dact #ng_arch{padding:8px 6px;font-size:12.5px}
+/* Hoy: las tarjetas no se estiran a la altura de la vecina */
+.pv-g{align-items:start}
+/* Cerebro: encabezado en una línea y sugerencias en una fila deslizable */
+.cop-h small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#copQ{min-height:44px;line-height:1.4}
+.cop-s{display:flex!important;flex-wrap:nowrap!important;overflow-x:auto;scrollbar-width:none}.cop-s::-webkit-scrollbar{display:none}.cop-s button{flex:none}
+/* Negocios: margen a la derecha del tablero */
+.ui2 .kb{padding-right:12px}
+/* Contraste de los textos grises chicos */
+.kvac,.ui2 .kvac,.pl3-e,.ui2 .pv-s > .ico,.hint.kvac{color:#667085!important}
+/* Habilidades del Cerebro: cifras y enlace en líneas separadas */
+.cb-card .cb-f,.cb-s .cb-f{flex-direction:column;align-items:flex-start;gap:4px}
 </style>
 
 
@@ -2550,8 +2580,9 @@ async function apiX(op, extra){
   }
 }
 // Nivel 2 del script Extras: recordatorios y base de contactos. Nivel 3: la base solo usa contacto@blacklinechile.cl. Nivel 4: eventos de varios días.
+function enCurso(k, fn){ S._p = S._p || {}; if (S._p[k]) return S._p[k]; const pr = Promise.resolve().then(fn).finally(() => { if (S._p[k] === pr) delete S._p[k]; }); S._p[k] = pr; return pr; }
 function extNivel(){ return S.extInactivo ? 0 : (S.ext && S.ext.nivel) || 1; }
-const APP_VER = 'v81', NIVEL_ULTIMO = 48;
+const APP_VER = 'v82', NIVEL_ULTIMO = 48;
 function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < NIVEL_ULTIMO; }
 let sincTimer = null;
 // Después de cambiar tareas, el script actualiza los recordatorios del calendario (en segundo plano).
@@ -2560,7 +2591,9 @@ function sincPronto(){
   clearTimeout(sincTimer);
   sincTimer = setTimeout(() => apiX('sinc').catch(() => {}), 2500);
 }
-async function loadBase(forzar){
+// Si ya hay una carga en curso se reutiliza (el script atiende de a una consulta).
+function loadBase(forzar){ return enCurso('base', () => _loadBase(forzar)); }
+async function _loadBase(forzar){
   if (extNivel() < 2) return;
   if (!forzar && S.base && Date.now() - S.baseAt < 10 * 60000) return;
   try { const b = await apiX('base'); S.base = b; S.baseAt = Date.now(); lsSet('baseCache', b); }
@@ -2587,7 +2620,9 @@ async function load(){
   S.busy = true; head();
   const antes = S.data ? +((S.data.indicadores || {})['Nivel']) || 0 : 0;
   try {
-    S.data = await api('state'); LS.cache = JSON.stringify(S.data); S.offline = false;
+    const seq = S.loadSeq = (S.loadSeq || 0) + 1, st = await api('state');
+    if (seq !== S.loadSeq) return;   // llegó una consulta más nueva: esta respuesta ya no sirve
+    S.data = st; LS.cache = JSON.stringify(S.data); S.offline = false;
     const ahora = +((S.data.indicadores || {})['Nivel']) || 0;
     if (antes && ahora > antes){ confetti(80); toast('🏅 ¡Subiste a nivel ' + ahora + ' · ' + ((S.data.indicadores || {})['Nombre del nivel'] || '') + '!'); }
   } catch(e){
@@ -2680,7 +2715,7 @@ const IMG_VACIA = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http:/
 document.addEventListener('error', e => { const t = e.target; if (t && t.tagName === 'IMG' && !t.dataset.vacia){ t.dataset.vacia = '1'; t.src = IMG_VACIA; } }, true);
 $('#btnRefresh').onclick = () => { load(); loadGoogle(true); loadGlobal(true); };
 $('#btnSettings').onclick = () => showSettings();
-$('#fab').onclick = () => { try { openAdd(); } catch(e){ toast('No se pudo abrir el formulario: ' + e.message); } };
+$('#fab').onclick = () => { try { if (S.tab === 'negocios' && extNivel() >= 5) return openNegocio(null); openAdd(); } catch(e){ toast('No se pudo abrir el formulario: ' + e.message); } };
 $('#copFab').onclick = () => { const c = $('#cop'); if (c && c.classList.contains('on')) c.classList.remove('on'); else copiloto(); };
 document.addEventListener('keydown', e => { if ((e.key === '/' && !/INPUT|TEXTAREA|SELECT/.test((document.activeElement || {}).tagName || ''))){ e.preventDefault(); copiloto(); } if (e.key === 'Escape'){ const c = $('#cop'); if (c) c.classList.remove('on'); } });
 
@@ -3305,7 +3340,7 @@ function openPlanSemana(){
 function motivoAlerta(n, a){
   if (a.sinResponder != null) return 'Te escribió ' + (a.sinResponder ? 'hace ' + a.sinResponder + ' d' : 'hoy') + ' · sin respuesta';
   if (a.proxVencida) return 'Próximo paso vencido (' + fmt(n.fechaProx) + ')';
-  if (a.estancada) return 'Sin actividad hace ' + a.dAct + ' d';
+  if (a.estancada) return 'Sin actividad hace ' + a.dAct + '\u00a0d';
   if (a.sinProx) return 'Sin próximo paso';
   return '';
 }
@@ -3532,7 +3567,11 @@ const TIPO_IC = { 'Cliente': '🛒', 'Proveedor': '📦', 'Institución': '🏛�
 const TIPO_COL = { 'Cliente': '#13B386', 'Proveedor': '#3B9EFF', 'Institución': '#A44DF0', 'Equipo': '#FF8A4C', 'Otro': '#7E7F92', 'Por clasificar': '#F5A524', 'Archivado': '#B8B7C6', 'Ignorar': '#A3A2B5' };
 function contactos(){ return ((S.base && S.base.contactos) || []).filter(c => c.tipo !== 'Ignorar' && c.tipo !== 'Archivado'); }
 function archivados(){ return ((S.base && S.base.contactos) || []).filter(c => c.tipo === 'Archivado'); }
-function contactoPorId(id){ return ((S.base && S.base.contactos) || []).find(c => c.id === id); }
+function contactoPorId(id){
+  const b = S.base, L = (b && b.contactos) || [];
+  if (!S._ctoM || S._ctoM.b !== b || S._ctoM.n !== L.length) S._ctoM = { b, n: L.length, m: new Map(L.map(c => [c.id, c])) };
+  return S._ctoM.m.get(id);
+}
 function contactosFrios(){ return contactos().filter(c => c.tipo === 'Cliente' && c.ultima && diffDays(c.ultima, hoy()) > 30); }
 function haceTxt(ymd){ if (!ymd) return 'sin contacto'; const n = diffDays(ymd, hoy()); return n <= 0 ? 'hoy' : n === 1 ? 'ayer' : n < 30 ? 'hace ' + n + ' d' : n < 365 ? 'hace ' + Math.round(n / 30) + ' m' : 'hace +1 año'; }
 function avatar(c, size){
@@ -3578,7 +3617,7 @@ function openPersonas(){
 }
 // Lo último que entendió el Cerebro sobre un contacto, con su idea de respuesta si el cliente espera.
 function agenteDe(id){
-  const I = ((S.base && S.base.interacciones) || []).filter(i => i.id === id);
+  const I = interIdx().c.get(id) || [];
   const r = I.find(i => /🧠 Agente/.test(i.tipo)), idea = I.find(i => /Idea de respuesta/.test(i.tipo)), perdida = I.find(i => /Venta perdida/.test(i.tipo));
   return { r, idea: idea && r && idea.fecha >= r.fecha && !(perdida && perdida.fecha >= idea.fecha) ? idea : null };
 }
@@ -4024,7 +4063,9 @@ function ctoTab(c, tab){
 
 /* ---------- Redes: Instagram (métricas, audiencia, leads), estrategia y calendario de contenido con IA ---------- */
 function igActivo(){ return extNivel() >= 11 && !!(S.ext && S.ext.instagram && S.ext.instagram.activo); }
-async function loadIG(forzar){
+// Si ya hay una carga en curso se reutiliza (el script atiende de a una consulta).
+function loadIG(forzar){ return enCurso('ig', () => _loadIG(forzar)); }
+async function _loadIG(forzar){
   if (extNivel() < 11) return;
   if (!forzar && S.cont && Date.now() - S.igAt < 10 * 60000) return;
   try {
@@ -5752,7 +5793,7 @@ function viewHoyPiso(){
       '<div class="pv-hr">' + hzAnillo(accH, accT) + hyWx() + '</div></section>' +
     '<div class="pv-lbl">Empieza por aquí</div><div class="pv-steps">' +
       paso('resp', D.resp.length, '💬', 'Responder', D.resp.length ? plural(D.resp.length, 'cliente espera', 'clientes esperan') : 'nadie espera', 'bad') +
-      paso('tareas', D.hacer.length, '✅', 'Tareas de hoy', D.venc.length ? D.venc.length + ' atrasadas' : D.hacer.length ? 'para hoy' : 'todo al día', D.venc.length ? 'bad' : 'warn') +
+      paso('tareas', D.hacer.length, '✅', 'Pendientes', D.venc.length ? D.venc.length + ' atrasadas' + (D.hoyL.length ? ' · ' + D.hoyL.length + ' de hoy' : '') : D.hacer.length ? 'para hoy' : 'todo al día', D.venc.length ? 'bad' : 'warn') +
       paso('neg', D.negs.length, '🤝', 'Seguimientos', D.negs.length ? 'clientes por seguir' : 'todo al día', 'warn') +
       paso('agenda', evF.length, '📅', 'Agenda', prox ? prox.inicio + ' · ' + esc(prox.titulo).slice(0, 28) : evF.length ? 'todo el día' : 'sin eventos', 'info') + '</div>';
   // Fila 1: avisos · calendario del mes · rutina
@@ -5934,7 +5975,7 @@ function copiloto(pregunta){
   let p = $('#cop');
   if (!p){
     p = document.createElement('div'); p.id = 'cop'; p.className = 'cop'; p.setAttribute('role', 'dialog'); p.setAttribute('aria-label', 'Cerebro');
-    p.innerHTML = '<div class="cop-h"><span class="cop-av">' + icon('spark') + '</span><div class="grow"><b>Cerebro</b><small>Un cerebro con todas tus skills. Pregunta o pide cambios: tareas, clientes, negocios, stock, Specialized, Instagram y más</small></div><button class="icon-btn" id="copNew" title="Nueva conversación">↺</button><button class="icon-btn" id="copX" aria-label="Cerrar">✕</button></div><div class="cop-m" id="copM"></div><div class="cop-s" id="copS"></div><form class="cop-f" id="copF"><button type="button" class="cop-mic" id="copMic" title="Dictar una actualización" aria-label="Dictar por voz">' + icon('mic') + '</button><textarea id="copQ" rows="1" placeholder="Pregunta o dicta una actualización…"></textarea><button class="btn" aria-label="Enviar">' + icon('arrow') + '</button></form>';
+    p.innerHTML = '<div class="cop-h"><span class="cop-av">' + icon('spark') + '</span><div class="grow"><b>Cerebro</b><small>Pregunta, dicta o pide cambios</small></div><button class="icon-btn" id="copNew" title="Nueva conversación">↺</button><button class="icon-btn" id="copX" aria-label="Cerrar">✕</button></div><div class="cop-m" id="copM"></div><div class="cop-s" id="copS"></div><form class="cop-f" id="copF"><button type="button" class="cop-mic" id="copMic" title="Dictar una actualización" aria-label="Dictar por voz">' + icon('mic') + '</button><textarea id="copQ" rows="1" placeholder="Pregunta o dicta…"></textarea><button class="btn" aria-label="Enviar">' + icon('arrow') + '</button></form>';
     document.body.appendChild(p);
     p.querySelector('#copX').onclick = () => p.classList.remove('on');
     p.querySelector('#copNew').onclick = () => { S.copHist = []; lsSet('copHist', []); copPintar(); };
@@ -6542,10 +6583,17 @@ async function archivarNeg(n){ await apiX('negocio', { negocio: { id: n.id, etap
 function etapaIdx(k){ return ETAPAS.findIndex(e => e.k === k); }
 function etapaDe(n){ return ETAPA_FIN[n.etapa] || ETAPAS[Math.max(0, etapaIdx(n.etapa))]; }
 function historialDe(n){ return String(n.historial || '').split('|').filter(Boolean).map(x => { const i = x.indexOf(':'); return { f: x.slice(0, i), e: x.slice(i + 1) }; }); }
-function interDe(n){ return ((S.base && S.base.interacciones) || []).filter(i => i.neg === n.id || (n.contacto && i.id === n.contacto)); }
+function interIdx(){
+  const b = S.base, I = (b && b.interacciones) || [];
+  if (!S._intX || S._intX.b !== b || S._intX.n !== I.length){ const c = new Map(), g = new Map(); I.forEach(i => { if (i.id){ if (!c.has(i.id)) c.set(i.id, []); c.get(i.id).push(i); } if (i.neg){ if (!g.has(i.neg)) g.set(i.neg, []); g.get(i.neg).push(i); } }); S._intX = { b, n: I.length, c, g }; }
+  return S._intX;
+}
+function interDe(n){ const X = interIdx(), a = X.g.get(n.id) || [], b = n.contacto ? (X.c.get(n.contacto) || []) : []; if (!a.length) return b.slice(); if (!b.length) return a.slice(); const s = new Set(a); return a.concat(b.filter(i => !s.has(i))); }
 function negTag(n){ return '🤝 ' + n.titulo + ' (' + n.id + ')'; }
 function saludCol(v){ return v >= 70 ? '#13B386' : v >= 40 ? '#F5A524' : '#F04461'; }
-async function loadNeg(forzar){
+// Si ya hay una carga en curso se reutiliza (el script atiende de a una consulta).
+function loadNeg(forzar){ return enCurso('neg', () => _loadNeg(forzar)); }
+async function _loadNeg(forzar){
   if (extNivel() < 5) return;
   if (!forzar && S.neg && Date.now() - S.negAt < 5 * 60000) return;
   try { S.neg = await apiX('negocios'); S.negAt = Date.now(); lsSet('negCache', S.neg); }
@@ -7075,7 +7123,7 @@ function dealCard(n, a, compact){
   const e = a.e, c = a.c, rec = recomendaciones(n, a)[0];
   return '<div class="deal" data-neg="' + esc(n.id) + '"><div class="row" style="gap:10px;align-items:flex-start"><span class="hd" style="background:' + saludCol(a.salud) + ';margin-top:6px"></span><div class="grow"><b style="font-size:15px">' + esc(n.titulo) + '</b>' +
     '<div class="meta"><span class="tag" style="background:' + hexToRgba(e.c, .15) + ';color:' + e.c + '">' + e.ic + ' ' + esc(n.etapa) + '</span>' + (n.valor ? '<span class="tag">💰 ' + clpCorto(n.valor) + '</span>' : '') + (/whatsapp/i.test(n.origen) ? '<span class="tag ok">💬 WhatsApp</span>' : '') + (c ? '<span class="tag">👤 ' + esc(String(c.nombre || c.email).split(' ').slice(0, 2).join(' ')) + '</span>' : '') +
-    (a.abierta ? '<span class="tag ' + (a.estancada ? 'bad' : '') + '">⏱ ' + a.dEtapa + ' d en etapa</span>' : '') + '</div>' +
+    (a.abierta ? '<span class="tag ' + (a.estancada ? 'bad' : '') + '">⏱ ' + a.dEtapa + '\u00a0d en etapa</span>' : '') + '</div>' +
     (!compact && a.abierta && n.proxima ? '<div class="hint" style="margin:5px 0 0">➡️ ' + esc(n.proxima) + (n.fechaProx ? ' · ' + fmtRel(n.fechaProx) : '') + '</div>' : '') +
     (rec ? '<div class="why">' + rec.ic + ' ' + esc(rec.t) + '</div>' : '') + '</div>' +
     (a.abierta ? '<div class="ct-last" data-info="prob" data-ref="' + esc(n.id) + '">' + Math.round(a.prob * 100) + '%<br><small>prob. ⓘ</small></div>' : '') + '</div></div>';
@@ -9159,7 +9207,7 @@ function showSettings(){
 window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferredInstall = e; });
 window.addEventListener('error', e => { const msg = e.error && e.error.message || e.message; try { LS.ultErr = JSON.stringify({ m: msg, s: String(e.error && e.error.stack || (e.filename || '') + ':' + (e.lineno || '')).slice(0, 600), tab: S.tab, v: APP_VER, f: new Date().toISOString().slice(0, 16) }); } catch(x){} toast('Error: ' + msg); });
 window.addEventListener('unhandledrejection', e => toast('Error: ' + (e.reason && e.reason.message || e.reason)));
-document.addEventListener('visibilitychange', () => { if (!document.hidden && LS.url && S.data){ load(); focusPill(); } });
+document.addEventListener('visibilitychange', () => { if (!document.hidden && LS.url && S.data){ if (Date.now() - (S._visAt || 0) > 60000){ S._visAt = Date.now(); load(); } focusPill(); } });
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
 
 /* ---------- inicio ---------- */

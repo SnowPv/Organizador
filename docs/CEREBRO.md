@@ -490,3 +490,23 @@ Basada en el análisis de unos 300 diseños de Dribbble (búsquedas: crm, crm-da
 
 - **Negocios → Resumen → «De dónde vienen las ventas»**: por origen (WhatsApp/agente, Instagram, Cerebro, web, a mano…): abiertas, ganadas, tasa de cierre (sin archivadas), ticket promedio (solo Admin) y días para cerrar (`origenNegHTML`).
 - **Postventa**: la tarea de la revisión de los 30 días agrega «Asesoría (si no los tiene): …» con los accesorios típicos que no están entre los productos del negocio (casco, pedales, bolso/mochila, luces, tubeless, protecciones y, en e-bikes, cargador o batería extra). Nunca descuentos.
+
+## Revisión general: eficiencia y diseño (app v82 · script nivel 48)
+
+Revisión con tres análisis en paralelo (diseño y uso, eficiencia y errores, uso de datos y automatización).
+
+**Eficiencia (app)**
+- `enCurso`: las cargas de contactos, negociaciones e Instagram no se duplican si ya hay una en curso (el script atiende de a una consulta).
+- `load()`: si llegan dos respuestas, gana la más nueva (`S.loadSeq`); al volver a la app se recarga como máximo una vez por minuto.
+- Índices: `contactoPorId` usa un mapa; `interIdx` agrupa las interacciones por contacto y por negocio (`interDe`, `agenteDe`). Menos trabajo en cada pantalla con muchos contactos.
+
+**Eficiencia (script)**
+- El catálogo de Bsale ya no se sincroniza dentro de una consulta de la app (solo si está vacío o tiene más de 3 días); lo sincroniza la tarea de cada hora. Se lee una vez por ejecución.
+- La base de contactos se lee una vez por ejecución (`ex_leerBase_` con memoria; se borra al escribir).
+- Cachés: nunca se guarda JSON cortado (chats, correos de proveedores).
+- Cerebro: desde los 40 s responde con lo que tiene y no corre más herramientas; respuestas más cortas (`max_tokens` 3000).
+
+**Diseño**
+- Celular: más espacio abajo para que los botones flotantes no tapen contenido; el «+» en Negocios abre un negocio nuevo; textos de «Empieza por aquí» sin cortes («Pendientes: 10 atrasadas · 2 de hoy»); acciones de la negociación en filas de 3; pestañas de la ficha deslizables; barra inferior con letra de 11 px.
+- Cerebro: subtítulo en una línea, sugerencias en una fila deslizable, campo de texto más alto.
+- Hoy en computador: las tarjetas no se estiran a la altura de la vecina. Contraste mayor en textos grises chicos. «N d» sin quiebre de línea.

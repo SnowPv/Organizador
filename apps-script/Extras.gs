@@ -15,7 +15,7 @@
  * Para actualizar este archivo más adelante: reemplaza todo su contenido y repite los dos pasos anteriores.
  */
 
-const EX_VERSION = '2027-01-15';
+const EX_VERSION = '2027-01-16';
 const EX_NIVEL = 48;      // la app lo usa para saber qué funciones tiene este script
 const EX_HOJA = 'Tareas';
 const EX_PRIMERA = 4;
@@ -460,7 +460,9 @@ function ex_filasContactos_(cs) {
   return n > 0 ? cs.getRange(2, 1, n, EX_CAB_CONTACTOS.length).getValues() : [];
 }
 
-function ex_leerBase_() {
+var EX_BASE_MEMO = null;
+function ex_leerBase_() { return EX_BASE_MEMO || (EX_BASE_MEMO = ex_leerBaseReal_()); }
+function ex_leerBaseReal_() {
   const b = ex_baseHojas_(), tz = ex_tz_();
   const f = function (d) { return d instanceof Date ? ex_ymd_(d, tz) : ''; };
   const contactos = ex_filasContactos_(b.cs).filter(function (r) { return r[0]; }).map(function (r) {
@@ -475,6 +477,7 @@ function ex_leerBase_() {
 }
 
 function ex_guardarContacto_(c) {
+  EX_BASE_MEMO = null;
   const b = ex_baseHojas_(), filas = ex_filasContactos_(b.cs);
   const email = String(c.email || '').trim().toLowerCase();
   let id = String(c.id || '').trim();
@@ -682,6 +685,7 @@ function ex_escanearBase_() {
 
 // Recalcula "Última interacción" e "Interacciones" de cada contacto.
 function ex_recalcular_(cs, is) {
+  EX_BASE_MEMO = null;
   const nc = cs.getLastRow() - 1;
   if (nc < 1) return;
   const ids = cs.getRange(2, 1, nc, 1).getValues();
@@ -1046,7 +1050,7 @@ function ex_chats_(p) {
   const L = Object.keys(ult).map(function (id) { const u = ult[id]; return { id: id, f: u.t > 0 ? Utilities.formatDate(new Date(u.t), tz, 'yyyy-MM-dd HH:mm') : '', yo: !!u.yo, tx: u.tx, n: u.n, nom: u.nom, tel: u.tel }; })
     .sort(function (a, b) { return a.f < b.f ? 1 : a.f > b.f ? -1 : 0; });
   const out = { ok: true, chats: L.slice(0, 1500) };
-  try { cache.put(k, JSON.stringify(out), 120); } catch (e) {}
+  try { const js = JSON.stringify(out); if (js.length < 95000) cache.put(k, js, 120); } catch (e) {}
   return out;
 }
 
@@ -1360,11 +1364,15 @@ function ex_bsaleSincCatalogo_() {
   PropertiesService.getScriptProperties().setProperty('EX_BSALE_SINC', new Date().toISOString());
   return filas.length;
 }
+var EX_BSCAT = null;   // catálogo leído una vez por ejecución
 function ex_bsaleCatalogo_() {
   const sh = ex_hojaBsale_(), n = sh.getLastRow() - 1, props = PropertiesService.getScriptProperties();
   const viejo = Date.now() - new Date(props.getProperty('EX_BSALE_SINC') || 0).getTime() > 24 * 3600000;
-  if (n <= 0 || viejo) { ex_bsaleSincCatalogo_(); return ex_bsaleCatalogo_Leer_(); }
-  return ex_bsaleCatalogo_Leer_();
+  // La sincronización completa es lenta: en una consulta de la app solo se hace si no hay catálogo o tiene más de 3 días;
+  // lo normal es que la haga la tarea de cada hora (EX_FONDO).
+  const muyViejo = Date.now() - new Date(props.getProperty('EX_BSALE_SINC') || 0).getTime() > 72 * 3600000;
+  if (n <= 0 || (viejo && (EX_FONDO || muyViejo))) { ex_bsaleSincCatalogo_(); EX_BSCAT = null; }
+  return EX_BSCAT || (EX_BSCAT = ex_bsaleCatalogo_Leer_());
 }
 function ex_bsaleCatalogo_Leer_() {
   const sh = ex_hojaBsale_(), n = sh.getLastRow() - 1;
@@ -3223,7 +3231,7 @@ function ex_provCorreos_(forzar) {
     });
   } catch (e) { return { error: e.message, items: [] }; }
   const r = { items: out, fecha: new Date().toISOString() };
-  try { cache.put('provCorreos', JSON.stringify(r).slice(0, 95000), 6 * 3600); } catch (e) {}
+  try { const js = JSON.stringify(r); if (js.length < 95000) cache.put('provCorreos', js, 6 * 3600); } catch (e) {}
   return r;
 }
 function ex_provMovimientos_(dias) {
@@ -4089,14 +4097,15 @@ function ex_copiloto_(p) {
   // Pasados ~55 s (o en la última vuelta) se le pide responder con lo que ya tiene, sin más herramientas.
   const t0 = Date.now();
   for (let paso = 0; paso < 7; paso++) {
-    const cerrar = paso === 6 || Date.now() - t0 > 55000;
-    const j = ex_claudeMensajes_({ model: modelo, max_tokens: 6000, output_config: { effort: /haiku/.test(modelo) ? 'medium' : 'low' }, system: [{ type: 'text', text: EX_COP_SISTEMA + '\n\n' + ex_skillsIndice_() + (EX_ROL === 'piso' ? '\n\nCUENTA PISO DE VENTA: quien pregunta es un vendedor del equipo, no Gustavo. No entregues ventas totales de la tienda, metas, márgenes, costos de compra ni gasto; si lo piden, di que eso lo ve el Admin. Sí puedes dar precios de venta al público, stock y el historial de un cliente para atenderlo.' : ''), cache_control: { type: 'ephemeral' } }], tools: tools, tool_choice: { type: cerrar ? 'none' : 'auto' }, messages: messages });
+    const cerrar = paso === 6 || Date.now() - t0 > 40000;
+    const j = ex_claudeMensajes_({ model: modelo, max_tokens: 3000, output_config: { effort: /haiku/.test(modelo) ? 'medium' : 'low' }, system: [{ type: 'text', text: EX_COP_SISTEMA + '\n\n' + ex_skillsIndice_() + (EX_ROL === 'piso' ? '\n\nCUENTA PISO DE VENTA: quien pregunta es un vendedor del equipo, no Gustavo. No entregues ventas totales de la tienda, metas, márgenes, costos de compra ni gasto; si lo piden, di que eso lo ve el Admin. Sí puedes dar precios de venta al público, stock y el historial de un cliente para atenderlo.' : ''), cache_control: { type: 'ephemeral' } }], tools: tools, tool_choice: { type: cerrar ? 'none' : 'auto' }, messages: messages });
     if (j.stop_reason === 'refusal') { texto = 'No puedo ayudar con eso.'; break; }
     messages.push({ role: 'assistant', content: j.content });
     texto = (j.content || []).filter(function (c) { return c.type === 'text'; }).map(function (c) { return c.text; }).join('\n').trim() || texto;
     if (j.stop_reason !== 'tool_use') break;
     const res = (j.content || []).filter(function (c) { return c.type === 'tool_use'; }).map(function (tu) {
       estado.usadas[tu.name] = 1;
+      if (Date.now() - t0 > 45000) return { type: 'tool_result', tool_use_id: tu.id, content: 'No alcancé a consultar esto (tiempo). Responde con lo que ya tienes y dilo en una línea.' };
       try { return { type: 'tool_result', tool_use_id: tu.id, content: String(ex_copHerramienta_(tu.name, tu.input || {}, estado)) }; }
       catch (e) { return { type: 'tool_result', tool_use_id: tu.id, content: 'Error: ' + e.message, is_error: true }; }
     });
@@ -4405,6 +4414,7 @@ function ex_conDocLock_(fn) {
 function ex_tareaHoraria() {
   if (!ex_cuentaVigente_()) return;
   EX_FONDO = true;
+  try { if (ex_bsaleToken_()) ex_bsaleCatalogo_(); } catch (e) { console.log('Bsale catálogo: ' + e.message); }
   ex_conLock_(ex_sincCalendario_);
   try { ex_rondaPublicar_(); } catch (e) { console.log('Publicar: ' + e.message); }
   try { ex_spzRonda_(); } catch (e) { console.log('Specialized: ' + e.message); }
