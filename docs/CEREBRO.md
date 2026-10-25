@@ -526,3 +526,7 @@ Revisión con tres análisis en paralelo (diseño y uso, eficiencia y errores, u
 
 ## v85 · Diagnóstico de conexión
 - El aviso «sin conexión · ver por qué» se puede tocar: revisa si hay internet y si el script responde, y explica qué hacer según el mensaje que muestre Google al abrir el script (código pegado incompleto o duplicado, permisos pendientes o URL de implementación cambiada). Incluye botones para reintentar, cambiar el link y abrir el script.
+
+## v86 · Enter en notas rápidas y «Ver chat» más certero
+- Los cuadros rápidos (nota de la negociación, nota del contacto, pasos de una tarea) son formularios: Enter en el computador o «Enviar» en el teclado del celular siempre registran, sin depender del botón ＋.
+- «Ver chat» busca la conversación por id del contacto, luego por teléfono y al final por nombre, y la abre aunque haya filtros o búsquedas activas en Chats. Si no existe, avisa en vez de quedar en la lista.

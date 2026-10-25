@@ -2589,7 +2589,7 @@ async function apiX(op, extra){
 // Nivel 2 del script Extras: recordatorios y base de contactos. Nivel 3: la base solo usa contacto@blacklinechile.cl. Nivel 4: eventos de varios días.
 function enCurso(k, fn){ S._p = S._p || {}; if (S._p[k]) return S._p[k]; const pr = Promise.resolve().then(fn).finally(() => { if (S._p[k] === pr) delete S._p[k]; }); S._p[k] = pr; return pr; }
 function extNivel(){ return S.extInactivo ? 0 : (S.ext && S.ext.nivel) || 1; }
-const APP_VER = 'v85', NIVEL_ULTIMO = 49;
+const APP_VER = 'v86', NIVEL_ULTIMO = 49;
 function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < NIVEL_ULTIMO; }
 let sincTimer = null;
 // Después de cambiar tareas, el script actualiza los recordatorios del calendario (en segundo plano).
@@ -3041,6 +3041,8 @@ function botonPrincipal(el){
   const L = [...cont.querySelectorAll('button.btn, button[type=submit]' + (el.closest('.smart') ? ', .smart button' : ''))].filter(b => vis(b) && !b.classList.contains('sec') && !b.classList.contains('bad') && !b.classList.contains('pill') && !/^(✕|×)$/.test(b.textContent.trim()));
   return L.find(b => el.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING) || L[L.length - 1] || null;
 }
+// Cuadros rápidos (nota, actividad, paso): son formularios, así Enter o «Enviar» del teclado del celular siempre registran.
+document.addEventListener('submit', e => { if (e.target.matches && e.target.matches('form.smart')) e.preventDefault(); });
 document.addEventListener('keydown', e => {
   if (e.key === 'Enter') S._shiftEnter = e.shiftKey;
   if (e.key !== 'Enter' || e.isComposing || e.keyCode === 229 || e.altKey || e.defaultPrevented) return;
@@ -3048,6 +3050,7 @@ document.addEventListener('keydown', e => {
   const esTA = el.tagName === 'TEXTAREA', esIn = el.tagName === 'INPUT' && /^(text|search|number|tel|email|url|date|time|)$/.test(el.getAttribute('type') || '');
   if (!esTA && !esIn) return;
   if (el.onkeydown || el.dataset.enter === 'no' || el.id === 'copQ') return;   // ya tiene su propio Enter
+  if (el.form && el.form.matches('form.smart')) return;   // el formulario envía solo (clic en su botón)
   const mod = e.metaKey || e.ctrlKey, fino = matchMedia('(pointer:fine)').matches;
   if (esTA){
     if (e.shiftKey) return;
@@ -4007,7 +4010,7 @@ function openContacto(c, opt){
     (!nuevo && extNivel() >= 5 ? '<label class="l">🤝 Negociaciones</label><div class="card" style="margin:0">' + (negocios().filter(x => x.contacto === c.id).map(x => dealCard(x, analizar(x), true)).join('') || '<div class="hint">Sin negociaciones.</div>') + '<button class="btn sm sec" id="c_neg" style="margin-top:8px">＋ Nueva negociación</button></div>' : '') +
     (nuevo ? '' :
       (tareas.length ? '<label class="l">📋 Tareas relacionadas</label><div class="card" style="margin:0">' + tareas.map(t => taskHTML(t)).join('') + '</div>' : '') +
-      '<label class="l">🕑 Historial</label><div class="smart"><input type="text" id="c_nota" placeholder="📝 Anotar algo (vino a la tienda, pidió precio…)" autocomplete="off"><button class="mic" id="c_nota_ok" aria-label="Anotar">＋</button></div>' +
+      '<label class="l">🕑 Historial</label><form class="smart"><input type="text" id="c_nota" enterkeyhint="send" placeholder="📝 Anotar algo (vino a la tienda, pidió precio…)" autocomplete="off"><button type="submit" class="mic" id="c_nota_ok" aria-label="Anotar">＋</button></form>' +
       '<div class="card" style="margin-top:8px">' + (inter.length ? inter.slice(0, 40).map(i => '<div class="tl"><span class="ic">' + icTl(i.tipo) + '</span><div class="grow"><div style="font-size:14px;font-weight:650;line-height:1.35">' + esc(i.detalle) + '</div><div class="hint" style="margin:2px 0 0">' + esc(i.tipo) + ' · ' + (i.fecha ? fmtRel(i.fecha) : '') + '</div></div>' + (i.link ? '<a class="play" style="display:flex;align-items:center;justify-content:center;text-decoration:none" href="' + esc(i.link) + '" target="_blank">↗</a>' : '') + '</div>').join('') : '<div class="hint">Aquí se irán guardando correos, reuniones, tareas y notas con este contacto.</div>') + '</div>'));
   bindPills('c_tipo'); bindTasks($('#layer'));
   const cn = $('#c_neg'); if (cn) cn.onclick = () => openNegocio(null, { contacto: c.id });
@@ -4029,7 +4032,7 @@ function openContacto(c, opt){
       try { await apiX('nota', { id: c.id, texto: tx }); toast('📝 Anotado'); await loadBase(true); openContacto(contactoPorId(c.id)); }
       catch(e){ $('#c_nota_ok').disabled = false; toast('No se pudo anotar: ' + e.message); }
     };
-    $('#c_nota_ok').onclick = anotar; $('#c_nota').onkeydown = e => { if (e.key === 'Enter') anotar(); };
+    $('#c_nota_ok').onclick = anotar; 
   }
 }
 
@@ -4088,11 +4091,11 @@ function ctoTab(c, tab){
   } else if (tab === 'actividad'){
     const inter = ((S.base && S.base.interacciones) || []).filter(i => i.id === c.id);
     const icTl = t => /perdida/i.test(t) ? '❌' : /agente|idea/i.test(t) ? '🧠' : /whatsapp|chat/i.test(t) ? '💬' : /correo/i.test(t) ? '✉️' : /reuni/i.test(t) ? '📅' : /tarea/i.test(t) ? '✅' : /negoci|venta/i.test(t) ? '🤝' : '📝';
-    box.innerHTML = '<div class="smart" style="margin-bottom:10px"><input type="text" id="c_nota" placeholder="Anotar algo (vino a la tienda, pidió precio…)" autocomplete="off"><button class="mic" id="c_nota_ok" aria-label="Anotar">＋</button></div>' +
+    box.innerHTML = '<form class="smart" style="margin-bottom:10px"><input type="text" id="c_nota" enterkeyhint="send" placeholder="Anotar algo (vino a la tienda, pidió precio…)" autocomplete="off"><button type="submit" class="mic" id="c_nota_ok" aria-label="Anotar">＋</button></form>' +
       (inter.length ? '<div class="wl">' + inter.slice(0, 50).map(i => '<div class="tl"><span class="ic">' + icTl(i.tipo) + '</span><div class="grow"><div style="font-size:14px;font-weight:600;line-height:1.4">' + esc(i.detalle) + '</div><div class="hint" style="margin:2px 0 0">' + esc(i.tipo) + ' · ' + (i.fecha ? fmtRel(i.fecha) : '') + (i.link ? ' · <a href="' + esc(i.link) + '" target="_blank" style="color:var(--accent-ink)">abrir</a>' : '') + '</div></div></div>').join('') + '</div>' : '<div class="empty">Aquí aparecen los mensajes, correos, notas y reuniones.</div>');
     const anotar = async () => { const tx = $('#c_nota').value.trim(); if (!tx) return; $('#c_nota_ok').disabled = true;
       try { await apiX('nota', { id: c.id, texto: tx }); toast('📝 Anotado'); await loadBase(true); openCto(contactoPorId(c.id) || c, { tab: 'actividad' }); } catch(e){ $('#c_nota_ok').disabled = false; toast('No se pudo anotar: ' + e.message); } };
-    $('#c_nota_ok').onclick = anotar; $('#c_nota').onkeydown = e => { if (e.key === 'Enter') anotar(); };
+    $('#c_nota_ok').onclick = anotar; 
   } else if (tab === 'negocios'){
     const negs = negocios().filter(x => x.contacto === c.id);
     box.innerHTML = (negs.length ? '<div class="klist">' + negs.map(n => kcardHTML(n, analizar(n), { etapa: true })).join('') + '</div>' : '<div class="empty">Sin negociaciones con este contacto.</div>') + '<div class="btns"><button class="btn sec" id="ct_ng2">＋ Nueva negociación</button></div>';
@@ -6936,10 +6939,10 @@ function dealTab(n, a, tab){
   } else if (tab === 'actividad'){
     const I = a.I.slice().reverse();
     const icTl = t => /perdida/i.test(t) ? '❌' : /agente|idea/i.test(t) ? '🧠' : /whatsapp|chat/i.test(t) ? '💬' : /correo/i.test(t) ? '✉️' : /reuni/i.test(t) ? '📅' : /tarea|acci/i.test(t) ? '✅' : /venta/i.test(t) ? '🏆' : /negoci|etapa/i.test(t) ? '🔀' : '📝';
-    box.innerHTML = '<div class="smart" style="margin-bottom:10px"><input type="text" id="ng_nota" placeholder="Escribe una nota rápida (pidió cuotas, viene el sábado…)" autocomplete="off"><button class="mic" id="ng_nota_ok" aria-label="Guardar nota">＋</button></div>' +
+    box.innerHTML = '<form class="smart" style="margin-bottom:10px"><input type="text" id="ng_nota" enterkeyhint="send" placeholder="Escribe una nota rápida (pidió cuotas, viene el sábado…)" autocomplete="off"><button type="submit" class="mic" id="ng_nota_ok" aria-label="Guardar nota">＋</button></form>' +
       (I.length ? '<div class="wl">' + I.slice(0, 40).map(i => '<div class="tl"><span class="ic">' + icTl(i.tipo) + '</span><div class="grow"><div style="font-size:14px;font-weight:600;line-height:1.4">' + esc(i.detalle) + '</div><div class="hint" style="margin:2px 0 0">' + esc(i.tipo) + ' · ' + (i.fecha ? fmtRel(i.fecha) : '') + '</div></div></div>').join('') + '</div>' : '<div class="empty">Aquí aparecen las notas, mensajes, correos y cambios de etapa.</div>');
     const nota = () => { const t = $('#ng_nota').value.trim(); if (!t) return; $('#ng_nota_ok').disabled = true; negRegistrar(n, '📝 Nota', t); };
-    $('#ng_nota_ok').onclick = nota; $('#ng_nota').onkeydown = ev => { if (ev.key === 'Enter') nota(); };
+    $('#ng_nota_ok').onclick = nota; 
   } else if (tab === 'etapas'){
     const hi = historialDe(n); if (!hi.length) hi.push({ f: n.creada || h, e: n.etapa });
     const filas = hi.map((x, i) => { const hasta = hi[i + 1] ? hi[i + 1].f : (a.abierta ? h : x.f); return { e: x.e, desde: x.f, dias: Math.max(0, diffDays(x.f, hasta)), actual: !hi[i + 1] }; });
@@ -7470,7 +7473,7 @@ function openNegocio(n, opt){
     (R.length ? '<label class="l">🧠 Qué hacer ahora</label><div class="card" style="margin:0">' + R.map((r, i) => '<div class="rec"><span class="ic" style="background:' + hexToRgba(r.c, .15) + '">' + r.ic + '</span><div class="grow"><div style="font-weight:750;font-size:14px;line-height:1.35">' + esc(r.t) + '</div><div class="hint" style="margin:3px 0 0">' + esc(r.d) + '</div>' + (r.acts ? '<div class="acts" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">' + r.acts.map(x => '<button class="btn sm sec" data-nga="' + esc(x[1]) + '">' + esc(x[0]) + '</button>').join('') + '</div>' : '') + '</div></div>').join('') + '</div>' : '') +
     (bsaleActivo() ? '<label class="l">📦 Stock en Bsale</label>' + stockBox(n.producto || '') : '') +
     '<label class="l">📝 Registrar actividad</label><div class="chips2">' + ACTIVIDADES.map((x, i) => '<button data-nact="' + i + '">' + x[0] + '</button>').join('') + '</div>' +
-    '<div class="smart" style="margin-top:6px"><input type="text" id="ng_nota" placeholder="Qué pasó (pidió cuotas, viene el sábado…)" autocomplete="off"><button class="mic" id="ng_nota_ok" aria-label="Registrar">＋</button></div>' +
+    '<form class="smart" style="margin-top:6px"><input type="text" id="ng_nota" enterkeyhint="send" placeholder="Qué pasó (pidió cuotas, viene el sábado…)" autocomplete="off"><button type="submit" class="mic" id="ng_nota_ok" aria-label="Registrar">＋</button></form>' +
     prox + '<details class="more"><summary>✏️ Editar datos</summary>' + campos + '</details>' +
     '<label class="l">🕑 Historial</label><div class="card" style="margin-top:0">' + (I.length ? I.slice(0, 30).map(i => '<div class="tl"><span class="ic">' + icTl(i.tipo) + '</span><div class="grow"><div style="font-size:14px;font-weight:650;line-height:1.35">' + esc(i.detalle) + '</div><div class="hint" style="margin:2px 0 0">' + esc(i.tipo) + ' · ' + (i.fecha ? fmtRel(i.fecha) : '') + '</div></div></div>').join('') : '<div class="hint">Aquí aparecen las actividades, correos y cambios de etapa.</div>') + '</div>') +
     '<div class="btns"><button class="btn" id="ng_ok">' + (nuevo ? 'Crear negociación' : 'Guardar') + '</button></div>');
@@ -7492,7 +7495,7 @@ function openNegocio(n, opt){
     $$('[data-nga]').forEach(b => b.onclick = () => negAccion(b.dataset.nga, n, b));
     $$('[data-nact]').forEach(b => b.onclick = () => { const x = ACTIVIDADES[+b.dataset.nact], extra = $('#ng_nota').value.trim(); b.disabled = true; negRegistrar(n, x[1], x[0].replace(/^\S+\s/, '') + (extra ? ': ' + extra : ''), x[2]); });
     const nota = () => { const t = $('#ng_nota').value.trim(); if (!t) return; $('#ng_nota_ok').disabled = true; negRegistrar(n, '📝 Nota', t); };
-    $('#ng_nota_ok').onclick = nota; $('#ng_nota').onkeydown = ev => { if (ev.key === 'Enter') nota(); };
+    $('#ng_nota_ok').onclick = nota; 
   }
   $('#ng_ok').onclick = async () => {
     const qn = ($('#ng_cq') || {}).value || '';
@@ -9018,7 +9021,7 @@ function openDetail(t, opt){
     '<label class="l">Tamaño</label>' + pills('e_tam', c.tamanos.map(x => ({ v: x.nombre, t: x.nombre })), t.tamano) +
     (S.extInactivo ? '<div class="card" style="margin-top:14px"><b>☑ Subtareas y 🔁 repetir</b><div class="hint">Divide la tarea en pasos y haz que se repita sola. Se activan una vez en tu Apps Script.</div><button class="btn sm sec" id="e_act">Cómo activarlas</button></div>' :
       '<label class="l">☑ Subtareas</label><div class="card" style="margin:0;padding:4px 14px" id="e_subs"></div>' +
-      '<div class="smart" style="margin-top:8px"><input type="text" id="e_sub_new" placeholder="+ Agregar un paso" autocomplete="off"><button class="mic" id="e_sub_add" aria-label="Agregar paso">＋</button></div>' +
+      '<form class="smart" style="margin-top:8px"><input type="text" id="e_sub_new" enterkeyhint="send" placeholder="+ Agregar un paso" autocomplete="off"><button type="submit" class="mic" id="e_sub_add" aria-label="Agregar paso">＋</button></form>' +
       '<label class="l">🔁 Repetir</label>' + pills('e_rep', [{ v: '', t: 'No se repite' }].concat(REPETIR.map(x => ({ v: x, t: x }))), t.repetir || '') +
       '<div class="hint">Al marcarla hecha se crea sola la siguiente, con la fecha que corresponda.</div>') +
     '<label class="l">Notas</label><textarea class="note" id="e_n">' + esc(t.notas) + '</textarea>' +
@@ -9075,7 +9078,6 @@ function bindSubtareas(t){
   };
   const agregar = () => { const v = $('#e_sub_new').value.trim(); if (!v) return; subs.push({ t: v, ok: false }); $('#e_sub_new').value = ''; pintar(); guardar(); $('#e_sub_new').focus(); };
   $('#e_sub_add').onclick = agregar;
-  $('#e_sub_new').onkeydown = e => { if (e.key === 'Enter') agregar(); };
   bindPills('e_rep', async v => {
     try { await apiX('repetir', { row: t.row, tarea: t.tarea, valor: v }); t.repetir = v; toast(v ? '🔁 Se repetirá: ' + v.toLowerCase() : 'Ya no se repite'); }
     catch(e){ toast('No se pudo guardar: ' + e.message); }
@@ -9631,7 +9633,17 @@ async function accionContactos(acc, ids, alTerminar){
   try { const r = await apiX('contactosLote', { ids, accion: acc, valor }); await loadBase(true); if (S.tab === 'base' && !$('#layer').innerHTML) viewBase(); toast('✓ ' + r.n + ' contacto' + (r.n === 1 ? '' : 's') + ' ' + txt); if (alTerminar) alTerminar(r); }
   catch(e){ toast('No se pudo: ' + e.message); }
 }
-function irAlChat(id){ closeSheet(); S.bv = 'chats'; S.chatSel = id; S.chats = null; go('base'); }
+function irAlChat(id){ closeSheet(); S.bv = 'chats'; S.chatSel = id; S.chatBusca = id; S.chq = ''; S.chPend = false; S.chats = null; go('base'); }
+// «Ver chat» desde una negociación o ficha: el contacto puede tener otro id que su conversación (ficha creada por correo,
+// contactos unidos, nombre distinto). Se busca por id, después por teléfono y al final por nombre, sin importar filtros.
+function chatDeContacto(id){
+  const C = S.chats || []; let x = C.find(y => y.id === id); if (x) return x;
+  const c = contactoPorId(id) || {}, t8 = String(c.telefono || (/^wa:\+?(\d+)/.exec(id) || [])[1] || '').replace(/\D/g, '').slice(-8);
+  if (t8.length === 8) x = C.find(y => String(y.tel || '').replace(/\D/g, '').slice(-8) === t8 || String(y.id).replace(/\D/g, '').slice(-8) === t8);
+  if (x) return x;
+  const nm = norm(c.nombre || ''); if (nm.length >= 5) x = C.find(y => norm(y.nom || '') === nm || norm((contactoPorId(y.id) || {}).nombre || '') === nm);
+  return x || null;
+}
 
 /* ---------- Depurar la base de WhatsApp ---------- */
 // Primero muestra qué haría (sin cambiar nada); al confirmar archiva y manda al Cerebro los chats que van al Pipeline.
@@ -9687,7 +9699,8 @@ function chatsLista(){
 }
 function chatsHTML(){
   if (!S.chats){ loadChats().then(() => { if (S.tab === 'base' && S.bv === 'chats') viewBase(); }); return '<div class="empty"><span class="spin"></span>Cargando conversaciones…</div>'; }
-  const L = chatsLista(), max = S.chMax || 200, sel = S.chatSel && L.find(y => y.x.id === S.chatSel);
+  if (S.chatBusca){ const b = S.chatBusca; S.chatBusca = null; const x = chatDeContacto(b); if (x) S.chatSel = x.id; else { S.chatSel = null; const c = contactoPorId(b); setTimeout(() => toast('No encontré una conversación de WhatsApp de ' + ((c && c.nombre) || 'este contacto') + '. Puede que hayan hablado por otro número o por Instagram.'), 50); } }
+  const L = chatsLista(), max = S.chMax || 200, sel = S.chatSel && (L.find(y => y.x.id === S.chatSel) || (() => { const x = (S.chats || []).find(y => y.id === S.chatSel); if (!x) return null; const c = contactoPorId(x.id) || { id: x.id, nombre: x.nom || x.tel, telefono: x.tel, tipo: 'Por clasificar' }; return { x, c }; })());
   const lista = L.slice(0, max).map(({ x, c }) => '<div class="chi' + (S.chatSel === x.id ? ' on' : '') + '" data-chi="' + esc(x.id) + '">' + avatar(c, 40) + '<div class="grow"><b>' + esc(c.nombre || c.telefono || x.id) + '</b><div class="sn">' + (x.yo ? '✓ ' : '') + esc(x.tx || '') + '</div></div><span class="hr">' + esc(chHora(x.f)) + (!x.yo && x.f && diffDays(x.f.slice(0, 10), hoy()) <= 7 ? '<i class="chdot" title="Te escribió y falta tu respuesta"></i>' : '') + '</span></div>').join('');
   return '<div class="chl' + (sel ? ' sel' : '') + '"><div class="chl-l"><div class="chq"><input type="text" id="chq" placeholder="Buscar chat, nombre o mensaje" value="' + esc(S.chq || '') + '"><div class="row" style="gap:8px;margin-top:8px;align-items:center"><span class="wsub" style="flex:1">' + L.length + ' conversaciones</span><button class="btn sm ' + (S.chPend ? '' : 'sec') + '" id="chPend" title="El cliente escribió último (30 días)">⏳ Sin responder</button><button class="btn sm sec" id="chArch">' + (S.chArch ? 'Ocultar archivados' : 'Ver archivados') + '</button><button class="btn sm sec" id="chRefL">↻</button></div></div>' +
     '<div class="chl-list">' + (lista || '<div class="empty">Sin conversaciones' + (S.chatsErr ? ' (' + esc(S.chatsErr) + ')' : '') + '</div>') + (L.length > max ? '<div class="btns" style="padding:10px"><button class="btn sm sec" id="chMas">Ver más (' + (L.length - max) + ')</button></div>' : '') + '</div></div>' +
@@ -9707,7 +9720,7 @@ function bindChats(){
   const cnT = $('#chTar'); if (cnT) cnT.onclick = () => { const c = contactoPorId(S.chatSel); openAdd({ texto: 'Seguimiento ' + (c.nombre || c.telefono) + ' mañana', notas: c.telefono ? '📞 ' + c.telefono : '' }); };
   const cnI = $('#chIA'); if (cnI) cnI.onclick = () => analizarAhora(S.chatSel, cnI);
   const pane = $('#chPane');
-  if (pane && S.chatSel){ const it = chatsLista().find(y => y.x.id === S.chatSel); if (it) chatTab(it.c, pane); }
+  if (pane && S.chatSel){ const x = (S.chats || []).find(y => y.id === S.chatSel); if (x) chatTab(contactoPorId(x.id) || { id: x.id, nombre: x.nom || x.tel, telefono: x.tel, tipo: 'Por clasificar' }, pane); }
 }
 
 /* ---------- Chat de WhatsApp en la ficha del contacto ---------- */
