@@ -37,7 +37,8 @@ header.top{position:sticky;top:0;z-index:5;background:linear-gradient(var(--bg) 
 header.top h1{font-size:24px;margin:0;font-weight:800;letter-spacing:-.02em}
 header.top small{display:block;color:var(--muted);font-size:13px;margin-top:2px;font-weight:500}
 .icon-btn{border:0;background:var(--card);box-shadow:var(--shadow-sm);width:40px;height:40px;border-radius:13px;font-size:17px;color:var(--ink)}
-.chip-off{background:rgba(245,165,36,.16);color:var(--warn-ink);border-radius:999px;padding:3px 10px;font-size:11px;margin-left:8px;font-weight:700;vertical-align:middle}
+button.chip-off{cursor:pointer}
+.chip-off{border:0;font-family:inherit;cursor:default;background:rgba(245,165,36,.16);color:var(--warn-ink);border-radius:999px;padding:3px 10px;font-size:11px;margin-left:8px;font-weight:700;vertical-align:middle}
 .card{background:var(--card);border-radius:22px;padding:18px;margin:14px 0;box-shadow:var(--shadow-sm)}
 .card h2{font-size:14px;letter-spacing:.01em;color:var(--ink);margin:0 0 12px;font-weight:800;display:flex;align-items:center;gap:8px}
 .card h2 .ct{margin-left:auto;font-size:11.5px;color:var(--muted);font-weight:700}
@@ -1826,7 +1827,11 @@ header.top h1{letter-spacing:-.025em}
 .pp3-t em{font-style:normal;font-size:11px;font-weight:800;color:var(--ink);background:var(--card);box-shadow:inset 0 0 0 2px var(--c);border-radius:999px;padding:1px 7px;flex:none}
 .pp3-v{font-size:12px;font-weight:700}
 .pp3-c small{font-size:11.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.pp3-c small.bad{color:#C4283F}
-.home.fit .pp2{min-height:0}
+.home.fit .pp2{flex:0 0 auto;min-height:auto}
+.home.fit .a-pipe .pp3{margin-top:auto}
+.a-pipe.cmp .pp2-dn .dn,.a-pipe.cmp .pp2-dn svg{width:128px!important;height:128px!important}.a-pipe.cmp .pp2-l{gap:0}.a-pipe.cmp .pp2-i{padding:2px 8px}.a-pipe.cmp .pp3-c small{display:none}.a-pipe.cmp .pp3{margin-top:8px;padding-top:8px}
+.a-pipe.sin3 .pp3{display:none}
+.hm-hero.cmp .hh-src{display:none}.hm-hero.cmp2 .hh-leg{display:none}
 @media (max-width:760px){.pp3-g{grid-template-columns:1fr}}
 /* ===== Acabado premium ===== */
 body{background:radial-gradient(1100px 520px at 78% -8%,#E6EFFB 0%,rgba(230,239,251,0) 62%),radial-gradient(800px 420px at 10% 110%,#EEF2F8 0%,rgba(238,242,248,0) 60%),var(--bg);background-attachment:fixed}
@@ -2582,7 +2587,7 @@ async function apiX(op, extra){
 // Nivel 2 del script Extras: recordatorios y base de contactos. Nivel 3: la base solo usa contacto@blacklinechile.cl. Nivel 4: eventos de varios días.
 function enCurso(k, fn){ S._p = S._p || {}; if (S._p[k]) return S._p[k]; const pr = Promise.resolve().then(fn).finally(() => { if (S._p[k] === pr) delete S._p[k]; }); S._p[k] = pr; return pr; }
 function extNivel(){ return S.extInactivo ? 0 : (S.ext && S.ext.nivel) || 1; }
-const APP_VER = 'v82', NIVEL_ULTIMO = 48;
+const APP_VER = 'v83', NIVEL_ULTIMO = 48;
 function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < NIVEL_ULTIMO; }
 let sincTimer = null;
 // Después de cambiar tareas, el script actualiza los recordatorios del calendario (en segundo plano).
@@ -2613,6 +2618,14 @@ async function loadExtras(){
   catch(e){ if (/accion desconocida/i.test(e.message)) S.extInactivo = true; else if (!S.ext) S.ext = lsGet('extCache', null); }
   applyExtras();
 }
+// El script atiende de a una consulta: si está ocupado o devolvió una página de error, se reintenta antes de rendirse.
+async function stateConReintento(){
+  const esperas = [2500, 6000, 12000];
+  for (let k = 0; ; k++){
+    try { return await api('state'); }
+    catch(e){ const m = String(e && e.message); if (k >= esperas.length || m === 'auth' || !/bloqueo|lock|candado|ocupad|respuesta|timeout|tiempo|service|servicio|invoked/i.test(m)) throw e; await new Promise(r => setTimeout(r, esperas[k])); }
+  }
+}
 async function load(){
   if (!S.global) S.global = lsGet('globalCache', null);
   if (!S.climaD){ const c = lsGet('climaCache', null); if (c){ S.climaD = c.d; S.climaAt = c.t; } }
@@ -2620,14 +2633,17 @@ async function load(){
   S.busy = true; head();
   const antes = S.data ? +((S.data.indicadores || {})['Nivel']) || 0 : 0;
   try {
-    const seq = S.loadSeq = (S.loadSeq || 0) + 1, st = await api('state');
-    if (seq !== S.loadSeq) return;   // llegó una consulta más nueva: esta respuesta ya no sirve
-    S.data = st; LS.cache = JSON.stringify(S.data); S.offline = false;
+    const seq = S.loadSeq = (S.loadSeq || 0) + 1, st = await stateConReintento();
+    if (seq !== S.loadSeq){ S.busy = false; return; }   // llegó una consulta más nueva: esta respuesta ya no sirve
+    S.data = st; LS.cache = JSON.stringify(S.data); S.offline = false; S.srvErr = '';
     const ahora = +((S.data.indicadores || {})['Nivel']) || 0;
     if (antes && ahora > antes){ confetti(80); toast('🏅 ¡Subiste a nivel ' + ahora + ' · ' + ((S.data.indicadores || {})['Nombre del nivel'] || '') + '!'); }
   } catch(e){
     if (e.message === 'auth'){ toast('La clave no coincide'); S.busy = false; return showSetup(); }
-    S.offline = true;
+    // «Sin conexión» solo si de verdad no hay internet; si el script respondió con error u ocupado, se dice eso.
+    const red = !navigator.onLine || e instanceof TypeError || /failed to fetch|networkerror|load failed/i.test(String(e && e.message));
+    S.offline = red; S.srvErr = red ? '' : String(e && e.message || 'error');
+    if (!red){ try { LS.ultErr = JSON.stringify({ t: new Date().toISOString(), m: 'state: ' + S.srvErr }); } catch(_){} }
     if (!S.data && LS.cache) S.data = JSON.parse(LS.cache);
   }
   applyExtras();
@@ -2663,7 +2679,8 @@ async function updateTask(t, cambios){
 /* ---------- cabecera y navegación ---------- */
 const TITLES = { inicio: 'Inicio', hoy: 'Hoy', tareas: 'Tareas', habitos: 'Hábitos', semana: 'Calendario', proy: 'Proyectos', base: 'Contactos', redes: 'Redes sociales', negocios: 'Negociaciones', compras: 'Compras y proveedores', cerebro: 'Cerebro' };
 function head(){
-  $('#hTitle').innerHTML = (S.tab === 'inicio' && S.data ? saludoTxt() : TITLES[S.tab]) + (S.offline ? '<span class="chip-off">sin conexión</span>' : '');
+  $('#hTitle').innerHTML = (S.tab === 'inicio' && S.data ? saludoTxt() : TITLES[S.tab]) + (S.offline ? '<span class="chip-off">sin conexión</span>' : S.srvErr ? '<button class="chip-off" id="srvChip" title="' + esc(S.srvErr) + '">planilla ocupada · reintentar</button>' : '');
+  if ($('#srvChip')) $('#srvChip').onclick = () => { toast('El script respondió: ' + S.srvErr.slice(0, 120) + ' · reintentando…'); load(); };
   $('#hSub').innerHTML = S.busy ? '<span class="spin"></span>Actualizando…' : fmtLong(hoy()) + (UI2() && PROPOSITO[S.tab] ? '<span class="h-prop"> · ' + PROPOSITO[S.tab] + '</span>' : '');
   $$('nav.bottom button').forEach(b => b.classList.toggle('on', b.dataset.tab === S.tab || (b.id === 'nbMas' && ['semana', 'compras', 'proy', 'redes', 'cerebro'].includes(S.tab))));
   const hb = $('nav.bottom [data-tab=hoy]'); if (hb){ let n = 0; try { n = pendientesHoyN(); } catch(e){} let x = hb.querySelector('.nb'); if (!x){ x = document.createElement('i'); x.className = 'nb'; hb.appendChild(x); } x.textContent = n > 99 ? '99+' : n; x.style.display = n ? '' : 'none'; }
@@ -3122,12 +3139,18 @@ function ajustarHome(){
 }
 // Las listas muestran solo filas completas: nada queda cortado a la mitad en el borde de la tarjeta.
 function recortarFilas(){
+  // Pipeline: si no cabe, primero se compacta y después oculta «Más cerca de cerrar»; nunca se monta una cosa sobre otra.
+  const pp = $('#home.fit .a-pipe');
+  if (pp){ pp.classList.remove('cmp', 'sin3'); const sobra = () => pp.scrollHeight > pp.clientHeight + 1; if (sobra()) pp.classList.add('cmp'); if (sobra()) pp.classList.add('sin3'); }
+  const hh = $('#home.fit .hm-hero');
+  if (hh){ hh.classList.remove('cmp', 'cmp2'); const so = () => hh.scrollHeight > hh.clientHeight + 1; if (so()) hh.classList.add('cmp'); if (so()) hh.classList.add('cmp2'); }
   $$('#home.fit .hm-people, #home.fit .tl, #home.fit .pi-n').forEach(box => {
     const K = [...box.children]; K.forEach(c => c.style.display = '');
     const fin = box.getBoundingClientRect().bottom + 1;
     K.forEach(c => { if (c.getBoundingClientRect().bottom > fin) c.style.display = 'none'; });
   });
 }
+addEventListener('online', () => { if (S.offline || S.srvErr) load(); });
 addEventListener('resize', () => { clearTimeout(S._ajT); S._ajT = setTimeout(() => { if (S.tab === 'inicio') ajustarHome(); }, 150); });
 
 /* ---------- Clima de yr.no (Instituto Meteorológico de Noruega) para el widget del Inicio ---------- */

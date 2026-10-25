@@ -510,3 +510,8 @@ Revisión con tres análisis en paralelo (diseño y uso, eficiencia y errores, u
 - Celular: más espacio abajo para que los botones flotantes no tapen contenido; el «+» en Negocios abre un negocio nuevo; textos de «Empieza por aquí» sin cortes («Pendientes: 10 atrasadas · 2 de hoy»); acciones de la negociación en filas de 3; pestañas de la ficha deslizables; barra inferior con letra de 11 px.
 - Cerebro: subtítulo en una línea, sugerencias en una fila deslizable, campo de texto más alto.
 - Hoy en computador: las tarjetas no se estiran a la altura de la vecina. Contraste mayor en textos grises chicos. «N d» sin quiebre de línea.
+
+## v83 · Conexión y Pipeline en Inicio
+- «Sin conexión» aparece solo si de verdad no hay internet. Si el script está ocupado o responde con error, la app reintenta sola (≈2, 6 y 12 s) y, si sigue fallando, muestra «planilla ocupada · reintentar» (tocable; el detalle queda en Ajustes → último error).
+- Al volver internet, la app recarga sola.
+- Inicio en pantallas grandes: el Pipeline se compacta (y si hace falta oculta «Más cerca de cerrar») para que nada se monte; lo mismo con la tarjeta de ventas.
