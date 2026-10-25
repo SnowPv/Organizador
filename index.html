@@ -2590,7 +2590,7 @@ async function apiX(op, extra){
 // Nivel 2 del script Extras: recordatorios y base de contactos. Nivel 3: la base solo usa contacto@blacklinechile.cl. Nivel 4: eventos de varios días.
 function enCurso(k, fn){ S._p = S._p || {}; if (S._p[k]) return S._p[k]; const pr = Promise.resolve().then(fn).finally(() => { if (S._p[k] === pr) delete S._p[k]; }); S._p[k] = pr; return pr; }
 function extNivel(){ return S.extInactivo ? 0 : (S.ext && S.ext.nivel) || 1; }
-const APP_VER = 'v87', NIVEL_ULTIMO = 50;
+const APP_VER = 'v88', NIVEL_ULTIMO = 50;
 function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < NIVEL_ULTIMO; }
 let sincTimer = null;
 // Después de cambiar tareas, el script actualiza los recordatorios del calendario (en segundo plano).
@@ -2660,6 +2660,8 @@ async function stateConReintento(){
     catch(e){ const m = String(e && e.message); if (k >= esperas.length || m === 'auth' || !/bloqueo|lock|candado|ocupad|respuesta|timeout|tiempo|service|servicio|invoked/i.test(m)) throw e; await new Promise(r => setTimeout(r, esperas[k])); }
   }
 }
+// Fecha y hora de Chile (no UTC) para el registro de errores.
+function horaLocal(){ const d = new Date(); return hoy() + 'T' + d.toTimeString().slice(0, 5); }
 async function load(){
   if (!S.global) S.global = lsGet('globalCache', null);
   if (!S.climaD){ const c = lsGet('climaCache', null); if (c){ S.climaD = c.d; S.climaAt = c.t; } }
@@ -2670,6 +2672,7 @@ async function load(){
     const seq = S.loadSeq = (S.loadSeq || 0) + 1, st = await stateConReintento();
     if (seq !== S.loadSeq){ S.busy = false; return; }   // llegó una consulta más nueva: esta respuesta ya no sirve
     S.data = st; LS.cache = JSON.stringify(S.data); S.offline = false; S.srvErr = '';
+    try { const u = LS.ultErr && JSON.parse(LS.ultErr); if (u && /^(Conexión|Cargar la planilla)/.test(u.m || '')) localStorage.removeItem('ultErr'); } catch(_){}
     const ahora = +((S.data.indicadores || {})['Nivel']) || 0;
     if (antes && ahora > antes){ confetti(80); toast('🏅 ¡Subiste a nivel ' + ahora + ' · ' + ((S.data.indicadores || {})['Nombre del nivel'] || '') + '!'); }
   } catch(e){
@@ -2678,7 +2681,7 @@ async function load(){
     const red = !navigator.onLine || e instanceof TypeError || /failed to fetch|networkerror|load failed/i.test(String(e && e.message));
     S.offline = red; S.srvErr = red ? '' : String(e && e.message || 'error');
     S.redErr = red ? String(e && e.message || e) : '';
-    if (!red){ try { LS.ultErr = JSON.stringify({ f: new Date().toISOString().slice(0, 16), tab: S.tab, v: APP_VER, m: 'Cargar la planilla: ' + S.srvErr, s: '' }); } catch(_){} }
+    if (!red){ try { LS.ultErr = JSON.stringify({ f: horaLocal(), tab: S.tab, v: APP_VER, m: 'Cargar la planilla: ' + S.srvErr, s: '' }); } catch(_){} }
     if (!S.data && LS.cache) S.data = JSON.parse(LS.cache);
   }
   applyExtras();
@@ -2731,7 +2734,7 @@ async function diagConexion(){
   if ($('#dgRe')) $('#dgRe').onclick = () => { closeSheet(); load(); };
   if ($('#dgUrl')) $('#dgUrl').onclick = showSetup;
   if ($('#dgAb')) $('#dgAb').onclick = () => window.open(LS.url, '_blank');
-  try { LS.ultErr = JSON.stringify({ f: new Date().toISOString().slice(0, 16), tab: S.tab, v: APP_VER, m: 'Conexión: ' + (internet ? 'internet ok' : 'sin internet') + ' · script ' + sTxt + (S.redErr ? ' · ' + S.redErr : ''), s: '' }); } catch(_){}
+  try { LS.ultErr = JSON.stringify({ f: horaLocal(), tab: S.tab, v: APP_VER, m: 'Conexión: ' + (internet ? 'internet ok' : 'sin internet') + ' · script ' + sTxt + (S.redErr ? ' · ' + S.redErr : ''), s: '' }); } catch(_){}
 }
 async function updateTask(t, cambios){
   const campos = Object.assign({ nuevoTexto: t.tarea, estado: t.estado || 'Pendiente', limite: t.limite || '', urgente: t.urgente || 'No', importante: t.importante || 'No', tamano: t.tamano || '', notas: t.notas || '' }, cambios);
@@ -9265,7 +9268,7 @@ function showSettings(){
     '<div class="card"><b>🧹 Empezar de cero</b><div class="hint">' + (inicioApp() ? 'Partiste de cero el ' + esc(fmtLong(inicioApp())) + '. ' : '') + 'Archiva las tareas viejas, archiva los negocios chicos o sin movimiento y deja como al día los mensajes anteriores. Antes de hacer nada te muestra la lista para que elijas.</div><div class="btns"><button class="btn sec" id="s_rein">Revisar qué se limpia</button></div></div>' +
     (S.ext && !S.ext.waHist && extNivel() >= 24 ? '<div class="card"><b>💬 Historial de WhatsApp</b><div class="hint">Todavía no llega el historial. Al conectar el número con «compartir historial», Meta lo envía por partes durante las primeras 24 horas y aquí verás el avance.</div></div>' : '') +
     (S.ext && S.ext.waHist ? '<div class="card"><b>💬 Historial de WhatsApp</b><div class="hint">' + (S.ext.waHist.rechazado ? 'No se compartió el historial al conectar el número (' + esc(S.ext.waHist.rechazado) + '). Para recibirlo hay que desconectar y volver a conectar el número aceptando «compartir historial».' : 'Recibidos ' + (S.ext.waHist.mensajes || 0).toLocaleString('es-CL') + ' mensajes de ' + (S.ext.waHist.chats || 0) + ' chats' + (S.ext.waHist.fases ? ' · avance por etapa: ' + Object.keys(S.ext.waHist.fases).sort().map(f => ['último día', 'hasta 90 días', 'hasta 180 días'][+f] + ' ' + S.ext.waHist.fases[f] + '%').join(', ') : S.ext.waHist.progreso != null ? ' · avance ' + S.ext.waHist.progreso + '%' : '') + ' · último envío ' + esc(haceTxt(String(S.ext.waHist.ultimo || '').slice(0, 10))) + '. El Cerebro arma el perfil de cada contacto en modo masivo (sin tareas ni negocios antiguos).') + '</div></div>' : '') +
-    (function(){ try { const u = LS.ultErr && JSON.parse(LS.ultErr); return u ? '<div class="card"><b>🐞 Último error</b><div class="hint">' + esc(u.f.replace('T', ' ') + ' · ' + u.tab + ' · ' + u.v) + '<br>' + esc(u.m) + '</div><pre class="err-st">' + esc(u.s) + '</pre><div class="hint">Si se repite, mándale un pantallazo de esto a Claude.</div></div>' : ''; } catch(e){ return ''; } })() + '<div class="card"><b>🔢 Versiones</b><div class="hint">App: ' + esc(APP_VER) + ' · Script: ' + (S.extInactivo ? 'funciones extra no activadas' : 'versión ' + esc((S.ext && S.ext.version) || '?') + ' (nivel ' + extNivel() + ')') + (extNivel() < NIVEL_ULTIMO ? ' · <b style="color:var(--bad-ink)">hay una versión nueva del script</b>: pega el Extras.gs nuevo y crea una Nueva versión de la implementación.' : ' · al día ✓') + '</div></div>' +
+    (function(){ try { const u = LS.ultErr && JSON.parse(LS.ultErr); return u ? '<div class="card"><b>🐞 Último error</b><div class="hint">' + esc(u.f.replace('T', ' ') + ' · ' + u.tab + ' · ' + u.v) + '<br>' + esc(u.m) + '</div>' + (u.s ? '<pre class="err-st">' + esc(u.s) + '</pre>' : '') + '<div class="hint">Si se repite, mándale un pantallazo de esto a Claude.</div><div class="btns"><button class="btn sm sec" id="errBorrar">Borrar este registro</button></div></div>' : ''; } catch(e){ return ''; } })() + '<div class="card"><b>🔢 Versiones</b><div class="hint">App: ' + esc(APP_VER) + ' · Script: ' + (S.extInactivo ? 'funciones extra no activadas' : 'versión ' + esc((S.ext && S.ext.version) || '?') + ' (nivel ' + extNivel() + ')') + (extNivel() < NIVEL_ULTIMO ? ' · <b style="color:var(--bad-ink)">hay una versión nueva del script</b>: pega el Extras.gs nuevo y crea una Nueva versión de la implementación.' : ' · al día ✓') + '</div></div>' +
     (deferredInstall ? '<div class="btns"><button class="btn" id="s_inst">📲 Instalar app en este dispositivo</button></div>' : '') +
     '<div class="card"><b>🧠 Cerebro y fuentes</b><div class="hint">' + (extNivel() >= 16 ? 'Activo ✓ Un solo cerebro con 9 skills: arma el plan del día a las 7:00, sigue a tus clientes, planifica tareas, busca compras y elige fotos. Su chat (botón ✨ o la tecla /) responde con tus datos.' : 'Actualiza el script para activar el plan del día, el chat del Cerebro, Specialized Chile, noticias y avisos.') + '</div><div class="btns" style="margin-top:8px"><button class="btn sm" id="s_cb">🧠 Abrir el Cerebro</button><button class="btn sm sec" id="s_gd">❓ Guía de la app</button><button class="btn sm sec" id="s_fz">📊 Fuentes de información</button>' + (extNivel() >= 16 ? '<button class="btn sm sec" id="s_av">📣 Avisos</button>' : '') + '</div></div>' +
     '<div class="card"><b>✨ Funciones extra</b> <span class="hint">(calendario, correo, subtareas, repetir)</span><div class="hint">' + esc(gTxt) + '</div><button class="btn sm sec" id="s_g">' + (g && !g.inactivo ? 'Ver sugerencias' : 'Cómo activarlas') + '</button></div>' +
@@ -9294,7 +9297,8 @@ function showSettings(){
 }
 
 window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferredInstall = e; });
-window.addEventListener('error', e => { const msg = e.error && e.error.message || e.message; try { LS.ultErr = JSON.stringify({ m: msg, s: String(e.error && e.error.stack || (e.filename || '') + ':' + (e.lineno || '')).slice(0, 600), tab: S.tab, v: APP_VER, f: new Date().toISOString().slice(0, 16) }); } catch(x){} toast('Error: ' + msg); });
+document.addEventListener('click', e => { if (e.target && e.target.id === 'errBorrar'){ localStorage.removeItem('ultErr'); const c = e.target.closest('.card'); if (c) c.remove(); toast('Registro borrado'); } });
+window.addEventListener('error', e => { const msg = e.error && e.error.message || e.message; try { LS.ultErr = JSON.stringify({ m: msg, s: String(e.error && e.error.stack || (e.filename || '') + ':' + (e.lineno || '')).slice(0, 600), tab: S.tab, v: APP_VER, f: horaLocal() }); } catch(x){} toast('Error: ' + msg); });
 window.addEventListener('unhandledrejection', e => toast('Error: ' + (e.reason && e.reason.message || e.reason)));
 document.addEventListener('visibilitychange', () => { if (!document.hidden && LS.url && S.data){ if (Date.now() - (S._visAt || 0) > 60000){ S._visAt = Date.now(); load(); } focusPill(); } });
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
