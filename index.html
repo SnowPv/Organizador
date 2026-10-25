@@ -2424,6 +2424,7 @@ body.ui2{background:#F6F7F9!important}
 .ctp-o{display:flex;align-items:center;gap:10px;width:100%;border:0;background:none;padding:8px;border-radius:8px;text-align:left;font:inherit;color:inherit;cursor:pointer}.ctp-o span{display:flex;flex-direction:column;min-width:0}.ctp-o small{color:var(--muted);font-size:12px}.ctp-o .pv-av{width:28px;height:28px;font-size:11px;flex:none}
 .ctp-o.on,.ctp-o:hover{background:var(--soft)}.ctp-o.nuevo{color:var(--accent-ink);font-weight:600;border-top:1px solid var(--line);border-radius:0 0 8px 8px}
 .ctp-h{font-size:12px;color:var(--ok-ink);margin-top:4px;min-height:16px}.ctp-h.nuevo{color:var(--accent-ink)}
+.org-t{width:100%;border-collapse:collapse;font-size:13.5px}.org-t th{text-align:left;font-size:11.5px;color:var(--muted);font-weight:600;padding:6px 4px;border-bottom:1px solid var(--line)}.org-t td{padding:8px 4px;border-bottom:1px solid #F0F2F5;font-variant-numeric:tabular-nums}
 </style>
 
 
@@ -2550,7 +2551,7 @@ async function apiX(op, extra){
 }
 // Nivel 2 del script Extras: recordatorios y base de contactos. Nivel 3: la base solo usa contacto@blacklinechile.cl. Nivel 4: eventos de varios días.
 function extNivel(){ return S.extInactivo ? 0 : (S.ext && S.ext.nivel) || 1; }
-const APP_VER = 'v80', NIVEL_ULTIMO = 47;
+const APP_VER = 'v81', NIVEL_ULTIMO = 48;
 function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < NIVEL_ULTIMO; }
 let sincTimer = null;
 // Después de cambiar tareas, el script actualiza los recordatorios del calendario (en segundo plano).
@@ -3136,7 +3137,7 @@ function noticiasHome(){
 // Texto corto de lo que trae la versión nueva del script (el banner de actualización del Inicio).
 function novedadScript(){
   const n = extNivel();
-  return n >= 47 ? 'Cada negociación tiene su lista de productos (desde Bsale o a mano) con precios, costo, ganancia y margen; el Cerebro también los puede agregar.' : n >= 46 ? 'Los contactos internos (Blackline Servicio Técnico, el equipo) ya no generan tareas, negociaciones ni «espera respuesta».' : n >= 45 ? 'El Cerebro responde más rápido (busca en varias fuentes a la vez y tiene un tope de tiempo) y no deja a la app esperando tanto.' : n >= 44 ? 'El Cerebro confirma en el catálogo de Andes Industrial si un repuesto Shimano o Continental existe en el distribuidor.' : n >= 43 ? 'El Cerebro entiende mejor el ciclismo (Di2, AXS, modelos) y busca opciones de compra cuando una tarea es conseguir un repuesto.' : n >= 42 ? 'Proveedores fuera del pipeline (el agente ya no les abre negociaciones) y el Cerebro puede agregar contactos nuevos cuando le dictas.' : n >= 41 ? 'Empezar de cero: la fecha de inicio se guarda en el script y la ven todos los equipos (Admin y Piso de venta).' : n >= 40 ? 'Ahora hay dos cuentas con contraseña: Admin (todo, como siempre) y Piso de venta (parte en un Hoy nuevo, sin cifras de la tienda). Créalas en ⚙️ Ajustes → Usuarios.' : n >= 39 ? 'La app ahora tiene un solo Cerebro con 9 skills (en vez de agentes sueltos): mira qué hace solo, cuánto gasta y paúsalo en la pestaña Cerebro.' : n >= 37 ? 'Las tareas automáticas ya no bloquean la app (por ejemplo, la lectura de ventas de Bsale).' : n >= 36 ? 'Cuando un cliente con negociación abierta compra en Bsale, la app te propone marcarla como ganada.' : n >= 35 ? 'Ventas del mes igual que en Bsale (solo boletas y facturas, menos notas de crédito) y noticias con foto de portada.' : n >= 34 ? 'Meta y gráfico de ventas del mes en el Inicio, con el avance diario desde Bsale.' : n >= 33 ? 'Une sola las negociaciones duplicadas de una venta ganada.' : n >= 32 ? 'Etapas después del pago: seguimiento, entrega y postventa.' : n >= 31 ? 'Venta perdida: cierra tareas, eventos y la idea de respuesta del Cerebro.' : 'Funciones nuevas para el Organizador.';
+  return n >= 48 ? 'La revisión de los 30 días sugiere los accesorios que el cliente no compró (asesoría, sin descuentos).' : n >= 47 ? 'Cada negociación tiene su lista de productos (desde Bsale o a mano) con precios, costo, ganancia y margen; el Cerebro también los puede agregar.' : n >= 46 ? 'Los contactos internos (Blackline Servicio Técnico, el equipo) ya no generan tareas, negociaciones ni «espera respuesta».' : n >= 45 ? 'El Cerebro responde más rápido (busca en varias fuentes a la vez y tiene un tope de tiempo) y no deja a la app esperando tanto.' : n >= 44 ? 'El Cerebro confirma en el catálogo de Andes Industrial si un repuesto Shimano o Continental existe en el distribuidor.' : n >= 43 ? 'El Cerebro entiende mejor el ciclismo (Di2, AXS, modelos) y busca opciones de compra cuando una tarea es conseguir un repuesto.' : n >= 42 ? 'Proveedores fuera del pipeline (el agente ya no les abre negociaciones) y el Cerebro puede agregar contactos nuevos cuando le dictas.' : n >= 41 ? 'Empezar de cero: la fecha de inicio se guarda en el script y la ven todos los equipos (Admin y Piso de venta).' : n >= 40 ? 'Ahora hay dos cuentas con contraseña: Admin (todo, como siempre) y Piso de venta (parte en un Hoy nuevo, sin cifras de la tienda). Créalas en ⚙️ Ajustes → Usuarios.' : n >= 39 ? 'La app ahora tiene un solo Cerebro con 9 skills (en vez de agentes sueltos): mira qué hace solo, cuánto gasta y paúsalo en la pestaña Cerebro.' : n >= 37 ? 'Las tareas automáticas ya no bloquean la app (por ejemplo, la lectura de ventas de Bsale).' : n >= 36 ? 'Cuando un cliente con negociación abierta compra en Bsale, la app te propone marcarla como ganada.' : n >= 35 ? 'Ventas del mes igual que en Bsale (solo boletas y facturas, menos notas de crédito) y noticias con foto de portada.' : n >= 34 ? 'Meta y gráfico de ventas del mes en el Inicio, con el avance diario desde Bsale.' : n >= 33 ? 'Une sola las negociaciones duplicadas de una venta ganada.' : n >= 32 ? 'Etapas después del pago: seguimiento, entrega y postventa.' : n >= 31 ? 'Venta perdida: cierra tareas, eventos y la idea de respuesta del Cerebro.' : 'Funciones nuevas para el Organizador.';
 }
 
 /* ---------- Ventas del mes: avance diario acumulado contra el mes anterior y la meta ---------- */
@@ -7175,9 +7176,21 @@ function resumenNegHTML(m){
   }).join('') + '<div class="fr" style="width:40%;background:#13B386;justify-content:center">🏆 ' + negocios().filter(n => n.estado === 'Ganada').length + ' ganadas</div></div>');
   const mx = Math.max(1, ...m.meses.map(x => x.v));
   html += card('Ventas ganadas · 6 meses', '📈', '<div class="mbar">' + m.meses.map(x => '<div>' + (x.v ? clpCorto(x.v) : '') + '<i style="height:' + Math.max(2, x.v / mx * 80) + '%"></i>' + x.nom + '</div>').join('') + '</div>');
+  html += origenNegHTML();
   const mot = Object.entries(m.motivos).sort((a, b) => b[1] - a[1]);
   if (mot.length){ const mm = Math.max(...mot.map(x => x[1])); html += card('Por qué se pierden', '❌', mot.map(([k, v]) => '<div class="hb"><div class="n"><span>' + esc(k) + '</span><span>' + v + '</span></div><div class="b"><i style="width:' + (v / mm * 100) + '%;background:#F04461"></i></div></div>').join('')); }
   return html + oportunidadesHTML() + '</div>';
+}
+// De dónde vienen las ventas: tasa de cierre, ticket y días para cerrar por origen del negocio.
+function origenTx(o){ o = String(o || ''); return /agente|whatsapp/i.test(o) ? 'WhatsApp (agente)' : /instagram|\bIG\b|IG-|HIS-|BIO-/i.test(o) ? 'Instagram' : /dictad|cerebro|🎙/i.test(o) ? 'Cerebro' : /web|blacklinechile/i.test(o) ? 'Web' : /correo|mail/i.test(o) ? 'Correo' : /bsale/i.test(o) ? 'Bsale' : o ? 'A mano' : 'Sin origen'; }
+function origenNegHTML(){
+  const G = {};
+  negocios().filter(n => !esArchivada(n)).forEach(n => { const k = origenTx(n.origen), g = G[k] = G[k] || { ab: 0, ga: [], pe: 0 }; if (n.estado === 'Abierta') g.ab++; else if (n.estado === 'Ganada') g.ga.push(n); else g.pe++; });
+  const L = Object.entries(G).filter(([k, g]) => g.ga.length + g.pe + g.ab > 0).sort((a, b) => b[1].ga.length - a[1].ga.length || b[1].ab - a[1].ab);
+  if (L.length < 2) return '';
+  const fila = ([k, g]) => { const t = g.ga.length + g.pe ? Math.round(g.ga.length / (g.ga.length + g.pe) * 100) + '%' : '–', tk = g.ga.length ? clpCorto(g.ga.reduce((s, n) => s + (n.valor || 0), 0) / g.ga.length) : '–', ci = g.ga.map(n => diffDays(n.creada || fechaCierre(n), fechaCierre(n))).filter(x => x >= 0), cd = ci.length ? Math.round(ci.reduce((s, x) => s + x, 0) / ci.length) + ' d' : '–';
+    return '<tr><td><b>' + esc(k) + '</b></td><td>' + g.ab + '</td><td>' + g.ga.length + '</td><td>' + t + '</td>' + (esPiso() ? '' : '<td>' + tk + '</td>') + '<td>' + cd + '</td></tr>'; };
+  return card('De dónde vienen las ventas', '🧭', '<table class="org-t"><tr><th>Origen</th><th>Abiertas</th><th>Ganadas</th><th>Cierre</th>' + (esPiso() ? '' : '<th>Ticket</th>') + '<th>Días</th></tr>' + L.map(fila).join('') + '</table><div class="hint">Cierre = ganadas sobre cerradas (sin archivadas). Días = desde que se abrió hasta que se ganó.</div>');
 }
 function oportunidadesHTML(){
   const O = oportunidadesNeg(); if (!O.length) return '';

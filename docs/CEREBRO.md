@@ -485,3 +485,8 @@ Basada en el análisis de unos 300 diseños de Dribbble (búsquedas: crm, crm-da
 
 - **Moneda**: el Cerebro tiene la regla de escribir todo en pesos chilenos ($1.234.567), nunca dólares. Al leer en voz alta, «$54.990» se dice «54990 pesos», «$9,0 M» «9,0 millones de pesos», «$180 mil» «180 mil pesos» (`decir` → `pesos`).
 - **Nueva negociación / Datos**: el campo Cliente es un buscador (`ctoPickerHTML`/`bindCtoPicker`): busca por nombre, empresa, teléfono o correo mientras escribes, se elige con toque, flechas y Enter. Si el nombre no está, al guardar se **crea la ficha** (tipo Cliente) y se liga (`contactoDelPicker`); si es un teléfono, crea el contacto con ese número.
+
+## De dónde vienen las ventas y asesoría a los 30 días (app v81 · script nivel 48)
+
+- **Negocios → Resumen → «De dónde vienen las ventas»**: por origen (WhatsApp/agente, Instagram, Cerebro, web, a mano…): abiertas, ganadas, tasa de cierre (sin archivadas), ticket promedio (solo Admin) y días para cerrar (`origenNegHTML`).
+- **Postventa**: la tarea de la revisión de los 30 días agrega «Asesoría (si no los tiene): …» con los accesorios típicos que no están entre los productos del negocio (casco, pedales, bolso/mochila, luces, tubeless, protecciones y, en e-bikes, cargador o batería extra). Nunca descuentos.

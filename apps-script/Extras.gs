@@ -15,8 +15,8 @@
  * Para actualizar este archivo más adelante: reemplaza todo su contenido y repite los dos pasos anteriores.
  */
 
-const EX_VERSION = '2027-01-14';
-const EX_NIVEL = 47;      // la app lo usa para saber qué funciones tiene este script
+const EX_VERSION = '2027-01-15';
+const EX_NIVEL = 48;      // la app lo usa para saber qué funciones tiene este script
 const EX_HOJA = 'Tareas';
 const EX_PRIMERA = 4;
 const EX_ULTIMA = 400;
@@ -875,6 +875,10 @@ function ex_postventa_(r, fechaVenta) {
   const mas = function (d) { return ex_ymd_(new Date(ex_aFecha_(base, tz).getTime() + d * 86400000 + 43200000), tz); };
   let nombre = 'cliente «' + String(r[1] || '').slice(0, 50) + '»';
   try { const c = ex_filasContactos_(ex_baseHojas_().cs).find(function (x) { return String(x[0]) === String(r[2]); }); if (c && c[2]) nombre = String(c[2]); } catch (e) {}
+  // Asesoría en la revisión de los 30 días: lo que suele faltarle a quien compra una bici y no está entre sus productos (nunca descuentos).
+  const its = ex_norm_(ex_itemsNeg_(r[16]).map(function (x) { return x.nombre; }).join(' ') + ' ' + String(r[5] || '') + ' ' + String(r[1] || ''));
+  const esBici = /levo|kenevo|vado|como|creo|turbo|stumpjumper|enduro|epic|chisel|tarmac|aethos|diverge|rockhopper|status|bici|bicicleta/.test(its), esE = /levo|kenevo|vado|como|creo|turbo|e-?bike|electric/.test(its);
+  const acc = !esBici ? [] : [['casco', 'casco'], ['pedal', 'pedales'], ['bolso|mochila|evoc|hidrat', 'bolso o mochila de hidratación'], ['luz|luces', 'luces'], ['sellante|tubeless', 'kit tubeless y sellante'], ['proteccion|rodillera|codera', 'protecciones']].concat(esE ? [['cargador|bateria|range extender', 'cargador o batería extra']] : []).filter(function (x) { return !new RegExp(x[0]).test(its); }).map(function (x) { return x[1]; });
   const prod = String(r[5] || r[1] || 'su compra').slice(0, 60), ref = ' · 🏆 Postventa · ' + nombre + (r[2] ? ' [' + r[2] + ']' : '') + ' (' + id + ')';
   [[1, 'Registrar la garantía en Specialized y la bici en la bitácora – ' + nombre, 'No'],
    [7, 'Llamar a ' + nombre + ': ¿cómo le va con ' + prod + '? Resolver dudas de uso', 'No'],
@@ -882,7 +886,8 @@ function ex_postventa_(r, fechaVenta) {
    [45, 'Pedirle a ' + nombre + ' una foto o reseña de su experiencia (contenido para Redes, con permiso)', 'No']
   ].forEach(function (x) {
     const f = mas(x[0]); if (f < hoy) return;
-    app_agregar_({ tarea: { tarea: x[1], area: 'Trabajo', categoria: 'Ventas', proyecto: '', limite: f, urgente: x[2], importante: 'Sí', tamano: 'Pequeña', notas: '⏰ 10:00' + ref, estado: 'Pendiente' } });
+    const ase = x[0] === 30 && acc.length ? ' · Asesoría (si no los tiene): ' + acc.slice(0, 4).join(', ') : '';
+    app_agregar_({ tarea: { tarea: x[1], area: 'Trabajo', categoria: 'Ventas', proyecto: '', limite: f, urgente: x[2], importante: 'Sí', tamano: 'Pequeña', notas: '⏰ 10:00' + ref + ase, estado: 'Pendiente' } });
   });
   hechas.push(id); props.setProperty('EX_POSTVENTA', JSON.stringify(hechas.slice(-500)));
 }
