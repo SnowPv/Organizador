@@ -15,8 +15,8 @@
  * Para actualizar este archivo más adelante: reemplaza todo su contenido y repite los dos pasos anteriores.
  */
 
-const EX_VERSION = '2027-02-13';
-const EX_NIVEL = 52;      // la app lo usa para saber qué funciones tiene este script
+const EX_VERSION = '2027-02-20';
+const EX_NIVEL = 53;      // la app lo usa para saber qué funciones tiene este script
 const EX_HOJA = 'Tareas';
 const EX_PRIMERA = 4;
 const EX_ULTIMA = 400;
@@ -1905,7 +1905,7 @@ function ex_fotosCarpeta_(f, ruta, out, nivel) {
 }
 const EX_EST_MTB = [
   'CONOCIMIENTO MTB (úsalo para que el contenido sea experto y correcto):',
-  '- E-MTB Specialized: Turbo Levo 4 (motor Specialized 2.2, 111 Nm, batería 840 Wh, aluminio o carbono, 160/150 mm), Levo SL 2 (motor SL 1.2, 50 Nm, 320 Wh + range extender de 160 Wh, liviana, sensación natural), Kenevo SL 2 (enduro/park liviana), Turbo Vado y Vado SL (urbana y trekking), Turbo Como (urbana cómoda), Turbo Tero (aventura). La app Specialized (Mission Control/Specialized App) permite ajustar la asistencia (modos Eco, Trail, Turbo y Smart Control para llegar con batería al final de la ruta).',
+  '- E-MTB Specialized: Turbo Levo 4 (2025: motor Specialized 2.2 de 111 Nm en Comp/Expert y motor S-Works 3.1 de 850 W y 111 Nm en la S-Works, batería 840 Wh, pantalla MasterMind, aluminio o carbono, 160/150 mm; si hay INVESTIGACIÓN DEL PRODUCTO, sus datos mandan sobre este resumen), Levo SL 2 (motor SL 1.2, 50 Nm, 320 Wh + range extender de 160 Wh, liviana, sensación natural), Kenevo SL 2 (enduro/park liviana), Turbo Vado y Vado SL (urbana y trekking), Turbo Como (urbana cómoda), Turbo Tero (aventura). La app Specialized (Mission Control/Specialized App) permite ajustar la asistencia (modos Eco, Trail, Turbo y Smart Control para llegar con batería al final de la ruta).',
   '- Autonomía de una e-bike: depende del modo de asistencia, el desnivel, el peso del ciclista, la presión de neumáticos, la temperatura (el frío baja la capacidad), la cadencia (pedalear más rápido y suave rinde más) y el estado de la batería. Cuidados: cargar entre 20 y 80 % para guardarla, no dejarla al sol ni bajo 0 °C, guardarla a media carga en invierno.',
   '- Mantención relevante para Puerto Varas (lluvia y barro): limpiar y lubricar la cadena después de rodar mojado (lubricante húmedo en invierno, seco o cerámico en verano), revisar pastillas de freno (se gastan rápido en barro), servicio de suspensión cada 50 a 100 horas (sellos y aceite), presión de neumáticos según peso y terreno, revisión de los 30 días para bicis nuevas (reapriete de pernos y ajuste de cambios).',
   '- Temas que más interesan a la comunidad MTB (Pinkbike, Vital MTB): comparativas y reviews honestas, setup de suspensión (sag, rebote), geometría y tallas, neumáticos y presiones, e-bike vs bici normal, rutas y senderos locales, mantención casera, carreras de enduro y downhill, tecnología nueva (motores, baterías, transmisiones inalámbricas SRAM AXS y Shimano Di2).',
@@ -1936,7 +1936,7 @@ function ex_elegirFotos_(p) {
       if (x.fuente === 'drive') blob = UrlFetchApp.fetch('https://drive.google.com/thumbnail?id=' + encodeURIComponent(x.id) + '&sz=w480', { headers: { Authorization: 'Bearer ' + ScriptApp.getOAuthToken() } }).getBlob();
       else if (x.fuente === 'ig') { const m = ex_igGet_('/' + x.id + '?fields=media_url,thumbnail_url,media_type', tok); blob = UrlFetchApp.fetch(m.media_type === 'VIDEO' ? m.thumbnail_url : m.media_url).getBlob(); }
       else if (x.fuente === 'stock' && /^https:\/\/images\.pexels\.com\//.test(x.url || '')) blob = UrlFetchApp.fetch(x.url.split('?')[0] + '?auto=compress&cs=tinysrgb&w=480').getBlob();
-      else if (x.fuente === 'spz' && /^https:\/\/resources\.specialized\.com\//.test(x.url || '')) blob = UrlFetchApp.fetch(x.url.replace(/w=\d+&h=\d+/, 'w=480&h=480')).getBlob();
+      else if (x.fuente === 'spz' && /^https:\/\/resources\.specialized\.com\//.test(x.url || '')) blob = UrlFetchApp.fetch(/w=\d+&h=\d+/.test(x.url) ? x.url.replace(/w=\d+&h=\d+/, 'w=480&h=480') : x.url.replace(/w=\d+/, 'w=480')).getBlob();
       else if (x.fuente === 'yt' && /^https:\/\/i\.ytimg\.com\//.test(x.url || '')) blob = UrlFetchApp.fetch(x.url.replace('maxresdefault', 'hqdefault')).getBlob();
       if (!blob || blob.getBytes().length > 3500000) return;
       const tipo = /png/.test(blob.getContentType()) ? 'image/png' : /webp/.test(blob.getContentType()) ? 'image/webp' : 'image/jpeg';
@@ -2179,6 +2179,16 @@ const EX_AS_SISTEMA = {
     'No inventes datos. Español de Chile, directo. Responde solo con el JSON pedido.'
   ].join('\n')
 };
+// Criterio de experto en redes para las piezas del Estudio (se suma a las reglas de la pieza).
+const EX_EXPERTO_RRSS = [
+  'CRITERIO DE EXPERTO EN REDES (obligatorio):',
+  '- Una idea por lámina. Arco del carrusel: 1) gancho que detiene el scroll (una promesa concreta o una tensión: «850 W en 2,2 kg de motor», «Lo que cambió de verdad en la Levo 4»); 2) contexto en una lámina (qué es y para quién); 3) 3 a 5 láminas de valor, cada una con UN beneficio traducido a la experiencia del ciclista local (subidas técnicas del Pichijuán, barro, frío, salidas largas al volcán) y su dato exacto; 4) una lámina de prueba (lo que dice la prensa o un dato duro); 5) cierre con llamado claro (test ride, escribir al WhatsApp, guardar el post).',
+  '- Títulos con verbos o números, nunca genéricos («Increíble potencia» no; «111 Nm para subir sin bajarte» sí). Cero adjetivos vacíos (increíble, espectacular, revolucionario).',
+  '- Cada cifra técnica sale de la INVESTIGACIÓN DEL PRODUCTO o de la investigación web. Si no hay dato, no lo pongas. Nombra la versión exacta (S-Works vs Comp) y la generación correcta.',
+  '- Diseña para guardar y compartir: incluye al menos una lámina útil por sí sola (comparativa frente a la versión anterior, «para quién es / para quién no», o datos clave en lista).',
+  '- caption: primera línea gancho (máx. 12 palabras), luego 2 o 3 líneas de valor con datos, luego llamado a la acción y una pregunta para comentar. Tono de un vendedor experto y ciclista local, cercano, sin exagerar. Sin descuentos ni promociones.',
+  '- FOTOS DEL MODELO: si hay fotos oficiales disponibles, úsalas en las láminas del producto (fuente producto) e indica en foto.vista cuál corresponde: portada → bicicleta completa de perfil; lámina del motor → motor; pantalla o app → pantalla MasterMind TCU; suspensión → suspensión y link; almacenaje → tubo superior y SWAT. No pidas fotos de stock genéricas para hablar del producto.'
+].join('\n');
 const EX_AS_ESQUEMA = {
   dia: { type: 'object', additionalProperties: false, required: ['resumen', 'bloques', 'mover', 'consejo'], properties: {
     resumen: { type: 'string' },
@@ -2197,7 +2207,7 @@ const EX_AS_ESQUEMA = {
     slides: { type: 'array', items: { type: 'object', additionalProperties: false, required: ['layout', 'kicker', 'titulo', 'texto', 'items', 'numero', 'foto'], properties: {
       layout: { type: 'string', enum: ['portada', 'texto', 'lista', 'comparativa', 'dato', 'foto', 'pregunta', 'cta'] }, kicker: { type: 'string' }, titulo: { type: 'string' }, texto: { type: 'string' },
       items: { type: 'array', items: { type: 'string' } }, numero: { type: 'string' },
-      foto: { type: 'object', additionalProperties: false, required: ['usar', 'descripcion', 'palabras', 'fuente'], properties: { usar: { type: 'boolean' }, descripcion: { type: 'string' }, palabras: { type: 'array', items: { type: 'string' } }, fuente: { type: 'string', enum: ['propia', 'stock', 'producto'] } } } } } },
+      foto: { type: 'object', additionalProperties: false, required: ['usar', 'descripcion', 'palabras', 'fuente', 'vista'], properties: { usar: { type: 'boolean' }, descripcion: { type: 'string' }, palabras: { type: 'array', items: { type: 'string' } }, fuente: { type: 'string', enum: ['propia', 'stock', 'producto'] }, vista: { type: 'string', enum: ['', 'bicicleta completa de perfil', 'motor', 'pantalla MasterMind TCU', 'suspensión y link', 'tubo superior y SWAT', 'dirección y tubo frontal', 'vista del ciclista (cockpit)', 'vista frontal', 'vista trasera', 'batería', 'en terreno', 'detalle'] } } } } } },
     caption: { type: 'string' }, hashtags: { type: 'string' }, cta: { type: 'string', enum: ['WhatsApp', 'Web', 'Visita', 'Guardar', 'Compartir'] }, alt: { type: 'string' } } },
   insights: { type: 'object', additionalProperties: false, required: ['resumen', 'predicciones', 'recomendaciones', 'alertas'], properties: {
     resumen: { type: 'string' },
@@ -2263,8 +2273,9 @@ function ex_asistente_(p) {
   if (modo === 'pieza' || modo === 'contenido') extra += '\n\n' + [ex_stockDestacado_(), modo === 'pieza' ? ex_inventarioFotos_(160) : ''].filter(String).join('\n\n');
   // Pieza sobre un modelo concreto: primero se investiga (ficha oficial, galería y prensa) y eso va al Cerebro.
   let inv = null;
-  if (modo === 'pieza') { try { const tema = ((/^TEMA: (.*)$/m.exec(ctx)) || [])[1] || ''; inv = ex_spzInvestigar_(tema, /TIPO PEDIDO: historias/.test(ctx) ? 'historias' : 'carrusel'); if (inv) extra = '\n\n' + ex_invTexto_(inv) + extra; } catch (e) { console.log('investigar: ' + e.message); } }
-  return { ok: true, modo: modo, r: ex_llamarClaude_(ctx + extra, EX_AS_SISTEMA[modo], EX_AS_ESQUEMA[modo], 'contenido'), investigacion: inv };
+  if (modo === 'pieza') { try { const tema = ((/^TEMA: (.*)$/m.exec(ctx)) || [])[1] || ''; inv = ex_spzInvestigar_(tema, /TIPO PEDIDO: historias/.test(ctx) ? 'historias' : 'carrusel'); if (inv) { if (!/PIEZA ACTUAL:/.test(ctx)) { try { inv.web = ex_investigarWeb_(inv); } catch (e) { console.log('investigación web: ' + e.message); } } extra = '\n\n' + ex_invTexto_(inv) + extra; } } catch (e) { console.log('investigar: ' + e.message); } }
+  const r = modo === 'pieza' ? ex_llamarClaude_(ctx + extra, EX_AS_SISTEMA.pieza + '\n\n' + EX_EXPERTO_RRSS, EX_AS_ESQUEMA.pieza, 'creativo', { effort: 'high', max: 16000 }) : ex_llamarClaude_(ctx + extra, EX_AS_SISTEMA[modo], EX_AS_ESQUEMA[modo], 'contenido');
+  return { ok: true, modo: modo, r: r, investigacion: inv };
 }
 
 /* ---------- agente de ventas con IA ---------- */
@@ -2380,13 +2391,13 @@ function ex_hojaAg_() {
 }
 
 // Llama a Claude con la conversación y devuelve el análisis (JSON validado por esquema).
-function ex_llamarClaude_(contexto, sistema, esquema, skill) {
-  skill = skill || 'seguimiento';
+function ex_llamarClaude_(contexto, sistema, esquema, skill, opt) {
+  skill = skill || 'seguimiento'; opt = opt || {};
   const modelo = ex_modeloSkill_(skill), haiku = /haiku/.test(modelo);
   const j = ex_ia_(skill, {
-    model: modelo, max_tokens: 8000,
+    model: modelo, max_tokens: opt.max || 8000,
     // Haiku: esfuerzo bajo (lo más barato). Opus/Sonnet: esfuerzo medio (el respaldo automático lo pone ex_ia_).
-    output_config: { effort: haiku ? 'low' : 'medium', format: { type: 'json_schema', schema: esquema || EX_AG_ESQUEMA } },
+    output_config: { effort: haiku ? 'low' : (opt.effort || 'medium'), format: { type: 'json_schema', schema: esquema || EX_AG_ESQUEMA } },
     system: [{ type: 'text', text: (sistema || EX_AG_SISTEMA) + '\n\n' + EX_POLITICA, cache_control: { type: 'ephemeral' } }],
     messages: [{ role: 'user', content: contexto }]
   });
@@ -3666,7 +3677,7 @@ function ex_spzBuscar_(q, max) {
 const EX_RE_MODELOS = /\b(levo|kenevo|vado|como|stumpjumper|stumpy|epic|chisel|enduro|status|demo|tarmac|roubaix|aethos|diverge|crux|allez|sirrus|rockhopper|fuse|creo|s-?works|globe|tero|riprock|jett|hotrock)\b/i;
 function ex_spzInvestigar_(tema, tipo) {
   tema = String(tema || ''); if (!EX_RE_MODELOS.test(ex_norm_(tema))) return null;
-  const x = ex_spzBuscar_(tema, 1)[0]; if (!x) return null;
+  const C3 = ex_spzBuscar_(tema, 4), x = (/frameset|cuadro/i.test(tema) ? null : C3.filter(function (y) { return !/frameset|cuadro|module|kit/i.test(y.nombre); })[0]) || C3[0]; if (!x) return null;
   const cache = CacheService.getScriptCache(), k = 'spinv:' + x.id + ':' + (tipo === 'historias' ? 'v' : 'c'), c0 = cache.get(k); if (c0) return JSON.parse(c0);
   const h = ex_spzPedir_(['/cl/es/p/' + x.id])[0]; if (typeof h !== 'string') return null;
   const lim = function (v) { return String(v || '').replace(/<[^>]+>/g, '').replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#x27;|&#39;/g, "'").replace(/\s+/g, ' ').trim(); };
@@ -3676,12 +3687,12 @@ function ex_spzInvestigar_(tema, tipo) {
   const componentes = pares(/paragraph450">([^<]{2,60})<\/p><p class="[^"]*paragraph400"[^>]*>([^<]{2,400})<\/p>/g);
   const resumen = lim(((/paragraph300"[^>]*>([^<]*\d+\s?Nm[^<]*)<\/p>/.exec(h)) || [])[1]);
   // Galería oficial del modelo (una URL por foto, recortada al formato de la pieza en el propio CDN de Specialized).
-  const tam = tipo === 'historias' ? 'w=1080&h=1920' : 'w=1200&h=1500', vistos = {}, fotos = [];
+  const vistos = {}, fotos = [];
   (h.match(/https:\/\/resources\.specialized\.com\/image\/[A-Za-z0-9_\-]+/g) || []).forEach(function (u) {
     const code = u.split('/').pop(); if (vistos[code] || fotos.length >= 12 || /geometr|logo|icon/i.test(code)) return; vistos[code] = 1;
     const vista = (/MOTOR/i.test(code) ? 'motor' : /TCU|DISPLAY|MASTERMIND/i.test(code) ? 'pantalla MasterMind TCU' : /LINK|SHOCK|SUSP/i.test(code) ? 'suspensión y link' : /STTT|SWAT|TT\b/i.test(code) ? 'tubo superior y SWAT' : /HT\b|HEAD/i.test(code) ? 'dirección y tubo frontal' : /POV|COCKPIT/i.test(code) ? 'vista del ciclista (cockpit)' : /FDSQ|FRONT/i.test(code) ? 'vista frontal' : /RDSQ|REAR/i.test(code) ? 'vista trasera' : /BATT/i.test(code) ? 'batería' : /HERO|PROFILE|SIDE/i.test(code) ? 'bicicleta completa de perfil' : /RIDE|ACTION|LIFESTYLE/i.test(code) ? 'en terreno' : 'detalle');
     fotos.push({ fuente: 'spz', id: 'spzg' + code.slice(0, 60), nombre: 'Foto oficial · ' + x.nombre + ' · ' + vista, vista: vista,
-      thumb: u + '?w=480&h=600&fit=fill&crop=focalpoint&q=70', url: u + '?' + tam + '&fit=fill&crop=focalpoint&q=85' });
+      thumb: u + '?w=480&q=70', url: u + '?w=1400&q=88' });
   });
   if (x.img && !fotos.length) fotos.push({ fuente: 'spz', id: 'spz' + x.id, nombre: 'Foto oficial · ' + x.nombre, thumb: x.img.replace(/w=\d+&h=\d+/, 'w=400&h=400'), url: x.img.replace(/w=\d+&h=\d+/, 'w=1600&h=1600') });
   // Prensa: titulares recientes del modelo (Google Noticias) como fuentes adicionales.
@@ -3696,6 +3707,33 @@ function ex_spzInvestigar_(tema, tipo) {
   try { const js = JSON.stringify(out); if (js.length < 90000) cache.put(k, js, 21600); } catch (e) {}
   return out;
 }
+// Investigación web rigurosa (búsqueda en vivo): lanzamiento, novedades frente a la generación anterior, especificaciones
+// verificadas con su fuente y lo que destaca la prensa. Se contrasta con la ficha oficial de Chile. Se guarda 24 horas.
+const EX_INV_SIS = [
+  'Eres un investigador de producto riguroso para la tienda Specialized Blackline Puerto Varas (Chile). Tu trabajo es reunir la información MÁS ACTUAL y VERIFICADA de un modelo antes de que el equipo de redes cree contenido.',
+  'Método: 1) busca la página oficial de lanzamiento o del producto en specialized.com (cualquier país) y la nota de prensa del lanzamiento; 2) busca 2 o 3 pruebas de medios especializados reconocidos (Pinkbike, Vital MTB, BikeRadar, Bike Magazine, MBR, Brújula Bike, Solobici, emtb-news); 3) contrasta todo con la FICHA OFICIAL DE CHILE que se te entrega (precio y versión que se vende acá).',
+  'Reglas: cada especificación con su fuente; si dos fuentes no coinciden, usa la oficial y anótalo en dudas; no confundas versiones (S-Works, Pro, Expert, Comp, Alloy) ni generaciones (Levo 3 vs Levo 4); si un dato no está confirmado, no lo pongas. Nada de precios de otros países.',
+  'Responde SOLO con un objeto JSON (sin texto antes ni después) con estas claves: modelo (nombre exacto), generacion, anuncio (mes y año del lanzamiento), novedades (lista de 3 a 6 cambios reales frente a la generación anterior, con números cuando existan), especificaciones (lista de {dato, valor, fuente}), para_quien (1 frase), prensa (lista de {idea, medio}: lo que más destacan las pruebas, positivo y negativo), dudas (lista), fuentes (lista de {titulo, url}).'
+].join('\n');
+function ex_investigarWeb_(inv) {
+  const pr = PropertiesService.getScriptProperties(); if (!pr.getProperty('ANTHROPIC_API_KEY') || pr.getProperty('ESTUDIO_WEB') === 'no') return null;
+  const cache = CacheService.getScriptCache(), k = 'spweb2:' + inv.producto.id, c0 = cache.get(k); if (c0) return JSON.parse(c0);
+  const modelo = ex_modeloSkill_('creativo'), haiku = /haiku/.test(modelo);
+  const web = { type: haiku ? 'web_search_20250305' : 'web_search_20260209', name: 'web_search', max_uses: 6 };
+  const messages = [{ role: 'user', content: 'Producto a investigar: ' + inv.producto.nombre + '\nFecha de hoy: ' + ex_hoyYmd_(ex_tz_()) + '\n\nFICHA OFICIAL DE CHILE (leída hoy de specialized.com/cl):\n' + ex_invTexto_(Object.assign({}, inv, { web: null })) }];
+  let txt = '', conWeb = true;
+  for (let paso = 0; paso < 4; paso++) {
+    const j = ex_ia_('creativo', { model: modelo, max_tokens: 6000, output_config: { effort: haiku ? 'low' : 'medium' }, system: EX_INV_SIS, tools: conWeb ? [web] : [], messages: messages }, { sinWeb: function () { conWeb = false; } });
+    txt = ex_iaTexto_(j);
+    if (j.stop_reason === 'pause_turn') { messages.push({ role: 'assistant', content: j.content }); continue; }
+    break;
+  }
+  const a = txt.indexOf('{'), b = txt.lastIndexOf('}'); if (a < 0 || b <= a) return null;
+  let out; try { out = JSON.parse(txt.slice(a, b + 1)); } catch (e) { return null; }
+  out.conWeb = conWeb;
+  try { cache.put(k, JSON.stringify(out).slice(0, 95000), 86400); } catch (e) {}
+  return out;
+}
 function ex_invTexto_(inv) {
   const p = inv.producto;
   return ['INVESTIGACIÓN DEL PRODUCTO (ficha oficial de specialized.com/cl, leída hoy). Usa estos datos tal cual: nombres de componentes, cifras de motor, batería y autonomía. No inventes cifras que no estén aquí.',
@@ -3704,7 +3742,8 @@ function ex_invTexto_(inv) {
     p.destacados.length ? 'Destacados:\n- ' + p.destacados.join('\n- ') : '', p.componentes.length ? 'Componentes:\n- ' + p.componentes.slice(0, 18).join('\n- ') : '',
     p.tallas ? 'Tallas con stock en Specialized Chile: ' + p.tallas : '',
     inv.fotos.length ? 'Hay ' + inv.fotos.length + ' fotos oficiales de este modelo disponibles: en cada lámina de producto pide foto con fuente «producto», palabras con el nombre del modelo y, en la descripción, la vista que corresponde (bicicleta completa de perfil, motor, pantalla MasterMind TCU, suspensión y link, tubo superior y SWAT, vista del ciclista, vista frontal o trasera, en terreno).' : '',
-    inv.prensa.length ? 'Prensa reciente sobre el modelo (contexto, no copies textos):\n- ' + inv.prensa.map(function (x) { return x.titulo + (x.fuente ? ' (' + x.fuente + ')' : ''); }).join('\n- ') : ''
+    inv.prensa.length ? 'Prensa reciente sobre el modelo (contexto, no copies textos):\n- ' + inv.prensa.map(function (x) { return x.titulo + (x.fuente ? ' (' + x.fuente + ')' : ''); }).join('\n- ') : '',
+    inv.web ? 'INVESTIGACIÓN WEB VERIFICADA (búsqueda de hoy; es la información más actual, úsala junto a la ficha oficial):\n' + JSON.stringify({ modelo: inv.web.modelo, generacion: inv.web.generacion, anuncio: inv.web.anuncio, novedades: inv.web.novedades, especificaciones: inv.web.especificaciones, para_quien: inv.web.para_quien, prensa: inv.web.prensa, dudas: inv.web.dudas }).slice(0, 9000) : ''
   ].filter(String).join('\n');
 }
 function ex_spzTallas_(id) {
@@ -4172,6 +4211,8 @@ const EX_SKILLS = [
     que: 'Elige las noticias del mundo bike que le importan a la tienda y explica por qué.' },
   { id: 'fotos', nombre: 'Catalogar fotos', icono: '🖼️', nivel: 'rapido', modo: 'auto', cuando: 'Cuando hay fotos nuevas en Drive', donde: 'Redes → Estudio', tab: 'redes', prop: 'FOTOS_MODELO',
     que: 'Mira cada foto nueva y la describe con etiquetas, para encontrarla al diseñar.' },
+  { id: 'creativo', nombre: 'Creativo de redes', icono: '📣', nivel: 'experto', modo: 'manual', donde: 'Redes → Estudio', tab: 'redes', prop: 'CREATIVO_MODELO',
+    que: 'Investiga el producto en la web (ficha oficial, lanzamiento, prensa) y escribe carruseles e historias como un experto en redes: gancho, datos verificados y llamado a la acción.' },
   { id: 'director_arte', nombre: 'Director de arte', icono: '🎨', nivel: 'experto', modo: 'manual', donde: 'Redes → Estudio', tab: 'redes', prop: 'ESTUDIO_MODELO',
     que: 'Elige la mejor foto para cada lámina de una pieza, o te dice exactamente qué foto sacar.' }
 ];

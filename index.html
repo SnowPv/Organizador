@@ -2669,7 +2669,7 @@ async function apiX(op, extra){
 // Nivel 2 del script Extras: recordatorios y base de contactos. Nivel 3: la base solo usa contacto@blacklinechile.cl. Nivel 4: eventos de varios días.
 function enCurso(k, fn){ S._p = S._p || {}; if (S._p[k]) return S._p[k]; const pr = Promise.resolve().then(fn).finally(() => { if (S._p[k] === pr) delete S._p[k]; }); S._p[k] = pr; return pr; }
 function extNivel(){ return S.extInactivo ? 0 : (S.ext && S.ext.nivel) || 1; }
-const APP_VER = 'v90', NIVEL_ULTIMO = 52;
+const APP_VER = 'v91', NIVEL_ULTIMO = 53;
 function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < NIVEL_ULTIMO; }
 let sincTimer = null;
 // Después de cambiar tareas, el script actualiza los recordatorios del calendario (en segundo plano).
@@ -3393,7 +3393,7 @@ function noticiasHome(){
 // Texto corto de lo que trae la versión nueva del script (el banner de actualización del Inicio).
 function novedadScript(){
   const n = extNivel();
-  return n >= 52 ? 'Redes renovado: Instagram en vivo con tus fotos reales, y el Estudio investiga la ficha oficial, las fotos del modelo y la prensa antes de crear una pieza.' : n >= 51 ? 'Noticias con su foto y link original.' : n >= 50 ? 'Guardar notas y mover negociaciones es más rápido: el script actualiza solo el contacto afectado.' : n >= 49 ? 'Recompra de consumibles: la app detecta quién debería cambiar pastillas, cadena o cubiertas según sus compras en Bsale, con el stock para ofrecer y el mensaje listo (Contactos → Campañas).' : n >= 48 ? 'La revisión de los 30 días sugiere los accesorios que el cliente no compró (asesoría, sin descuentos).' : n >= 47 ? 'Cada negociación tiene su lista de productos (desde Bsale o a mano) con precios, costo, ganancia y margen; el Cerebro también los puede agregar.' : n >= 46 ? 'Los contactos internos (Blackline Servicio Técnico, el equipo) ya no generan tareas, negociaciones ni «espera respuesta».' : n >= 45 ? 'El Cerebro responde más rápido (busca en varias fuentes a la vez y tiene un tope de tiempo) y no deja a la app esperando tanto.' : n >= 44 ? 'El Cerebro confirma en el catálogo de Andes Industrial si un repuesto Shimano o Continental existe en el distribuidor.' : n >= 43 ? 'El Cerebro entiende mejor el ciclismo (Di2, AXS, modelos) y busca opciones de compra cuando una tarea es conseguir un repuesto.' : n >= 42 ? 'Proveedores fuera del pipeline (el agente ya no les abre negociaciones) y el Cerebro puede agregar contactos nuevos cuando le dictas.' : n >= 41 ? 'Empezar de cero: la fecha de inicio se guarda en el script y la ven todos los equipos (Admin y Piso de venta).' : n >= 40 ? 'Ahora hay dos cuentas con contraseña: Admin (todo, como siempre) y Piso de venta (parte en un Hoy nuevo, sin cifras de la tienda). Créalas en ⚙️ Ajustes → Usuarios.' : n >= 39 ? 'La app ahora tiene un solo Cerebro con 9 skills (en vez de agentes sueltos): mira qué hace solo, cuánto gasta y paúsalo en la pestaña Cerebro.' : n >= 37 ? 'Las tareas automáticas ya no bloquean la app (por ejemplo, la lectura de ventas de Bsale).' : n >= 36 ? 'Cuando un cliente con negociación abierta compra en Bsale, la app te propone marcarla como ganada.' : n >= 35 ? 'Ventas del mes igual que en Bsale (solo boletas y facturas, menos notas de crédito) y noticias con foto de portada.' : n >= 34 ? 'Meta y gráfico de ventas del mes en el Inicio, con el avance diario desde Bsale.' : n >= 33 ? 'Une sola las negociaciones duplicadas de una venta ganada.' : n >= 32 ? 'Etapas después del pago: seguimiento, entrega y postventa.' : n >= 31 ? 'Venta perdida: cierra tareas, eventos y la idea de respuesta del Cerebro.' : 'Funciones nuevas para el Organizador.';
+  return n >= 53 ? 'El Estudio investiga en la web (lanzamiento, prensa y ficha oficial) y escribe con el modelo experto; cada lámina recibe la foto oficial que corresponde.' : n >= 52 ? 'Redes renovado: Instagram en vivo con tus fotos reales, y el Estudio investiga la ficha oficial, las fotos del modelo y la prensa antes de crear una pieza.' : n >= 51 ? 'Noticias con su foto y link original.' : n >= 50 ? 'Guardar notas y mover negociaciones es más rápido: el script actualiza solo el contacto afectado.' : n >= 49 ? 'Recompra de consumibles: la app detecta quién debería cambiar pastillas, cadena o cubiertas según sus compras en Bsale, con el stock para ofrecer y el mensaje listo (Contactos → Campañas).' : n >= 48 ? 'La revisión de los 30 días sugiere los accesorios que el cliente no compró (asesoría, sin descuentos).' : n >= 47 ? 'Cada negociación tiene su lista de productos (desde Bsale o a mano) con precios, costo, ganancia y margen; el Cerebro también los puede agregar.' : n >= 46 ? 'Los contactos internos (Blackline Servicio Técnico, el equipo) ya no generan tareas, negociaciones ni «espera respuesta».' : n >= 45 ? 'El Cerebro responde más rápido (busca en varias fuentes a la vez y tiene un tope de tiempo) y no deja a la app esperando tanto.' : n >= 44 ? 'El Cerebro confirma en el catálogo de Andes Industrial si un repuesto Shimano o Continental existe en el distribuidor.' : n >= 43 ? 'El Cerebro entiende mejor el ciclismo (Di2, AXS, modelos) y busca opciones de compra cuando una tarea es conseguir un repuesto.' : n >= 42 ? 'Proveedores fuera del pipeline (el agente ya no les abre negociaciones) y el Cerebro puede agregar contactos nuevos cuando le dictas.' : n >= 41 ? 'Empezar de cero: la fecha de inicio se guarda en el script y la ven todos los equipos (Admin y Piso de venta).' : n >= 40 ? 'Ahora hay dos cuentas con contraseña: Admin (todo, como siempre) y Piso de venta (parte en un Hoy nuevo, sin cifras de la tienda). Créalas en ⚙️ Ajustes → Usuarios.' : n >= 39 ? 'La app ahora tiene un solo Cerebro con 9 skills (en vez de agentes sueltos): mira qué hace solo, cuánto gasta y paúsalo en la pestaña Cerebro.' : n >= 37 ? 'Las tareas automáticas ya no bloquean la app (por ejemplo, la lectura de ventas de Bsale).' : n >= 36 ? 'Cuando un cliente con negociación abierta compra en Bsale, la app te propone marcarla como ganada.' : n >= 35 ? 'Ventas del mes igual que en Bsale (solo boletas y facturas, menos notas de crédito) y noticias con foto de portada.' : n >= 34 ? 'Meta y gráfico de ventas del mes en el Inicio, con el avance diario desde Bsale.' : n >= 33 ? 'Une sola las negociaciones duplicadas de una venta ganada.' : n >= 32 ? 'Etapas después del pago: seguimiento, entrega y postventa.' : n >= 31 ? 'Venta perdida: cierra tareas, eventos y la idea de respuesta del Cerebro.' : 'Funciones nuevas para el Organizador.';
 }
 
 /* ---------- Ventas del mes: avance diario acumulado contra el mes anterior y la meta ---------- */
@@ -5116,7 +5116,7 @@ async function traerImgs(refs, ancho){
   const falt = refs.filter(r => r && !_img[r.fuente + ':' + r.id]);
   for (let i = 0; i < falt.length; i += 6){
     const r = await apiX('imagen', { accion: 'traer', items: falt.slice(i, i + 6).map(x => ({ fuente: x.fuente, id: x.id, url: x.url, ancho: ancho || 1600 })) });
-    for (const x of r.items || []) if (x.data){ try { _img[x.fuente + ':' + x.id] = await cargarImg(x.data); } catch(e){} }
+    for (const x of r.items || []) if (x.data){ try { const im = await cargarImg(x.data); if (x.fuente === 'spz') im._spz = true; _img[x.fuente + ':' + x.id] = im; } catch(e){} }
   }
 }
 async function bancoListas(){
@@ -5133,7 +5133,21 @@ async function resolverFotos(pz, opt){
   const falta = pz.slides.map((s, i) => ({ s, i })).filter(x => x.s.foto && x.s.foto.usar && !x.s.foto.ref);
   const palDe = s => (s.foto.palabras || []).concat(tokens(s.foto.descripcion || ''), tokens(s.titulo || '')).map(w => norm(w)).filter(w => w.length >= 3);
   const pts = (it, pal) => { const t = norm(it.nombre || ''); return pal.reduce((n, w) => n + (t.includes(w) ? (RE_MODELO.test(w) ? 3 : 1) : 0), 0); };
-  const ofi = ((pz.investigacion || {}).fotos || []), ptsOfi = (x, s) => { const t = norm(x.vista + ' ' + x.nombre); return tokens((s.foto.descripcion || '') + ' ' + (s.titulo || '') + ' ' + (s.kicker || '')).map(w => norm(w)).filter(w => w.length >= 4).reduce((n, w) => n + (t.includes(w) ? 1 : 0), 0); };
+  const ofi = ((pz.investigacion || {}).fotos || []);
+  // Con fotos oficiales del modelo: cada lámina de producto recibe la vista que pidió el Cerebro (motor, pantalla, bici completa…).
+  if (ofi.length){
+    const VISTA_PORTADA = ['bicicleta completa de perfil', 'en terreno', 'vista frontal'];
+    falta.forEach(({ s }) => {
+      if (s.foto.ref) return;
+      const quiere = s.foto.vista || (s.foto.fuente === 'producto' || s.layout === 'portada' ? 'bicicleta completa de perfil' : '');
+      if (!quiere) return;
+      const libres = ofi.filter(x => !usadas.has(x.id)), orden = quiere === 'bicicleta completa de perfil' ? VISTA_PORTADA : [quiere];
+      const x = orden.map(v => libres.find(y => y.vista === v)).find(Boolean) || (s.foto.fuente === 'producto' ? libres.find(y => !/detalle/.test(y.vista)) || libres[0] : null);
+      if (x){ s.foto.ref = { fuente: 'spz', id: x.id, url: x.url, nombre: x.nombre }; usadas.add(x.id); delete s.foto.pedido; }
+    });
+  }
+  const ptsOfi = (x, s) => { const t = norm(x.vista + ' ' + x.nombre); return tokens((s.foto.descripcion || '') + ' ' + (s.titulo || '') + ' ' + (s.kicker || '')).map(w => norm(w)).filter(w => w.length >= 4).reduce((n, w) => n + (t.includes(w) ? 1 : 0), 0); };
+  for (let k = falta.length - 1; k >= 0; k--) if (falta[k].s.foto.ref) falta.splice(k, 1);
   if (falta.length && opt.vision !== false && extNivel() >= 22 && iaDisponible()){
     const cand = new Map(), addC = x => { if (x && !usadas.has(x.id) && cand.size < 36) cand.set(x.id, x); };
     ofi.forEach(addC);   // fotos oficiales del modelo investigado: primero
@@ -5142,7 +5156,7 @@ async function resolverFotos(pz, opt){
       propias.slice(0, 6).forEach(y => addC(y.x));
       (S.ytFotos || []).map(x => ({ x, p: pts(x, pal) })).filter(y => y.p > 0).sort((a, b) => b.p - a.p).slice(0, 2).forEach(y => addC(y.x));
       const modelo = pal.filter(w => RE_MODELO.test(w)).slice(0, 3).join(' ');
-      if (modelo || s.foto.fuente === 'producto'){ try { ((await apiX('imagen', { accion: 'spz', q: modelo || s.foto.descripcion })).items || []).slice(0, 2).forEach(addC); } catch(e){} }
+      if (!ofi.length && (modelo || s.foto.fuente === 'producto')){ try { ((await apiX('imagen', { accion: 'spz', q: modelo || s.foto.descripcion })).items || []).slice(0, 2).forEach(addC); } catch(e){} }
       if (S.marcaSrv && S.marcaSrv.pexels && (s.foto.fuente === 'stock' || propias.length < 2)){ try { const q = (s.foto.palabras || []).filter(w => /^[a-z0-9 -]+$/i.test(w)).slice(0, 4).join(' ') || s.foto.descripcion; ((await apiX('imagen', { accion: 'buscar', q, orientacion: 'portrait' })).items || []).slice(0, 3).forEach(addC); } catch(e){} }
     }
     try {
@@ -5179,7 +5193,13 @@ function encajar(ctx, txt, fam, peso, maxW, maxH, grande, chico, lh){
   ctx.font = f(chico); return { sz: chico, L: lineas(ctx, txt, maxW), f: f(chico) };
 }
 function escribir(ctx, b, x, y, lh, align){ if (b.f) ctx.font = b.f; ctx.textAlign = align || 'left'; ctx.textBaseline = 'top'; b.L.forEach((l, i) => ctx.fillText(l, x, y + i * b.sz * lh)); return y + b.L.length * b.sz * lh; }
-function cubrir(ctx, img, x, y, w, h){ const r = Math.max(w / img.width, h / img.height), iw = img.width * r, ih = img.height * r; ctx.save(); ctx.beginPath(); ctx.rect(x, y, w, h); ctx.clip(); ctx.drawImage(img, x + (w - iw) / 2, y + (h - ih) / 2, iw, ih); ctx.restore(); }
+function cubrir(ctx, img, x, y, w, h){
+  // Fotos oficiales horizontales (la bici de perfil) en un espacio vertical: la bici entera sobre su propia foto difuminada, sin cortar ruedas.
+  if (img._spz && img.width / img.height > 1.2 && w / h < 1.05){
+    const rc = Math.max(w / img.width, h / img.height); ctx.save(); ctx.beginPath(); ctx.rect(x, y, w, h); ctx.clip(); ctx.filter = 'blur(28px) brightness(.55)'; ctx.drawImage(img, x + (w - img.width * rc) / 2, y + (h - img.height * rc) / 2, img.width * rc, img.height * rc); ctx.filter = 'none';
+    const rf = Math.min(w / img.width, h / img.height) * 0.98, iw = img.width * rf, ih = img.height * rf; ctx.drawImage(img, x + (w - iw) / 2, y + Math.max(h * 0.02, (h - ih) / 2 - h * 0.13), iw, ih); ctx.restore(); return;
+  }
+  const r = Math.max(w / img.width, h / img.height), iw = img.width * r, ih = img.height * r; ctx.save(); ctx.beginPath(); ctx.rect(x, y, w, h); ctx.clip(); ctx.drawImage(img, x + (w - iw) / 2, y + (h - ih) / 2, iw, ih); ctx.restore(); }
 function rrect(ctx, x, y, w, h, r){ ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); }
 let _logoImg = null, _logoSrc = '';
 async function prepararLogo(m){ if (m.logoData && m.logoData !== _logoSrc){ try { _logoImg = await cargarImg(m.logoData); _logoSrc = m.logoData; } catch(e){ _logoImg = null; } } if (!m.logoData) _logoImg = null; }
@@ -5407,9 +5427,9 @@ function crearPieza(idea){
     try {
       if (!S.base) await loadBase(false);
       try { await bancoListas(); } catch(e){}
-      b.innerHTML = '<span class="spin"></span>Investigando y escribiendo…';
+      b.innerHTML = '<span class="spin"></span>' + (/\b(levo|kenevo|vado|como|stumpjumper|epic|chisel|enduro|status|tarmac|roubaix|aethos|diverge|crux|allez|creo|s-?works)\b/i.test(md.el.querySelector('#cp_q').value) ? 'Investigando el modelo en la web y en specialized.com (hasta 1 minuto)…' : 'Escribiendo…');
       const R = await apiX('asistente', { modo: 'pieza', contexto: contextoPieza(md.el.querySelector('#cp_q').value.trim(), tipo, it) }), r = R.r;
-      if (R.investigacion){ const iv = R.investigacion; r.investigacion = { producto: { nombre: iv.producto.nombre, url: iv.producto.url, precio: iv.producto.precio }, prensa: iv.prensa || [], fotos: iv.fotos || [] }; }
+      if (R.investigacion){ const iv = R.investigacion; r.investigacion = { producto: { nombre: iv.producto.nombre, url: iv.producto.url, precio: iv.producto.precio }, prensa: iv.prensa || [], fotos: iv.fotos || [], web: iv.web ? { anuncio: iv.web.anuncio || '', generacion: iv.web.generacion || '', novedades: (iv.web.novedades || []).slice(0, 6), fuentes: (iv.web.fuentes || []).slice(0, 8), dudas: (iv.web.dudas || []).slice(0, 4) } : null }; }
       r.tipo = tipo; b.innerHTML = '<span class="spin"></span>' + (r.investigacion ? 'Eligiendo entre ' + r.investigacion.fotos.length + ' fotos oficiales y diseñando…' : 'Eligiendo fotos y diseñando…');
       await renderPieza(r);
       const res = await apiX('piezas', { guardar: { tipo, estado: 'Borrador', titulo: r.titulo, pilar: r.pilar, caption: r.caption, hashtags: r.hashtags, diseno: r, contenido: it ? it.id : '' } });
@@ -5449,7 +5469,8 @@ async function abrirPieza(p){
         (pz.por_que ? '<div class="hint">Por qué ahora: ' + esc(pz.por_que) + '</div>' : '') +
         (pz.investigacion ? '<div class="pz-fu"><b>' + icon('search') + ' Fuentes consultadas</b><a href="' + esc(pz.investigacion.producto.url) + '" target="_blank" rel="noopener"><span class="pz-fs">Oficial</span>Ficha de ' + esc(pz.investigacion.producto.nombre) + ' en specialized.com</a>' +
           (pz.investigacion.fotos.length ? '<span class="pz-fl">' + icon('image') + pz.investigacion.fotos.length + ' fotos oficiales del modelo disponibles (botón «Cambiar» de cada lámina)</span>' : '') +
-          (pz.investigacion.prensa || []).slice(0, 5).map(x => '<a href="' + esc(x.link) + '" target="_blank" rel="noopener"><span class="pz-fs pr">Prensa</span>' + esc(x.titulo) + (x.fuente ? ' <small>· ' + esc(x.fuente) + '</small>' : '') + '</a>').join('') + '</div>' : '') +
+          (pz.investigacion.web ? '<span class="pz-fl">' + icon('check') + 'Investigación web' + (pz.investigacion.web.anuncio ? ' · lanzamiento ' + esc(pz.investigacion.web.anuncio) : '') + (pz.investigacion.web.novedades.length ? ' · ' + pz.investigacion.web.novedades.length + ' novedades verificadas' : '') + '</span>' + (pz.investigacion.web.fuentes || []).map(x => '<a href="' + esc(x.url) + '" target="_blank" rel="noopener"><span class="pz-fs">Web</span>' + esc(x.titulo || x.url) + '</a>').join('') + ((pz.investigacion.web.dudas || []).length ? '<span class="pz-fl">⚠️ Revisa: ' + esc(pz.investigacion.web.dudas.join(' · ')) + '</span>' : '') : '') +
+          (pz.investigacion.prensa || []).slice(0, pz.investigacion.web ? 2 : 5).map(x => '<a href="' + esc(x.link) + '" target="_blank" rel="noopener"><span class="pz-fs pr">Prensa</span>' + esc(x.titulo) + (x.fuente ? ' <small>· ' + esc(x.fuente) + '</small>' : '') + '</a>').join('') + '</div>' : '') +
         (pedidosFoto(pz).length ? '<div class="pz-ped"><b>📸 Fotos que te pido</b>' + pedidosFoto(pz).map(x => '<div><span>Lámina ' + (x.i + 1) + '</span>' + esc(x.t) + '</div>').join('') + '<div class="hint" style="margin:6px 0 8px">No encontré fotos que calcen de verdad. Sácalas (o súbelas a tu carpeta de fotos) y vuelve a elegir en cada lámina.</div><button class="btn sm sec" id="pe_ped">＋ Crear tarea para sacarlas</button></div>' : '') +
         '<div class="pz-ia"><label class="l">Pedir cambios al Cerebro</label><textarea class="note" id="pe_q" rows="2" placeholder="Ej.: más corto, enfócalo en la Levo SL, agrega una lámina de tallas, cambia el tono a más técnico…"></textarea><button class="btn sm" id="pe_ia">' + icon('spark') + ' Pedir cambios</button></div>' +
         (pub ? '<div class="pz-ok">' + icon('check') + ' Publicada' + (p.link ? ' · <a href="' + esc(p.link) + '" target="_blank">ver en Instagram</a>' : '') + '</div>' : '') +
