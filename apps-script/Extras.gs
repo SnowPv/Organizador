@@ -15,8 +15,8 @@
  * Para actualizar este archivo más adelante: reemplaza todo su contenido y repite los dos pasos anteriores.
  */
 
-const EX_VERSION = '2027-02-06';
-const EX_NIVEL = 51;      // la app lo usa para saber qué funciones tiene este script
+const EX_VERSION = '2027-02-13';
+const EX_NIVEL = 52;      // la app lo usa para saber qué funciones tiene este script
 const EX_HOJA = 'Tareas';
 const EX_PRIMERA = 4;
 const EX_ULTIMA = 400;
@@ -114,7 +114,7 @@ var EX_ROL = 'admin';
 // Lo único que puede pedir el Piso de Venta (todo lo demás responde «solo Admin»).
 const EX_OPS_PISO = ['extras', 'google', 'subtareas', 'repetir', 'siguiente', 'base', 'contacto', 'chat', 'chats', 'nota', 'negocios', 'negocio', 'negocioNota',
   'eventosContacto', 'perderNegocio', 'agente', 'bsale', 'instagram', 'contenido', 'perfilCorregir', 'oportunidad', 'leadsCanal', 'specialized', 'noticias', 'clima',
-  'avisos', 'copiloto', 'global', 'tareaIA', 'eventoCrear', 'eventos', 'sesion', 'salir', 'recompra', 'recompraMarca'];
+  'avisos', 'copiloto', 'global', 'tareaIA', 'eventoCrear', 'eventos', 'sesion', 'salir', 'recompra', 'recompraMarca', 'igVivo'];
 // Herramientas del Cerebro que muestran números de la tienda o costos: el Piso de Venta no las tiene.
 const EX_TOOLS_SOLO_ADMIN = ['ventas_tienda', 'buscar_en_proveedores', 'oportunidades_compra', 'correos_proveedores', 'buscar_en_planillas', 'buscar_correos'];
 const EX_SES_DIAS = { admin: 30, piso: 14 };
@@ -282,6 +282,7 @@ function ex_ruta_(p) {
     case 'proveedores': return ex_proveedores_(p);
     case 'tareaIA':    return ex_tareaIA_(p);
     case 'bsaleVentas': return ex_bsaleVentas_(p);
+    case 'igVivo':     return ex_igVivo_(p);
     case 'recompra':   return ex_recompra_(p);
     case 'recompraMarca': return ex_recompraMarca_(p);
     case 'eventoCrear': return ex_eventoCrear_(p);
@@ -1587,6 +1588,34 @@ function ex_instagram_(p) {
   const audiencia = aud.length ? { fecha: aud[0][0] instanceof Date ? Utilities.formatDate(aud[0][0], tz, 'yyyy-MM-dd') : '', items: aud.map(function (r) { return { tipo: r[1], clave: String(r[2]), valor: +r[3] || 0 }; }) } : null;
   return { ok: true, activo: true, usuario: pr.getProperty('IG_USUARIO') || '', sinc: pr.getProperty('EX_IG_SINC') || '', dias: dias, posts: posts.concat(historias), audiencia: audiencia, resultado: sinc };
 }
+// Instagram en vivo (para el Resumen de Redes): la cuenta ahora, las últimas publicaciones con su foto y métricas al minuto,
+// lo que va del día y la foto de las publicaciones que pide la app (las mejores). Las fotos de Instagram vencen a los días,
+// por eso se piden cada vez y no se guardan. Se guarda 5 minutos en caché para no gastar llamadas.
+function ex_igVivo_(p) {
+  const tok = ex_igToken_(); if (!tok) return { ok: true, activo: false };
+  const ids = (Array.isArray(p.ids) ? p.ids : []).map(String).filter(function (x) { return /^\d+$/.test(x); }).slice(0, 12);
+  const cache = CacheService.getScriptCache(), k = 'igv1:' + Utilities.base64Encode(Utilities.computeDigest(Utilities.DigestAlgorithm.MD5, ids.join(','))).slice(0, 12);
+  if (!p.fresco) { const c = cache.get(k); if (c) return JSON.parse(c); }
+  const tz = ex_tz_(), hoy0 = Math.floor(ex_aFecha_(ex_hoyYmd_(tz), tz).getTime() / 1000), ahora = Math.floor(Date.now() / 1000);
+  const R = ex_igVarias_([
+    '/me?fields=username,followers_count,follows_count,media_count,profile_picture_url',
+    '/me/media?fields=id,caption,media_type,media_product_type,permalink,timestamp,like_count,comments_count,media_url,thumbnail_url&limit=12',
+    '/me/insights?metric=reach,views,total_interactions,profile_links_taps&period=day&metric_type=total_value&since=' + hoy0 + '&until=' + Math.max(hoy0 + 60, ahora)
+  ].concat(ids.map(function (id) { return '/' + id + '?fields=id,media_url,thumbnail_url,media_type,permalink'; })), tok);
+  const yo = R[0] || {}, media = (R[1] && R[1].data) || [], hoyJ = R[2];
+  const tipo = function (m) { return EX_IG_MET[m.media_product_type] ? m.media_product_type : 'FEED'; };
+  const ins = ex_igVarias_(media.map(function (m) { return '/' + m.id + '/insights?metric=' + EX_IG_MET[tipo(m)][1]; }), tok);
+  const img = function (m) { return m.media_type === 'VIDEO' ? (m.thumbnail_url || '') : (m.media_url || m.thumbnail_url || ''); };
+  const out = { ok: true, activo: true, en: new Date().toISOString(),
+    cuenta: { usuario: yo.username || '', seguidores: yo.followers_count, siguiendo: yo.follows_count, publicaciones: yo.media_count, foto: yo.profile_picture_url || '' },
+    hoy: hoyJ ? { alcance: ex_igValor_(hoyJ, 'reach'), vistas: ex_igValor_(hoyJ, 'views'), interacciones: ex_igValor_(hoyJ, 'total_interactions'), links: ex_igValor_(hoyJ, 'profile_links_taps') } : null,
+    recientes: media.map(function (m, i) { const j = ins[i]; return { id: m.id, fecha: Utilities.formatDate(new Date(m.timestamp), tz, 'yyyy-MM-dd HH:mm'), tipo: m.media_type, formato: m.media_product_type, texto: String(m.caption || '').slice(0, 220), link: m.permalink, img: img(m),
+      likes: m.like_count || 0, comentarios: m.comments_count || 0, alcance: ex_igValor_(j, 'reach'), vistas: ex_igValor_(j, 'views'), guardados: ex_igValor_(j, 'saved'), compartidos: ex_igValor_(j, 'shares'), interacciones: ex_igValor_(j, 'total_interactions') }; }),
+    imagenes: {} };
+  ids.forEach(function (id, i) { const m = R[3 + i]; if (m && img(m)) out.imagenes[id] = img(m); });
+  try { cache.put(k, JSON.stringify(out), 300); } catch (e) {}
+  return out;
+}
 const EX_IG_MET = {
   FEED: ['reach,saved,shares,views,total_interactions,follows,profile_visits', 'reach,saved,shares,views,total_interactions'],
   REELS: ['reach,saved,shares,views,total_interactions,ig_reels_avg_watch_time,reels_skip_rate', 'reach,saved,shares,views,total_interactions,ig_reels_avg_watch_time'],
@@ -2168,7 +2197,7 @@ const EX_AS_ESQUEMA = {
     slides: { type: 'array', items: { type: 'object', additionalProperties: false, required: ['layout', 'kicker', 'titulo', 'texto', 'items', 'numero', 'foto'], properties: {
       layout: { type: 'string', enum: ['portada', 'texto', 'lista', 'comparativa', 'dato', 'foto', 'pregunta', 'cta'] }, kicker: { type: 'string' }, titulo: { type: 'string' }, texto: { type: 'string' },
       items: { type: 'array', items: { type: 'string' } }, numero: { type: 'string' },
-      foto: { type: 'object', additionalProperties: false, required: ['usar', 'descripcion', 'palabras', 'fuente'], properties: { usar: { type: 'boolean' }, descripcion: { type: 'string' }, palabras: { type: 'array', items: { type: 'string' } }, fuente: { type: 'string', enum: ['propia', 'stock'] } } } } } },
+      foto: { type: 'object', additionalProperties: false, required: ['usar', 'descripcion', 'palabras', 'fuente'], properties: { usar: { type: 'boolean' }, descripcion: { type: 'string' }, palabras: { type: 'array', items: { type: 'string' } }, fuente: { type: 'string', enum: ['propia', 'stock', 'producto'] } } } } } },
     caption: { type: 'string' }, hashtags: { type: 'string' }, cta: { type: 'string', enum: ['WhatsApp', 'Web', 'Visita', 'Guardar', 'Compartir'] }, alt: { type: 'string' } } },
   insights: { type: 'object', additionalProperties: false, required: ['resumen', 'predicciones', 'recomendaciones', 'alertas'], properties: {
     resumen: { type: 'string' },
@@ -2232,7 +2261,10 @@ function ex_asistente_(p) {
   if (!ctx) throw new Error('sin contexto');
   let extra = (modo === 'pieza' || modo === 'contenido' || modo === 'redes') ? '\n\n' + EX_EST_MTB + '\n\n' + ex_bibliotecaContexto_() : '';
   if (modo === 'pieza' || modo === 'contenido') extra += '\n\n' + [ex_stockDestacado_(), modo === 'pieza' ? ex_inventarioFotos_(160) : ''].filter(String).join('\n\n');
-  return { ok: true, modo: modo, r: ex_llamarClaude_(ctx + extra, EX_AS_SISTEMA[modo], EX_AS_ESQUEMA[modo], 'contenido') };
+  // Pieza sobre un modelo concreto: primero se investiga (ficha oficial, galería y prensa) y eso va al Cerebro.
+  let inv = null;
+  if (modo === 'pieza') { try { const tema = ((/^TEMA: (.*)$/m.exec(ctx)) || [])[1] || ''; inv = ex_spzInvestigar_(tema, /TIPO PEDIDO: historias/.test(ctx) ? 'historias' : 'carrusel'); if (inv) extra = '\n\n' + ex_invTexto_(inv) + extra; } catch (e) { console.log('investigar: ' + e.message); } }
+  return { ok: true, modo: modo, r: ex_llamarClaude_(ctx + extra, EX_AS_SISTEMA[modo], EX_AS_ESQUEMA[modo], 'contenido'), investigacion: inv };
 }
 
 /* ---------- agente de ventas con IA ---------- */
@@ -3627,6 +3659,53 @@ function ex_spzBuscar_(q, max) {
   }).filter(function (o) { return o.p > 0; }); };
   let res = puntaje(0.7); if (!res.length) res = puntaje(0.5);
   return res.sort(function (a, b) { return b.p - a.p; }).slice(0, max || 10).map(function (o) { return o.x; });
+}
+// Investigación de un producto para el Estudio: la ficha oficial de specialized.com/cl (descripción, destacados, componentes
+// y la galería de fotos del modelo) y lo que dice la prensa del modelo. Así el Cerebro escribe con datos exactos y elige fotos
+// del producto correcto. Se guarda 6 horas.
+const EX_RE_MODELOS = /\b(levo|kenevo|vado|como|stumpjumper|stumpy|epic|chisel|enduro|status|demo|tarmac|roubaix|aethos|diverge|crux|allez|sirrus|rockhopper|fuse|creo|s-?works|globe|tero|riprock|jett|hotrock)\b/i;
+function ex_spzInvestigar_(tema, tipo) {
+  tema = String(tema || ''); if (!EX_RE_MODELOS.test(ex_norm_(tema))) return null;
+  const x = ex_spzBuscar_(tema, 1)[0]; if (!x) return null;
+  const cache = CacheService.getScriptCache(), k = 'spinv:' + x.id + ':' + (tipo === 'historias' ? 'v' : 'c'), c0 = cache.get(k); if (c0) return JSON.parse(c0);
+  const h = ex_spzPedir_(['/cl/es/p/' + x.id])[0]; if (typeof h !== 'string') return null;
+  const lim = function (v) { return String(v || '').replace(/<[^>]+>/g, '').replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#x27;|&#39;/g, "'").replace(/\s+/g, ' ').trim(); };
+  const desc = lim(((/<meta name="description" content="([^"]+)"/.exec(h)) || [])[1]);
+  const pares = function (re) { const out = [], vistos = {}; let m; while ((m = re.exec(h)) && out.length < 30) { const a = lim(m[1]), b = lim(m[2]); if (a && b && a.length < 60 && !vistos[a + b]) { vistos[a + b] = 1; out.push(a + ': ' + b.slice(0, 220)); } } return out; };
+  const destacados = pares(/paragraph200">([^<]{2,60})<\/p><p class="[^"]*paragraph300">([^<]{3,400})<\/p>/g);
+  const componentes = pares(/paragraph450">([^<]{2,60})<\/p><p class="[^"]*paragraph400"[^>]*>([^<]{2,400})<\/p>/g);
+  const resumen = lim(((/paragraph300"[^>]*>([^<]*\d+\s?Nm[^<]*)<\/p>/.exec(h)) || [])[1]);
+  // Galería oficial del modelo (una URL por foto, recortada al formato de la pieza en el propio CDN de Specialized).
+  const tam = tipo === 'historias' ? 'w=1080&h=1920' : 'w=1200&h=1500', vistos = {}, fotos = [];
+  (h.match(/https:\/\/resources\.specialized\.com\/image\/[A-Za-z0-9_\-]+/g) || []).forEach(function (u) {
+    const code = u.split('/').pop(); if (vistos[code] || fotos.length >= 12 || /geometr|logo|icon/i.test(code)) return; vistos[code] = 1;
+    const vista = (/MOTOR/i.test(code) ? 'motor' : /TCU|DISPLAY|MASTERMIND/i.test(code) ? 'pantalla MasterMind TCU' : /LINK|SHOCK|SUSP/i.test(code) ? 'suspensión y link' : /STTT|SWAT|TT\b/i.test(code) ? 'tubo superior y SWAT' : /HT\b|HEAD/i.test(code) ? 'dirección y tubo frontal' : /POV|COCKPIT/i.test(code) ? 'vista del ciclista (cockpit)' : /FDSQ|FRONT/i.test(code) ? 'vista frontal' : /RDSQ|REAR/i.test(code) ? 'vista trasera' : /BATT/i.test(code) ? 'batería' : /HERO|PROFILE|SIDE/i.test(code) ? 'bicicleta completa de perfil' : /RIDE|ACTION|LIFESTYLE/i.test(code) ? 'en terreno' : 'detalle');
+    fotos.push({ fuente: 'spz', id: 'spzg' + code.slice(0, 60), nombre: 'Foto oficial · ' + x.nombre + ' · ' + vista, vista: vista,
+      thumb: u + '?w=480&h=600&fit=fill&crop=focalpoint&q=70', url: u + '?' + tam + '&fit=fill&crop=focalpoint&q=85' });
+  });
+  if (x.img && !fotos.length) fotos.push({ fuente: 'spz', id: 'spz' + x.id, nombre: 'Foto oficial · ' + x.nombre, thumb: x.img.replace(/w=\d+&h=\d+/, 'w=400&h=400'), url: x.img.replace(/w=\d+&h=\d+/, 'w=1600&h=1600') });
+  // Prensa: titulares recientes del modelo (Google Noticias) como fuentes adicionales.
+  let prensa = [];
+  try {
+    const q = x.nombre.replace(/\b(Frameset|Cuadro)\b/gi, '').trim();
+    const r = UrlFetchApp.fetch('https://news.google.com/rss/search?q=' + encodeURIComponent('"' + q + '"') + '&hl=es-419&gl=CL&ceid=CL:es-419', { muteHttpExceptions: true });
+    if (r.getResponseCode() === 200) prensa = ex_rssItems_(r.getContentText(), 'Prensa').slice(0, 6).map(function (it) { return { titulo: it.titulo, fuente: it.fuente || '', link: it.link, fecha: (it.fecha || '').slice(0, 10) }; });
+    if (prensa.length < 3) { const r2 = UrlFetchApp.fetch('https://news.google.com/rss/search?q=' + encodeURIComponent('"' + q + '"') + '&hl=en-US&gl=US&ceid=US:en', { muteHttpExceptions: true }); if (r2.getResponseCode() === 200) prensa = prensa.concat(ex_rssItems_(r2.getContentText(), 'Prensa').slice(0, 6 - prensa.length).map(function (it) { return { titulo: it.titulo, fuente: it.fuente || '', link: it.link, fecha: (it.fecha || '').slice(0, 10) }; })); }
+  } catch (e) { console.log('prensa: ' + e.message); }
+  const out = { producto: { id: x.id, nombre: x.nombre, familia: x.familia, anio: x.anio, precio: x.precio, oferta: x.oferta, url: EX_SPZ + '/cl/es/p/' + x.id, descripcion: desc, resumen: resumen, destacados: destacados, componentes: componentes, tallas: x.tallas || '' }, fotos: fotos, prensa: prensa };
+  try { const js = JSON.stringify(out); if (js.length < 90000) cache.put(k, js, 21600); } catch (e) {}
+  return out;
+}
+function ex_invTexto_(inv) {
+  const p = inv.producto;
+  return ['INVESTIGACIÓN DEL PRODUCTO (ficha oficial de specialized.com/cl, leída hoy). Usa estos datos tal cual: nombres de componentes, cifras de motor, batería y autonomía. No inventes cifras que no estén aquí.',
+    'Modelo: ' + p.nombre + (p.anio ? ' (' + p.anio + ')' : '') + (p.precio ? ' · precio público $' + Math.round(p.precio).toLocaleString('es-CL') : '') + ' · ' + p.url,
+    p.descripcion ? 'Descripción oficial: ' + p.descripcion : '', p.resumen ? 'Resumen: ' + p.resumen : '',
+    p.destacados.length ? 'Destacados:\n- ' + p.destacados.join('\n- ') : '', p.componentes.length ? 'Componentes:\n- ' + p.componentes.slice(0, 18).join('\n- ') : '',
+    p.tallas ? 'Tallas con stock en Specialized Chile: ' + p.tallas : '',
+    inv.fotos.length ? 'Hay ' + inv.fotos.length + ' fotos oficiales de este modelo disponibles: en cada lámina de producto pide foto con fuente «producto», palabras con el nombre del modelo y, en la descripción, la vista que corresponde (bicicleta completa de perfil, motor, pantalla MasterMind TCU, suspensión y link, tubo superior y SWAT, vista del ciclista, vista frontal o trasera, en terreno).' : '',
+    inv.prensa.length ? 'Prensa reciente sobre el modelo (contexto, no copies textos):\n- ' + inv.prensa.map(function (x) { return x.titulo + (x.fuente ? ' (' + x.fuente + ')' : ''); }).join('\n- ') : ''
+  ].filter(String).join('\n');
 }
 function ex_spzTallas_(id) {
   const sh = SpreadsheetApp.getActive().getSheetByName(EX_HOJA_SPZS); if (!sh || sh.getLastRow() < 2) return [];

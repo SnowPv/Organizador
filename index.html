@@ -908,6 +908,14 @@ body:has(.selbar) .fab,body:has(.selbar) .fab2{display:none}
 .sgi .ac button.ok{background:var(--accent);border-color:var(--accent);color:#fff}
 .src{display:inline-block;font-size:11px;font-weight:700;color:var(--accent-ink);background:var(--accent-soft);border-radius:6px;padding:1px 6px;margin-right:6px}
 /* Estudio de contenido */
+.est-hero{background:var(--card);border-radius:22px;padding:20px 22px;margin:0 0 16px;border:1px solid rgba(16,24,40,.06);box-shadow:0 1px 2px rgba(16,24,40,.04),0 16px 36px -22px rgba(16,24,40,.3);position:relative;overflow:hidden}
+.est-hero::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:linear-gradient(90deg,#2A78D6,#8134AF 55%,rgba(221,42,123,0))}
+.est-hh{display:flex;gap:14px;align-items:flex-start}.est-hh h3{margin:0;font-size:18px}.est-hh p{margin:4px 0 0;font-size:13px;color:var(--muted);line-height:1.45;max-width:80ch}
+.est-ic{width:38px;height:38px;border-radius:12px;background:var(--accent-soft);color:var(--accent-ink);display:inline-flex;align-items:center;justify-content:center;flex:none}.est-ic .ico{width:18px;height:18px}
+.est-q{display:flex;gap:10px;align-items:center;margin-top:14px}.est-q input{flex:1;min-width:0;font-size:15px;padding:12px 14px;border-radius:14px}.est-q .seg{flex:none}.est-q .btn{flex:none}
+.est-sug{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:12px}.est-sug span{font-size:12px;font-weight:700;color:var(--muted)}
+.est-sug button{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:6px 12px;font:inherit;font-size:12.5px;font-weight:600;cursor:pointer;color:var(--ink)}.est-sug button:hover{background:var(--accent-soft);border-color:transparent;color:var(--accent-ink)}
+@media (max-width:760px){.est-q{flex-wrap:wrap}.est-q input{flex-basis:100%}.est-q .btn{flex:1}}
 .est-top{display:flex;gap:12px;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;margin:2px 2px 14px}
 .est-acts{display:flex;gap:8px;flex-wrap:wrap}
 .est-setup{margin-bottom:14px}
@@ -929,14 +937,25 @@ body:has(.selbar) .fab,body:has(.selbar) .fab2{display:none}
 .pz-b b{font-size:14px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .pz-b small{font-size:12px;color:var(--muted)}
 .pz-b small.err{color:var(--bad,#d33)}
-.pop.pzm{max-width:1020px}
+.pop.pzm{max-width:1280px;width:calc(100vw - 48px)}
 .pz-strip{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 2px 12px;margin:8px -2px 6px}
-.pz-sl{all:unset;box-sizing:border-box;position:relative;flex:0 0 auto;width:150px;aspect-ratio:4/5;border-radius:10px;overflow:hidden;cursor:pointer;scroll-snap-align:start;border:3px solid transparent;background:#111214}
-.pz-strip.v .pz-sl{width:118px;aspect-ratio:9/16}
+.pz-sl{all:unset;box-sizing:border-box;position:relative;flex:0 0 auto;width:96px;aspect-ratio:4/5;border-radius:10px;overflow:hidden;cursor:pointer;scroll-snap-align:start;border:3px solid transparent;background:#111214}
+.pz-strip.v .pz-sl{width:72px;aspect-ratio:9/16}
 .pz-sl img{width:100%;height:100%;object-fit:cover;display:block}
 .pz-sl span{position:absolute;left:6px;top:6px;background:rgba(0,0,0,.6);color:#fff;font-size:11px;font-weight:800;border-radius:6px;padding:2px 6px}
 .pz-sl.on{border-color:var(--accent)}
-.pz-cols{display:grid;grid-template-columns:1.1fr 1fr;gap:22px;align-items:start}
+.pz-cols{display:grid;grid-template-columns:minmax(260px,380px) minmax(0,1fr) minmax(0,1fr);gap:22px;align-items:start}
+.pz-prev{position:sticky;top:0;display:flex;flex-direction:column;gap:10px}
+.pz-big{all:unset;box-sizing:border-box;position:relative;display:block;width:100%;aspect-ratio:4/5;border-radius:14px;overflow:hidden;background:#111214;cursor:zoom-in;box-shadow:0 18px 40px -22px rgba(16,24,40,.55)}
+.pz-prev.v .pz-big{aspect-ratio:9/16;max-height:62vh;width:auto;margin:0 auto}
+.pz-big img{width:100%;height:100%;object-fit:contain;display:block}
+.pz-zoom{position:absolute;right:10px;bottom:10px;display:inline-flex;align-items:center;gap:6px;background:rgba(16,24,40,.75);color:#fff;font-size:12px;font-weight:700;border-radius:999px;padding:5px 10px;opacity:0;transition:opacity .15s}.pz-zoom .ico{width:13px;height:13px}
+.pz-big:hover .pz-zoom,.pz-big:focus-visible .pz-zoom{opacity:1}
+.pz-nav{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:13px;color:var(--muted)}.pz-nav b{color:var(--ink)}
+.pz-tip{font-size:11.5px;color:#98A2B3;text-align:center}
+.pz-sl{transition:transform .12s}.pz-sl:hover{transform:translateY(-2px)}
+@media (max-width:1100px){.pz-cols{grid-template-columns:minmax(220px,320px) minmax(0,1fr)}.pz-side{grid-column:1/-1}}
+@media (max-width:760px){.pz-cols{grid-template-columns:1fr}.pz-prev{position:static}.pz-tip{display:none}.pz-zoom{opacity:1}}
 .pz-ed,.pz-side{min-width:0}
 .pz-foto{display:flex;gap:10px;align-items:center;background:var(--soft);border-radius:12px;padding:8px;margin-top:12px}
 .pz-foto>div{flex:1;min-width:0}
@@ -1468,6 +1487,10 @@ body:has(.selbar) .fab,body:has(.selbar) .fab2{display:none}
 .bsv-g{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:12px}
 .bsv-g .it .btn{flex:none}
 /* Fotos pedidas por el Estudio */
+.pz-fu{display:flex;flex-direction:column;gap:6px;background:var(--soft);border-radius:12px;padding:10px 12px;margin-top:12px;font-size:12.5px}.pz-fu b{display:flex;align-items:center;gap:6px;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}.pz-fu b .ico{width:13px;height:13px}
+.pz-fu a{color:var(--ink);text-decoration:none;line-height:1.35;display:block}.pz-fu a:hover{color:var(--accent-ink)}.pz-fu small{color:var(--muted)}
+.pz-fs{display:inline-block;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;background:var(--accent-soft);color:var(--accent-ink);border-radius:6px;padding:1px 6px;margin-right:6px}.pz-fs.pr{background:#F2F4F7;color:var(--muted)}
+.pz-fl{display:flex;align-items:center;gap:6px;color:var(--muted)}.pz-fl .ico{width:13px;height:13px}
 .pz-ped{border:1px solid var(--warn);background:rgba(229,160,0,.07);border-radius:12px;padding:10px 12px;margin-top:12px;font-size:13.5px;line-height:1.45}
 .pz-ped b{display:block;margin-bottom:6px}.pz-ped div span{font-weight:700;margin-right:6px}
 /* Chat de WhatsApp en la ficha */
@@ -1665,6 +1688,54 @@ body:has(.selbar) .fab,body:has(.selbar) .fab2{display:none}
 .hh-lk{all:unset;cursor:pointer;color:var(--accent-ink);font-weight:800}.hh-lk:hover{text-decoration:underline}
 .hh-empty{margin-top:14px;color:var(--muted);font-size:14px}
 @media (max-width:760px){.hh-k em{display:none}.hh-main{grid-template-columns:1fr;gap:14px}.hh-kps{border-left:0;padding-left:0;min-width:0;flex-direction:row;gap:8px}.hh-kp{flex:1;display:flex;flex-direction:column;align-items:flex-start;gap:2px;border:0;padding:8px 10px;background:var(--soft);border-radius:12px}.hh-kp:first-child{padding-top:8px}.hh-kp b{font-size:15px;text-align:left}.hh-kp span{font-size:10.5px}.hh-v{font-size:38px}}
+/* Redes · Resumen con fotos reales */
+.ig-hero{background:var(--card);border-radius:22px;padding:20px 22px;border:1px solid rgba(16,24,40,.06);box-shadow:0 1px 2px rgba(16,24,40,.04),0 16px 36px -20px rgba(16,24,40,.28);position:relative;overflow:hidden;margin-bottom:8px}
+.ig-hero::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:linear-gradient(90deg,#F58529,#DD2A7B 45%,#8134AF 75%,rgba(81,91,212,0))}
+.ig-who{display:flex;align-items:center;gap:12px}.ig-who img,.ig-av{width:44px;height:44px;border-radius:50%;object-fit:cover;box-shadow:0 0 0 2px #fff,0 0 0 4px #DD2A7B33;flex:none}.ig-av{display:inline-flex;align-items:center;justify-content:center;background:var(--soft);color:var(--muted)}
+.ig-who>div{flex:1;min-width:0}.ig-who b{display:block;font-size:16px}
+.ig-live{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;color:var(--muted)}.ig-live i{width:7px;height:7px;border-radius:50%;background:#98A2B3}.ig-live.on i{background:#12A06B;box-shadow:0 0 0 3px rgba(18,160,107,.18);animation:igp 2s infinite}
+@keyframes igp{50%{box-shadow:0 0 0 6px rgba(18,160,107,0)}}
+.ig-foco{margin:12px 0 0;font-size:15px;font-weight:600;line-height:1.45}
+.ig-kps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:16px}
+.ig-kp{background:var(--soft);border-radius:14px;padding:10px 12px;min-width:0}.ig-kp small{display:block;font-size:11.5px;font-weight:700;color:var(--muted)}.ig-kp b{display:block;font-size:22px;letter-spacing:-.03em;margin:2px 0}.ig-kp span{font-size:11.5px;color:var(--muted);font-weight:600}.ig-kp em{font-style:normal;font-weight:800}.ig-kp em.up{color:var(--ok-ink)}.ig-kp em.down{color:var(--bad-ink)}
+.ig-ha{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.ig-sh{margin:22px 2px 10px}.ig-sh h3{margin:0;font-size:16px}.ig-sh span{display:block;font-size:12.5px;color:var(--muted);margin-top:3px;line-height:1.4}
+.ig-top{display:grid;grid-template-columns:repeat(auto-fill,minmax(176px,1fr));gap:14px}
+.ig-tc{display:flex;flex-direction:column;background:var(--card);border-radius:18px;overflow:hidden;text-decoration:none;color:var(--ink);border:1px solid rgba(16,24,40,.06);box-shadow:0 1px 2px rgba(16,24,40,.04),0 10px 30px -18px rgba(16,24,40,.22);transition:transform .15s,box-shadow .15s}
+.ig-tc:hover{transform:translateY(-2px);box-shadow:0 2px 4px rgba(16,24,40,.06),0 18px 36px -18px rgba(16,24,40,.32)}
+.ig-ph{position:relative;display:block;aspect-ratio:4/5;background:linear-gradient(160deg,#F3F4F6,#E7EAF0);overflow:hidden}.ig-ph.sm{aspect-ratio:1}
+.ig-ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.ig-ph0{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#B4BCC8}.ig-ph0 .ico{width:30px;height:30px}
+.ig-fmt{position:absolute;left:10px;top:10px;display:inline-flex;align-items:center;gap:5px;font-style:normal;font-size:11px;font-weight:800;background:rgba(16,24,40,.72);color:#fff;border-radius:999px;padding:3px 9px 3px 7px;backdrop-filter:blur(4px)}.ig-fmt .ico{width:12px;height:12px}
+.ig-ph.sm .ig-fmt{left:6px;top:6px;font-size:0;padding:4px}.ig-ph.sm .ig-fmt .ico{width:12px;height:12px}
+.ig-tb{display:flex;flex-direction:column;gap:7px;padding:12px 14px 14px}
+.ig-x{align-self:flex-start;font-size:12px;font-weight:800;background:var(--accent-soft);color:var(--accent-ink);border-radius:999px;padding:3px 9px}.ig-x.hi{background:#E7F6EF;color:var(--ok-ink)}
+.ig-ms{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.ig-ms span{font-size:11px;color:var(--muted);font-weight:600}.ig-ms b{display:block;font-size:15px;color:var(--ink)}
+.ig-tb small{font-size:12.5px;line-height:1.4;color:var(--ink);font-weight:600}
+.ig-cap{font-size:12px;color:var(--muted);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.ig-f{font-size:11px;color:#98A2B3;font-weight:700}
+.ig-rec{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:10px}
+.ig-rc{display:flex;flex-direction:column;background:var(--card);border-radius:14px;overflow:hidden;text-decoration:none;color:var(--ink);border:1px solid rgba(16,24,40,.06)}
+.ig-rb{display:flex;flex-direction:column;gap:2px;padding:8px 9px 10px}.ig-rb b{font-size:15px}.ig-rb small{font-size:10.5px;color:var(--muted);font-weight:600}
+.ig-st{align-self:flex-start;font-size:10.5px;font-weight:800;border-radius:999px;padding:1px 7px;margin-bottom:2px}.ig-st.ok{background:#E7F6EF;color:var(--ok-ink)}.ig-st.mid{background:var(--soft);color:var(--muted)}.ig-st.lo{background:#FDECEA;color:var(--bad-ink)}.ig-st.va{background:var(--accent-soft);color:var(--accent-ink)}
+.ig-les{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.ig-l{background:var(--card);border-radius:18px;padding:16px;border:1px solid rgba(16,24,40,.06);box-shadow:0 1px 2px rgba(16,24,40,.04);display:flex;flex-direction:column;gap:6px}
+.ig-li{width:32px;height:32px;border-radius:10px;background:var(--accent-soft);color:var(--accent-ink);display:inline-flex;align-items:center;justify-content:center}.ig-li .ico{width:16px;height:16px}
+.ig-l b{font-size:14.5px}.ig-l p{margin:0;font-size:13px;color:var(--muted);line-height:1.45;flex:1}.ig-l .btn{align-self:flex-start;margin-top:4px}
+@media (max-width:1100px){.ig-rec{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media (max-width:760px){.ig-kps{grid-template-columns:repeat(2,minmax(0,1fr))}.ig-top{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.ig-les{grid-template-columns:1fr}.ig-rec{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:4px}.ig-rc{flex:0 0 132px;scroll-snap-align:start}.ig-ms b{font-size:13px}.ig-tb small{font-size:12px}}
+/* visor grande y atajos */
+.lb{position:fixed;inset:0;z-index:200;background:rgba(10,14,22,.92);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 70px 110px;outline:none;animation:lbIn .15s ease-out}
+@keyframes lbIn{from{opacity:0}}
+.lb figure{margin:0;display:flex;flex-direction:column;align-items:center;gap:10px;max-width:100%;max-height:100%}
+.lb figure img{max-width:min(92vw,1080px);max-height:calc(100vh - 190px);border-radius:12px;box-shadow:0 30px 80px -20px rgba(0,0,0,.7);background:#fff}
+.lb figcaption{color:#E4E7EC;font-size:13px;font-weight:700;text-align:center}.lb figcaption span{display:block;font-weight:500;color:#98A2B3;font-size:12px;margin-top:2px}
+.lb-x,.lb-p,.lb-n{position:absolute;border:0;background:rgba(255,255,255,.12);color:#fff;border-radius:50%;width:46px;height:46px;font-size:24px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.lb-x{top:18px;right:18px;font-size:18px}.lb-p{left:16px;top:50%;margin-top:-23px}.lb-n{right:16px;top:50%;margin-top:-23px}.lb-x:hover,.lb-p:hover,.lb-n:hover{background:rgba(255,255,255,.22)}
+.lb-dots{position:absolute;bottom:16px;left:0;right:0;display:flex;justify-content:center;gap:8px;overflow-x:auto;padding:0 16px}
+.lb-dots button{border:2px solid transparent;border-radius:8px;padding:0;background:none;cursor:pointer;opacity:.55;flex:none}.lb-dots button.on{border-color:#fff;opacity:1}.lb-dots img{display:block;height:64px;border-radius:6px}
+@media (max-width:760px){.lb{padding:16px 8px 96px}.lb-p,.lb-n{display:none}.lb figure img{max-width:96vw}.lb-dots img{height:48px}}
+.kb{display:flex;flex-direction:column;gap:4px}.kb-r{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:6px 0;border-bottom:1px solid var(--line)}.kb-r b{font-size:13.5px;font-weight:600;text-align:right}
+.kb-h{font-size:11.5px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:14px 0 2px}
+kbd{display:inline-block;min-width:22px;text-align:center;font:700 12px/1 ui-monospace,Menlo,monospace;background:var(--soft);border:1px solid var(--line);border-bottom-width:2px;border-radius:6px;padding:4px 6px;color:var(--ink)}
 /* post-it de avisos */
 .hm-postit{background:linear-gradient(170deg,#FFF6B8 0%,#FFEC85 100%);border:0;border-radius:6px 6px 22px 6px;box-shadow:0 2px 3px rgba(120,90,0,.08),0 18px 30px -18px rgba(120,90,0,.55);transform:rotate(-.6deg);padding:22px 18px 16px;color:#3B3000}
 .pi-tape{position:absolute;top:-9px;left:50%;width:92px;height:22px;margin-left:-46px;background:rgba(255,255,255,.55);border:1px solid rgba(0,0,0,.04);transform:rotate(2deg);box-shadow:0 1px 2px rgba(0,0,0,.06)}
@@ -2598,7 +2669,7 @@ async function apiX(op, extra){
 // Nivel 2 del script Extras: recordatorios y base de contactos. Nivel 3: la base solo usa contacto@blacklinechile.cl. Nivel 4: eventos de varios días.
 function enCurso(k, fn){ S._p = S._p || {}; if (S._p[k]) return S._p[k]; const pr = Promise.resolve().then(fn).finally(() => { if (S._p[k] === pr) delete S._p[k]; }); S._p[k] = pr; return pr; }
 function extNivel(){ return S.extInactivo ? 0 : (S.ext && S.ext.nivel) || 1; }
-const APP_VER = 'v89', NIVEL_ULTIMO = 50;
+const APP_VER = 'v90', NIVEL_ULTIMO = 52;
 function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < NIVEL_ULTIMO; }
 let sincTimer = null;
 // Después de cambiar tareas, el script actualiza los recordatorios del calendario (en segundo plano).
@@ -2773,6 +2844,49 @@ $('#btnGuia').onclick = () => openGuia();
 addEventListener('scroll', () => { const hd = $('header.top'); if (hd) hd.classList.toggle('scr', scrollY > 8); }, { passive: true });
 // Buscador global: Ctrl+K (o ⌘K) desde cualquier pestaña.
 addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k'){ e.preventDefault(); openBuscar(); } });
+/* ---------- Teclado en toda la app ----------
+   Esc: cierra lo último que se abrió (visor de fotos → ventana → panel lateral → Cerebro).
+   Atajos (cuando no estás escribiendo): ? ayuda · N nueva tarea · / Cerebro · Ctrl+K buscar · G y una letra para ir a una sección. */
+const ATAJOS_IR = { i: 'inicio', h: 'hoy', t: 'tareas', c: 'semana', n: 'negocios', o: 'base', p: 'compras', r: 'redes', e: 'cerebro' };
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape'){
+    if (e.defaultPrevented) return;
+    const lb = $$('.lb'); if (lb.length){ e.preventDefault(); lb[lb.length - 1].remove(); return; }
+    const qp = $$('.qpop'); if (qp.length){ e.preventDefault(); qp.forEach(x => x.remove()); return; }
+    const pops = $$('.pop-bg'); if (pops.length){ e.preventDefault(); const t = pops[pops.length - 1], x = t.querySelector('.px'); x ? x.click() : t.remove(); return; }
+    if ($('#layer') && $('#layer').innerHTML){ e.preventDefault(); closeSheet(); return; }
+    const c = $('#cop'); if (c && c.classList.contains('on')){ c.classList.remove('on'); return; }
+    const ae = document.activeElement; if (ae && /INPUT|TEXTAREA|SELECT/.test(ae.tagName)) ae.blur();
+    return;
+  }
+  const ae = document.activeElement, escribiendo = ae && (/INPUT|TEXTAREA|SELECT/.test(ae.tagName) || ae.isContentEditable);
+  if (escribiendo || e.ctrlKey || e.metaKey || e.altKey || e.defaultPrevented) return;
+  const k = e.key.toLowerCase(), abierto = $$('.pop-bg, .lb').length || ($('#layer') && $('#layer').innerHTML);
+  if (S._gTecla && Date.now() - S._gTecla < 1500){ S._gTecla = 0; const t = ATAJOS_IR[k]; if (t && tabPermitida(t)){ e.preventDefault(); cerrarModales(); if ($('#layer').innerHTML) closeSheet(); go(t); } return; }
+  if (abierto) return;
+  if (k === 'g'){ S._gTecla = Date.now(); return; }
+  if (e.key === '?'){ e.preventDefault(); ayudaAtajos(); return; }
+  if (k === 'n'){ e.preventDefault(); openAdd(); return; }
+});
+function ayudaAtajos(){
+  const f = (k, t) => '<div class="kb-r"><span>' + k.split(' ').map(x => '<kbd>' + esc(x) + '</kbd>').join(' ') + '</span><b>' + esc(t) + '</b></div>';
+  modal('⌨️ Atajos de teclado', '<div class="kb">' + f('Enter', 'Confirmar o enviar') + f('Shift Enter', 'Salto de línea en un cuadro de texto') + f('Esc', 'Cerrar la ventana, el visor o el panel abierto') + f('N', 'Nueva tarea') + f('/', 'Preguntarle al Cerebro') + f('Ctrl K', 'Buscar clientes, tareas o secciones') + f('?', 'Ver estos atajos') +
+    '<div class="kb-h">Ir a una sección: G y luego…</div>' + f('G I', 'Inicio') + f('G H', 'Hoy') + f('G T', 'Tareas') + f('G C', 'Calendario') + f('G N', 'Negocios') + f('G O', 'Contactos') + f('G P', 'Compras') + f('G R', 'Redes') + f('G E', 'Cerebro') +
+    '<div class="kb-h">En el visor de láminas</div>' + f('← →', 'Lámina anterior / siguiente') + f('Esc', 'Volver al editor') + '</div>', { sinFoco: true });
+}
+// Visor grande de imágenes (láminas del Estudio): flechas, deslizar en el celular, Esc para cerrar.
+function verGrande(srcs, i, opt){
+  opt = opt || {}; let k = Math.max(0, Math.min(srcs.length - 1, i || 0));
+  const lb = document.createElement('div'); lb.className = 'lb'; lb.tabIndex = -1;
+  const pintar = () => { lb.innerHTML = '<button class="lb-x" aria-label="Cerrar (Esc)">✕</button>' + (srcs.length > 1 ? '<button class="lb-p" aria-label="Anterior">‹</button><button class="lb-n" aria-label="Siguiente">›</button>' : '') +
+    '<figure><img src="' + srcs[k] + '" alt="Lámina ' + (k + 1) + '"><figcaption>' + (opt.titulo ? esc(opt.titulo) + ' · ' : '') + 'Lámina ' + (k + 1) + ' de ' + srcs.length + '<span>← → para moverte · Esc para cerrar</span></figcaption></figure>' +
+    (srcs.length > 1 ? '<div class="lb-dots">' + srcs.map((s, j) => '<button class="' + (j === k ? 'on' : '') + '" data-lb="' + j + '" aria-label="Lámina ' + (j + 1) + '"><img src="' + s + '" alt=""></button>').join('') + '</div>' : ''); };
+  const mover = d => { k = (k + d + srcs.length) % srcs.length; pintar(); if (opt.alMover) opt.alMover(k); };
+  lb.onclick = e => { const t = e.target; if (t.closest('.lb-x') || t === lb) lb.remove(); else if (t.closest('.lb-p')) mover(-1); else if (t.closest('.lb-n')) mover(1); else if (t.closest('[data-lb]')){ k = +t.closest('[data-lb]').dataset.lb; pintar(); if (opt.alMover) opt.alMover(k); } };
+  lb.onkeydown = e => { if (e.key === 'ArrowLeft'){ e.preventDefault(); mover(-1); } else if (e.key === 'ArrowRight'){ e.preventDefault(); mover(1); } };
+  let x0 = null; lb.ontouchstart = e => { x0 = e.touches[0].clientX; }; lb.ontouchend = e => { if (x0 == null) return; const dx = e.changedTouches[0].clientX - x0; x0 = null; if (Math.abs(dx) > 50) mover(dx < 0 ? 1 : -1); };
+  pintar(); document.body.appendChild(lb); lb.focus();
+}
 function openBuscar(){
   const SECC = [['inicio', 'Inicio'], ['hoy', 'Hoy'], ['tareas', 'Tareas'], ['semana', 'Calendario'], ['compras', 'Compras'], ['negocios', 'Negocios'], ['proy', 'Proyectos'], ['base', 'Contactos'], ['redes', 'Redes'], ['cerebro', 'Cerebro']].filter(x => tabPermitida(x[0]));
   const md = modal('Buscar', '<input type="search" id="gb_q" placeholder="Cliente, tarea, negocio, aviso o sección…" autocomplete="off" style="width:100%;font-size:17px"><div id="gb_r" class="gb-r"></div><div class="hint" style="margin:8px 0 0">↑ ↓ para moverte · Enter para abrir · Ctrl+K desde cualquier pestaña</div>', { wide: true });
@@ -3279,7 +3393,7 @@ function noticiasHome(){
 // Texto corto de lo que trae la versión nueva del script (el banner de actualización del Inicio).
 function novedadScript(){
   const n = extNivel();
-  return n >= 50 ? 'Guardar notas y mover negociaciones es más rápido: el script actualiza solo el contacto afectado.' : n >= 49 ? 'Recompra de consumibles: la app detecta quién debería cambiar pastillas, cadena o cubiertas según sus compras en Bsale, con el stock para ofrecer y el mensaje listo (Contactos → Campañas).' : n >= 48 ? 'La revisión de los 30 días sugiere los accesorios que el cliente no compró (asesoría, sin descuentos).' : n >= 47 ? 'Cada negociación tiene su lista de productos (desde Bsale o a mano) con precios, costo, ganancia y margen; el Cerebro también los puede agregar.' : n >= 46 ? 'Los contactos internos (Blackline Servicio Técnico, el equipo) ya no generan tareas, negociaciones ni «espera respuesta».' : n >= 45 ? 'El Cerebro responde más rápido (busca en varias fuentes a la vez y tiene un tope de tiempo) y no deja a la app esperando tanto.' : n >= 44 ? 'El Cerebro confirma en el catálogo de Andes Industrial si un repuesto Shimano o Continental existe en el distribuidor.' : n >= 43 ? 'El Cerebro entiende mejor el ciclismo (Di2, AXS, modelos) y busca opciones de compra cuando una tarea es conseguir un repuesto.' : n >= 42 ? 'Proveedores fuera del pipeline (el agente ya no les abre negociaciones) y el Cerebro puede agregar contactos nuevos cuando le dictas.' : n >= 41 ? 'Empezar de cero: la fecha de inicio se guarda en el script y la ven todos los equipos (Admin y Piso de venta).' : n >= 40 ? 'Ahora hay dos cuentas con contraseña: Admin (todo, como siempre) y Piso de venta (parte en un Hoy nuevo, sin cifras de la tienda). Créalas en ⚙️ Ajustes → Usuarios.' : n >= 39 ? 'La app ahora tiene un solo Cerebro con 9 skills (en vez de agentes sueltos): mira qué hace solo, cuánto gasta y paúsalo en la pestaña Cerebro.' : n >= 37 ? 'Las tareas automáticas ya no bloquean la app (por ejemplo, la lectura de ventas de Bsale).' : n >= 36 ? 'Cuando un cliente con negociación abierta compra en Bsale, la app te propone marcarla como ganada.' : n >= 35 ? 'Ventas del mes igual que en Bsale (solo boletas y facturas, menos notas de crédito) y noticias con foto de portada.' : n >= 34 ? 'Meta y gráfico de ventas del mes en el Inicio, con el avance diario desde Bsale.' : n >= 33 ? 'Une sola las negociaciones duplicadas de una venta ganada.' : n >= 32 ? 'Etapas después del pago: seguimiento, entrega y postventa.' : n >= 31 ? 'Venta perdida: cierra tareas, eventos y la idea de respuesta del Cerebro.' : 'Funciones nuevas para el Organizador.';
+  return n >= 52 ? 'Redes renovado: Instagram en vivo con tus fotos reales, y el Estudio investiga la ficha oficial, las fotos del modelo y la prensa antes de crear una pieza.' : n >= 51 ? 'Noticias con su foto y link original.' : n >= 50 ? 'Guardar notas y mover negociaciones es más rápido: el script actualiza solo el contacto afectado.' : n >= 49 ? 'Recompra de consumibles: la app detecta quién debería cambiar pastillas, cadena o cubiertas según sus compras en Bsale, con el stock para ofrecer y el mensaje listo (Contactos → Campañas).' : n >= 48 ? 'La revisión de los 30 días sugiere los accesorios que el cliente no compró (asesoría, sin descuentos).' : n >= 47 ? 'Cada negociación tiene su lista de productos (desde Bsale o a mano) con precios, costo, ganancia y margen; el Cerebro también los puede agregar.' : n >= 46 ? 'Los contactos internos (Blackline Servicio Técnico, el equipo) ya no generan tareas, negociaciones ni «espera respuesta».' : n >= 45 ? 'El Cerebro responde más rápido (busca en varias fuentes a la vez y tiene un tope de tiempo) y no deja a la app esperando tanto.' : n >= 44 ? 'El Cerebro confirma en el catálogo de Andes Industrial si un repuesto Shimano o Continental existe en el distribuidor.' : n >= 43 ? 'El Cerebro entiende mejor el ciclismo (Di2, AXS, modelos) y busca opciones de compra cuando una tarea es conseguir un repuesto.' : n >= 42 ? 'Proveedores fuera del pipeline (el agente ya no les abre negociaciones) y el Cerebro puede agregar contactos nuevos cuando le dictas.' : n >= 41 ? 'Empezar de cero: la fecha de inicio se guarda en el script y la ven todos los equipos (Admin y Piso de venta).' : n >= 40 ? 'Ahora hay dos cuentas con contraseña: Admin (todo, como siempre) y Piso de venta (parte en un Hoy nuevo, sin cifras de la tienda). Créalas en ⚙️ Ajustes → Usuarios.' : n >= 39 ? 'La app ahora tiene un solo Cerebro con 9 skills (en vez de agentes sueltos): mira qué hace solo, cuánto gasta y paúsalo en la pestaña Cerebro.' : n >= 37 ? 'Las tareas automáticas ya no bloquean la app (por ejemplo, la lectura de ventas de Bsale).' : n >= 36 ? 'Cuando un cliente con negociación abierta compra en Bsale, la app te propone marcarla como ganada.' : n >= 35 ? 'Ventas del mes igual que en Bsale (solo boletas y facturas, menos notas de crédito) y noticias con foto de portada.' : n >= 34 ? 'Meta y gráfico de ventas del mes en el Inicio, con el avance diario desde Bsale.' : n >= 33 ? 'Une sola las negociaciones duplicadas de una venta ganada.' : n >= 32 ? 'Etapas después del pago: seguimiento, entrega y postventa.' : n >= 31 ? 'Venta perdida: cierra tareas, eventos y la idea de respuesta del Cerebro.' : 'Funciones nuevas para el Organizador.';
 }
 
 /* ---------- Ventas del mes: avance diario acumulado contra el mes anterior y la meta ---------- */
@@ -4378,23 +4492,82 @@ function bindBaseResumenV2(){
   const pf = $('#b2Perf'); if (pf) pf.onclick = perfilarExistentes;
 }
 
+/* ---------- Redes · Resumen: lo que funciona, con las fotos reales de Instagram y el pulso en vivo ---------- */
+function loadIgVivo(forzar){
+  if (!igActivo() || extNivel() < 52) return Promise.resolve(null);
+  if (!forzar && S.igv && Date.now() - (S.igvAt || 0) < 5 * 60000) return Promise.resolve(S.igv);
+  const ids = igTop().map(x => x.id).filter(id => !(S.igImg || {})[id]);
+  return enCurso('igv', () => apiX('igVivo', Object.assign({ ids }, forzar ? { fresco: 1 } : {})).then(r => {
+    S.igv = r; S.igvAt = Date.now(); S.igImg = Object.assign(S.igImg || {}, r.imagenes || {}); (r.recientes || []).forEach(x => { if (x.img) S.igImg[x.id] = x.img; }); return r;
+  }).catch(e => { S.igvErr = e.message; return null; }));
+}
+// Las publicaciones que mejor rindieron en 90 días, medidas contra tu alcance típico del mismo formato.
+function igTop(){
+  const P = ((S.ig || {}).posts || []).filter(x => x.formato !== 'STORY' && x.fecha.slice(0, 10) >= addDays(hoy(), -90) && +x.alcance > 0);
+  const tip = {}; P.forEach(x => { const k = fmtPost(x); (tip[k] = tip[k] || []).push(+x.alcance); });
+  Object.keys(tip).forEach(k => tip[k] = med(tip[k]) || 1);
+  return P.map(x => Object.assign({}, x, { veces: +x.alcance / tip[fmtPost(x)], tipico: tip[fmtPost(x)] })).sort((a, b) => b.veces * Math.sqrt(b.alcance) - a.veces * Math.sqrt(a.alcance)).slice(0, 6);
+}
+// Por qué funcionó, en una frase (para aprender a repetirlo).
+function igPorQue(x){
+  const al = +x.alcance || 1, g = (+x.guardados || 0) / al, c = (+x.compartidos || 0) / al, i = (+x.interacciones || 0) / al;
+  if (c >= 0.02) return 'La compartieron mucho: contenido que la gente le manda a sus amigos.';
+  if (g >= 0.02) return 'La guardaron mucho: contenido útil al que vuelven (consejos, datos, comparativas).';
+  if ((+x.comentarios || 0) >= 8) return 'Generó conversación: muchas preguntas o comentarios.';
+  if (fmtPost(x) === 'Reel' && x.veces >= 1.5) return 'El reel llegó a gente que no te sigue: buen gancho en los primeros segundos.';
+  if (i >= 0.08) return 'Muy buena reacción de quienes la vieron (me gusta y comentarios).';
+  return 'Llegó a más gente que tu publicación típica de ' + fmtPost(x).toLowerCase() + '.';
+}
+const igN = v => v === '' || v == null ? '–' : (+v >= 10000 ? (Math.round(+v / 100) / 10).toLocaleString('es-CL') + ' mil' : (+v).toLocaleString('es-CL'));
+function igFoto(x, cls){
+  const src = (S.igImg || {})[x.id] || x.img || '', ic = fmtPost(x) === 'Reel' ? 'film' : fmtPost(x) === 'Carrusel' ? 'image' : 'camera';
+  return '<span class="' + (cls || 'ig-ph') + '"><span class="ig-ph0">' + icon(ic) + '</span>' + (src ? '<img src="' + esc(src) + '" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">' : '') + '<em class="ig-fmt">' + icon(ic) + fmtPost(x) + '</em></span>';
+}
 function redesResumenV2(){
   if (!igActivo()) return igConectarHTML();
-  const a = igAnalisis(), m = a.m, h = hoy(), C = (S.cont || []).filter(x => x.estado !== 'Descartado');
+  if (!S.igv && !S._igvPend && extNivel() >= 52){ S._igvPend = 1; loadIgVivo().then(() => { S._igvPend = 0; if (S.tab === 'redes' && (S.rtab || 'resumen') === 'resumen' && !$('#layer').innerHTML) viewRedes(); }); }
+  const a = igAnalisis(), m = a.m, h = hoy(), C = (S.cont || []).filter(x => x.estado !== 'Descartado'), V = S.igv && S.igv.activo ? S.igv : null;
   const hoyC = C.filter(x => x.fecha === h && x.estado !== 'Publicado'), prox7 = C.filter(x => x.fecha > h && x.fecha <= addDays(h, 7) && x.estado !== 'Publicado');
-  const porGrabar = C.filter(x => x.estado === 'Planificado' && x.fecha >= h), ideas = C.filter(x => x.estado === 'Idea'), leads28 = a.leads.hay ? a.leads.ig28.length : 0;
   const mf = metaFrecuencia(), meta = mf.reels + mf.carruseles + mf.posts, semAct = a.sem.length ? a.sem[a.sem.length - 1].n : 0;
-  const foco = hoyC.length ? 'Hoy toca publicar: ' + hoyC[0].formato + ' · ' + hoyC[0].tema + '.' : !prox7.length ? 'No hay contenido planificado para esta semana.' : semAct < meta ? 'Llevas ' + semAct + ' de ' + meta + ' publicaciones esta semana.' : 'Vas al día con la constancia de la semana.';
-  const D = m.D.slice(-30), alc = D.map(d => +d.alcance || 0);
-  let html = '<section class="pv-hero"><div class="pv-hl"><div class="pv-k">@' + esc(S.ig.usuario || 'instagram') + ' · datos de ' + (S.ig.sinc ? haceTxt(S.ig.sinc.slice(0, 10)) : 'nunca') + '</div><h2>Redes de la tienda</h2><p>' + esc(foco) + '</p>' +
-    '<div class="pv-ha"><button class="btn" id="r2Plan">' + icon('spark') + ' Planificar contenido</button><button class="btn sec" data-rt2="estudio">🎨 Abrir Estudio</button><button class="btn sec" data-rt2="contenido">Calendario</button></div></div>' +
-    '<div class="pv-hr"><div class="pv-igk"><b>' + (m.seg != null ? m.seg.toLocaleString('es-CL') : '–') + '</b><small>seguidores' + (m.dSeg != null ? ' · <em class="' + (m.dSeg >= 0 ? 'up' : 'down') + '">' + (m.dSeg >= 0 ? '+' : '') + m.dSeg + '</em> en 28 d' : '') + '</small>' + sparkSVG(alc, 360, 78, '#D9467A') + '<small>alcance diario · 30 días</small></div>' +
-      progresoHTML(semAct, meta, 'publicaciones esta semana') + '</div></section>';
-  html += '<div class="pv-lbl">Empieza por aquí</div><div class="pv-steps">' +
-    pvPaso('data-rt2="contenido"', hoyC.length, '📸', 'Publicar hoy', hoyC.length ? esc(hoyC[0].formato + ' · ' + hoyC[0].tema).slice(0, 34) : 'nada para hoy', 'bad') +
-    pvPaso('data-rt2="contenido"', porGrabar.length, '🎬', 'Por grabar', porGrabar.length ? 'planificadas' : 'nada pendiente', 'warn') +
-    pvPaso('data-rt2="leads"', leads28, '🧲', 'Clientes desde IG', '28 días', 'info') +
-    pvPaso('data-rt2="contenido"', ideas.length, '💡', 'Banco de ideas', ideas.length ? 'listas para planificar' : 'vacío: pide ideas', 'info') + '</div>';
+  const D = m.D.slice(-30), alc = D.map(d => +d.alcance || 0), alcMed = med(alc.filter(Boolean)) || 0;
+  const foco = hoyC.length ? 'Hoy toca publicar: ' + hoyC[0].formato + ' · ' + hoyC[0].tema + '.' : !prox7.length ? 'No hay contenido planificado para esta semana: pide ideas o crea una pieza en el Estudio.' : semAct < meta ? 'Llevas ' + semAct + ' de ' + meta + ' publicaciones esta semana.' : 'Vas al día con la constancia de la semana. 👏';
+  const seg = V && V.cuenta.seguidores != null ? V.cuenta.seguidores : m.seg, vivoTx = V ? 'en vivo · ' + new Date(V.en).toTimeString().slice(0, 5) : S.igvErr ? 'datos de la última sincronización' : 'conectando…';
+  const kp = (lab, val, sub, q) => '<div class="ig-kp"' + (q ? ' title="' + esc(q) + '"' : '') + '><small>' + lab + '</small><b>' + val + '</b>' + (sub ? '<span>' + sub + '</span>' : '') + '</div>';
+  const hoyA = V && V.hoy ? V.hoy.alcance : '';
+  let html = '<section class="ig-hero"><div class="ig-who">' + (V && V.cuenta.foto ? '<img src="' + esc(V.cuenta.foto) + '" alt="" referrerpolicy="no-referrer" onerror="this.remove()">' : '<span class="ig-av">' + icon('camera') + '</span>') +
+      '<div><b>@' + esc((V && V.cuenta.usuario) || S.ig.usuario || 'instagram') + '</b><span class="ig-live' + (V ? ' on' : '') + '"><i></i>' + esc(vivoTx) + '</span></div><button class="btn sm sec" id="igvRef" title="Actualizar ahora">↻</button></div>' +
+    '<p class="ig-foco">' + esc(foco) + '</p>' +
+    '<div class="ig-kps">' +
+      kp('Seguidores', igN(seg), m.dSeg != null ? '<em class="' + (m.dSeg >= 0 ? 'up' : 'down') + '">' + (m.dSeg >= 0 ? '+' : '') + m.dSeg + '</em> en 28 días' : '', 'Cuántas cuentas te siguen ahora.') +
+      kp('Alcance de hoy', igN(hoyA), alcMed ? 'un día normal: ' + igN(Math.round(alcMed)) : '', 'Cuentas distintas que vieron algo tuyo hoy (se va sumando durante el día).') +
+      kp('Interacciones hoy', igN(V && V.hoy ? V.hoy.interacciones : ''), 'me gusta, comentarios, guardados…', 'Todo lo que la gente hizo con tu contenido hoy.') +
+      kp('Esta semana', semAct + ' de ' + meta, 'publicaciones', 'Tu meta de constancia semanal.') +
+    '</div><div class="ig-ha"><button class="btn" id="r2Plan">' + icon('spark') + ' Planificar contenido</button><button class="btn sec" data-rt2="estudio">🎨 Crear en el Estudio</button><button class="btn sec" data-rt2="contenido">Calendario</button></div></section>';
+  // Lo que está funcionando
+  const T = igTop();
+  html += '<div class="ig-sh"><h3>Lo que está funcionando</h3><span>Tus publicaciones de los últimos 90 días que llegaron a más gente que lo normal para su formato. Repite lo que tienen en común.</span></div>';
+  html += T.length ? '<div class="ig-top">' + T.map((x, i) => '<a class="ig-tc" href="' + esc(x.link || '#') + '" target="_blank" rel="noopener">' + igFoto(x) +
+      '<span class="ig-tb"><span class="ig-x' + (x.veces >= 1.5 ? ' hi' : '') + '">' + (x.veces >= 1.1 ? '×' + (Math.round(x.veces * 10) / 10).toLocaleString('es-CL') + ' tu alcance típico' : 'tu alcance típico') + '</span>' +
+      '<span class="ig-ms"><span><b>' + igN(x.alcance) + '</b>alcance</span><span><b>' + igN(x.guardados) + '</b>guardados</span><span><b>' + igN(x.compartidos) + '</b>compart.</span></span>' +
+      '<small>' + esc(igPorQue(x)) + '</small><span class="ig-cap">' + esc(String(x.texto || '').split('\n')[0].slice(0, 90) || 'Sin texto') + '</span><span class="ig-f">' + esc(fmt(x.fecha.slice(0, 10))) + ' · ' + esc(x.fecha.slice(11, 16)) + '</span></span></a>').join('') + '</div>'
+    : '<div class="pv-ok">Cuando tengas publicaciones medidas, aquí verás las que mejor funcionaron con su foto.</div>';
+  // Últimas publicaciones (en vivo)
+  if (V && V.recientes && V.recientes.length){
+    const tip = {}; ((S.ig || {}).posts || []).filter(x => x.formato !== 'STORY' && +x.alcance > 0).forEach(x => { const k = fmtPost(x); (tip[k] = tip[k] || []).push(+x.alcance); });
+    html += '<div class="ig-sh"><h3>Tus últimas publicaciones</h3><span>Cómo van ahora mismo comparadas con lo normal. Las de menos de 2 días todavía están sumando.</span></div><div class="ig-rec">' +
+      V.recientes.filter(x => x.formato !== 'STORY').slice(0, 8).map(x => { const t = med(tip[fmtPost(x)] || []) || 0, r = t && +x.alcance ? +x.alcance / t : 0, joven = (Date.now() - new Date(x.fecha.replace(' ', 'T')).getTime()) < 48 * 3600000;
+        const est = joven ? ['va', 'sumando'] : r >= 1.2 ? ['ok', 'sobre lo normal'] : r >= 0.8 ? ['mid', 'normal'] : ['lo', 'bajo lo normal'];
+        return '<a class="ig-rc" href="' + esc(x.link || '#') + '" target="_blank" rel="noopener">' + igFoto(x, 'ig-ph sm') + '<span class="ig-rb"><span class="ig-st ' + est[0] + '">' + est[1] + '</span><b>' + igN(x.alcance) + '</b><small>alcance · ' + igN(x.likes) + ' ♥ · ' + igN(x.comentarios) + ' 💬</small><small>' + esc(fmtRel(x.fecha.slice(0, 10))) + '</small></span></a>'; }).join('') + '</div>';
+  }
+  // Qué aprendemos (didáctico, con acción)
+  const FF = a.formatos.filter(x => x.n >= 2).slice().sort((x, y) => y.alc - x.alc), mejorF = FF[0], peorF = FF[FF.length - 1], slot = a.mejores[0];
+  const L = [];
+  if (mejorF && peorF && mejorF !== peorF && peorF.alc) L.push({ ic: 'film', t: 'Formato que más llega: ' + mejorF.k, d: 'Un ' + mejorF.k.toLowerCase() + ' tuyo llega a ~' + igN(Math.round(mejorF.alc)) + ' cuentas; un ' + peorF.k.toLowerCase() + ', a ~' + igN(Math.round(peorF.alc)) + '. ' + (mejorF.alc / peorF.alc >= 1.3 ? 'Es ' + (Math.round(mejorF.alc / peorF.alc * 10) / 10).toLocaleString('es-CL') + ' veces más.' : ''), b: 'Crear un ' + mejorF.k.toLowerCase(), f: mejorF.k });
+  if (slot) L.push({ ic: 'clock', t: 'Mejor momento: ' + DIAS_L[slot.d] + ' · ' + FRANJAS[slot.f][0].toLowerCase(), d: 'Lo que publicas en esa franja llega en promedio a ' + (Math.round(slot.v * 10) / 10).toLocaleString('es-CL') + ' veces tu alcance típico.', b: 'Ver calendario', go: 'contenido' });
+  if (a.tasas && a.tasas.guardado != null) L.push({ ic: 'bookmark', t: a.tasas.guardado >= 0.01 ? 'Tu público guarda tus consejos' : 'Haz contenido para guardar', d: a.tasas.guardado >= 0.01 ? 'Guardan ' + (Math.round(a.tasas.guardado * 1000) / 10).toLocaleString('es-CL') + '% de lo que ven: los carruseles con datos y comparativas te funcionan.' : 'Hoy casi no guardan tus publicaciones. Los carruseles útiles (cómo elegir talla, mantención, comparativas) se guardan y el algoritmo los empuja.', b: 'Crear un carrusel útil', f: 'Carrusel' });
+  if (L.length) html += '<div class="ig-sh"><h3>Qué aprendemos</h3><span>Conclusiones de tus propios números, con el siguiente paso.</span></div><div class="ig-les">' + L.map((x, i) => '<div class="ig-l"><span class="ig-li">' + icon(x.ic === 'bookmark' ? 'flag' : x.ic) + '</span><b>' + esc(x.t) + '</b><p>' + esc(x.d) + '</p><button class="btn sm sec" data-igl="' + i + '">' + esc(x.b) + ' ›</button></div>').join('') + '</div>';
+  S._igL = L;
+  html += '<div class="ig-sh"><h3>Constancia y planificación</h3></div>';
   html += '<div class="pv-g">';
   // Alcance
   const tot = alc.reduce((s, x) => s + x, 0), pubs = new Set(a.P.map(x => String(x.fecha).slice(0, 10))), mxA = Math.max(1, ...alc);
@@ -4410,15 +4583,15 @@ function redesResumenV2(){
   html += pvTile('target', 'Qué formato funciona', '<span class="pv-c">alcance típico</span>', F.length ? pvBarrasH(F, () => 'data-rt2="estrategia"') : '<div class="pv-ok">Aparece con tus publicaciones.</div>');
   // Cuándo publicar
   html += pvTile('clock', 'Cuándo publicar', '', a.mejores.length ? '<div class="pv-slot">' + a.mejores.map((b, i) => '<div class="' + (i ? '' : 'top') + '"><b>' + DIAS_L[b.d].charAt(0).toUpperCase() + DIAS_L[b.d].slice(1, 3) + '</b><span>' + esc(FRANJAS[b.f][0]) + '</span><small>#' + (i + 1) + '</small></div>').join('') + '</div><div class="pv-cap">Franjas con más alcance que tu publicación típica</div>' : '<div class="pv-ok">Se calcula con al menos 2 publicaciones por franja.</div>');
-  // Mejores publicaciones
-  const top = a.P.slice().sort((x, y) => (+y.alcance || 0) - (+x.alcance || 0)).slice(0, 3);
-  html += pvTile('trophy', 'Mejores publicaciones', '<span class="pv-c">90 días</span>', top.length ? '<div class="pv-nl">' + top.map(x => '<a class="pv-n pv-tp" href="' + esc(x.link || '#') + '" target="_blank" rel="noopener"><span>' + icF(x.formato || '') + '</span><span class="pv-tpt"><b>' + esc(String(x.texto || x.formato || 'Publicación').slice(0, 60)) + '</b><small>' + (+x.alcance || 0).toLocaleString('es-CL') + ' de alcance · ' + esc(fmt(String(x.fecha).slice(0, 10))) + '</small></span></a>').join('') + '</div>' : '<div class="pv-ok">Aún no hay publicaciones medidas.</div>');
   html += '</div>';
   S._sinIns = 1; let det = ''; try { det = redesResumen(); } finally { S._sinIns = 0; }
   return html + (iaDisponible() && extNivel() >= 14 ? '<div class="pv-lbl">Recomendación del Cerebro</div>' + insightsHTML('redes') : '') + masAnalisis('anRedes2', det);
 }
 function bindRedesV2(){
   const v = $('#view');
+  const rf = $('#igvRef'); if (rf) rf.onclick = async () => { rf.disabled = true; rf.innerHTML = '<span class="spin"></span>'; await loadIgVivo(true); viewRedes(); };
+  v.querySelectorAll('[data-igl]').forEach(b => b.onclick = () => { const x = (S._igL || [])[+b.dataset.igl]; if (!x) return; if (x.go){ S.rtab = x.go; viewRedes(); return; } if (x.f === 'Reel') return planContenido(); S.rtab = 'estudio'; viewRedes(); crearPieza({ formato: x.f, tema: '' }); });
+  clearInterval(S._igvT); S._igvT = setInterval(() => { if (S.tab !== 'redes' || (S.rtab || 'resumen') !== 'resumen' || document.hidden){ return; } loadIgVivo(true).then(() => { if (!$('#layer').innerHTML && S.tab === 'redes') viewRedes(); }); }, 5 * 60000);
   const p = $('#r2Plan'); if (p) p.onclick = () => planContenido();
   v.querySelectorAll('[data-plan2]').forEach(b => b.onclick = () => planContenido());
   v.querySelectorAll('[data-ct2]').forEach(b => b.onclick = () => openIdea((S.cont || []).find(x => x.id === b.dataset.ct2)));
@@ -4597,7 +4770,7 @@ function contextoRedes(){
 }
 function bindRedes(t){
   if (t === 'resumen') bindInsights('redes');
-  if (t === 'estudio') bindEstudio();
+  if (t === 'estudio'){ bindEstudio(); bindEstudioCrear(); }
   $$('[data-rt2]').forEach(b => b.onclick = () => { S.rtab = b.dataset.rt2; viewRedes(); });
   const eg = $('#estGo'); if (eg) eg.onclick = () => armarEstrategia(eg);
   const ru = $('#rUpd'); if (ru) ru.onclick = showExtrasUpdate;
@@ -4960,8 +5133,10 @@ async function resolverFotos(pz, opt){
   const falta = pz.slides.map((s, i) => ({ s, i })).filter(x => x.s.foto && x.s.foto.usar && !x.s.foto.ref);
   const palDe = s => (s.foto.palabras || []).concat(tokens(s.foto.descripcion || ''), tokens(s.titulo || '')).map(w => norm(w)).filter(w => w.length >= 3);
   const pts = (it, pal) => { const t = norm(it.nombre || ''); return pal.reduce((n, w) => n + (t.includes(w) ? (RE_MODELO.test(w) ? 3 : 1) : 0), 0); };
+  const ofi = ((pz.investigacion || {}).fotos || []), ptsOfi = (x, s) => { const t = norm(x.vista + ' ' + x.nombre); return tokens((s.foto.descripcion || '') + ' ' + (s.titulo || '') + ' ' + (s.kicker || '')).map(w => norm(w)).filter(w => w.length >= 4).reduce((n, w) => n + (t.includes(w) ? 1 : 0), 0); };
   if (falta.length && opt.vision !== false && extNivel() >= 22 && iaDisponible()){
     const cand = new Map(), addC = x => { if (x && !usadas.has(x.id) && cand.size < 36) cand.set(x.id, x); };
+    ofi.forEach(addC);   // fotos oficiales del modelo investigado: primero
     for (const { s } of falta){
       const pal = palDe(s), propias = (S.banco || []).concat(S.propias || []).map(x => ({ x, p: pts(x, pal) })).filter(y => y.p > 0).sort((a, b) => b.p - a.p);
       propias.slice(0, 6).forEach(y => addC(y.x));
@@ -4980,6 +5155,7 @@ async function resolverFotos(pz, opt){
     for (const { s } of falta){
       const pal = palDe(s), propias = (S.banco || []).concat(S.propias || []).filter(x => !usadas.has(x.id)).map(x => ({ x, p: pts(x, pal) })).sort((a, b) => b.p - a.p);
       let ref = s.foto.fuente !== 'stock' && propias[0] && propias[0].p >= 2 ? propias[0].x : null;
+      if (!ref && ofi.length && (s.foto.fuente === 'producto' || s.layout === 'portada')){ const o = ofi.filter(x => !usadas.has(x.id)).map(x => ({ x, p: ptsOfi(x, s) })).sort((a, b) => b.p - a.p)[0]; if (o) ref = o.x; }
       if (!ref && S.marcaSrv && S.marcaSrv.pexels && s.foto.fuente === 'stock' && opt.vision !== false){ try { const q = (s.foto.palabras || []).filter(w => /^[a-z0-9 -]+$/i.test(w)).slice(0, 4).join(' ') || s.foto.descripcion; const r = await apiX('imagen', { accion: 'buscar', q, orientacion: 'portrait' }); ref = (r.items || []).find(x => !usadas.has(x.id)) || null; } catch(e){} }
       if (ref){ s.foto.ref = { fuente: ref.fuente, id: ref.id, url: ref.url || '', nombre: ref.nombre || '' }; usadas.add(ref.id); }
     }
@@ -5101,6 +5277,7 @@ function redesEstudio(){
   if (!srv.alojamiento) falta.push(['Publicar con un toque', 'Falta el alojamiento de imágenes (GITHUB_TOKEN). Mientras, puedes compartir a Instagram desde el teléfono.', 'guia']);
   const tmp = temporadaPV();
   let html = '<div class="est-top"><div><div class="wh" style="margin:0">' + icon('spark') + 'Estudio de contenido</div><div class="wsub">Temporada: <b>' + esc(tmp.k) + '</b> · ' + esc(tmp.t.split(':')[1] || '') + '</div></div><div class="est-acts">' + (extNivel() >= 27 ? '<button class="btn sm sec" id="esSub">📥 Subir fotos</button>' : '') + (extNivel() >= 22 ? '<button class="btn sm sec" id="esCarp">' + icon('camera') + ' Carpetas de fotos</button>' : '') + '<button class="btn sm sec" id="esMarca">' + icon('target') + ' Kit de marca</button><button class="btn sm" id="esNueva">' + icon('spark') + ' Crear con IA</button></div></div>';
+  html += estudioCrearHTML();
   if (falta.length) html += '<div class="w est-setup"><div class="lab2">Para dejarlo listo</div>' + falta.map(f => '<div class="est-f">' + icon('flag') + '<div><b>' + esc(f[0]) + '</b><span>' + esc(f[1]) + '</span></div>' + (f[2] === 'marca' ? '<button class="btn sm" data-esm="1">Configurar</button>' : f[2] === 'guia' ? '<a class="btn sm sec" target="_blank" href="https://github.com/SnowPv/Organizador/blob/main/docs/INSTAGRAM.md#estudio-de-contenido" style="text-decoration:none">Ver cómo</a>' : '') + '</div>').join('') + (srv.banco ? '' : '') + '</div>';
   if (srv.banco) html += '<div class="wsub" style="margin:0 2px 12px">Banco de imágenes: <a href="' + esc(srv.banco) + '" target="_blank">abrir la carpeta de Drive</a>. Sube fotos reales con nombres descriptivos (por ejemplo «levo-sendero-pichijuan.jpg») y el Cerebro las elige solas.' + (srv.pexels ? ' También usa el banco gratuito Pexels.' : '') + '</div>';
   const grupos = [['Borrador', 'Para revisar'], ['Aprobado', 'Aprobadas'], ['Programado', 'Programadas'], ['Error', 'Con error'], ['Publicado', 'Publicadas']];
@@ -5108,6 +5285,27 @@ function redesEstudio(){
   grupos.forEach(([e, t]) => { const L = S.piezas.filter(p => p.estado === e); if (!L.length) return;
     html += '<div class="lab2" style="margin:14px 2px 8px">' + t + ' <span class="num">' + L.length + '</span></div><div class="pz-grid">' + L.map(p => '<button class="pz" data-pz="' + esc(p.id) + '"><span class="pz-th' + (p.tipo === 'historias' ? ' v' : '') + '" id="th-' + esc(p.id) + '">' + (S._thumbs && S._thumbs[p.id] ? '<img src="' + S._thumbs[p.id] + '" alt="">' : '<span class="spin"></span>') + '</span><span class="pz-b"><b>' + esc(p.titulo || 'Sin título') + '</b><small>' + (p.tipo === 'historias' ? 'Historias' : 'Carrusel') + ' · ' + ((p.diseno && p.diseno.slides) || []).length + (p.tipo === 'historias' ? ' pantallas' : ' láminas') + (p.programado && e === 'Programado' ? ' · ' + esc(fmt(p.programado.slice(0, 10)) + ' ' + p.programado.slice(11)) : '') + '</small>' + (p.error ? '<small class="err">' + esc(p.error.slice(0, 90)) + '</small>' : '') + '</span></button>').join('') + '</div>'; });
   return html;
+}
+// Barra principal del Estudio: escribes qué quieres y el Cerebro investiga (si nombras un modelo) y lo diseña.
+function estudioSugerencias(){
+  const out = [], tmp = temporadaPV();
+  try { const nv = ((S.global || {}).spz || {}).nuevos || []; if (nv[0] && nv[0].nombre) out.push('Lo nuevo: ' + nv[0].nombre + ' y sus características'); } catch(e){}
+  try { if (igActivo()){ const d = (igAnalisis().demanda || []).filter(x => x.n >= 2 && x.posts < 2)[0]; if (d) out.push('Guía para elegir talla de ' + d.k.charAt(0).toUpperCase() + d.k.slice(1)); } } catch(e){}
+  out.push('Carrusel de la nueva Levo 4 S-Works: motor, batería y lo que cambia');
+  out.push('Mantención de ' + (tmp.k || 'temporada').toLowerCase() + ': qué revisar antes de salir');
+  out.push('Comparativa Levo vs Levo SL: ¿cuál es para ti?');
+  return [...new Set(out)].slice(0, 4);
+}
+function estudioCrearHTML(){
+  return '<section class="est-hero"><div class="est-hh"><span class="est-ic">' + icon('spark') + '</span><div><h3>¿Qué quieres crear hoy?</h3><p>Escribe un tema o nombra un modelo. Si es una bici o producto Specialized, el Cerebro lee su ficha oficial, elige entre las fotos oficiales del modelo y revisa la prensa antes de escribir.</p></div></div>' +
+    '<form class="est-q" id="estQf"><input type="text" id="estQ" placeholder="Ej.: carrusel de la nueva Levo 4 S-Works destacando sus características" enterkeyhint="go" autocomplete="off"><div class="seg" id="estT"><button type="button" class="pill on" data-v="carrusel">Carrusel</button><button type="button" class="pill" data-v="historias">Historias</button></div><button class="btn" type="submit">' + icon('spark') + ' Crear</button></form>' +
+    '<div class="est-sug"><span>Ideas:</span>' + estudioSugerencias().map(t => '<button type="button" data-esug="' + esc(t) + '">' + esc(t) + '</button>').join('') + '</div></section>';
+}
+function bindEstudioCrear(){
+  const f = $('#estQf'); if (!f) return; bindPills('estT');
+  const ir = tema => { const tipo = ($('#estT .on') || {}).dataset.v || 'carrusel'; crearPieza({ tema, formato: tipo === 'historias' ? 'Historias' : 'Carrusel', auto: !!tema }); };
+  f.onsubmit = e => { e.preventDefault(); ir($('#estQ').value.trim()); };
+  $$('[data-esug]').forEach(b => b.onclick = () => { $('#estQ').value = b.dataset.esug; ir(b.dataset.esug); });
 }
 async function miniaturas(){
   S._thumbs = S._thumbs || {};
@@ -5202,14 +5400,17 @@ function crearPieza(idea){
     '<label class="l">Tema (opcional)</label><textarea class="note" id="cp_q" placeholder="Déjalo vacío y el Cerebro elige lo más oportuno: temporada, lo que preguntan tus clientes, lo que más se vende y el stock. O escribe, por ejemplo: «Guía para elegir talla de Levo» o «Mantención de primavera»."></textarea>' +
     '<div class="wsub" style="margin-top:8px">Tarda unos 20 segundos: el Cerebro escribe, elige las fotos y la app la diseña con tu marca.</div><div class="btns"><button class="btn" id="cp_go">' + icon('spark') + ' Crear</button></div>');
   bindPills('cp_t'); if (idea){ md.el.querySelectorAll('#cp_t .pill').forEach(b => b.classList.toggle('on', /Historia/.test(idea.formato || idea.tema || '') === (b.dataset.v === 'historias'))); if (idea.tema && !idea.id) md.el.querySelector('#cp_q').value = idea.tema; }
+  if (idea && idea.auto) setTimeout(() => { const b = md.el.querySelector('#cp_go'); if (b && !b.disabled) b.click(); }, 60);
   md.el.querySelector('#cp_go').onclick = async () => {
     const b = md.el.querySelector('#cp_go'), tipo = (md.el.querySelector('#cp_t .on') || {}).dataset.v || 'carrusel', iid = md.el.querySelector('#cp_i') ? md.el.querySelector('#cp_i').value : '', it = (S.cont || []).find(x => x.id === iid);
     b.disabled = true; b.innerHTML = '<span class="spin"></span>El Cerebro está creando…';
     try {
       if (!S.base) await loadBase(false);
       try { await bancoListas(); } catch(e){}
-      const r = (await apiX('asistente', { modo: 'pieza', contexto: contextoPieza(md.el.querySelector('#cp_q').value.trim(), tipo, it) })).r;
-      r.tipo = tipo; b.innerHTML = '<span class="spin"></span>Eligiendo fotos y diseñando…';
+      b.innerHTML = '<span class="spin"></span>Investigando y escribiendo…';
+      const R = await apiX('asistente', { modo: 'pieza', contexto: contextoPieza(md.el.querySelector('#cp_q').value.trim(), tipo, it) }), r = R.r;
+      if (R.investigacion){ const iv = R.investigacion; r.investigacion = { producto: { nombre: iv.producto.nombre, url: iv.producto.url, precio: iv.producto.precio }, prensa: iv.prensa || [], fotos: iv.fotos || [] }; }
+      r.tipo = tipo; b.innerHTML = '<span class="spin"></span>' + (r.investigacion ? 'Eligiendo entre ' + r.investigacion.fotos.length + ' fotos oficiales y diseñando…' : 'Eligiendo fotos y diseñando…');
       await renderPieza(r);
       const res = await apiX('piezas', { guardar: { tipo, estado: 'Borrador', titulo: r.titulo, pilar: r.pilar, caption: r.caption, hashtags: r.hashtags, diseno: r, contenido: it ? it.id : '' } });
       S.piezas = res.items; md.cerrar(); const p = S.piezas.find(x => x.id === res.id); if (p) abrirPieza(p); render();
@@ -5225,10 +5426,18 @@ async function abrirPieza(p){
   const box = md.el.querySelector('#pzE');
   const repintar = async () => { canvases = await renderPieza(pz); pintar(); };
   const guardar = async (extra) => { const res = await apiX('piezas', { guardar: Object.assign({ id: p.id, tipo: pz.tipo, estado: p.estado === 'Publicado' ? 'Publicado' : 'Borrador', titulo: pz.titulo, pilar: pz.pilar, caption: pz.caption, hashtags: pz.hashtags, diseno: pz, contenido: p.contenido, imagenes: p.imagenes, programado: p.programado }, extra || {}) }); S.piezas = res.items; Object.assign(p, S.piezas.find(x => x.id === p.id) || {}); if (S._thumbs) delete S._thumbs[p.id]; };
+  // Ver en grande (pantalla completa) y moverse entre láminas con las flechas del teclado.
+  const grande = i => { if (box.querySelector('#pe_l')) leerSuave(); verGrande(canvases.map(c => c._u || (c._u = c.toDataURL('image/jpeg', .86))), i, { titulo: pz.titulo, alMover: j => { sel = j; pintar(); } }); };
+  const irA = i => { if (!pz.slides.length) return; leerSuave(); sel = (i + pz.slides.length) % pz.slides.length; pintar(); };
+  let leerSuave = () => {};
+  md.el.addEventListener('keydown', e => { if ($$('.lb').length) return; const ae = document.activeElement; if (ae && /INPUT|TEXTAREA|SELECT/.test(ae.tagName)) return; if (e.key === 'ArrowLeft'){ e.preventDefault(); irA(sel - 1); } else if (e.key === 'ArrowRight'){ e.preventDefault(); irA(sel + 1); } });
+  md.el.tabIndex = -1;
   const pintar = () => {
     const s = pz.slides[sel] || {}, ref = s.foto && s.foto.ref, pub = p.estado === 'Publicado', alo = S.marcaSrv && S.marcaSrv.alojamiento;
-    box.innerHTML = '<div class="pz-strip' + (pz.tipo === 'historias' ? ' v' : '') + '">' + canvases.map((c, i) => '<button class="pz-sl' + (i === sel ? ' on' : '') + '" data-sl="' + i + '"><img src="' + c.toDataURL('image/jpeg', .82) + '" alt="Lámina ' + (i + 1) + '"><span>' + (i + 1) + '</span></button>').join('') + '</div>' +
-      '<div class="pz-cols"><div class="pz-ed"><div class="lab2">Lámina ' + (sel + 1) + ' de ' + pz.slides.length + '</div>' +
+    const U = canvases.map(c => { if (!c._u) c._u = c.toDataURL('image/jpeg', .86); return c._u; }), vert = pz.tipo === 'historias';
+    box.innerHTML = '<div class="pz-strip' + (vert ? ' v' : '') + '">' + U.map((u, i) => '<button class="pz-sl' + (i === sel ? ' on' : '') + '" data-sl="' + i + '" title="Doble clic para ver en grande"><img src="' + u + '" alt="Lámina ' + (i + 1) + '"><span>' + (i + 1) + '</span></button>').join('') + '</div>' +
+      '<div class="pz-cols"><div class="pz-prev' + (vert ? ' v' : '') + '"><button class="pz-big" id="pe_big" title="Ver en grande (doble clic)"><img src="' + (U[sel] || '') + '" alt="Lámina ' + (sel + 1) + '"><span class="pz-zoom">' + icon('search') + ' Ver en grande</span></button>' +
+        '<div class="pz-nav"><button class="btn sm sec" id="pe_prev" aria-label="Lámina anterior">‹</button><span>Lámina <b>' + (sel + 1) + '</b> de ' + pz.slides.length + '</span><button class="btn sm sec" id="pe_next" aria-label="Lámina siguiente">›</button></div><div class="pz-tip">Doble clic en cualquier lámina para verla en grande · ← → para moverte</div></div><div class="pz-ed"><div class="lab2">Lámina ' + (sel + 1) + ' de ' + pz.slides.length + '</div>' +
         '<div class="rs-row"><div><label class="l">Diseño</label><select id="pe_l">' + ['portada', 'texto', 'lista', 'comparativa', 'dato', 'foto', 'pregunta', 'cta'].map(x => '<option' + (x === s.layout ? ' selected' : '') + '>' + x + '</option>').join('') + '</select></div><div><label class="l">Etiqueta</label><input type="text" id="pe_k" value="' + esc(s.kicker || '') + '"></div></div>' +
         '<label class="l">Título</label><input type="text" id="pe_t" value="' + esc(s.titulo || '') + '">' +
         (s.layout === 'dato' ? '<label class="l">Cifra</label><input type="text" id="pe_n" value="' + esc(s.numero || '') + '">' : '') +
@@ -5238,6 +5447,9 @@ async function abrirPieza(p){
         '<div class="btns" style="margin-top:10px"><button class="btn sm sec" id="pe_up">↑</button><button class="btn sm sec" id="pe_dn">↓</button><button class="btn sm sec" id="pe_dup">Duplicar</button><button class="btn sm bad" id="pe_del">Eliminar</button><button class="btn sm" id="pe_ap">Aplicar</button></div></div>' +
       '<div class="pz-side"><label class="l" style="margin-top:0">Texto de la publicación</label><textarea class="note" id="pe_c" rows="6">' + esc(pz.caption || '') + '</textarea><label class="l">Hashtags</label><input type="text" id="pe_h" value="' + esc(pz.hashtags || '') + '">' +
         (pz.por_que ? '<div class="hint">Por qué ahora: ' + esc(pz.por_que) + '</div>' : '') +
+        (pz.investigacion ? '<div class="pz-fu"><b>' + icon('search') + ' Fuentes consultadas</b><a href="' + esc(pz.investigacion.producto.url) + '" target="_blank" rel="noopener"><span class="pz-fs">Oficial</span>Ficha de ' + esc(pz.investigacion.producto.nombre) + ' en specialized.com</a>' +
+          (pz.investigacion.fotos.length ? '<span class="pz-fl">' + icon('image') + pz.investigacion.fotos.length + ' fotos oficiales del modelo disponibles (botón «Cambiar» de cada lámina)</span>' : '') +
+          (pz.investigacion.prensa || []).slice(0, 5).map(x => '<a href="' + esc(x.link) + '" target="_blank" rel="noopener"><span class="pz-fs pr">Prensa</span>' + esc(x.titulo) + (x.fuente ? ' <small>· ' + esc(x.fuente) + '</small>' : '') + '</a>').join('') + '</div>' : '') +
         (pedidosFoto(pz).length ? '<div class="pz-ped"><b>📸 Fotos que te pido</b>' + pedidosFoto(pz).map(x => '<div><span>Lámina ' + (x.i + 1) + '</span>' + esc(x.t) + '</div>').join('') + '<div class="hint" style="margin:6px 0 8px">No encontré fotos que calcen de verdad. Sácalas (o súbelas a tu carpeta de fotos) y vuelve a elegir en cada lámina.</div><button class="btn sm sec" id="pe_ped">＋ Crear tarea para sacarlas</button></div>' : '') +
         '<div class="pz-ia"><label class="l">Pedir cambios al Cerebro</label><textarea class="note" id="pe_q" rows="2" placeholder="Ej.: más corto, enfócalo en la Levo SL, agrega una lámina de tallas, cambia el tono a más técnico…"></textarea><button class="btn sm" id="pe_ia">' + icon('spark') + ' Pedir cambios</button></div>' +
         (pub ? '<div class="pz-ok">' + icon('check') + ' Publicada' + (p.link ? ' · <a href="' + esc(p.link) + '" target="_blank">ver en Instagram</a>' : '') + '</div>' : '') +
@@ -5246,18 +5458,21 @@ async function abrirPieza(p){
           '<div class="btns" style="margin-top:6px"><button class="btn sm sec" id="pe_sh">' + icon('box') + ' Compartir / descargar</button>' + (pub ? '' : '<button class="btn sm sec" id="pe_ok">Aprobar</button>') + '<button class="btn sm bad" id="pe_rm">Eliminar pieza</button></div>' +
           (alo || pub ? '' : '<div class="hint">Para publicar con un toque falta el alojamiento de imágenes (ver guía). Mientras, «Compartir» abre Instagram en tu teléfono con las imágenes y copia el texto.</div>') + '</div></div></div>';
     const $b = q => box.querySelector(q), leer = () => { const x = pz.slides[sel]; x.layout = $b('#pe_l').value; x.kicker = $b('#pe_k').value; x.titulo = $b('#pe_t').value; x.texto = $b('#pe_x').value; if ($b('#pe_n')) x.numero = $b('#pe_n').value; if ($b('#pe_i')) x.items = $b('#pe_i').value.split('\n').map(z => z.trim()).filter(Boolean); pz.caption = $b('#pe_c').value; pz.hashtags = $b('#pe_h').value; };
-    box.querySelectorAll('[data-sl]').forEach(b => b.onclick = () => { leer(); sel = +b.dataset.sl; pintar(); });
+    leerSuave = leer;
+    box.querySelectorAll('[data-sl]').forEach(b => { b.onclick = () => { if (+b.dataset.sl === sel) return; leer(); sel = +b.dataset.sl; pintar(); }; b.ondblclick = () => grande(+b.dataset.sl); });
+    $b('#pe_big').onclick = () => grande(sel);
+    $b('#pe_prev').onclick = () => irA(sel - 1); $b('#pe_next').onclick = () => irA(sel + 1);
     $b('#pe_ap').onclick = async () => { leer(); const b = $b('#pe_ap'); b.disabled = true; b.innerHTML = '<span class="spin"></span>'; canvases = await renderPieza(pz); pintar(); guardar().catch(e => toast('No se guardó: ' + e.message)); };
     $b('#pe_up').onclick = () => { leer(); if (sel > 0){ [pz.slides[sel - 1], pz.slides[sel]] = [pz.slides[sel], pz.slides[sel - 1]]; [canvases[sel - 1], canvases[sel]] = [canvases[sel], canvases[sel - 1]]; sel--; repintar(); } };
     $b('#pe_dn').onclick = () => { leer(); if (sel < pz.slides.length - 1){ [pz.slides[sel + 1], pz.slides[sel]] = [pz.slides[sel], pz.slides[sel + 1]]; sel++; repintar(); } };
     $b('#pe_dup').onclick = () => { leer(); pz.slides.splice(sel + 1, 0, JSON.parse(JSON.stringify(pz.slides[sel]))); sel++; repintar(); };
     $b('#pe_del').onclick = () => { if (pz.slides.length <= 1) return; pz.slides.splice(sel, 1); sel = Math.max(0, sel - 1); repintar(); };
     $b('#pe_sf') && ($b('#pe_sf').onclick = () => { leer(); pz.slides[sel].foto = Object.assign({}, pz.slides[sel].foto, { usar: false }); repintar(); });
-    $b('#pe_f').onclick = () => { leer(); elegirFoto(pz.tipo, ref2 => { const x = pz.slides[sel]; x.foto = Object.assign({ palabras: [], descripcion: '', fuente: 'propia' }, x.foto, { usar: true, ref: ref2 }); repintar(); }); };
+    $b('#pe_f').onclick = () => { leer(); elegirFoto(pz.tipo, ref2 => { const x = pz.slides[sel]; x.foto = Object.assign({ palabras: [], descripcion: '', fuente: 'propia' }, x.foto, { usar: true, ref: ref2 }); repintar(); }, (pz.investigacion || {}).fotos); };
     $b('#pe_ia').onclick = async () => { leer(); const q = $b('#pe_q').value.trim(); if (!q){ toast('Escribe qué quieres cambiar'); return; } const b = $b('#pe_ia'); b.disabled = true; b.innerHTML = '<span class="spin"></span>Corrigiendo…';
       try { const sinRef = JSON.parse(JSON.stringify(pz)); sinRef.slides.forEach(z => { if (z.foto) delete z.foto.ref; });
         const r = (await apiX('asistente', { modo: 'pieza', contexto: contextoPieza('', pz.tipo) + '\n\nPIEZA ACTUAL:\n' + JSON.stringify(sinRef) + '\n\nCAMBIOS PEDIDOS: ' + q })).r;
-        r.tipo = pz.tipo; r.slides.forEach((z, k) => { const prev = pz.slides[k]; if (prev && prev.foto && prev.foto.ref && z.foto && z.foto.usar && norm(z.foto.descripcion) === norm(prev.foto.descripcion || '')) z.foto.ref = prev.foto.ref; });
+        r.tipo = pz.tipo; if (pz.investigacion && !r.investigacion) r.investigacion = pz.investigacion; r.slides.forEach((z, k) => { const prev = pz.slides[k]; if (prev && prev.foto && prev.foto.ref && z.foto && z.foto.usar && norm(z.foto.descripcion) === norm(prev.foto.descripcion || '')) z.foto.ref = prev.foto.ref; });
         Object.keys(pz).forEach(k => delete pz[k]); Object.assign(pz, r); sel = Math.min(sel, pz.slides.length - 1); canvases = await renderPieza(pz); pintar(); await guardar(); toast('✓ Cambios aplicados');
       } catch(e){ b.disabled = false; b.textContent = 'Pedir cambios'; toast('No se pudo: ' + e.message); } };
     $b('#pe_sh').onclick = () => { leer(); compartirPieza(pz, canvases); };
@@ -5303,12 +5518,19 @@ async function compartirPieza(pz, canvases){
   toast('Imágenes descargadas · texto copiado');
 }
 // Selector de fotos: tus publicaciones, tu banco de Drive y Pexels.
-async function elegirFoto(tipo, cb){
-  const md = modal(icon('camera') + ' Elegir foto', '<div class="seg" id="ef_t"><button type="button" class="pill on" data-v="ig">Tu Instagram</button><button type="button" class="pill" data-v="drive">Banco de Drive</button>' + (extNivel() >= 22 ? '<button type="button" class="pill" data-v="spz">Specialized</button><button type="button" class="pill" data-v="yt">Videos Specialized</button>' : '') + (S.marcaSrv && S.marcaSrv.pexels ? '<button type="button" class="pill" data-v="stock">Pexels</button>' : '') + '</div><div class="tbar" id="ef_b" style="margin-top:10px"><input type="text" id="ef_q" placeholder="Buscar (ej.: levo, lago, sendero)"></div><div id="ef_g" class="ef-g"><div class="empty"><span class="spin"></span></div></div>', { wide: true });
+async function elegirFoto(tipo, cb, oficiales){
+  oficiales = oficiales || [];
+  const md = modal(icon('camera') + ' Elegir foto', '<div class="seg" id="ef_t">' + (oficiales.length ? '<button type="button" class="pill on" data-v="ofi">Fotos del modelo</button>' : '') + '<button type="button" class="pill' + (oficiales.length ? '' : ' on') + '" data-v="ig">Tu Instagram</button><button type="button" class="pill" data-v="drive">Banco de Drive</button>' + (extNivel() >= 22 ? '<button type="button" class="pill" data-v="spz">Specialized</button><button type="button" class="pill" data-v="yt">Videos Specialized</button>' : '') + (S.marcaSrv && S.marcaSrv.pexels ? '<button type="button" class="pill" data-v="stock">Pexels</button>' : '') + '</div><div class="tbar" id="ef_b" style="margin-top:10px"><input type="text" id="ef_q" placeholder="Buscar (ej.: levo, lago, sendero)"></div><div id="ef_g" class="ef-g"><div class="empty"><span class="spin"></span></div></div>', { wide: true });
   await bancoListas();
-  let fuente = 'ig';
+  let fuente = oficiales.length ? 'ofi' : 'ig';
   const pintar = async () => {
     const q = norm(md.el.querySelector('#ef_q').value), g = md.el.querySelector('#ef_g');
+    if (fuente === 'ofi'){
+      const L = oficiales.filter(x => !q || norm(x.nombre).includes(q));
+      g.innerHTML = L.map((x, i) => '<button class="ef-i" data-ef="' + i + '"><img src="' + esc(x.thumb) + '" alt="" loading="lazy"><small>' + esc(x.vista || x.nombre) + '</small></button>').join('') || '<div class="wsub">Sin resultados.</div>';
+      g.querySelectorAll('[data-ef]').forEach(b => b.onclick = async () => { const x = L[+b.dataset.ef]; b.classList.add('cargando'); await traerImgs([x]); md.cerrar(); cb({ fuente: 'spz', id: x.id, url: x.url, nombre: x.nombre }); });
+      return;
+    }
     if (fuente === 'stock' || fuente === 'spz' || fuente === 'yt'){
       if (!q && fuente !== 'yt'){ g.innerHTML = '<div class="wsub">' + (fuente === 'spz' ? 'Escribe el modelo (ej.: turbo levo 4, levo sl, kenevo).' : 'Escribe qué buscar (en inglés funciona mejor: mountain bike, lake, rain…).') + '</div>'; return; }
       g.innerHTML = '<div class="empty"><span class="spin"></span></div>';
@@ -5985,7 +6207,7 @@ const GUIA_PISO = [
   { ic: '🤝', t: 'Hacer avanzar una venta', tab: 'negocios', p: 'Cada venta pasa por etapas: Nuevo → Contactado → Prueba → Cotización → Negociación → Ganada → Entregada → Postventa.',
     l: ['Toca una venta para moverla de etapa o anotar el próximo paso.', 'Toda venta abierta debe tener un <b>próximo paso con fecha</b>.', 'Si el cliente no compra, márcala como perdida con el motivo.'] },
   { ic: '⌨️', t: 'Atajos', p: 'Para moverte rápido:',
-    l: ['<b>＋</b>: agregar una tarea (puedes dictarla).', '<b>Ctrl + K</b>: buscar un cliente, una tarea o una sección.', '<b>/</b>: preguntarle al Cerebro.', 'Esta guía está siempre en el botón <b>?</b> de arriba.'] }
+    l: ['<b>＋</b>: agregar una tarea (puedes dictarla).', '<b>Ctrl + K</b>: buscar un cliente, una tarea o una sección.', '<b>/</b>: preguntarle al Cerebro.', '<b>?</b>: ver todos los atajos (Esc cierra, N nueva tarea, G + letra para ir a una sección).', 'Esta guía está siempre en el botón <b>?</b> de arriba.'] }
 ];
 
 /* ---------- Cerebro: un solo cerebro con skills (reemplaza a los agentes sueltos) ---------- */
@@ -6063,7 +6285,7 @@ const GUIA_ADMIN = [
   { ic: '🧠', t: 'El Cerebro', tab: 'cerebro', p: 'Un solo cerebro con varias skills: sigue a los clientes, arma el plan del día, planifica tareas, busca compras y elige fotos.',
     l: ['Pregúntale lo que sea con el botón <b>Cerebro</b> o la tecla <b>/</b>.', 'Propone, pero <b>nada le llega a un cliente sin tu aprobación</b>.', 'En la pestaña <b>Cerebro</b> ves qué hace solo, cuánto gasta y puedes pausarlo.'] },
   { ic: '⌨️', t: 'Atajos', p: 'Para moverte rápido:',
-    l: ['<b>Ctrl + K</b>: buscar clientes, tareas o secciones.', '<b>/</b>: preguntarle al Cerebro.', '<b>＋</b>: agregar una tarea.  <b>↻</b>: actualizar.  <b>⚙️</b>: ajustes.', 'Esta guía siempre está en el botón <b>?</b> de arriba.'] }
+    l: ['<b>Ctrl + K</b>: buscar clientes, tareas o secciones.', '<b>/</b>: preguntarle al Cerebro.', '<b>?</b>: ver todos los atajos (Esc cierra, N nueva tarea, G + letra para ir a una sección).', '<b>＋</b>: agregar una tarea.  <b>↻</b>: actualizar.  <b>⚙️</b>: ajustes.', 'Esta guía siempre está en el botón <b>?</b> de arriba.'] }
 ];
 function openGuia(paso){
   const GUIA = esPiso() ? GUIA_PISO : GUIA_ADMIN;
@@ -6891,7 +7113,7 @@ function bindCtoPicker(alElegir){
     if (L.hidden) return;
     if (e.key === 'ArrowDown' || e.key === 'ArrowUp'){ e.preventDefault(); sel = Math.max(-1, Math.min(opc.length - 1, sel + (e.key === 'ArrowDown' ? 1 : -1))); L.querySelectorAll('.ctp-o').forEach((b, k) => b.classList.toggle('on', k === sel)); }
     if (e.key === 'Enter'){ e.preventDefault(); elegir(sel >= 0 ? opc[sel] : null); }
-    if (e.key === 'Escape'){ L.hidden = true; }
+    if (e.key === 'Escape' && !L.hidden){ L.hidden = true; e.preventDefault(); }
   };
   ayuda();
 }
