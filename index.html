@@ -2669,7 +2669,7 @@ async function apiX(op, extra){
 // Nivel 2 del script Extras: recordatorios y base de contactos. Nivel 3: la base solo usa contacto@blacklinechile.cl. Nivel 4: eventos de varios días.
 function enCurso(k, fn){ S._p = S._p || {}; if (S._p[k]) return S._p[k]; const pr = Promise.resolve().then(fn).finally(() => { if (S._p[k] === pr) delete S._p[k]; }); S._p[k] = pr; return pr; }
 function extNivel(){ return S.extInactivo ? 0 : (S.ext && S.ext.nivel) || 1; }
-const APP_VER = 'v91', NIVEL_ULTIMO = 53;
+const APP_VER = 'v92', NIVEL_ULTIMO = 53;
 function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < NIVEL_ULTIMO; }
 let sincTimer = null;
 // Después de cambiar tareas, el script actualiza los recordatorios del calendario (en segundo plano).
@@ -8180,7 +8180,7 @@ function esperanRespuesta(){
 async function marcarRespondido(x, nota){
   const R = lsGet('respondidos', {}); R[x.c.id] = x.g.idea.fecha + '|' + String(x.g.idea.detalle).slice(0, 24); lsSet('respondidos', R);
   const rh = respHoy(); if (rh.ids.indexOf(x.c.id) < 0) rh.ids.push(x.c.id); lsSet('respHoy', rh);
-  try { await apiX('nota', { id: x.c.id, texto: '✅ Respondido' + (nota ? ': ' + nota : '') }); } catch(e){}
+  guardarFondo({ guardar: () => apiX('nota', { id: x.c.id, texto: '✅ Respondido' + (nota ? ': ' + nota : '') }), error: 'No se guardó «respondido» en la ficha', recargar: { base: 1 } });
 }
 function negsAtencion(){
   if (!S.neg) return [];
@@ -8387,21 +8387,20 @@ function rondaSeguimiento(t, opt){
       const det = $b('#rsN').value.trim(), px = $b('#rsP').value.trim(), pf = $b('#rsF').value;
       if (act < 0 && !det && etapa === n.etapa && px === (n.proxima || '') && pf === (n.fechaProx || '')){ toast('Marca qué hiciste o escribe una línea'); return; }
       if (etapa === 'Perdida'){ m.cerrar(); openPerdida(n); return; }
-      const bt = $b('#rsOk'); bt.disabled = true; bt.textContent = 'Guardando…';
-      try {
-        const txt = (act >= 0 ? ACTIVIDADES[act][0].replace(/^\S+\s/, '') : 'Seguimiento') + (det ? ': ' + det : '');
-        await apiX('negocioNota', { id: n.id, texto: txt, tipo: act >= 0 ? ACTIVIDADES[act][1] : '📝 Seguimiento' });
+      {
+        const txt = (act >= 0 ? ACTIVIDADES[act][0].replace(/^\S+\s/, '') : 'Seguimiento') + (det ? ': ' + det : ''), tipoN = act >= 0 ? ACTIVIDADES[act][1] : '📝 Seguimiento';
         const cambios = { id: n.id }; let hay = false;
         if (etapa === n.etapa && n.estado === 'Abierta' && senalGanada(det)){ etapa = 'Ganada'; cambios.fechaEtapa = h; cambios.entrega = addDays(h, 3); }
         if (etapa !== n.etapa){ cambios.etapa = etapa; hay = true; }
         if (etapa !== 'Ganada' && (px !== (n.proxima || '') || pf !== (n.fechaProx || ''))){ cambios.proxima = px; cambios.fechaProx = pf; hay = true; }
-        if (hay) await apiX('negocio', { negocio: cambios });
-        Object.assign(n, cambios, { actividad: h }); if (etapa === 'Ganada') n.estado = 'Ganada';
+        const ant = { etapa: n.etapa, estado: n.estado, proxima: n.proxima, fechaProx: n.fechaProx, actividad: n.actividad }; let quitar;
+        guardarFondo({ aplicar: () => { quitar = notaLocal(n.contacto, tipoN, txt, n.id); Object.assign(n, cambios, { actividad: h }); if (etapa === 'Ganada') n.estado = 'Ganada'; },
+          guardar: async () => { await apiX('negocioNota', { id: n.id, texto: txt, tipo: tipoN }); if (hay) await apiX('negocio', { negocio: cambios }); },
+          deshacer: () => { if (quitar) quitar(); Object.assign(n, ant); }, error: 'No se guardó el seguimiento de «' + n.titulo + '»' });
         st.hechos.push(n.id); guardar();
         toast(etapa === 'Ganada' ? '🏆 ¡Venta ganada!' : '✓ Guardado' + (hay && cambios.fechaProx ? ' · próximo paso ' + fmtRel(pf) : ''));
         i++; pintar();
-        loadNeg(true).catch(() => {}); loadBase(true).catch(() => {});
-      } catch(err){ bt.disabled = false; bt.textContent = 'Guardar y siguiente →'; toast('No se pudo guardar: ' + err.message); }
+      }
     };
   };
   pintar();
@@ -8440,24 +8439,21 @@ function modoEnfoque(){
       const enviar = () => window.open('https://wa.me/' + telWA(q.x.c) + '?text=' + encodeURIComponent($b('#mfT').value), '_blank');
       if ($b('#mfWA')) $b('#mfWA').onclick = () => { enviar(); $b('#mfOk').classList.remove('sec'); };
       if ($b('#mfCp')) $b('#mfCp').onclick = () => { try { navigator.clipboard.writeText($b('#mfT').value); toast('Copiado'); } catch(e){} };
-      $b('#mfOk').onclick = async () => { $b('#mfOk').disabled = true; await marcarRespondido(q.x); sig(true); };
+      $b('#mfOk').onclick = () => { marcarRespondido(q.x); sig(true); };
     } else if (q.k === 't'){
-      $b('#mfOk').onclick = async () => { $b('#mfOk').disabled = true; try { await toggle(q.t); } catch(e){} sig(true); };
-      const mover = async f => { if (!f) return; $b('#mfPos').disabled = true; try { await updateTask(q.t, { limite: f }); q.t.limite = f; toast('Pospuesta para ' + fmtRel(f).toLowerCase()); } catch(e){ toast('No se pudo mover: ' + e.message); } sig(false); };
+      $b('#mfOk').onclick = () => { const t = q.t; guardarFondo({ guardar: () => toggle(t), recargar: {} }); sig(true); };
+      const mover = f => { if (!f) return; const t = q.t, ant = t.limite; guardarFondo({ aplicar: () => { t.limite = f; }, guardar: () => updateTask(Object.assign({}, t, { limite: ant }), { limite: f }), deshacer: () => { t.limite = ant; }, error: 'No se pudo posponer «' + t.tarea + '»', recargar: { state: 1 } }); toast('Pospuesta para ' + fmtRel(f).toLowerCase()); sig(false); };
       $b('#mfPos').onclick = () => { const mm = $b('#mfPosM'); mm.hidden = !mm.hidden; };
       box.querySelectorAll('[data-pos]').forEach(x => x.onclick = () => mover(x.dataset.pos === 'lun' ? nextMonday(D.h) : addDays(D.h, +x.dataset.pos)));
       $b('#mfF').onchange = e => mover(e.target.value);
-      $b('#mfEsp').onclick = async () => { $b('#mfEsp').disabled = true; const f = addDays(D.h, 2); try { await updateTask(q.t, { estado: 'Esperando respuesta', limite: f }); q.t.estado = 'Esperando respuesta'; q.t.limite = f; toast('En espera: vuelve a aparecer ' + fmtRel(f).toLowerCase()); } catch(e){ toast('No se pudo guardar: ' + e.message); } sig(false); };
+      $b('#mfEsp').onclick = () => { const f = addDays(D.h, 2), t = q.t, ant = { estado: t.estado, limite: t.limite }; guardarFondo({ aplicar: () => { t.estado = 'Esperando respuesta'; t.limite = f; }, guardar: () => updateTask(Object.assign({}, t, ant), { estado: 'Esperando respuesta', limite: f }), deshacer: () => Object.assign(t, ant), error: 'No se pudo dejar en espera «' + t.tarea + '»', recargar: { state: 1 } }); toast('En espera: vuelve a aparecer ' + fmtRel(f).toLowerCase()); sig(false); };
       $b('#mfCan').onclick = async () => {
         if (!confirm('¿Cancelar «' + q.t.tarea + '»? Queda en el historial como cancelada.')) return;
-        $b('#mfCan').disabled = true;
-        try {
-          const nota = '❌ Cancelada el ' + fmt(D.h) + (q.t.notas ? '\n' + q.t.notas : '');
-          await updateTask(q.t, { notas: nota }); q.t.notas = nota;
-          await api('toggle', { row: q.t.row, tarea: q.t.tarea, hecho: true }); q.t.hecho = true; q.t.cierre = D.h + 'T' + new Date().toTimeString().slice(0, 5);
-          toast('Tarea cancelada');
-        } catch(e){ toast('No se pudo cancelar: ' + e.message); }
-        sig(false);
+        const t = q.t, ant = { notas: t.notas, hecho: t.hecho, cierre: t.cierre }, nota = '❌ Cancelada el ' + fmt(D.h) + (t.notas ? '\n' + t.notas : '');
+        guardarFondo({ aplicar: () => { t.notas = nota; t.hecho = true; t.cierre = D.h + 'T' + new Date().toTimeString().slice(0, 5); },
+          guardar: async () => { await updateTask(Object.assign({}, t, { notas: ant.notas }), { notas: nota }); await api('toggle', { row: t.row, tarea: t.tarea, hecho: true }); },
+          deshacer: () => Object.assign(t, ant), error: 'No se pudo cancelar «' + t.tarea + '»', recargar: { state: 1 } });
+        toast('Tarea cancelada'); sig(false);
       };
       $b('#mfPlay').onclick = () => { m.cerrar(); openFocus(q.t); };
     } else {

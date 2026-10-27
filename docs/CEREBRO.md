@@ -554,3 +554,7 @@ Revisión con tres análisis en paralelo (diseño y uso, eficiencia y errores, u
 - Corregido el conocimiento interno: la Levo 4 S-Works lleva motor S-Works 3.1 de 850 W (antes decía 2.2). La investigación manda sobre ese resumen.
 - **Fotos exactas**: cada lámina de producto pide una vista (bici completa, motor, pantalla MasterMind, suspensión, SWAT…) y recibe esa foto oficial del modelo; no se mezclan fotos de otros modelos. Las fotos horizontales de la bici se muestran completas sobre su propia foto difuminada (sin cortar ruedas). Se evita el «Frameset» salvo que lo pidas.
 - El editor muestra la investigación: fecha de lanzamiento, novedades verificadas, fuentes web y lo que conviene revisar.
+
+## v92 · «Empezar mi día» sin esperas
+- En «Tu día, paso a paso», Ya respondí, Hecha, Posponer, En espera, Cancelar tarea y Registrar pasan al instante a la siguiente; la planilla se guarda detrás, en orden (indicador «guardando» arriba). Si algo falla, se deshace y aparece «Reintentar».
+- Lo mismo en el repaso de negociaciones («Guardar y siguiente»).
