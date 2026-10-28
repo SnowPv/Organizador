@@ -558,3 +558,10 @@ Revisión con tres análisis en paralelo (diseño y uso, eficiencia y errores, u
 ## v92 · «Empezar mi día» sin esperas
 - En «Tu día, paso a paso», Ya respondí, Hecha, Posponer, En espera, Cancelar tarea y Registrar pasan al instante a la siguiente; la planilla se guarda detrás, en orden (indicador «guardando» arriba). Si algo falla, se deshace y aparece «Reintentar».
 - Lo mismo en el repaso de negociaciones («Guardar y siguiente»).
+
+## v93 · Pipeline arreglado, arranque en una consulta y revisión visual (script nivel 54)
+- **Pipeline horizontal otra vez**: el estilo de la ayuda de atajos (v90) usaba el mismo nombre que el tablero (`.kb`) y apilaba las columnas. Renombrado a `.atj`.
+- Otros choques de nombres de estilo corregidos: la agenda del Inicio y la línea de actividad de las fichas (`.tl` → `.tline` en la agenda), el número de «Empezar mi día» y el gráfico de Seguimientos (`.pv-dn` → `.pv-cnt`), los colores del Kit de marca y los interruptores del Cerebro (`.sw` → `.swc`).
+- **`tools/revisar.py`**: revisa la sintaxis de la app y del script y avisa de nombres de estilo definidos en dos lugares lejanos (para que no vuelva a pasar). Correr antes de cada publicación.
+- **Abre más rápido**: op `arranque` del script entrega en una sola consulta extras, contactos, negocios, datos globales, contenido, Instagram, estrategia, leads y ventas de Bsale (antes 7 a 9 consultas en fila). Respeta los permisos de Piso parte por parte. Si el script es anterior, la app usa el método antiguo.
+- Diseño: portada de «Hoy» clara como el resto (botón principal azul); barra de Negocios en el celular con el buscador a lo ancho; tarjetas del Calendario sin hueco; íconos parejos en la ficha de la negociación.

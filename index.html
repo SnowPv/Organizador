@@ -282,6 +282,7 @@ textarea.note{min-height:56px;resize:vertical}
 .ntool .views button{padding:8px 12px}
 .ntool input{flex:1 1 140px;width:auto;min-width:0;padding:11px 14px}
 @media (max-width:999px){.ntool .views{width:100%}.ntool .views button{flex:1}}
+@media (max-width:760px){.ntool input{flex:1 1 100%;order:1}.ntool .views{order:0}.ntool > .btn{order:2;flex:1 1 0;justify-content:center;white-space:nowrap}}
 .hstat span{white-space:nowrap}
 .kb{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;margin:4px -18px 0;padding:4px 18px 14px}
 .kcol{flex:none;width:85%;max-width:330px;background:var(--soft);border-radius:18px;scroll-snap-align:start;display:flex;flex-direction:column;overflow:hidden}
@@ -388,6 +389,7 @@ nav.bottom button span .ico{width:21px;height:21px}
 .ihead .quick{margin:0;flex:1 1 260px}
 .ihead .btn{flex:none}
 .wgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px;align-items:start}
+.wgrid.per-g{grid-template-columns:repeat(auto-fit,minmax(290px,1fr));grid-auto-flow:row dense}
 .w{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;min-width:0}
 .w.span2{grid-column:span 2}
 /* Inicio en mosaico: cada módulo ocupa solo la altura que necesita y los huecos se rellenan (filas de 2 px). */
@@ -866,7 +868,7 @@ nav.bottom button span .ico{width:21px;height:21px}
 .hy-link span{flex:1;min-width:0}
 .hy-link svg{width:16px;height:16px;flex:none;color:var(--muted)}
 #mf .hy-facts{display:grid;grid-template-columns:1fr 1fr;gap:8px}#mf .hy-facts .btn{justify-content:center}#mf #mfOk,#mf .mf-pos,#mf #mfSk{grid-column:span 2}#mf #mfSk{background:none;border:0}.mf-fecha{white-space:nowrap}
-.mf-pos{display:flex;flex-wrap:wrap;gap:8px;align-items:center;flex-basis:100%;padding:10px 0 2px}.mf-pos[hidden]{display:none}.mf-fecha{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted)}.mf-fecha input{padding:6px 8px;border:1px solid var(--line);border-radius:8px;font:inherit;background:var(--card);color:var(--ink)}.pv-dn{display:inline-block!important;width:auto!important;min-width:20px;padding:0 6px;margin-left:4px;border-radius:10px;background:rgba(255,255,255,.25);font-size:12px;line-height:20px;text-align:center}
+.mf-pos{display:flex;flex-wrap:wrap;gap:8px;align-items:center;flex-basis:100%;padding:10px 0 2px}.mf-pos[hidden]{display:none}.mf-fecha{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted)}.mf-fecha input{padding:6px 8px;border:1px solid var(--line);border-radius:8px;font:inherit;background:var(--card);color:var(--ink)}.pv-cnt{display:inline-block!important;width:auto!important;min-width:20px;padding:0 6px;margin-left:4px;border-radius:10px;background:rgba(255,255,255,.25);font-size:12px;line-height:20px;text-align:center}
 .hy-fprog{display:flex;justify-content:space-between;font-size:12.5px;font-weight:700;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em}
 .hy-fcard{padding:16px 2px 6px}.hy-fcard h3{margin:0 0 6px;font-size:20px;line-height:1.3}
 .hy-fcard input{width:100%;margin-top:4px}
@@ -989,7 +991,7 @@ body:has(.selbar) .fab,body:has(.selbar) .fab2{display:none}
 .mk-c input[type=color]::-webkit-color-swatch{border:1px solid var(--line);border-radius:50%}
 .mk-sw{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px}
 .mk-sw .wsub{flex-basis:100%}
-.sw{all:unset;cursor:pointer;width:30px;height:30px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(0,0,0,.15)}
+.swc{all:unset;cursor:pointer;width:30px;height:30px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(0,0,0,.15)}
 .mk-logo{display:flex;align-items:center;justify-content:center;width:64px;height:64px;border-radius:12px;background:repeating-conic-gradient(#ddd 0 25%,#fff 0 50%) 0/14px 14px;font-size:11px;color:var(--muted);overflow:hidden;flex:none}
 .mk-logo img{max-width:100%;max-height:100%}
 @media (max-width:760px){
@@ -1622,7 +1624,7 @@ body:has(.selbar) .fab,body:has(.selbar) .fab2{display:none}
 .hm-p .tx{min-width:0;flex:1}.hm-p b{display:block;font-size:13.5px}.hm-p small{display:block;font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .hm-v{font-size:12.5px;font-weight:800;white-space:nowrap}
 /* agenda: línea de tiempo */
-.tl{display:flex;flex-direction:column}
+.tline{display:flex;flex-direction:column}
 .tl-i{display:grid;grid-template-columns:44px 14px 1fr;align-items:start;gap:8px;padding:6px 0;position:relative}
 .tl-i + .tl-i::before{content:"";position:absolute;left:58px;top:-6px;height:16px;border-left:2px solid var(--line)}
 .tl-h{font-size:12.5px;font-weight:800;color:var(--muted);font-variant-numeric:tabular-nums;padding-top:1px}
@@ -1733,8 +1735,8 @@ body:has(.selbar) .fab,body:has(.selbar) .fab2{display:none}
 .lb-dots{position:absolute;bottom:16px;left:0;right:0;display:flex;justify-content:center;gap:8px;overflow-x:auto;padding:0 16px}
 .lb-dots button{border:2px solid transparent;border-radius:8px;padding:0;background:none;cursor:pointer;opacity:.55;flex:none}.lb-dots button.on{border-color:#fff;opacity:1}.lb-dots img{display:block;height:64px;border-radius:6px}
 @media (max-width:760px){.lb{padding:16px 8px 96px}.lb-p,.lb-n{display:none}.lb figure img{max-width:96vw}.lb-dots img{height:48px}}
-.kb{display:flex;flex-direction:column;gap:4px}.kb-r{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:6px 0;border-bottom:1px solid var(--line)}.kb-r b{font-size:13.5px;font-weight:600;text-align:right}
-.kb-h{font-size:11.5px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:14px 0 2px}
+.atj{display:flex;flex-direction:column;gap:4px}.atj-r{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:6px 0;border-bottom:1px solid var(--line)}.atj-r b{font-size:13.5px;font-weight:600;text-align:right}
+.atj-h{font-size:11.5px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:14px 0 2px}
 kbd{display:inline-block;min-width:22px;text-align:center;font:700 12px/1 ui-monospace,Menlo,monospace;background:var(--soft);border:1px solid var(--line);border-bottom-width:2px;border-radius:6px;padding:4px 6px;color:var(--ink)}
 /* post-it de avisos */
 .hm-postit{background:linear-gradient(170deg,#FFF6B8 0%,#FFEC85 100%);border:0;border-radius:6px 6px 22px 6px;box-shadow:0 2px 3px rgba(120,90,0,.08),0 18px 30px -18px rgba(120,90,0,.55);transform:rotate(-.6deg);padding:22px 18px 16px;color:#3B3000}
@@ -1794,7 +1796,7 @@ kbd{display:inline-block;min-width:22px;text-align:center;font:700 12px/1 ui-mon
 .home.fit .hh-v{font-size:44px}.home.fit .hh-prog{margin-top:12px}
 .home.fit .hm-postit{padding:20px 16px 12px}
 .home.fit .pi-n{flex:1;min-height:0;overflow:hidden}
-.home.fit .tl{flex:1;min-height:0;overflow:hidden}
+.home.fit .tline{flex:1;min-height:0;overflow:hidden}
 .home.fit .hm-people{flex:1;min-height:0;overflow:hidden}
 .home.fit .hm-spark{flex:1;min-height:40px}.home.fit .hm-spark .spk{height:100%}
 .home.fit .pp-fun{flex:1;justify-content:space-evenly}
@@ -2384,7 +2386,7 @@ body.ui2{background:#F6F7F9!important}
 .ui2 .pv-hero.hz .pv-ha .btn .ico,.ui2 .pv-hero.hz .pv-ha .btn .ei{color:inherit}
 .ui2 .pv-hero.hz #pvDia{background:#fff;color:#111827;border-color:#fff;font-weight:650;height:44px;padding:0 20px;font-size:15px}
 .ui2 .pv-hero.hz #pvDia:hover{background:#E8EEF7}
-.ui2 .pv-hero.hz .pv-dn{background:#111827;color:#fff}
+.ui2 .pv-hero.hz .pv-cnt{background:#111827;color:#fff}
 .ui2 .pv-hero.hz .pv-hr{flex-direction:column;align-items:flex-end;gap:12px}
 .ui2 .pv-hero.hz .hy-wx{background:rgba(255,255,255,.08)!important;border:1px solid rgba(255,255,255,.14)!important;color:#E2E8F0!important;max-width:360px}
 .ui2 .pv-hero.hz .hy-wx b,.ui2 .pv-hero.hz .hy-wx span{color:inherit!important}
@@ -2392,6 +2394,18 @@ body.ui2{background:#F6F7F9!important}
 .hz-ring > div{position:absolute;left:0;top:0;width:84px;height:84px;display:flex;flex-direction:column;align-items:center;justify-content:center}
 .hz-ring b{font-size:20px;font-weight:650;color:#fff;line-height:1}
 .hz-ring span{font-size:11px;color:#9AA4B5;margin-top:3px}
+.ui2 .pv-hero.hz{background:var(--card)!important;border:1px solid rgba(16,24,40,.06)!important;color:var(--ink);box-shadow:0 1px 2px rgba(16,24,40,.04),0 16px 36px -22px rgba(16,24,40,.3)!important;position:relative;overflow:hidden}
+.ui2 .pv-hero.hz::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:linear-gradient(90deg,#2A78D6,#6198DF 60%,rgba(97,152,223,0))}
+.ui2 .pv-hero.hz .pv-k{color:var(--accent-ink)}
+.ui2 .pv-hero.hz h2{color:var(--ink)}
+.ui2 .pv-hero.hz p{color:var(--muted)}
+.ui2 .pv-hero.hz .pv-ha .btn{background:var(--card);border:1px solid var(--line);color:var(--ink)}
+.ui2 .pv-hero.hz .pv-ha .btn:hover{background:var(--soft)}
+.ui2 .pv-hero.hz #pvDia{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 8px 18px -10px rgba(42,120,214,.8)}
+.ui2 .pv-hero.hz #pvDia:hover{background:var(--accent-ink)}
+.ui2 .pv-hero.hz .pv-cnt{background:#fff;color:var(--accent-ink)}
+.ui2 .pv-hero.hz .hy-wx{background:var(--soft)!important;border:1px solid var(--line)!important;color:var(--ink)!important}
+.ui2 .pv-hero.hz .hz-ring b{color:var(--ink)}.ui2 .pv-hero.hz .hz-ring span{color:var(--muted)}
 /* «Empieza por aquí»: una franja de números con divisores, sin cajas sueltas */
 .ui2 .pv-steps{gap:0!important;background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
 .ui2 .pv-steps .pv-s{border:0!important;border-radius:0!important;background:transparent;border-left:1px solid var(--line)!important}
@@ -2669,7 +2683,7 @@ async function apiX(op, extra){
 // Nivel 2 del script Extras: recordatorios y base de contactos. Nivel 3: la base solo usa contacto@blacklinechile.cl. Nivel 4: eventos de varios días.
 function enCurso(k, fn){ S._p = S._p || {}; if (S._p[k]) return S._p[k]; const pr = Promise.resolve().then(fn).finally(() => { if (S._p[k] === pr) delete S._p[k]; }); S._p[k] = pr; return pr; }
 function extNivel(){ return S.extInactivo ? 0 : (S.ext && S.ext.nivel) || 1; }
-const APP_VER = 'v92', NIVEL_ULTIMO = 53;
+const APP_VER = 'v93', NIVEL_ULTIMO = 54;
 function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < NIVEL_ULTIMO; }
 let sincTimer = null;
 // Después de cambiar tareas, el script actualiza los recordatorios del calendario (en segundo plano).
@@ -2765,15 +2779,30 @@ async function load(){
   }
   applyExtras();
   S.busy = false; render();
-  loadExtras().then(async () => {
+  // Con el script nivel 54+, todo lo demás llega en UNA consulta (antes eran 7 en fila).
+  (extNivel() >= 54 ? loadArranque().catch(() => false) : Promise.resolve(false)).then(async ok => {
+    if (!ok) await loadExtras();
     if (S.mutado){ S.mutado = false; sincPronto(); }
-    loadGlobal(false);
-    await loadBase(false);
-    await loadNeg(false);
-    await loadIG(false);
+    if (ok){ Promise.all([loadClima(false), loadYr(false)]).then(() => { if (['inicio', 'hoy'].includes(S.tab) && !$('#layer').innerHTML && !$('.pop-bg')) render(); }); revisarDuplicados(); }
+    else { loadGlobal(false); await loadBase(false); await loadNeg(false); await loadIG(false); }
     if (!$('#layer').innerHTML) render();
   });
   loadGoogle(false);
+}
+async function loadArranque(){
+  const quiere = ['extras', 'base', 'negocios', 'global', 'contenido'].concat(igActivo() ? ['instagram'] : []).concat(extNivel() >= 13 ? ['igEstrategia', 'leadsCanal'] : []).concat(!esPiso() && bsvListo() ? ['bsaleVentas'] : []);
+  const w0 = S.wseq, r = await apiX('arranque', { partes: quiere }), P = r.partes || {}, ok = x => x && typeof x === 'object' && x.ok !== false, t = Date.now();
+  if (!ok(P.extras)) return false;
+  S.ext = P.extras; S.extInactivo = false; lsSet('extCache', S.ext); applyExtras();
+  if (w0 === S.wseq){
+    if (ok(P.base)){ S.base = P.base; S.baseAt = t; lsSet('baseCache', S.base); }
+    if (ok(P.negocios)){ S.neg = P.negocios; S.negAt = t; lsSet('negCache', S.neg); }
+  } else refrescoFondo({ neg: 1, base: 1 });   // hubo cambios mientras llegaba: se relee después de guardarlos
+  if (ok(P.global)){ S.global = P.global; S.globalAt = t; lsSet('globalCache', S.global); }
+  if (ok(P.leadsCanal)){ S.leadsCanal = P.leadsCanal; S.leadsAt = t; }
+  if (ok(P.bsaleVentas) && P.bsaleVentas.activo){ S.bsv = P.bsaleVentas; S.bsvAt = t; if (!P.bsaleVentas.vacio) lsSet('bsvCache', { r: P.bsaleVentas, t }); }
+  if (ok(P.contenido)){ if (ok(P.instagram)) S.ig = P.instagram; S.cont = P.contenido.items || []; if (ok(P.igEstrategia)) S.igEst = P.igEstrategia; S.igAt = t; lsSet('igCache', { ig: S.ig, cont: S.cont, est: S.igEst }); }
+  return true;
 }
 // Calendario y Gmail (vía Extras): se piden aparte para no hacer más lenta la carga principal.
 async function loadGoogle(forzar){
@@ -2869,10 +2898,10 @@ document.addEventListener('keydown', e => {
   if (k === 'n'){ e.preventDefault(); openAdd(); return; }
 });
 function ayudaAtajos(){
-  const f = (k, t) => '<div class="kb-r"><span>' + k.split(' ').map(x => '<kbd>' + esc(x) + '</kbd>').join(' ') + '</span><b>' + esc(t) + '</b></div>';
-  modal('⌨️ Atajos de teclado', '<div class="kb">' + f('Enter', 'Confirmar o enviar') + f('Shift Enter', 'Salto de línea en un cuadro de texto') + f('Esc', 'Cerrar la ventana, el visor o el panel abierto') + f('N', 'Nueva tarea') + f('/', 'Preguntarle al Cerebro') + f('Ctrl K', 'Buscar clientes, tareas o secciones') + f('?', 'Ver estos atajos') +
-    '<div class="kb-h">Ir a una sección: G y luego…</div>' + f('G I', 'Inicio') + f('G H', 'Hoy') + f('G T', 'Tareas') + f('G C', 'Calendario') + f('G N', 'Negocios') + f('G O', 'Contactos') + f('G P', 'Compras') + f('G R', 'Redes') + f('G E', 'Cerebro') +
-    '<div class="kb-h">En el visor de láminas</div>' + f('← →', 'Lámina anterior / siguiente') + f('Esc', 'Volver al editor') + '</div>', { sinFoco: true });
+  const f = (k, t) => '<div class="atj-r"><span>' + k.split(' ').map(x => '<kbd>' + esc(x) + '</kbd>').join(' ') + '</span><b>' + esc(t) + '</b></div>';
+  modal('⌨️ Atajos de teclado', '<div class="atj">' + f('Enter', 'Confirmar o enviar') + f('Shift Enter', 'Salto de línea en un cuadro de texto') + f('Esc', 'Cerrar la ventana, el visor o el panel abierto') + f('N', 'Nueva tarea') + f('/', 'Preguntarle al Cerebro') + f('Ctrl K', 'Buscar clientes, tareas o secciones') + f('?', 'Ver estos atajos') +
+    '<div class="atj-h">Ir a una sección: G y luego…</div>' + f('G I', 'Inicio') + f('G H', 'Hoy') + f('G T', 'Tareas') + f('G C', 'Calendario') + f('G N', 'Negocios') + f('G O', 'Contactos') + f('G P', 'Compras') + f('G R', 'Redes') + f('G E', 'Cerebro') +
+    '<div class="atj-h">En el visor de láminas</div>' + f('← →', 'Lámina anterior / siguiente') + f('Esc', 'Volver al editor') + '</div>', { sinFoco: true });
 }
 // Visor grande de imágenes (láminas del Estudio): flechas, deslizar en el celular, Esc para cerrar.
 function verGrande(srcs, i, opt){
@@ -3169,7 +3198,7 @@ function emoIcono(e){ const k = String(e || '').replace(/\uFE0F/g, ''), ic = UI2
 function avTenue(nom){ const t = tonoNombre(nom); return '<span class="pv-av" style="--av-bg:' + t[0] + ';--av-fg:' + t[1] + '">' + esc(iniciales(nom)) + '</span>'; }
 function hzAnillo(hecho, total){
   const p = total ? Math.min(1, hecho / total) : 0, r = 34, c = 2 * Math.PI * r;
-  return '<div class="hz-ring" title="Acciones del día"><svg width="84" height="84" viewBox="0 0 84 84"><circle cx="42" cy="42" r="' + r + '" fill="none" stroke="rgba(255,255,255,.14)" stroke-width="7"/><circle cx="42" cy="42" r="' + r + '" fill="none" stroke="#7CC4FF" stroke-width="7" stroke-linecap="round" stroke-dasharray="' + (c * p).toFixed(1) + ' ' + c.toFixed(1) + '" transform="rotate(-90 42 42)"/></svg><div><b>' + Math.round(p * 100) + '%</b><span>' + hecho + ' de ' + total + '</span></div></div>';
+  return '<div class="hz-ring" title="Acciones del día"><svg width="84" height="84" viewBox="0 0 84 84"><circle cx="42" cy="42" r="' + r + '" fill="none" stroke="#E9EDF3" stroke-width="7"/><circle cx="42" cy="42" r="' + r + '" fill="none" stroke="#2A78D6" stroke-width="7" stroke-linecap="round" stroke-dasharray="' + (c * p).toFixed(1) + ' ' + c.toFixed(1) + '" transform="rotate(-90 42 42)"/></svg><div><b>' + Math.round(p * 100) + '%</b><span>' + hecho + ' de ' + total + '</span></div></div>';
 }
 function progresoHTML(hecho, total, etq){ const p = total ? Math.min(1, hecho / total) : 0; return '<div class="pg2"><div class="pg2-n"><b>' + hecho + '</b><small>/' + total + '</small></div><div class="pg2-t"><span>' + etq + '</span><i><u style="width:' + Math.round(p * 100) + '%"></u></i></div></div>'; }
 document.querySelectorAll('[data-ic]').forEach(e => { e.innerHTML = icon(e.dataset.ic); });
@@ -3335,7 +3364,7 @@ function recortarFilas(){
   if (pp){ pp.classList.remove('cmp', 'sin3'); const sobra = () => pp.scrollHeight > pp.clientHeight + 1; if (sobra()) pp.classList.add('cmp'); if (sobra()) pp.classList.add('sin3'); }
   const hh = $('#home.fit .hm-hero');
   if (hh){ hh.classList.remove('cmp', 'cmp2'); const so = () => hh.scrollHeight > hh.clientHeight + 1; if (so()) hh.classList.add('cmp'); if (so()) hh.classList.add('cmp2'); }
-  $$('#home.fit .hm-people, #home.fit .tl, #home.fit .pi-n').forEach(box => {
+  $$('#home.fit .hm-people, #home.fit .tline, #home.fit .pi-n').forEach(box => {
     const K = [...box.children]; K.forEach(c => c.style.display = '');
     const fin = box.getBoundingClientRect().bottom + 1;
     K.forEach(c => { if (c.getBoundingClientRect().bottom > fin) c.style.display = 'none'; });
@@ -3393,7 +3422,7 @@ function noticiasHome(){
 // Texto corto de lo que trae la versión nueva del script (el banner de actualización del Inicio).
 function novedadScript(){
   const n = extNivel();
-  return n >= 53 ? 'El Estudio investiga en la web (lanzamiento, prensa y ficha oficial) y escribe con el modelo experto; cada lámina recibe la foto oficial que corresponde.' : n >= 52 ? 'Redes renovado: Instagram en vivo con tus fotos reales, y el Estudio investiga la ficha oficial, las fotos del modelo y la prensa antes de crear una pieza.' : n >= 51 ? 'Noticias con su foto y link original.' : n >= 50 ? 'Guardar notas y mover negociaciones es más rápido: el script actualiza solo el contacto afectado.' : n >= 49 ? 'Recompra de consumibles: la app detecta quién debería cambiar pastillas, cadena o cubiertas según sus compras en Bsale, con el stock para ofrecer y el mensaje listo (Contactos → Campañas).' : n >= 48 ? 'La revisión de los 30 días sugiere los accesorios que el cliente no compró (asesoría, sin descuentos).' : n >= 47 ? 'Cada negociación tiene su lista de productos (desde Bsale o a mano) con precios, costo, ganancia y margen; el Cerebro también los puede agregar.' : n >= 46 ? 'Los contactos internos (Blackline Servicio Técnico, el equipo) ya no generan tareas, negociaciones ni «espera respuesta».' : n >= 45 ? 'El Cerebro responde más rápido (busca en varias fuentes a la vez y tiene un tope de tiempo) y no deja a la app esperando tanto.' : n >= 44 ? 'El Cerebro confirma en el catálogo de Andes Industrial si un repuesto Shimano o Continental existe en el distribuidor.' : n >= 43 ? 'El Cerebro entiende mejor el ciclismo (Di2, AXS, modelos) y busca opciones de compra cuando una tarea es conseguir un repuesto.' : n >= 42 ? 'Proveedores fuera del pipeline (el agente ya no les abre negociaciones) y el Cerebro puede agregar contactos nuevos cuando le dictas.' : n >= 41 ? 'Empezar de cero: la fecha de inicio se guarda en el script y la ven todos los equipos (Admin y Piso de venta).' : n >= 40 ? 'Ahora hay dos cuentas con contraseña: Admin (todo, como siempre) y Piso de venta (parte en un Hoy nuevo, sin cifras de la tienda). Créalas en ⚙️ Ajustes → Usuarios.' : n >= 39 ? 'La app ahora tiene un solo Cerebro con 9 skills (en vez de agentes sueltos): mira qué hace solo, cuánto gasta y paúsalo en la pestaña Cerebro.' : n >= 37 ? 'Las tareas automáticas ya no bloquean la app (por ejemplo, la lectura de ventas de Bsale).' : n >= 36 ? 'Cuando un cliente con negociación abierta compra en Bsale, la app te propone marcarla como ganada.' : n >= 35 ? 'Ventas del mes igual que en Bsale (solo boletas y facturas, menos notas de crédito) y noticias con foto de portada.' : n >= 34 ? 'Meta y gráfico de ventas del mes en el Inicio, con el avance diario desde Bsale.' : n >= 33 ? 'Une sola las negociaciones duplicadas de una venta ganada.' : n >= 32 ? 'Etapas después del pago: seguimiento, entrega y postventa.' : n >= 31 ? 'Venta perdida: cierra tareas, eventos y la idea de respuesta del Cerebro.' : 'Funciones nuevas para el Organizador.';
+  return n >= 54 ? 'La app abre más rápido: carga todo en una sola consulta al script en vez de siete.' : n >= 53 ? 'El Estudio investiga en la web (lanzamiento, prensa y ficha oficial) y escribe con el modelo experto; cada lámina recibe la foto oficial que corresponde.' : n >= 52 ? 'Redes renovado: Instagram en vivo con tus fotos reales, y el Estudio investiga la ficha oficial, las fotos del modelo y la prensa antes de crear una pieza.' : n >= 51 ? 'Noticias con su foto y link original.' : n >= 50 ? 'Guardar notas y mover negociaciones es más rápido: el script actualiza solo el contacto afectado.' : n >= 49 ? 'Recompra de consumibles: la app detecta quién debería cambiar pastillas, cadena o cubiertas según sus compras en Bsale, con el stock para ofrecer y el mensaje listo (Contactos → Campañas).' : n >= 48 ? 'La revisión de los 30 días sugiere los accesorios que el cliente no compró (asesoría, sin descuentos).' : n >= 47 ? 'Cada negociación tiene su lista de productos (desde Bsale o a mano) con precios, costo, ganancia y margen; el Cerebro también los puede agregar.' : n >= 46 ? 'Los contactos internos (Blackline Servicio Técnico, el equipo) ya no generan tareas, negociaciones ni «espera respuesta».' : n >= 45 ? 'El Cerebro responde más rápido (busca en varias fuentes a la vez y tiene un tope de tiempo) y no deja a la app esperando tanto.' : n >= 44 ? 'El Cerebro confirma en el catálogo de Andes Industrial si un repuesto Shimano o Continental existe en el distribuidor.' : n >= 43 ? 'El Cerebro entiende mejor el ciclismo (Di2, AXS, modelos) y busca opciones de compra cuando una tarea es conseguir un repuesto.' : n >= 42 ? 'Proveedores fuera del pipeline (el agente ya no les abre negociaciones) y el Cerebro puede agregar contactos nuevos cuando le dictas.' : n >= 41 ? 'Empezar de cero: la fecha de inicio se guarda en el script y la ven todos los equipos (Admin y Piso de venta).' : n >= 40 ? 'Ahora hay dos cuentas con contraseña: Admin (todo, como siempre) y Piso de venta (parte en un Hoy nuevo, sin cifras de la tienda). Créalas en ⚙️ Ajustes → Usuarios.' : n >= 39 ? 'La app ahora tiene un solo Cerebro con 9 skills (en vez de agentes sueltos): mira qué hace solo, cuánto gasta y paúsalo en la pestaña Cerebro.' : n >= 37 ? 'Las tareas automáticas ya no bloquean la app (por ejemplo, la lectura de ventas de Bsale).' : n >= 36 ? 'Cuando un cliente con negociación abierta compra en Bsale, la app te propone marcarla como ganada.' : n >= 35 ? 'Ventas del mes igual que en Bsale (solo boletas y facturas, menos notas de crédito) y noticias con foto de portada.' : n >= 34 ? 'Meta y gráfico de ventas del mes en el Inicio, con el avance diario desde Bsale.' : n >= 33 ? 'Une sola las negociaciones duplicadas de una venta ganada.' : n >= 32 ? 'Etapas después del pago: seguimiento, entrega y postventa.' : n >= 31 ? 'Venta perdida: cierra tareas, eventos y la idea de respuesta del Cerebro.' : 'Funciones nuevas para el Organizador.';
 }
 
 /* ---------- Ventas del mes: avance diario acumulado contra el mes anterior y la meta ---------- */
@@ -3508,7 +3537,7 @@ function agendaHome(ancho){
   if (g.inactivo) return '<div class="' + cl + '">' + cab + '<div class="hm-sub">Conecta tu calendario en ⚙️ Ajustes.</div></div>';
   const ahora = new Date().toTimeString().slice(0, 5), E = (g.eventos || []), ev = E.filter(e => e.fecha === h), man = E.filter(e => e.fecha > h && e.fecha <= addDays(h, 6)).slice(0, ev.length ? 3 : 5), n = sugerencias().length;
   const it = (e, dim) => { const now = !dim && !e.todoElDia && e.inicio <= ahora && e.fin > ahora, past = !dim && !e.todoElDia && e.fin && e.fin <= ahora; const cto = contactoEnTexto(e.titulo + ' ' + (e.lugar || '')); return '<div class="tl-i' + (now ? ' now' : '') + (past ? ' past' : '') + (dim ? ' dim' : '') + (cto ? ' lk" data-cto="' + esc(cto.id) + '" title="Abrir la ficha de ' + esc(cto.nombre) : '') + '"><span class="tl-h">' + (dim ? '<em>' + esc(DIAS[pd(e.fecha).getDay()] + ' ' + pd(e.fecha).getDate()) + '</em>' : '') + (e.todoElDia ? 'Día' : esc(e.inicio)) + '</span><span class="tl-dot" style="--c:' + esc(e.color || 'var(--s3)') + '"></span><span class="tl-t"><b>' + esc(e.titulo) + '</b>' + (e.lugar ? '<small>' + esc(e.lugar) + '</small>' : '') + '</span></div>'; };
-  return '<div class="' + cl + '">' + cab + '<div class="tl">' + (ev.length ? ev.slice(0, 5).map(e => it(e)).join('') : '<div class="hm-ok">' + icon('check') + 'Día libre de reuniones</div>') + (man.length ? '<div class="tl-k">Próximos días</div>' + man.map(e => it(e, true)).join('') : '') + '</div>' +
+  return '<div class="' + cl + '">' + cab + '<div class="tline">' + (ev.length ? ev.slice(0, 5).map(e => it(e)).join('') : '<div class="hm-ok">' + icon('check') + 'Día libre de reuniones</div>') + (man.length ? '<div class="tl-k">Próximos días</div>' + man.map(e => it(e, true)).join('') : '') + '</div>' +
     (n ? '<button class="hm-link" id="sugBtn">' + n + (n === 1 ? ' sugerencia' : ' sugerencias') + ' para agendar ›</button>' : '') + '</div>';
 }
 // Pipeline: embudo con el valor de cada etapa y lo que falta entregar.
@@ -5609,8 +5638,8 @@ function abrirMarca(){
         for (let i = 0; i < d.length; i += 4){ const r = d[i] >> 4, g = d[i + 1] >> 4, b2 = d[i + 2] >> 4, key = r + ',' + g + ',' + b2; cnt[key] = (cnt[key] || 0) + 1; } });
       const hex = v => '#' + v.split(',').map(n => ((+n << 4) + 8).toString(16).padStart(2, '0')).join('');
       const top = Object.entries(cnt).sort((a, b) => b[1] - a[1]).slice(0, 40).map(e => hex(e[0])).filter((h, i, a) => a.findIndex(z => Math.abs(parseInt(z.slice(1), 16) - parseInt(h.slice(1), 16)) < 0x0a0a0a) === i).slice(0, 8);
-      md.el.querySelector('#mk_sw').innerHTML = '<div class="wsub">Colores frecuentes en tus publicaciones (toca uno para usarlo de acento):</div>' + top.map(h => '<button class="sw" data-sw="' + h + '" style="background:' + h + '" title="' + h + '"></button>').join('');
-      md.el.querySelectorAll('[data-sw]').forEach(b => b.onclick = () => { md.el.querySelector('#mk_acento').value = b.dataset.sw; prev(); });
+      md.el.querySelector('#mk_sw').innerHTML = '<div class="wsub">Colores frecuentes en tus publicaciones (toca uno para usarlo de acento):</div>' + top.map(h => '<button class="swc" data-swc="' + h + '" style="background:' + h + '" title="' + h + '"></button>').join('');
+      md.el.querySelectorAll('[data-swc]').forEach(b => b.onclick = () => { md.el.querySelector('#mk_acento').value = b.dataset.swc; prev(); });
       det.style.display = 'none';
     } catch(e){ det.disabled = false; det.textContent = 'Detectar colores de mi Instagram'; toast('No se pudo: ' + e.message); }
   };
@@ -6159,7 +6188,7 @@ function viewHoyPiso(){
   const paso = (k, n, ic, t, sub, tono) => '<button class="pv-s ' + (n ? tono : 'ok') + '" data-pv="' + k + '"><span class="pv-si">' + ic + '</span><span class="pv-sn">' + n + '</span><span class="pv-st">' + t + '</span><span class="pv-ss">' + sub + '</span>' + icon('arrow') + '</button>';
   let html = (S.vistaPiso && !esPiso() && !UI2() ? '<div class="pv-prev">👀 Vista previa del <b>Hoy del Piso de venta</b> (tú sigues como Admin).<button class="btn sm sec" id="pvSalir">Volver a mi Hoy</button></div>' : '') +
     '<section class="pv-hero hz"><div class="pv-hl"><div class="pv-k">' + esc(fmtLong(h)) + '</div><h2>' + sal + ', ' + esc(esPiso() ? 'equipo' : (params()['Tu nombre (para el saludo)'] || 'equipo')) + '</h2><p>' + esc(foco) + '</p>' +
-      '<div class="pv-ha"><button class="btn" id="pvDia">' + icon('arrow') + ' Empezar mi día' + (function(){ try { const n = pendientesHoyN(); return n ? ' <b class="pv-dn">' + n + '</b>' : ''; } catch(e){ return ''; } })() + '</button><button class="btn sec" id="pvAdd">' + icon('plus') + ' Agregar tarea</button><button class="btn sec" id="pvCop">' + icon('spark') + ' Preguntar al Cerebro</button>' + (esPiso() ? '<button class="btn sec" id="pvGuia">¿Nuevo en la tienda?</button>' : (cerebroPlan() ? '<button class="btn sec" id="pvPlan">' + icon('brain') + ' Plan del Cerebro</button>' : '<button class="btn sec" id="pvIA">' + icon('brain') + ' Planificar mi día</button>')) + '</div></div>' +
+      '<div class="pv-ha"><button class="btn" id="pvDia">' + icon('arrow') + ' Empezar mi día' + (function(){ try { const n = pendientesHoyN(); return n ? ' <b class="pv-cnt">' + n + '</b>' : ''; } catch(e){ return ''; } })() + '</button><button class="btn sec" id="pvAdd">' + icon('plus') + ' Agregar tarea</button><button class="btn sec" id="pvCop">' + icon('spark') + ' Preguntar al Cerebro</button>' + (esPiso() ? '<button class="btn sec" id="pvGuia">¿Nuevo en la tienda?</button>' : (cerebroPlan() ? '<button class="btn sec" id="pvPlan">' + icon('brain') + ' Plan del Cerebro</button>' : '<button class="btn sec" id="pvIA">' + icon('brain') + ' Planificar mi día</button>')) + '</div></div>' +
       '<div class="pv-hr">' + hzAnillo(accH, accT) + hyWx() + '</div></section>' +
     '<div class="pv-lbl">Empieza por aquí</div><div class="pv-steps">' +
       paso('resp', D.resp.length, '💬', 'Responder', D.resp.length ? plural(D.resp.length, 'cliente espera', 'clientes esperan') : 'nadie espera', 'bad') +
@@ -6974,7 +7003,10 @@ async function _loadNeg(forzar){
   if (!forzar && S.neg && Date.now() - S.negAt < 5 * 60000) return;
   try { const w0 = S.wseq, r = await apiX('negocios'); if (w0 !== S.wseq && S.neg){ refrescoFondo({ neg: 1 }); return; } S.neg = r; S.negAt = Date.now(); lsSet('negCache', S.neg); }
   catch(e){ if (!S.neg) S.neg = lsGet('negCache', null); }
-  // Una vez por sesión: une las negociaciones abiertas que duplican una venta ganada del mismo cliente.
+  revisarDuplicados();
+}
+// Una vez por sesión: une las negociaciones abiertas que duplican una venta ganada del mismo cliente.
+function revisarDuplicados(){
   if (extNivel() >= 34 && !S.dupRevisado){
     S.dupRevisado = true;
     apiX('unirDuplicados', { aplicar: true }).then(r => {
@@ -7078,7 +7110,7 @@ function openDeal(n, opt){
   if (a.abierta){
     html += '<div class="stepper">' + ETAPAS.map((x, i) => '<button class="' + (i === idx ? 'on' : i < idx ? 'ok' : '') + '" data-ngk="' + esc(x.k) + '" title="Mover a ' + esc(x.k) + '">' + x.corto + '</button>').join('') + '</div>' +
       '<div class="shint">Etapa actual: <b>' + esc(n.etapa) + '</b> · ' + a.dEtapa + ' días en esta etapa. Toca otra etapa para moverla.</div>' +
-      '<div class="dact">' + (c && extNivel() >= 28 ? '<button id="dx_chat">💬 Ver chat</button>' : '') + '<button id="dx_act">' + icon('note') + 'Registrar actividad</button><button id="dx_prox">' + icon('arrow') + 'Próximo paso</button><button class="win" id="ng_win">' + icon('trophy') + 'Ganada</button><button class="lose" id="ng_lose">' + icon('x') + 'Perdida</button><button id="ng_arch" title="Ya no está activa: sale del pipeline (se puede reabrir)">🗄️ Archivar</button></div>';
+      '<div class="dact">' + (c && extNivel() >= 28 ? '<button id="dx_chat">' + icon('chat') + 'Ver chat</button>' : '') + '<button id="dx_act">' + icon('note') + 'Registrar actividad</button><button id="dx_prox">' + icon('arrow') + 'Próximo paso</button><button class="win" id="ng_win">' + icon('trophy') + 'Ganada</button><button class="lose" id="ng_lose">' + icon('x') + 'Perdida</button><button id="ng_arch" title="Ya no está activa: sale del pipeline (se puede reabrir)">' + icon('archive') + 'Archivar</button></div>';
     const vencido = a.proxVencida || a.sinResponder != null || !n.proxima;
     html += '<div class="nextc' + (vencido ? ' bad' : '') + '"><div class="tx"><small>Próximo paso</small>' + (n.proxima ? '<b>' + esc(n.proxima) + '</b><span>' + (n.fechaProx ? (a.proxVencida ? 'Venció ' : '') + fmtLong(n.fechaProx) : 'sin fecha') + '</span>' : '<b>Sin próximo paso</b><span>Defínelo: los negocios sin siguiente paso son los que se pierden</span>') +
       (a.sinResponder != null ? '<span style="display:block">⚡ El cliente escribió ' + (a.sinResponder ? 'hace ' + a.sinResponder + ' d' : 'hoy') + ' y no hay respuesta</span>' : '') + '</div>' +

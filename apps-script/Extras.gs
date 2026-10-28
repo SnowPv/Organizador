@@ -15,8 +15,8 @@
  * Para actualizar este archivo más adelante: reemplaza todo su contenido y repite los dos pasos anteriores.
  */
 
-const EX_VERSION = '2027-02-20';
-const EX_NIVEL = 53;      // la app lo usa para saber qué funciones tiene este script
+const EX_VERSION = '2027-02-27';
+const EX_NIVEL = 54;      // la app lo usa para saber qué funciones tiene este script
 const EX_HOJA = 'Tareas';
 const EX_PRIMERA = 4;
 const EX_ULTIMA = 400;
@@ -198,6 +198,18 @@ function app_extra_(p) {
     EX_ROL = s.r;
   }
   if (p.op === 'sesion') return { ok: true, rol: EX_ROL, activos: !!u };
+  // Arranque de la app: varias lecturas en UNA consulta (el script atiende de a una; así la app no hace fila 7 veces al abrir).
+  // Cada parte pasa por los mismos permisos y filtros de Piso que si se pidiera sola; si una falla, las demás llegan igual.
+  if (p.op === 'arranque') {
+    const partes = {}, pedir = (Array.isArray(p.partes) ? p.partes : ['extras', 'base', 'negocios', 'global', 'instagram', 'contenido', 'igEstrategia']).slice(0, 10);
+    pedir.forEach(function (o) {
+      if (['extras', 'base', 'negocios', 'global', 'instagram', 'contenido', 'igEstrategia', 'leadsCanal', 'bsaleVentas'].indexOf(o) < 0) return;
+      if (EX_ROL === 'piso' && EX_OPS_PISO.indexOf(o) < 0) { partes[o] = { ok: false, error: 'PERMISO' }; return; }
+      try { let r = ex_ruta_({ op: o }); if (r && typeof r === 'object' && o === 'extras') { r.usuarios = !!u; r.rol = EX_ROL; } partes[o] = EX_ROL === 'piso' ? ex_filtrarPiso_(o, r) : r; }
+      catch (e) { partes[o] = { ok: false, error: String(e && e.message || e).slice(0, 300) }; }
+    });
+    return { ok: true, partes: partes };
+  }
   if (p.op === 'usuariosConf') { if (EX_ROL !== 'admin') return { ok: false, error: 'PERMISO: solo la cuenta Admin' }; return ex_usuariosConf_(p); }
   if (EX_ROL === 'piso') {
     const ok = EX_OPS_PISO.indexOf(p.op) >= 0 || (p.op === 'bsaleVentas' && p.cliente);   // compras de UN cliente (para atenderlo), no las ventas de la tienda
