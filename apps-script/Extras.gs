@@ -15,8 +15,8 @@
  * Para actualizar este archivo más adelante: reemplaza todo su contenido y repite los dos pasos anteriores.
  */
 
-const EX_VERSION = '2027-02-27';
-const EX_NIVEL = 54;      // la app lo usa para saber qué funciones tiene este script
+const EX_VERSION = '2027-03-06';
+const EX_NIVEL = 55;      // la app lo usa para saber qué funciones tiene este script
 const EX_HOJA = 'Tareas';
 const EX_PRIMERA = 4;
 const EX_ULTIMA = 400;
@@ -114,7 +114,7 @@ var EX_ROL = 'admin';
 // Lo único que puede pedir el Piso de Venta (todo lo demás responde «solo Admin»).
 const EX_OPS_PISO = ['extras', 'google', 'subtareas', 'repetir', 'siguiente', 'base', 'contacto', 'chat', 'chats', 'nota', 'negocios', 'negocio', 'negocioNota',
   'eventosContacto', 'perderNegocio', 'agente', 'bsale', 'instagram', 'contenido', 'perfilCorregir', 'oportunidad', 'leadsCanal', 'specialized', 'noticias', 'clima',
-  'avisos', 'copiloto', 'global', 'tareaIA', 'eventoCrear', 'eventos', 'sesion', 'salir', 'recompra', 'recompraMarca', 'igVivo'];
+  'avisos', 'copiloto', 'global', 'tareaIA', 'eventoCrear', 'eventos', 'sesion', 'salir', 'recompra', 'recompraMarca', 'igVivo', 'silenciar', 'resolverPaso'];
 // Herramientas del Cerebro que muestran números de la tienda o costos: el Piso de Venta no las tiene.
 const EX_TOOLS_SOLO_ADMIN = ['ventas_tienda', 'buscar_en_proveedores', 'oportunidades_compra', 'correos_proveedores', 'buscar_en_planillas', 'buscar_correos'];
 const EX_SES_DIAS = { admin: 30, piso: 14 };
@@ -295,6 +295,8 @@ function ex_ruta_(p) {
     case 'tareaIA':    return ex_tareaIA_(p);
     case 'bsaleVentas': return ex_bsaleVentas_(p);
     case 'igVivo':     return ex_igVivo_(p);
+    case 'silenciar':  return ex_silenciar_(p);
+    case 'resolverPaso': return ex_resolverPaso_(p);
     case 'recompra':   return ex_recompra_(p);
     case 'recompraMarca': return ex_recompraMarca_(p);
     case 'eventoCrear': return ex_eventoCrear_(p);
@@ -333,7 +335,8 @@ function ex_leer_() {
   return { ok: true, version: EX_VERSION, nivel: EX_NIVEL, filas: filas, calendario: EX_CAL_NOMBRE, wa: pr.getProperty('EX_WA_ULTIMO') || '', waHist: JSON.parse(pr.getProperty('EX_WA_HIST') || 'null'),
     bsale: { activo: !!pr.getProperty('BSALE_TOKEN'), sinc: pr.getProperty('EX_BSALE_SINC') || '' },
     instagram: { activo: !!pr.getProperty('IG_TOKEN'), usuario: pr.getProperty('IG_USUARIO') || '', sinc: pr.getProperty('EX_IG_SINC') || '' },
-    agente: { activo: !!pr.getProperty('ANTHROPIC_API_KEY'), modelo: pr.getProperty('AGENTE_MODELO') || EX_AG_MODELO, ultimo: pr.getProperty('EX_AG_ULTIMO') || '' } };
+    agente: { activo: !!pr.getProperty('ANTHROPIC_API_KEY'), modelo: pr.getProperty('AGENTE_MODELO') || EX_AG_MODELO, ultimo: pr.getProperty('EX_AG_ULTIMO') || '' },
+    silencio: ex_silencio_(), equipo: ex_equipoNombres_() };
 }
 
 // Confirma que la fila sigue siendo la misma tarea (por si alguien movió filas en el Sheet).
@@ -1007,8 +1010,22 @@ function ex_esInterno_(c, ac) {
   const tx = ex_norm_([c && c[2], c && c[3], ac && ac.nombre, ac && ac.empresa].join(' '));
   if (String(c && c[1]) === 'Equipo') return true;
   if (/\bblackline\b/.test(tx)) return true;
-  const extra = String(PropertiesService.getScriptProperties().getProperty('CONTACTOS_INTERNOS') || '').split(',').map(function (x) { return ex_norm_(x).trim(); }).filter(Boolean);
+  const extra = String(PropertiesService.getScriptProperties().getProperty('CONTACTOS_INTERNOS') || '').split(',').concat(ex_equipoNombres_()).map(function (x) { return ex_norm_(x).trim(); }).filter(Boolean);
   return extra.some(function (x) { return tx.indexOf(x) >= 0; });
+}
+// Equipo de la tienda (nunca generan tareas, negociaciones ni «espera respuesta»). Se cambia con la propiedad EQUIPO_NOMBRES.
+const EX_EQUIPO_DEF = 'Tomás Allende, Isaías Godoy, Felipe Pizarro';
+function ex_equipoNombres_() { return String(PropertiesService.getScriptProperties().getProperty('EQUIPO_NOMBRES') || EX_EQUIPO_DEF).split(',').map(function (x) { return x.trim(); }).filter(Boolean); }
+// Contactos silenciados: lo que pediste no volver a ver. El agente sigue guardando sus mensajes, pero no crea tareas,
+// negociaciones ni «espera respuesta». Se quita el silencio desde la ficha del contacto.
+function ex_silencio_() { return JSON.parse(PropertiesService.getScriptProperties().getProperty('EX_SILENCIO') || '{}'); }
+function ex_silenciar_(p) {
+  const id = String(p.id || ''); if (!id) return { ok: false, error: 'falta el contacto' };
+  const S = ex_silencio_();
+  if (p.quitar) delete S[id]; else S[id] = { f: new Date().toISOString().slice(0, 10), m: String(p.motivo || '').slice(0, 120) };
+  PropertiesService.getScriptProperties().setProperty('EX_SILENCIO', JSON.stringify(S));
+  try { ex_hoja_(); const b = ex_baseHojas_(); b.is.appendRow([new Date(), id, p.quitar ? '🔔 Silencio quitado' : '🔕 Silenciado', p.quitar ? 'Vuelve a aparecer en Hoy' : 'No volver a mostrar' + (p.motivo ? ': ' + p.motivo : ''), '', 'sil:' + Date.now()]); ex_recalcularUno_(b.cs, id); } catch (e) {}
+  return { ok: true, silencio: S };
 }
 function ex_perdidaReciente_(id) {
   const tz = ex_tz_(), lim = ex_ymd_(new Date(Date.now() - 180 * 86400000), tz);
@@ -2290,6 +2307,37 @@ function ex_asistente_(p) {
   return { ok: true, modo: modo, r: r, investigacion: inv };
 }
 
+/* ---------- «Mi día»: intérprete de lo que escribes en «¿Qué pasó?» ----------
+   Recibe la tarjeta (cliente, negociación, tareas pendientes con su fila, lo último que entendió el agente) y tu texto,
+   y devuelve las acciones concretas que la app ejecuta: cerrar o posponer tareas, mover o cerrar la negociación,
+   anotar, definir el próximo paso, silenciar. Solo cambia el CRM: nunca escribe a clientes. */
+const EX_PASO_SIS = [
+  'Eres el asistente del encargado de Blackline Puerto Varas (tienda Specialized con taller). Él está revisando su día, tarjeta por tarjeta, y te escribe en pocas palabras qué pasó con un cliente o una tarea. Tu trabajo: traducir eso en acciones concretas sobre el CRM, sin pedirle nada más.',
+  'Reglas:',
+  '- Interpreta la intención aunque esté escrita rápido o con faltas: «ya le respondí» = marcar_respondido; «no va a comprar», «no le interesa», «quitar», «no es relevante», «eliminar» = cerrar_perdida (si hay negociación) + cerrar o eliminar todas sus tareas + silenciar (no quiere volver a verlo); «compró», «pagó», «se la llevó» = ganada; «las bicis ya están en la tienda», «llegó el pedido» = nota + proximo_paso para avisar o coordinar retiro, y cerrar las tareas que ya no aplican (por ejemplo «averiguar stock» o «pedir bici»).',
+  '- Cierra (cerrar_tareas) las tareas que el texto da por hechas; elimina (eliminar_tareas) las que ya no tienen sentido; pospone (posponer_tareas con fecha) las que siguen pero en otra fecha. Usa siempre las filas (row) exactas de la lista TAREAS.',
+  '- Si hay negociación abierta y el texto muestra un avance, usa mover_etapa con la etapa correcta (Contactado, Prueba / visita, Cotización, Negociación) y deja proximo_paso con fecha concreta (resuelve «mañana», «el viernes», «la próxima semana» desde HOY).',
+  '- Si el texto pide hacer algo nuevo, crear_tarea con fecha. No dupliques tareas que ya están en la lista.',
+  '- Siempre agrega una nota breve con lo que pasó (para la ficha del cliente), salvo que el texto sea solo «ya respondí».',
+  '- Si el contacto es del equipo de la tienda o un proveedor, usa clasificar (Equipo o Proveedor) + eliminar_tareas + silenciar.',
+  '- resumen: una línea en español de Chile con lo que vas a hacer, para mostrarle (ej.: «Negociación cerrada (no compra), 2 tareas eliminadas y contacto silenciado»).',
+  'Responde solo con el JSON pedido.'
+].join('\n');
+const EX_PASO_ESQ = { type: 'object', additionalProperties: false, required: ['resumen', 'acciones'], properties: {
+  resumen: { type: 'string' },
+  acciones: { type: 'array', items: { type: 'object', additionalProperties: false, required: ['tipo', 'filas', 'fecha', 'texto', 'etapa', 'motivo', 'clase'], properties: {
+    tipo: { type: 'string', enum: ['marcar_respondido', 'cerrar_tareas', 'eliminar_tareas', 'posponer_tareas', 'nota', 'mover_etapa', 'proximo_paso', 'crear_tarea', 'cerrar_perdida', 'ganada', 'archivar_negocio', 'silenciar', 'clasificar'] },
+    filas: { type: 'array', items: { type: 'integer' } }, fecha: { type: 'string', description: 'AAAA-MM-DD o vacío' }, texto: { type: 'string' },
+    etapa: { type: 'string', enum: ['', 'Nuevo', 'Contactado', 'Prueba / visita', 'Cotización', 'Negociación'] }, motivo: { type: 'string' },
+    clase: { type: 'string', enum: ['', 'Cliente', 'Proveedor', 'Equipo', 'Ignorar'] } } } } } };
+function ex_resolverPaso_(p) {
+  const tx = String(p.texto || '').trim(); if (!tx) return { ok: false, error: 'escribe qué pasó' };
+  const tz = ex_tz_(), hoy = ex_hoyYmd_(tz), dias = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+  const ctx = 'HOY: ' + hoy + ' (' + dias[new Date(hoy + 'T12:00:00').getDay()] + ')\n' + String(p.contexto || '').slice(0, 6000) + '\n\nLO QUE ESCRIBIÓ EL ENCARGADO: ' + tx.slice(0, 1000);
+  const r = ex_llamarClaude_(ctx, EX_PASO_SIS, EX_PASO_ESQ, 'seguimiento');
+  return { ok: true, resumen: r.resumen, acciones: r.acciones || [] };
+}
+
 /* ---------- agente de ventas con IA ---------- */
 const EX_AG_SISTEMA = [
   'Eres el asistente de ventas de Blackline Puerto Varas, tienda de bicicletas Specialized (e-bikes como Turbo Levo, Turbo Vado, Turbo Como, Kenevo; MTB como Stumpjumper, Epic, Chisel; ruta y gravel como Tarmac, Roubaix, Diverge), repuestos, accesorios y taller de mantención en Puerto Varas, Chile.',
@@ -2499,6 +2547,10 @@ function ex_aplicarAgente_(id, ctx, a, opt) {
   if (!ctx.neg && tipoNoVenta && (n.accion === 'crear' || abrir)) { abrir = false; n.accion = 'ninguna'; cambios.push('sin negociación: el contacto es ' + tipoNoVenta.toLowerCase()); }
   // Contactos internos (Blackline Servicio Técnico, el equipo): conversación interna, sin negociaciones, tareas ni «espera respuesta».
   if (ex_esInterno_(c, ac)) { abrir = false; n.accion = 'ninguna'; a.tareas = []; a.esperando_respuesta = false; cambios.push('contacto interno: sin negociación ni tareas'); }
+  // Proveedores y equipo: se ven en Compras, nunca como tareas ni «espera respuesta» en Hoy.
+  if (['Proveedor', 'Equipo'].indexOf(String(ac.tipo || c[1])) >= 0) { a.tareas = []; a.esperando_respuesta = false; }
+  // Silenciado por ti: solo se guarda el resumen.
+  if (ex_silencio_()[id]) { abrir = false; n.accion = 'ninguna'; a.tareas = []; a.esperando_respuesta = false; a.proxima_accion = null; cambios.push('contacto silenciado: sin tareas ni negociación'); }
   if (sigueCerrada) {
     if (abrir || n.accion === 'crear') cambios.push('negociación no reabierta (se perdió el ' + perdida.fecha + ' y el cliente no ha vuelto a escribir)');
     abrir = false; n.accion = 'ninguna'; a.esperando_respuesta = false; a.tareas = [];

@@ -565,3 +565,12 @@ Revisión con tres análisis en paralelo (diseño y uso, eficiencia y errores, u
 - **`tools/revisar.py`**: revisa la sintaxis de la app y del script y avisa de nombres de estilo definidos en dos lugares lejanos (para que no vuelva a pasar). Correr antes de cada publicación.
 - **Abre más rápido**: op `arranque` del script entrega en una sola consulta extras, contactos, negocios, datos globales, contenido, Instagram, estrategia, leads y ventas de Bsale (antes 7 a 9 consultas en fila). Respeta los permisos de Piso parte por parte. Si el script es anterior, la app usa el método antiguo.
 - Diseño: portada de «Hoy» clara como el resto (botón principal azul); barra de Negocios en el celular con el buscador a lo ancho; tarjetas del Calendario sin hueco; íconos parejos en la ficha de la negociación.
+
+## v94 · «Tu día» renovado (script nivel 55)
+- **Una tarjeta por cliente**: sus tareas, si espera respuesta y su negociación juntas (antes cada cosa era un paso aparte: 90+ pasos). Orden por prioridad (espera respuesta, valor de la negociación, tareas vencidas) y **foco de 12 tarjetas**; el resto queda «para después», con opción de seguir o pasarlas a la próxima semana.
+- **Nunca aparecen**: el equipo (Tomás Allende, Isaías Godoy, Felipe Pizarro; propiedad `EQUIPO_NOMBRES`), proveedores, ignorados, archivados y silenciados. Al inicio ofrece archivar las tareas de ese tipo que ya existían.
+- **«¿Qué pasó?» ejecuta**: el Cerebro (op `resolverPaso`) interpreta lo que escribes y la app lo aplica en toda la app: cerrar, eliminar o posponer tareas, mover o cerrar la negociación, ganada, próximo paso, tarea nueva, nota en la ficha, silenciar, clasificar. Pasa al instante a la siguiente tarjeta; se guarda detrás (con «Reintentar» si falla). Solo cambia el CRM: nunca escribe a clientes.
+- **Botones rápidos**: Ya respondí · Todo listo · Mañana · Próx. semana · No compra · quitar · Silenciar · Eliminar tarea(s). Las casillas cierran tareas sueltas.
+- **Silenciar contactos** (op `silenciar`, propiedad `EX_SILENCIO`): el agente sigue guardando sus mensajes pero no crea tareas, negociaciones ni «espera respuesta». Se quita desde la ficha («Quitar silencio»).
+- **Agente**: proveedores y equipo nunca generan tareas ni «espera respuesta».
+- **«Ya respondí» sincronizado**: se lee de la ficha (✅ Respondido), así vale igual en el Mac de la tienda y en el teléfono.

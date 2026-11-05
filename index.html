@@ -1738,6 +1738,27 @@ body:has(.selbar) .fab,body:has(.selbar) .fab2{display:none}
 .atj{display:flex;flex-direction:column;gap:4px}.atj-r{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:6px 0;border-bottom:1px solid var(--line)}.atj-r b{font-size:13.5px;font-weight:600;text-align:right}
 .atj-h{font-size:11.5px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:14px 0 2px}
 kbd{display:inline-block;min-width:22px;text-align:center;font:700 12px/1 ui-monospace,Menlo,monospace;background:var(--soft);border:1px solid var(--line);border-bottom-width:2px;border-radius:6px;padding:4px 6px;color:var(--ink)}
+.pop.mdm{max-width:760px}
+.md-top{display:flex;justify-content:space-between;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:6px}
+.md-aviso{display:flex;align-items:center;gap:10px;background:#FFF8E6;border:1px solid #F5D98B;border-radius:12px;padding:8px 12px;margin:10px 0 0;font-size:13px}.md-aviso .ico{width:16px;height:16px;color:var(--warn-ink);flex:none}.md-aviso span{flex:1}
+.md-card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin-top:12px;display:flex;flex-direction:column;gap:10px}
+.md-h{display:flex;align-items:center;gap:12px}.md-h b{font-size:18px;letter-spacing:-.01em}.md-ic{width:44px;height:44px;border-radius:50%;background:var(--soft);display:flex;align-items:center;justify-content:center;color:var(--muted)}.md-ic .ico{width:20px;height:20px}
+.md-chs{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}.md-ch{font-size:11.5px;font-weight:800;border-radius:999px;padding:2px 9px}.md-ch.r{background:#FDECEA;color:var(--bad-ink)}.md-ch.n{background:var(--accent-soft);color:var(--accent-ink)}.md-ch.t{background:var(--soft);color:var(--muted)}
+.md-lk{display:flex;gap:6px;flex:none}
+.md-ctx,.md-neg{display:flex;gap:8px;margin:0;font-size:13.5px;line-height:1.45;color:#3B4456}.md-ctx .ico,.md-neg .ico{width:15px;height:15px;flex:none;margin-top:2px;color:var(--muted)}
+.md-idea summary{cursor:pointer;font-size:12.5px;font-weight:700;color:var(--accent-ink)}.md-idea textarea{width:100%;margin:8px 0 6px}
+.md-ts{display:flex;flex-direction:column;gap:2px;background:var(--soft);border-radius:12px;padding:6px 10px}
+.md-t{display:flex;gap:10px;align-items:flex-start;padding:6px 0;cursor:pointer;font-size:14px}.md-t input{width:18px;height:18px;margin-top:1px;flex:none;accent-color:var(--ok)}
+.md-t span{display:flex;flex-direction:column}.md-t small{font-size:11.5px;color:var(--muted)}.md-t small.bad{color:var(--bad-ink);font-weight:700}
+.md-t:has(input:checked) span{text-decoration:line-through;color:var(--muted)}
+.md-tip{font-size:11.5px;color:#98A2B3;padding:2px 0 2px 28px}
+.md-q{width:100%;font-size:15px;border-radius:14px;padding:12px 14px;min-height:64px}
+.md-acts{display:flex;flex-wrap:wrap;gap:6px}
+.md-acts button{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--card);border-radius:999px;padding:7px 12px;font:inherit;font-size:13px;font-weight:650;color:var(--ink);cursor:pointer}
+.md-acts button .ico{width:14px;height:14px}.md-acts button:hover{background:var(--soft)}.md-acts button.bad{color:var(--bad-ink)}.md-acts button.bad:hover{background:#FDECEA;border-color:#F5C2BD}
+.md-foot{display:flex;justify-content:space-between;gap:10px;margin-top:12px}.md-foot .btn:last-child{flex:1;justify-content:center}
+@media (max-width:760px){.md-h{flex-wrap:wrap}.md-h .grow{flex:1 1 0;min-width:0}.md-h b{font-size:16px}.md-lk{width:100%}.md-lk .btn{flex:1;justify-content:center}.md-acts button{flex:1 1 auto;justify-content:center}}
+.sil-b{display:flex;align-items:center;gap:8px;background:#F2F4F7;border-radius:10px;padding:6px 10px;font-size:12.5px;margin-bottom:8px}.sil-b span{flex:1}
 /* post-it de avisos */
 .hm-postit{background:linear-gradient(170deg,#FFF6B8 0%,#FFEC85 100%);border:0;border-radius:6px 6px 22px 6px;box-shadow:0 2px 3px rgba(120,90,0,.08),0 18px 30px -18px rgba(120,90,0,.55);transform:rotate(-.6deg);padding:22px 18px 16px;color:#3B3000}
 .pi-tape{position:absolute;top:-9px;left:50%;width:92px;height:22px;margin-left:-46px;background:rgba(255,255,255,.55);border:1px solid rgba(0,0,0,.04);transform:rotate(2deg);box-shadow:0 1px 2px rgba(0,0,0,.06)}
@@ -2683,7 +2704,7 @@ async function apiX(op, extra){
 // Nivel 2 del script Extras: recordatorios y base de contactos. Nivel 3: la base solo usa contacto@blacklinechile.cl. Nivel 4: eventos de varios días.
 function enCurso(k, fn){ S._p = S._p || {}; if (S._p[k]) return S._p[k]; const pr = Promise.resolve().then(fn).finally(() => { if (S._p[k] === pr) delete S._p[k]; }); S._p[k] = pr; return pr; }
 function extNivel(){ return S.extInactivo ? 0 : (S.ext && S.ext.nivel) || 1; }
-const APP_VER = 'v93', NIVEL_ULTIMO = 54;
+const APP_VER = 'v94', NIVEL_ULTIMO = 55;
 function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < NIVEL_ULTIMO; }
 let sincTimer = null;
 // Después de cambiar tareas, el script actualiza los recordatorios del calendario (en segundo plano).
@@ -3422,7 +3443,7 @@ function noticiasHome(){
 // Texto corto de lo que trae la versión nueva del script (el banner de actualización del Inicio).
 function novedadScript(){
   const n = extNivel();
-  return n >= 54 ? 'La app abre más rápido: carga todo en una sola consulta al script en vez de siete.' : n >= 53 ? 'El Estudio investiga en la web (lanzamiento, prensa y ficha oficial) y escribe con el modelo experto; cada lámina recibe la foto oficial que corresponde.' : n >= 52 ? 'Redes renovado: Instagram en vivo con tus fotos reales, y el Estudio investiga la ficha oficial, las fotos del modelo y la prensa antes de crear una pieza.' : n >= 51 ? 'Noticias con su foto y link original.' : n >= 50 ? 'Guardar notas y mover negociaciones es más rápido: el script actualiza solo el contacto afectado.' : n >= 49 ? 'Recompra de consumibles: la app detecta quién debería cambiar pastillas, cadena o cubiertas según sus compras en Bsale, con el stock para ofrecer y el mensaje listo (Contactos → Campañas).' : n >= 48 ? 'La revisión de los 30 días sugiere los accesorios que el cliente no compró (asesoría, sin descuentos).' : n >= 47 ? 'Cada negociación tiene su lista de productos (desde Bsale o a mano) con precios, costo, ganancia y margen; el Cerebro también los puede agregar.' : n >= 46 ? 'Los contactos internos (Blackline Servicio Técnico, el equipo) ya no generan tareas, negociaciones ni «espera respuesta».' : n >= 45 ? 'El Cerebro responde más rápido (busca en varias fuentes a la vez y tiene un tope de tiempo) y no deja a la app esperando tanto.' : n >= 44 ? 'El Cerebro confirma en el catálogo de Andes Industrial si un repuesto Shimano o Continental existe en el distribuidor.' : n >= 43 ? 'El Cerebro entiende mejor el ciclismo (Di2, AXS, modelos) y busca opciones de compra cuando una tarea es conseguir un repuesto.' : n >= 42 ? 'Proveedores fuera del pipeline (el agente ya no les abre negociaciones) y el Cerebro puede agregar contactos nuevos cuando le dictas.' : n >= 41 ? 'Empezar de cero: la fecha de inicio se guarda en el script y la ven todos los equipos (Admin y Piso de venta).' : n >= 40 ? 'Ahora hay dos cuentas con contraseña: Admin (todo, como siempre) y Piso de venta (parte en un Hoy nuevo, sin cifras de la tienda). Créalas en ⚙️ Ajustes → Usuarios.' : n >= 39 ? 'La app ahora tiene un solo Cerebro con 9 skills (en vez de agentes sueltos): mira qué hace solo, cuánto gasta y paúsalo en la pestaña Cerebro.' : n >= 37 ? 'Las tareas automáticas ya no bloquean la app (por ejemplo, la lectura de ventas de Bsale).' : n >= 36 ? 'Cuando un cliente con negociación abierta compra en Bsale, la app te propone marcarla como ganada.' : n >= 35 ? 'Ventas del mes igual que en Bsale (solo boletas y facturas, menos notas de crédito) y noticias con foto de portada.' : n >= 34 ? 'Meta y gráfico de ventas del mes en el Inicio, con el avance diario desde Bsale.' : n >= 33 ? 'Une sola las negociaciones duplicadas de una venta ganada.' : n >= 32 ? 'Etapas después del pago: seguimiento, entrega y postventa.' : n >= 31 ? 'Venta perdida: cierra tareas, eventos y la idea de respuesta del Cerebro.' : 'Funciones nuevas para el Organizador.';
+  return n >= 55 ? 'Tu día renovado: una tarjeta por cliente, el Cerebro ejecuta lo que escribes en «¿Qué pasó?», silenciar contactos y el equipo y proveedores fuera de Hoy.' : n >= 54 ? 'La app abre más rápido: carga todo en una sola consulta al script en vez de siete.' : n >= 53 ? 'El Estudio investiga en la web (lanzamiento, prensa y ficha oficial) y escribe con el modelo experto; cada lámina recibe la foto oficial que corresponde.' : n >= 52 ? 'Redes renovado: Instagram en vivo con tus fotos reales, y el Estudio investiga la ficha oficial, las fotos del modelo y la prensa antes de crear una pieza.' : n >= 51 ? 'Noticias con su foto y link original.' : n >= 50 ? 'Guardar notas y mover negociaciones es más rápido: el script actualiza solo el contacto afectado.' : n >= 49 ? 'Recompra de consumibles: la app detecta quién debería cambiar pastillas, cadena o cubiertas según sus compras en Bsale, con el stock para ofrecer y el mensaje listo (Contactos → Campañas).' : n >= 48 ? 'La revisión de los 30 días sugiere los accesorios que el cliente no compró (asesoría, sin descuentos).' : n >= 47 ? 'Cada negociación tiene su lista de productos (desde Bsale o a mano) con precios, costo, ganancia y margen; el Cerebro también los puede agregar.' : n >= 46 ? 'Los contactos internos (Blackline Servicio Técnico, el equipo) ya no generan tareas, negociaciones ni «espera respuesta».' : n >= 45 ? 'El Cerebro responde más rápido (busca en varias fuentes a la vez y tiene un tope de tiempo) y no deja a la app esperando tanto.' : n >= 44 ? 'El Cerebro confirma en el catálogo de Andes Industrial si un repuesto Shimano o Continental existe en el distribuidor.' : n >= 43 ? 'El Cerebro entiende mejor el ciclismo (Di2, AXS, modelos) y busca opciones de compra cuando una tarea es conseguir un repuesto.' : n >= 42 ? 'Proveedores fuera del pipeline (el agente ya no les abre negociaciones) y el Cerebro puede agregar contactos nuevos cuando le dictas.' : n >= 41 ? 'Empezar de cero: la fecha de inicio se guarda en el script y la ven todos los equipos (Admin y Piso de venta).' : n >= 40 ? 'Ahora hay dos cuentas con contraseña: Admin (todo, como siempre) y Piso de venta (parte en un Hoy nuevo, sin cifras de la tienda). Créalas en ⚙️ Ajustes → Usuarios.' : n >= 39 ? 'La app ahora tiene un solo Cerebro con 9 skills (en vez de agentes sueltos): mira qué hace solo, cuánto gasta y paúsalo en la pestaña Cerebro.' : n >= 37 ? 'Las tareas automáticas ya no bloquean la app (por ejemplo, la lectura de ventas de Bsale).' : n >= 36 ? 'Cuando un cliente con negociación abierta compra en Bsale, la app te propone marcarla como ganada.' : n >= 35 ? 'Ventas del mes igual que en Bsale (solo boletas y facturas, menos notas de crédito) y noticias con foto de portada.' : n >= 34 ? 'Meta y gráfico de ventas del mes en el Inicio, con el avance diario desde Bsale.' : n >= 33 ? 'Une sola las negociaciones duplicadas de una venta ganada.' : n >= 32 ? 'Etapas después del pago: seguimiento, entrega y postventa.' : n >= 31 ? 'Venta perdida: cierra tareas, eventos y la idea de respuesta del Cerebro.' : 'Funciones nuevas para el Organizador.';
 }
 
 /* ---------- Ventas del mes: avance diario acumulado contra el mes anterior y la meta ---------- */
@@ -3893,6 +3914,7 @@ function agenteDe(id){
 function agenteActivo(){ return extNivel() >= 7 && S.ext && S.ext.agente && S.ext.agente.activo; }
 function agenteHTML(c){
   if (!c || extNivel() < 7) return '';
+  if (silenciados()[c.id]) return '<div class="sil-b">🔕<span>Silenciado: no aparece en Tu día ni genera tareas.</span><button class="btn sm sec" data-desil="' + esc(c.id) + '">Quitar silencio</button></div>';
   const g = agenteDe(c.id), tel = String(c.telefono || '').replace(/[^\d+]/g, '').replace(/^\+/, '').replace(/^9(\d{8})$/, '569$1');
   if (!g.r && !agenteActivo() && extNivel() < 8) return '';
   return '<div class="ai"><div class="wh" style="margin:0">' + icon('spark') + 'Lo que entendió el Cerebro</div>' +
@@ -6961,7 +6983,13 @@ function negocios(){
 }
 function negociosCompra(){ return negociosTodos().filter(esNegCompra); }
 // Contactos internos (Blackline Servicio Técnico, el equipo): sin negociaciones, sin «espera respuesta».
-function esInterno(c){ if (!c) return false; return c.tipo === 'Equipo' || /\bblackline\b/.test(norm((c.nombre || '') + ' ' + (c.empresa || ''))); }
+const EQUIPO_DEF = ['Tomás Allende', 'Isaías Godoy', 'Felipe Pizarro'];
+function equipoNombres(){ return ((S.ext && S.ext.equipo) || EQUIPO_DEF).map(x => norm(x)).filter(Boolean); }
+function esInterno(c){ if (!c) return false; const tx = norm((c.nombre || '') + ' ' + (c.empresa || '')); return c.tipo === 'Equipo' || /\bblackline\b/.test(tx) || equipoNombres().some(n => tx.includes(n)); }
+// Silenciados: lo que pediste no volver a ver (se guarda en el script, lo ven todos los equipos).
+function silenciados(){ return Object.assign({}, (S.ext && S.ext.silencio) || {}, S.silLocal || {}); }
+// Nunca aparecen en «Tu día»: equipo, proveedores, ignorados, archivados y silenciados.
+function fueraDelDia(c){ return !!c && (esInterno(c) || TIPOS_COMPRA.includes(c.tipo) || ['Equipo', 'Ignorar', 'Archivado'].includes(c.tipo) || !!silenciados()[c.id]); }
 function esNegInterna(n){ if (!n.contacto || !S.base) return false; return esInterno(contactoPorId(n.contacto)); }
 // Cliente de una tarea: el que va en la nota [id], el de su negociación (N-…) o el que se nombra en el texto.
 function clienteDeTarea(t){
@@ -8207,7 +8235,9 @@ function esperanRespuesta(){
   if (!S.base) return [];
   const R = lsGet('respondidos', {});
   const ini = inicioApp();
-  return contactos().filter(c => !esInterno(c)).map(c => ({ c, g: agenteDe(c.id) })).filter(x => x.g.idea && (!ini || String(x.g.idea.fecha).slice(0, 10) >= ini) && R[x.c.id] !== x.g.idea.fecha + '|' + String(x.g.idea.detalle).slice(0, 24)).sort((a, b) => String(a.g.idea.fecha).localeCompare(String(b.g.idea.fecha)));
+  // «Ya respondí» se guarda en la ficha (✅ Respondido): así vale en el Mac de la tienda y en el teléfono.
+  const respondioDespues = x => (interIdx().c.get(x.c.id) || []).some(i => String(i.fecha) >= String(x.g.idea.fecha).slice(0, 10) && (/^✅ Respondido/.test(String(i.detalle)) || /WhatsApp enviado|Mensaje enviado|Silenciado/.test(String(i.tipo))));
+  return contactos().filter(c => !fueraDelDia(c)).map(c => ({ c, g: agenteDe(c.id) })).filter(x => x.g.idea && (!ini || String(x.g.idea.fecha).slice(0, 10) >= ini) && R[x.c.id] !== x.g.idea.fecha + '|' + String(x.g.idea.detalle).slice(0, 24) && !respondioDespues(x)).sort((a, b) => String(a.g.idea.fecha).localeCompare(String(b.g.idea.fecha)));
 }
 async function marcarRespondido(x, nota){
   const R = lsGet('respondidos', {}); R[x.c.id] = x.g.idea.fecha + '|' + String(x.g.idea.detalle).slice(0, 24); lsSet('respondidos', R);
@@ -8216,7 +8246,7 @@ async function marcarRespondido(x, nota){
 }
 function negsAtencion(){
   if (!S.neg) return [];
-  const pend = metricasNeg().an.filter(x => requiereAtencion(x.a) && x.n.actividad !== hoy());
+  const pend = metricasNeg().an.filter(x => requiereAtencion(x.a) && x.n.actividad !== hoy() && !fueraDelDia(x.a.c || (x.n.contacto ? contactoPorId(x.n.contacto) : null)));
   return pend.sort((a, b) => (b.n.valor || 0) - (a.n.valor || 0));
 }
 function negsAvanzadasHoy(){ return S.neg ? abiertos().filter(n => n.actividad === hoy()).length : 0; }
@@ -8232,7 +8262,7 @@ function datosHoy(){
   let ops = []; try { ops = oportunidades().slice(0, 5); } catch(e){}
   return { h, venc, hoyL, curso, hacer, top, ev, resp, negs, hechas, rh, nh, cont, ops, oc: ocupados()[h] };
 }
-function pendientesHoyN(){ if (!S.data) return 0; const D = datosHoy(); return D.resp.length + D.hacer.length + D.negs.length + D.ops.length; }
+function pendientesHoyN(){ if (!S.data) return 0; try { return colaDia().cartas.length; } catch(e){ const D = datosHoy(); return D.resp.length + D.hacer.length + D.negs.length; } }
 // Resumen del Cerebro: lo importante del día en frases cortas, con lo que pasa en las otras pestañas.
 function briefingHoy(D){
   const L = [], ahora = new Date().toTimeString().slice(0, 5);
@@ -8437,62 +8467,145 @@ function rondaSeguimiento(t, opt){
   };
   pintar();
 }
-/* ---------- Modo enfoque: una acción a la vez (responder → hacer → avanzar) ---------- */
+/* ---------- «Tu día»: una tarjeta por cliente, lo más importante primero ----------
+   Antes era una lista plana (cada tarea, cada respuesta y cada negociación por separado: 90+ pasos).
+   Ahora todo lo de un mismo cliente va en UNA tarjeta, el equipo, los proveedores y los silenciados no aparecen,
+   y se muestra un foco de pocas tarjetas. Lo que escribes en «¿Qué pasó?» lo interpreta el Cerebro y se ejecuta en toda la app. */
+const FOCO_DIA = 12;
+function mdHechos(){ const r = lsGet('mdHechos', {}); return r.dia === hoy() ? r : { dia: hoy(), ids: [] }; }
+function mdMarcar(id){ const r = mdHechos(); if (r.ids.indexOf(id) < 0) r.ids.push(id); lsSet('mdHechos', r); }
+function colaDia(){
+  const D = datosHoy(), porC = new Map(), solos = [], fuera = [], H = new Set(mdHechos().ids);
+  const carta = c => { if (!porC.has(c.id)) porC.set(c.id, { id: 'c:' + c.id, c, tareas: [], resp: null, neg: null }); return porC.get(c.id); };
+  D.resp.forEach(x => carta(x.c).resp = x);
+  D.negs.forEach(x => { const c = x.a.c || (x.n.contacto ? contactoPorId(x.n.contacto) : null); if (c) carta(c).neg = x; else solos.push({ id: 'n:' + x.n.id, c: null, tareas: [], resp: null, neg: x }); });
+  D.hacer.forEach(t => { if (esCancelada(t)) return; const c = clienteDeTarea(t); if (c && fueraDelDia(c)){ fuera.push(t); return; } if (c) carta(c).tareas.push(t); else solos.push({ id: 't:' + t.row, c: null, tareas: [t], resp: null, neg: null }); });
+  const prio = k => { let s = 0, por = [];
+    if (k.resp){ const d = Math.max(0, diffDays(String(k.resp.g.idea.fecha).slice(0, 10), hoy())); s += 60 + Math.min(20, d * 2); por.push('espera respuesta' + (d ? ' hace ' + d + ' d' : '')); }
+    if (k.neg){ const v = +k.neg.n.valor || 0; s += 20 + Math.min(40, Math.log10(v + 1) * 5) + (k.neg.a.proxVencida ? 10 : 0); por.push('negociación ' + (v ? clpCorto(v) : k.neg.n.etapa)); }
+    if (k.tareas.length){ s += Math.max(...k.tareas.map(t => puntaje(t).s)) + (k.tareas.length - 1) * 3; }
+    k.prio = s; k.por = por; return k; };
+  const cartas = [...porC.values(), ...solos].map(prio).filter(k => !H.has(k.id)).sort((a, b) => b.prio - a.prio);
+  return { cartas, foco: cartas.slice(0, FOCO_DIA), resto: cartas.slice(FOCO_DIA), fuera, D };
+}
+// Contexto de la tarjeta para el intérprete del Cerebro.
+function mdContexto(k){
+  const c = k.c, L = [];
+  if (c){ const g = agenteDe(c.id); L.push('CLIENTE: ' + (c.nombre || c.telefono || c.id) + ' (' + (c.tipo || 'Por clasificar') + (c.telefono ? ', ' + c.telefono : '') + ')'); if (g.r) L.push('LO ÚLTIMO QUE ENTENDIÓ EL AGENTE (' + g.r.fecha + '): ' + String(g.r.detalle).slice(0, 600)); }
+  else L.push('CLIENTE: (sin cliente asociado)');
+  if (k.resp) L.push('ESPERA RESPUESTA desde ' + String(k.resp.g.idea.fecha).slice(0, 10) + '. Idea sugerida: ' + String(k.resp.g.idea.detalle).slice(0, 300));
+  if (k.neg){ const n = k.neg.n; L.push('NEGOCIACIÓN ABIERTA: «' + n.titulo + '» · etapa ' + n.etapa + (n.valor ? ' · $' + Math.round(n.valor).toLocaleString('es-CL') : '') + (n.proxima ? ' · próximo paso: ' + n.proxima + (n.fechaProx ? ' (' + n.fechaProx + ')' : '') : '')); }
+  else L.push('NEGOCIACIÓN: ninguna abierta');
+  L.push('TAREAS PENDIENTES (row · tarea · fecha límite · estado):' + (k.tareas.length ? '' : ' ninguna'));
+  k.tareas.forEach(t => L.push('- ' + t.row + ' · ' + t.tarea + ' · ' + (t.limite || 'sin fecha') + ' · ' + (t.estado || 'Pendiente')));
+  return L.join('\n');
+}
+// Ejecuta las acciones (del Cerebro o de los botones) en toda la app. Corre en segundo plano y en orden.
+async function mdEjecutar(k, acciones){
+  const c = k.c, n = k.neg && k.neg.n, h = hoy(), hechos = [];
+  const tarea = row => k.tareas.find(t => +t.row === +row) || (S.data.tareas || []).find(t => +t.row === +row);
+  const filas = a => (a.filas && a.filas.length ? a.filas : k.tareas.map(t => t.row)).map(tarea).filter(t => t && !t.hecho);
+  for (const a of acciones){
+    try {
+      if (a.tipo === 'marcar_respondido' && k.resp){ await marcarRespondido(k.resp); hechos.push('respondido'); }
+      else if (a.tipo === 'cerrar_tareas'){ for (const t of filas(a)){ await api('toggle', { row: t.row, tarea: t.tarea, hecho: true }); t.hecho = true; t.cierre = h + 'T' + new Date().toTimeString().slice(0, 5); } hechos.push('tareas cerradas'); }
+      else if (a.tipo === 'eliminar_tareas'){ for (const t of filas(a)){ const nota = '❌ Cancelada el ' + fmt(h) + (a.motivo ? ' (' + a.motivo + ')' : '') + (t.notas ? '\n' + t.notas : ''); await updateTask(t, { notas: nota }); await api('toggle', { row: t.row, tarea: t.tarea, hecho: true }); t.notas = nota; t.hecho = true; } hechos.push('tareas eliminadas'); }
+      else if (a.tipo === 'posponer_tareas' && /^\d{4}-\d{2}-\d{2}$/.test(a.fecha)){ for (const t of filas(a)){ await updateTask(t, { limite: a.fecha }); t.limite = a.fecha; } hechos.push('pospuesto a ' + fmtRel(a.fecha).toLowerCase()); }
+      else if (a.tipo === 'nota' && a.texto){ if (n) await apiX('negocioNota', { id: n.id, texto: a.texto, tipo: '📝 Nota' }); else if (c) await apiX('nota', { id: c.id, texto: a.texto }); }
+      else if (a.tipo === 'mover_etapa' && n && a.etapa){ await apiX('negocio', { negocio: { id: n.id, etapa: a.etapa } }); n.etapa = a.etapa; hechos.push('etapa → ' + a.etapa); }
+      else if (a.tipo === 'proximo_paso' && a.texto){ const f = /^\d{4}-\d{2}-\d{2}$/.test(a.fecha) ? a.fecha : addDays(h, 1);
+        if (n){ await apiX('negocio', { negocio: { id: n.id, proxima: a.texto, fechaProx: f } }); n.proxima = a.texto; n.fechaProx = f; }
+        else await api('add', { tarea: { tarea: a.texto, area: 'Trabajo', categoria: 'Ventas', proyecto: '', limite: f, urgente: 'No', importante: 'Sí', tamano: 'Pequeña', notas: c ? '[' + c.id + ']' : '' } });
+        hechos.push('próximo paso ' + fmtRel(f).toLowerCase()); }
+      else if (a.tipo === 'crear_tarea' && a.texto){ const f = /^\d{4}-\d{2}-\d{2}$/.test(a.fecha) ? a.fecha : h; await api('add', { tarea: { tarea: a.texto, area: 'Trabajo', categoria: 'Ventas', proyecto: '', limite: f, urgente: 'No', importante: 'Sí', tamano: 'Pequeña', notas: (c ? '[' + c.id + '] ' : '') + (n ? '(' + n.id + ')' : '') } }); hechos.push('tarea nueva'); }
+      else if (a.tipo === 'cerrar_perdida' && n){ await apiX('negocio', { negocio: { id: n.id, etapa: 'Perdida', motivo: a.motivo || 'No va a comprar' } }); n.etapa = 'Perdida'; n.estado = 'Perdida'; hechos.push('negociación cerrada'); }
+      else if (a.tipo === 'ganada' && n){ await apiX('negocio', { negocio: { id: n.id, etapa: 'Ganada', fechaEtapa: h, entrega: addDays(h, 3) } }); n.etapa = 'Ganada'; n.estado = 'Ganada'; hechos.push('🏆 venta ganada'); }
+      else if (a.tipo === 'archivar_negocio' && n){ await apiX('negocio', { negocio: { id: n.id, etapa: 'Perdida', motivo: 'Archivada · ' + fmt(h) } }); n.etapa = 'Perdida'; n.estado = 'Perdida'; n.motivo = 'Archivada'; hechos.push('negociación archivada'); }
+      else if (a.tipo === 'silenciar' && c){ S.silLocal = Object.assign(S.silLocal || {}, { [c.id]: { f: h } }); const r = await apiX('silenciar', { id: c.id, motivo: a.motivo || '' }); if (S.ext) S.ext.silencio = r.silencio; hechos.push('silenciado'); }
+      else if (a.tipo === 'clasificar' && c && a.clase){ await apiX('contacto', { contacto: { id: c.id, tipo: a.clase } }); c.tipo = a.clase; hechos.push('es ' + a.clase.toLowerCase()); }
+    } catch(e){ throw new Error((a.tipo || 'acción').replace(/_/g, ' ') + ': ' + e.message); }
+  }
+  return hechos;
+}
 function modoEnfoque(){
-  const D = datosHoy(), Q = [].concat(D.resp.map(x => ({ k: 'r', x })), D.hacer.map(t => ({ k: 't', t })), D.negs.map(x => ({ k: 'n', x })));
-  if (!Q.length){ toast('No tienes nada pendiente hoy 🙌'); return; }
-  let i = 0, hechas = 0;
-  const m = modal(icon('arrow') + ' Tu día, paso a paso', '<div id="mf"></div>', { wide: true }), box = m.el.querySelector('#mf');
-  const sig = ok => { if (ok) hechas++; i++; pintar(); };
+  let Q = colaDia(), lista = Q.foco, i = 0, hechas = 0, todo = false;
+  if (!Q.cartas.length && !Q.fuera.length){ toast('No tienes nada pendiente hoy 🙌'); return; }
+  const m = modal(icon('arrow') + ' Tu día', '<div id="mf"></div>', { wide: true, sinFoco: true }), box = m.el.querySelector('#mf'); m.el.classList.add('mdm');
+  const nombre = k => k.c ? (k.c.nombre || k.c.telefono || k.c.email) : k.neg ? k.neg.n.titulo : k.tareas[0].tarea;
+  const sig = ok => { if (ok) hechas++; mdMarcar(lista[i].id); i++; pintar(); };
+  // Cada acción: se ve al instante y se guarda detrás (si falla, avisa con «Reintentar»).
+  const ejecutar = (k, acciones, txt) => guardarFondo({ guardar: async () => { const h = await mdEjecutar(k, acciones); if (txt) toast('🧠 ' + nombre(k) + ': ' + txt); return h; }, error: 'No se completó lo de ' + nombre(k), recargar: { neg: 1, base: 1, state: 1 } });
   const pintar = () => {
-    if (i >= Q.length){ box.innerHTML = '<div class="hy-fin">' + ringSVG(1, 84) + '<h3>¡Listo por ahora!</h3><p>Completaste ' + hechas + ' de ' + Q.length + ' acciones. ' + (hechas < Q.length ? 'Las que saltaste siguen en la pestaña Hoy.' : 'Día al día 💪') + '</p><button class="btn" id="mfX">Cerrar</button></div>'; box.querySelector('#mfX').onclick = () => { m.cerrar(); render(); }; return; }
-    const q = Q[i], etapa = q.k === 'r' ? '1 · Responder' : q.k === 't' ? '2 · Hacer' : '3 · Avanzar';
-    let cuerpo = '', acts = '';
-    if (q.k === 'r'){
-      const c = q.x.c, tel = telWA(c);
-      cuerpo = '<h3>Responder a ' + esc(c.nombre || c.email) + '</h3>' + (q.x.g.r ? '<p class="ctx">' + esc(String(q.x.g.r.detalle).split(' · ')[0]) + '</p>' : '') + '<div class="idea"><small>Idea de respuesta (puedes editarla)</small><textarea id="mfT" rows="4">' + esc(q.x.g.idea.detalle) + '</textarea></div>';
-      acts = (tel ? '<button class="btn" id="mfWA">' + icon('note') + ' Enviar por WhatsApp</button>' : '<button class="btn" id="mfCp">Copiar</button>') + '<button class="btn sec" id="mfOk">' + icon('check') + ' Ya respondí</button>';
-    } else if (q.k === 't'){
-      const t = q.t, p = puntaje(t);
-      cuerpo = '<h3>' + esc(t.tarea) + '</h3><p class="ctx">' + (t.limite && t.limite < D.h ? '<span style="color:var(--bad-ink);font-weight:700">' + esc(p.why) + '</span>' : esc(p.why || '')) + (t.categoria ? ' · ' + esc(t.categoria) : '') + '</p>' + (t.notas ? '<p class="ctx">' + esc(String(t.notas).slice(0, 220)) + '</p>' : '');
-      acts = '<button class="btn" id="mfOk">' + icon('check') + ' Hecha</button><button class="btn sec" id="mfPos">Posponer ▾</button><button class="btn sec" id="mfEsp" title="Esperando respuesta: vuelve en 2 días">En espera</button><button class="btn sec" id="mfPlay">▶ Temporizador</button><button class="btn sec" id="mfCan">Cancelar tarea</button>' +
-        '<div class="mf-pos" id="mfPosM" hidden><button class="btn sm sec" data-pos="1">Mañana</button><button class="btn sm sec" data-pos="lun">Próximo lunes</button><button class="btn sm sec" data-pos="7">En una semana</button><label class="mf-fecha">Otra fecha <input type="date" id="mfF" min="' + addDays(D.h, 1) + '"></label></div>';
-    } else {
-      const n = q.x.n, c = n.contacto ? contactoPorId(n.contacto) : null, tel = telWA(c);
-      cuerpo = '<h3>' + esc(n.titulo) + '</h3><p class="ctx">' + (n.valor && !esPiso() ? '<b>' + clpCorto(n.valor) + '</b> · ' : '') + esc(n.etapa) + ' · <span style="color:var(--warn-ink)">' + esc(motivoAlerta(n, q.x.a)) + '</span></p>' + (n.proxima ? '<p class="ctx">Próximo paso: <b>' + esc(n.proxima) + '</b></p>' : '') +
-        (tel ? '<div class="acts" style="margin:6px 0 10px"><a class="btn sm sec" target="_blank" href="https://wa.me/' + esc(tel) + '">' + icon('note') + ' WhatsApp</a><a class="btn sm sec" href="tel:' + esc(tel) + '">' + icon('phone') + ' Llamar</a></div>' : '') +
-        '<input type="text" id="mfN" placeholder="¿Qué pasó? (ej.: le mandé la cotización, responde el viernes)">';
-      acts = '<button class="btn" id="mfOk">Registrar y seguir</button><button class="btn sec" id="mfAb">Abrir negociación</button>';
+    if (i >= lista.length){
+      const quedan = Q.resto.length && !todo;
+      box.innerHTML = '<div class="hy-fin">' + ringSVG(1, 84) + '<h3>' + (quedan ? '¡Foco del día listo!' : '¡Listo por ahora!') + '</h3><p>Revisaste ' + hechas + ' de ' + lista.length + (quedan ? '. Quedan <b>' + Q.resto.length + '</b> de menor prioridad.' : '. Día al día 💪') + '</p>' +
+        '<div class="btns" style="justify-content:center">' + (quedan ? '<button class="btn sec" id="mfMas">Seguir con las ' + Q.resto.length + ' restantes</button><button class="btn sec" id="mfPos">Pasar las restantes a la próxima semana</button>' : '') + '<button class="btn" id="mfX">Cerrar</button></div></div>';
+      box.querySelector('#mfX').onclick = () => { m.cerrar(); render(); };
+      if (box.querySelector('#mfMas')) box.querySelector('#mfMas').onclick = () => { todo = true; lista = lista.concat(Q.resto); pintar(); };
+      if (box.querySelector('#mfPos')) box.querySelector('#mfPos').onclick = () => { const f = nextMonday(hoy()); Q.resto.forEach(k => { if (k.tareas.length) ejecutar(k, [{ tipo: 'posponer_tareas', filas: [], fecha: f }]); mdMarcar(k.id); }); toast('Pasadas al ' + fmt(f)); m.cerrar(); render(); };
+      return;
     }
-    box.innerHTML = '<div class="hy-fprog"><span>' + etapa + '</span><span>' + (i + 1) + ' de ' + Q.length + '</span></div><div class="pb"><i style="width:' + (i / Q.length * 100) + '%"></i></div><div class="hy-fcard">' + cuerpo + '</div><div class="hy-facts">' + acts + '<button class="btn bad" id="mfSk">Saltar</button></div>';
+    const k = lista[i], c = k.c, g = c ? agenteDe(c.id) : {}, n = k.neg && k.neg.n, tel = c ? telWA(c) : '';
+    const chips = [k.resp ? '<span class="md-ch r">Espera respuesta</span>' : '', n ? '<span class="md-ch n">' + esc(n.etapa) + (n.valor && !esPiso() ? ' · ' + clpCorto(n.valor) : '') + '</span>' : '', k.tareas.length ? '<span class="md-ch t">' + k.tareas.length + (k.tareas.length === 1 ? ' tarea' : ' tareas') + '</span>' : ''].join('');
+    box.innerHTML = '<div class="md-top"><span>' + (i < Q.foco.length ? 'Foco del día' : 'Otras pendientes') + '</span><span>' + (i + 1) + ' de ' + lista.length + (Q.resto.length && !todo ? ' · ' + Q.resto.length + ' para después' : '') + '</span></div><div class="pb"><i style="width:' + (i / lista.length * 100) + '%"></i></div>' +
+      (i === 0 && Q.fuera.length ? '<div class="md-aviso">' + icon('flag') + '<span>Hay <b>' + Q.fuera.length + '</b> tareas del equipo, de proveedores o de contactos silenciados. Ya no aparecen aquí.</span><button class="btn sm sec" id="mdLimp">Archivarlas</button></div>' : '') +
+      '<div class="md-card"><div class="md-h">' + (c ? avatar(c, 44) : '<span class="md-ic">' + icon(k.tareas.length ? 'check' : 'deal') + '</span>') + '<div class="grow"><b>' + esc(nombre(k)) + '</b><div class="md-chs">' + chips + '</div></div>' +
+        (c ? '<div class="md-lk">' + (tel ? '<a class="btn sm sec" target="_blank" href="https://wa.me/' + esc(tel) + '">' + icon('chat') + ' WhatsApp</a>' : '') + '<button class="btn sm sec" id="mdFi">Ficha</button></div>' : '') + '</div>' +
+        (g.r ? '<p class="md-ctx">' + icon('brain') + '<span>' + esc(String(g.r.detalle).split(' · ')[0].slice(0, 260)) + '</span></p>' : '') +
+        (n ? '<p class="md-neg">' + icon('deal') + '<span><b>' + esc(n.titulo) + '</b>' + (n.proxima ? ' · próximo paso: ' + esc(n.proxima) + (n.fechaProx ? ' (' + esc(fmtRel(n.fechaProx).toLowerCase()) + ')' : '') : '') + '</span></p>' : '') +
+        (k.resp ? '<details class="md-idea"><summary>Idea de respuesta del Cerebro</summary><textarea id="mfT" rows="3">' + esc(k.resp.g.idea.detalle) + '</textarea>' + (tel ? '<button class="btn sm sec" id="mfWA">' + icon('chat') + ' Enviar por WhatsApp</button>' : '') + '</details>' : '') +
+        (k.tareas.length ? '<div class="md-ts">' + k.tareas.map(t => '<label class="md-t"><input type="checkbox" data-mdt="' + t.row + '"><span>' + esc(t.tarea) + '<small' + (t.limite && t.limite < hoy() ? ' class="bad"' : '') + '>' + esc(t.limite ? fmtRel(t.limite) : 'sin fecha') + '</small></span></label>').join('') + '<div class="md-tip">Marca las que ya están hechas.</div></div>' : '') +
+        '<textarea id="mdQ" class="md-q" rows="2" placeholder="¿Qué pasó? Ej.: «ya le respondí, las bicis ya están en la tienda» · «no va a comprar, quitar» · «viene el sábado a probarla»"></textarea>' +
+        '<div class="md-acts">' +
+          (k.resp ? '<button data-md="resp">' + icon('check') + 'Ya respondí</button>' : '') +
+          (k.tareas.length ? '<button data-md="listo">' + icon('check') + 'Todo listo</button>' : '') +
+          '<button data-md="man">' + icon('clock') + 'Mañana</button><button data-md="sem">' + icon('cal') + 'Próx. semana</button>' +
+          (n || c ? '<button data-md="nocompra" class="bad">' + icon('x') + 'No compra · quitar</button>' : '') +
+          (c ? '<button data-md="sil">' + icon('bell') + 'Silenciar</button>' : '') +
+          (k.tareas.length ? '<button data-md="del" class="bad">' + icon('trash') + (k.tareas.length === 1 ? 'Eliminar tarea' : 'Eliminar tareas') + '</button>' : '') +
+        '</div></div>' +
+      '<div class="md-foot"><button class="btn sec" id="mfSk">Saltar</button><button class="btn" id="mfOk">Guardar y siguiente →</button></div>';
     const $b = s => box.querySelector(s);
+    const marcadas = () => [...box.querySelectorAll('[data-mdt]:checked')].map(x => +x.dataset.mdt);
     $b('#mfSk').onclick = () => sig(false);
-    if (q.k === 'r'){
-      const enviar = () => window.open('https://wa.me/' + telWA(q.x.c) + '?text=' + encodeURIComponent($b('#mfT').value), '_blank');
-      if ($b('#mfWA')) $b('#mfWA').onclick = () => { enviar(); $b('#mfOk').classList.remove('sec'); };
-      if ($b('#mfCp')) $b('#mfCp').onclick = () => { try { navigator.clipboard.writeText($b('#mfT').value); toast('Copiado'); } catch(e){} };
-      $b('#mfOk').onclick = () => { marcarRespondido(q.x); sig(true); };
-    } else if (q.k === 't'){
-      $b('#mfOk').onclick = () => { const t = q.t; guardarFondo({ guardar: () => toggle(t), recargar: {} }); sig(true); };
-      const mover = f => { if (!f) return; const t = q.t, ant = t.limite; guardarFondo({ aplicar: () => { t.limite = f; }, guardar: () => updateTask(Object.assign({}, t, { limite: ant }), { limite: f }), deshacer: () => { t.limite = ant; }, error: 'No se pudo posponer «' + t.tarea + '»', recargar: { state: 1 } }); toast('Pospuesta para ' + fmtRel(f).toLowerCase()); sig(false); };
-      $b('#mfPos').onclick = () => { const mm = $b('#mfPosM'); mm.hidden = !mm.hidden; };
-      box.querySelectorAll('[data-pos]').forEach(x => x.onclick = () => mover(x.dataset.pos === 'lun' ? nextMonday(D.h) : addDays(D.h, +x.dataset.pos)));
-      $b('#mfF').onchange = e => mover(e.target.value);
-      $b('#mfEsp').onclick = () => { const f = addDays(D.h, 2), t = q.t, ant = { estado: t.estado, limite: t.limite }; guardarFondo({ aplicar: () => { t.estado = 'Esperando respuesta'; t.limite = f; }, guardar: () => updateTask(Object.assign({}, t, ant), { estado: 'Esperando respuesta', limite: f }), deshacer: () => Object.assign(t, ant), error: 'No se pudo dejar en espera «' + t.tarea + '»', recargar: { state: 1 } }); toast('En espera: vuelve a aparecer ' + fmtRel(f).toLowerCase()); sig(false); };
-      $b('#mfCan').onclick = async () => {
-        if (!confirm('¿Cancelar «' + q.t.tarea + '»? Queda en el historial como cancelada.')) return;
-        const t = q.t, ant = { notas: t.notas, hecho: t.hecho, cierre: t.cierre }, nota = '❌ Cancelada el ' + fmt(D.h) + (t.notas ? '\n' + t.notas : '');
-        guardarFondo({ aplicar: () => { t.notas = nota; t.hecho = true; t.cierre = D.h + 'T' + new Date().toTimeString().slice(0, 5); },
-          guardar: async () => { await updateTask(Object.assign({}, t, { notas: ant.notas }), { notas: nota }); await api('toggle', { row: t.row, tarea: t.tarea, hecho: true }); },
-          deshacer: () => Object.assign(t, ant), error: 'No se pudo cancelar «' + t.tarea + '»', recargar: { state: 1 } });
-        toast('Tarea cancelada'); sig(false);
-      };
-      $b('#mfPlay').onclick = () => { m.cerrar(); openFocus(q.t); };
-    } else {
-      $b('#mfOk').onclick = async () => { const tx = $b('#mfN').value.trim(); if (!tx){ $b('#mfN').focus(); toast('Escribe en una línea qué pasó'); return; } $b('#mfOk').disabled = true; await negRegistrar(q.x.n, '📝 Nota', tx); sig(true); };
-      $b('#mfAb').onclick = () => { m.cerrar(); openDeal(q.x.n, { tab: 'actividad' }); };
-    }
+    if ($b('#mdFi')) $b('#mdFi').onclick = () => openCto(c);
+    if ($b('#mfWA')) $b('#mfWA').onclick = () => window.open('https://wa.me/' + tel + '?text=' + encodeURIComponent($b('#mfT').value), '_blank');
+    if ($b('#mdLimp')) $b('#mdLimp').onclick = () => { const L = Q.fuera.slice(); ejecutar({ c: null, tareas: L, resp: null, neg: null }, [{ tipo: 'eliminar_tareas', filas: [], motivo: 'equipo, proveedor o silenciado' }], L.length + ' tareas archivadas'); Q.fuera = []; $b('.md-aviso').remove(); };
+    // Botones rápidos: acción inmediata, sin escribir.
+    const RAP = {
+      resp: () => [{ tipo: 'marcar_respondido' }],
+      listo: () => [{ tipo: 'cerrar_tareas', filas: [] }].concat(k.resp ? [{ tipo: 'marcar_respondido' }] : []),
+      man: () => { const f = addDays(hoy(), 1); return (k.tareas.length ? [{ tipo: 'posponer_tareas', filas: [], fecha: f }] : []).concat(n ? [{ tipo: 'proximo_paso', texto: n.proxima || 'Seguimiento', fecha: f }] : []); },
+      sem: () => { const f = nextMonday(hoy()); return (k.tareas.length ? [{ tipo: 'posponer_tareas', filas: [], fecha: f }] : []).concat(n ? [{ tipo: 'proximo_paso', texto: n.proxima || 'Seguimiento', fecha: f }] : []); },
+      nocompra: () => (n ? [{ tipo: 'cerrar_perdida', motivo: 'No va a comprar' }] : []).concat(k.tareas.length ? [{ tipo: 'eliminar_tareas', filas: [], motivo: 'no compra' }] : []).concat(k.resp ? [{ tipo: 'marcar_respondido' }] : []).concat(c ? [{ tipo: 'silenciar', motivo: 'No va a comprar' }] : []),
+      sil: () => (k.tareas.length ? [{ tipo: 'eliminar_tareas', filas: [], motivo: 'silenciado' }] : []).concat(n ? [{ tipo: 'archivar_negocio' }] : []).concat([{ tipo: 'silenciar', motivo: 'No volver a mostrar' }]),
+      del: () => [{ tipo: 'eliminar_tareas', filas: marcadas().length ? marcadas() : [] }]
+    };
+    const TXT = { resp: 'respondido', listo: 'todo listo', man: 'para mañana', sem: 'para la próxima semana', nocompra: 'cerrado y silenciado', sil: 'silenciado', del: 'tareas eliminadas' };
+    box.querySelectorAll('[data-md]').forEach(b => b.onclick = () => {
+      const q = b.dataset.md; if ((q === 'nocompra' || q === 'sil') && !confirm(q === 'sil' ? '¿Silenciar a ' + nombre(k) + '? No volverá a aparecer en Tu día ni generará tareas (se puede deshacer en su ficha).' : '¿Cerrar todo lo de ' + nombre(k) + '? Negociación perdida, tareas eliminadas y no vuelve a aparecer.')) return;
+      const txt = $b('#mdQ').value.trim(), base = RAP[q]();
+      if (txt) mdInterpretar(k, txt, base); else ejecutar(k, base, TXT[q]);
+      sig(true);
+    });
+    $b('#mfOk').onclick = () => {
+      const txt = $b('#mdQ').value.trim(), ok = marcadas();
+      if (!txt && !ok.length){ $b('#mdQ').focus(); toast('Escribe qué pasó o marca una acción'); return; }
+      const base = ok.length ? [{ tipo: 'cerrar_tareas', filas: ok }] : [];
+      if (txt) mdInterpretar(k, txt, base); else ejecutar(k, base, ok.length + (ok.length === 1 ? ' tarea cerrada' : ' tareas cerradas'));
+      sig(true);
+    };
+    // Enter guarda (Shift+Enter: salto de línea)
+    $b('#mdQ').onkeydown = e => { if (e.key === 'Enter' && !e.shiftKey && !e.isComposing){ e.preventDefault(); $b('#mfOk').click(); } };
+    if (matchMedia('(pointer:fine)').matches) setTimeout(() => { const q = $b('#mdQ'); if (q) q.focus(); }, 30);
   };
+  // El Cerebro interpreta lo escrito; se suma a lo que marcaste. Corre en segundo plano: tú ya sigues con la próxima tarjeta.
+  const mdInterpretar = (k, txt, base) => guardarFondo({ guardar: async () => {
+      if (!iaDisponible()){ const h = await mdEjecutar(k, base.concat([{ tipo: 'nota', texto: txt }])); toast('📝 ' + nombre(k) + ': anotado'); return h; }
+      const r = await apiX('resolverPaso', { texto: txt, contexto: mdContexto(k) });
+      const tipos = new Set((r.acciones || []).map(a => a.tipo)), acc = base.filter(a => !tipos.has(a.tipo)).concat(r.acciones || []);
+      await mdEjecutar(k, acc); toast('🧠 ' + nombre(k) + ': ' + (r.resumen || 'listo'));
+    }, error: 'No se completó lo que escribiste para ' + nombre(k), recargar: { neg: 1, base: 1, state: 1 } });
   pintar();
 }
 
@@ -9602,7 +9715,7 @@ function showSettings(){
 }
 
 window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferredInstall = e; });
-document.addEventListener('click', e => { if (e.target && e.target.id === 'errBorrar'){ localStorage.removeItem('ultErr'); const c = e.target.closest('.card'); if (c) c.remove(); toast('Registro borrado'); } });
+document.addEventListener('click', e => { const ds = e.target && e.target.closest && e.target.closest('[data-desil]'); if (ds){ const id = ds.dataset.desil; if (S.silLocal) delete S.silLocal[id]; if (S.ext && S.ext.silencio) delete S.ext.silencio[id]; ds.closest('.sil-b').remove(); guardarFondo({ guardar: () => apiX('silenciar', { id, quitar: true }), error: 'No se quitó el silencio', recargar: { base: 1 } }); toast('🔔 Vuelve a aparecer en Tu día'); return; } if (e.target && e.target.id === 'errBorrar'){ localStorage.removeItem('ultErr'); const c = e.target.closest('.card'); if (c) c.remove(); toast('Registro borrado'); } });
 window.addEventListener('error', e => { const msg = e.error && e.error.message || e.message; try { LS.ultErr = JSON.stringify({ m: msg, s: String(e.error && e.error.stack || (e.filename || '') + ':' + (e.lineno || '')).slice(0, 600), tab: S.tab, v: APP_VER, f: horaLocal() }); } catch(x){} toast('Error: ' + msg); });
 window.addEventListener('unhandledrejection', e => toast('Error: ' + (e.reason && e.reason.message || e.reason)));
 document.addEventListener('visibilitychange', () => { if (!document.hidden && LS.url && S.data){ if (Date.now() - (S._visAt || 0) > 60000){ S._visAt = Date.now(); load(); } focusPill(); } });
