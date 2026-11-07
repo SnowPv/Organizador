@@ -574,3 +574,8 @@ Revisión con tres análisis en paralelo (diseño y uso, eficiencia y errores, u
 - **Silenciar contactos** (op `silenciar`, propiedad `EX_SILENCIO`): el agente sigue guardando sus mensajes pero no crea tareas, negociaciones ni «espera respuesta». Se quita desde la ficha («Quitar silencio»).
 - **Agente**: proveedores y equipo nunca generan tareas ni «espera respuesta».
 - **«Ya respondí» sincronizado**: se lee de la ficha (✅ Respondido), así vale igual en el Mac de la tienda y en el teléfono.
+
+## v95 · «Tu día» realizable: limpieza automática y tiempo disponible (script nivel 56)
+- **Limpieza automática al abrir** (una vez al día, con «Deshacer la limpieza»): archiva tareas del equipo, proveedores o silenciados; archiva tareas de clientes cuya negociación ya se cerró; une tareas repetidas del mismo cliente (texto parecido); pasa a «Sin fecha» las tareas vencidas hace más de 14 días que no son urgentes ni están en curso (siguen en Tareas). Descarta respuestas sugeridas de hace más de 10 días.
+- Todo en **una sola consulta** (op `tareasLote`: cambia muchas tareas a la vez; columnas A, J, K, L y O, sin tocar fórmulas).
+- **Portada**: cuántos pendientes había, cuántas tarjetas quedan, qué se resolvió solo y **¿cuánto tiempo tienes ahora?** (10 min · 30 min · 1 hora · Todo el foco): elige las tarjetas más importantes que caben en ese tiempo (estimación por tarjeta: responder 3 min, negociación 4, tarea pequeña 5 / mediana 15 / grande 40). Durante el recorrido muestra los minutos restantes.

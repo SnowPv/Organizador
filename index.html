@@ -1739,6 +1739,14 @@ body:has(.selbar) .fab,body:has(.selbar) .fab2{display:none}
 .atj-h{font-size:11.5px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:14px 0 2px}
 kbd{display:inline-block;min-width:22px;text-align:center;font:700 12px/1 ui-monospace,Menlo,monospace;background:var(--soft);border:1px solid var(--line);border-bottom-width:2px;border-radius:6px;padding:4px 6px;color:var(--ink)}
 .pop.mdm{max-width:760px}
+.md-intro{display:flex;flex-direction:column;gap:14px}.md-ih h3{margin:0;font-size:22px;letter-spacing:-.02em}.md-ih p{margin:4px 0 0;color:var(--muted);font-size:14.5px}.md-ih p b{color:var(--ink)}
+.md-auto{background:#F0F8F4;border:1px solid #CDEBDC;border-radius:16px;padding:12px 14px;display:flex;flex-direction:column;gap:6px;font-size:13.5px}.md-auto > b{display:flex;align-items:center;gap:6px;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--ok-ink)}.md-auto > b .ico{width:14px;height:14px}
+.md-auto div{display:flex;align-items:center;gap:8px}.md-auto em{font-style:normal;font-weight:800;min-width:22px}.md-auto .btn{align-self:flex-start;margin-top:4px}
+.md-tq{display:flex;flex-direction:column;gap:8px}.md-tq b{font-size:14px}.md-tq small{font-size:12.5px;color:var(--muted)}
+.md-tb{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.md-tb button{border:1px solid var(--line);background:var(--card);border-radius:12px;padding:12px 6px;font:inherit;font-weight:700;font-size:14px;cursor:pointer;color:var(--ink)}.md-tb button.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.md-go{height:52px;font-size:16px;justify-content:center}
+@media (max-width:760px){.md-tb{grid-template-columns:repeat(2,1fr)}}
+
 .md-top{display:flex;justify-content:space-between;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:6px}
 .md-aviso{display:flex;align-items:center;gap:10px;background:#FFF8E6;border:1px solid #F5D98B;border-radius:12px;padding:8px 12px;margin:10px 0 0;font-size:13px}.md-aviso .ico{width:16px;height:16px;color:var(--warn-ink);flex:none}.md-aviso span{flex:1}
 .md-card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin-top:12px;display:flex;flex-direction:column;gap:10px}
@@ -2676,7 +2684,7 @@ function quadOf(t){ const n = parseInt(t.cuadrante); if (QUAD[n]) return n; retu
 function habIc(n){ const k = norm(n); const m = HAB_IC.find(x => k.includes(x[0])); return m ? m[1] : '✨'; }
 
 /* ---------- API ---------- */
-const OPS_CAMBIO = ['subtareas', 'repetir', 'siguiente'];
+const OPS_CAMBIO = ['subtareas', 'repetir', 'siguiente', 'tareasLote'];
 async function api(action, extra){
   if (['add', 'update', 'toggle', 'delete'].includes(action) || (action === 'extra' && OPS_CAMBIO.includes(extra && extra.op))) S.mutado = true;
   const res = await fetch(LS.url, { method: 'POST', body: JSON.stringify(Object.assign({ token: LS.token, action, ses: LS.ses || '' }, extra || {})) });
@@ -2704,7 +2712,7 @@ async function apiX(op, extra){
 // Nivel 2 del script Extras: recordatorios y base de contactos. Nivel 3: la base solo usa contacto@blacklinechile.cl. Nivel 4: eventos de varios días.
 function enCurso(k, fn){ S._p = S._p || {}; if (S._p[k]) return S._p[k]; const pr = Promise.resolve().then(fn).finally(() => { if (S._p[k] === pr) delete S._p[k]; }); S._p[k] = pr; return pr; }
 function extNivel(){ return S.extInactivo ? 0 : (S.ext && S.ext.nivel) || 1; }
-const APP_VER = 'v94', NIVEL_ULTIMO = 55;
+const APP_VER = 'v95', NIVEL_ULTIMO = 56;
 function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < NIVEL_ULTIMO; }
 let sincTimer = null;
 // Después de cambiar tareas, el script actualiza los recordatorios del calendario (en segundo plano).
@@ -3443,7 +3451,7 @@ function noticiasHome(){
 // Texto corto de lo que trae la versión nueva del script (el banner de actualización del Inicio).
 function novedadScript(){
   const n = extNivel();
-  return n >= 55 ? 'Tu día renovado: una tarjeta por cliente, el Cerebro ejecuta lo que escribes en «¿Qué pasó?», silenciar contactos y el equipo y proveedores fuera de Hoy.' : n >= 54 ? 'La app abre más rápido: carga todo en una sola consulta al script en vez de siete.' : n >= 53 ? 'El Estudio investiga en la web (lanzamiento, prensa y ficha oficial) y escribe con el modelo experto; cada lámina recibe la foto oficial que corresponde.' : n >= 52 ? 'Redes renovado: Instagram en vivo con tus fotos reales, y el Estudio investiga la ficha oficial, las fotos del modelo y la prensa antes de crear una pieza.' : n >= 51 ? 'Noticias con su foto y link original.' : n >= 50 ? 'Guardar notas y mover negociaciones es más rápido: el script actualiza solo el contacto afectado.' : n >= 49 ? 'Recompra de consumibles: la app detecta quién debería cambiar pastillas, cadena o cubiertas según sus compras en Bsale, con el stock para ofrecer y el mensaje listo (Contactos → Campañas).' : n >= 48 ? 'La revisión de los 30 días sugiere los accesorios que el cliente no compró (asesoría, sin descuentos).' : n >= 47 ? 'Cada negociación tiene su lista de productos (desde Bsale o a mano) con precios, costo, ganancia y margen; el Cerebro también los puede agregar.' : n >= 46 ? 'Los contactos internos (Blackline Servicio Técnico, el equipo) ya no generan tareas, negociaciones ni «espera respuesta».' : n >= 45 ? 'El Cerebro responde más rápido (busca en varias fuentes a la vez y tiene un tope de tiempo) y no deja a la app esperando tanto.' : n >= 44 ? 'El Cerebro confirma en el catálogo de Andes Industrial si un repuesto Shimano o Continental existe en el distribuidor.' : n >= 43 ? 'El Cerebro entiende mejor el ciclismo (Di2, AXS, modelos) y busca opciones de compra cuando una tarea es conseguir un repuesto.' : n >= 42 ? 'Proveedores fuera del pipeline (el agente ya no les abre negociaciones) y el Cerebro puede agregar contactos nuevos cuando le dictas.' : n >= 41 ? 'Empezar de cero: la fecha de inicio se guarda en el script y la ven todos los equipos (Admin y Piso de venta).' : n >= 40 ? 'Ahora hay dos cuentas con contraseña: Admin (todo, como siempre) y Piso de venta (parte en un Hoy nuevo, sin cifras de la tienda). Créalas en ⚙️ Ajustes → Usuarios.' : n >= 39 ? 'La app ahora tiene un solo Cerebro con 9 skills (en vez de agentes sueltos): mira qué hace solo, cuánto gasta y paúsalo en la pestaña Cerebro.' : n >= 37 ? 'Las tareas automáticas ya no bloquean la app (por ejemplo, la lectura de ventas de Bsale).' : n >= 36 ? 'Cuando un cliente con negociación abierta compra en Bsale, la app te propone marcarla como ganada.' : n >= 35 ? 'Ventas del mes igual que en Bsale (solo boletas y facturas, menos notas de crédito) y noticias con foto de portada.' : n >= 34 ? 'Meta y gráfico de ventas del mes en el Inicio, con el avance diario desde Bsale.' : n >= 33 ? 'Une sola las negociaciones duplicadas de una venta ganada.' : n >= 32 ? 'Etapas después del pago: seguimiento, entrega y postventa.' : n >= 31 ? 'Venta perdida: cierra tareas, eventos y la idea de respuesta del Cerebro.' : 'Funciones nuevas para el Organizador.';
+  return n >= 56 ? 'Tu día limpia solo lo que no necesita de ti (tareas repetidas, viejas o de contactos cerrados) y se adapta al tiempo que tienes.' : n >= 55 ? 'Tu día renovado: una tarjeta por cliente, el Cerebro ejecuta lo que escribes en «¿Qué pasó?», silenciar contactos y el equipo y proveedores fuera de Hoy.' : n >= 54 ? 'La app abre más rápido: carga todo en una sola consulta al script en vez de siete.' : n >= 53 ? 'El Estudio investiga en la web (lanzamiento, prensa y ficha oficial) y escribe con el modelo experto; cada lámina recibe la foto oficial que corresponde.' : n >= 52 ? 'Redes renovado: Instagram en vivo con tus fotos reales, y el Estudio investiga la ficha oficial, las fotos del modelo y la prensa antes de crear una pieza.' : n >= 51 ? 'Noticias con su foto y link original.' : n >= 50 ? 'Guardar notas y mover negociaciones es más rápido: el script actualiza solo el contacto afectado.' : n >= 49 ? 'Recompra de consumibles: la app detecta quién debería cambiar pastillas, cadena o cubiertas según sus compras en Bsale, con el stock para ofrecer y el mensaje listo (Contactos → Campañas).' : n >= 48 ? 'La revisión de los 30 días sugiere los accesorios que el cliente no compró (asesoría, sin descuentos).' : n >= 47 ? 'Cada negociación tiene su lista de productos (desde Bsale o a mano) con precios, costo, ganancia y margen; el Cerebro también los puede agregar.' : n >= 46 ? 'Los contactos internos (Blackline Servicio Técnico, el equipo) ya no generan tareas, negociaciones ni «espera respuesta».' : n >= 45 ? 'El Cerebro responde más rápido (busca en varias fuentes a la vez y tiene un tope de tiempo) y no deja a la app esperando tanto.' : n >= 44 ? 'El Cerebro confirma en el catálogo de Andes Industrial si un repuesto Shimano o Continental existe en el distribuidor.' : n >= 43 ? 'El Cerebro entiende mejor el ciclismo (Di2, AXS, modelos) y busca opciones de compra cuando una tarea es conseguir un repuesto.' : n >= 42 ? 'Proveedores fuera del pipeline (el agente ya no les abre negociaciones) y el Cerebro puede agregar contactos nuevos cuando le dictas.' : n >= 41 ? 'Empezar de cero: la fecha de inicio se guarda en el script y la ven todos los equipos (Admin y Piso de venta).' : n >= 40 ? 'Ahora hay dos cuentas con contraseña: Admin (todo, como siempre) y Piso de venta (parte en un Hoy nuevo, sin cifras de la tienda). Créalas en ⚙️ Ajustes → Usuarios.' : n >= 39 ? 'La app ahora tiene un solo Cerebro con 9 skills (en vez de agentes sueltos): mira qué hace solo, cuánto gasta y paúsalo en la pestaña Cerebro.' : n >= 37 ? 'Las tareas automáticas ya no bloquean la app (por ejemplo, la lectura de ventas de Bsale).' : n >= 36 ? 'Cuando un cliente con negociación abierta compra en Bsale, la app te propone marcarla como ganada.' : n >= 35 ? 'Ventas del mes igual que en Bsale (solo boletas y facturas, menos notas de crédito) y noticias con foto de portada.' : n >= 34 ? 'Meta y gráfico de ventas del mes en el Inicio, con el avance diario desde Bsale.' : n >= 33 ? 'Une sola las negociaciones duplicadas de una venta ganada.' : n >= 32 ? 'Etapas después del pago: seguimiento, entrega y postventa.' : n >= 31 ? 'Venta perdida: cierra tareas, eventos y la idea de respuesta del Cerebro.' : 'Funciones nuevas para el Organizador.';
 }
 
 /* ---------- Ventas del mes: avance diario acumulado contra el mes anterior y la meta ---------- */
@@ -8477,16 +8485,48 @@ function mdMarcar(id){ const r = mdHechos(); if (r.ids.indexOf(id) < 0) r.ids.pu
 function colaDia(){
   const D = datosHoy(), porC = new Map(), solos = [], fuera = [], H = new Set(mdHechos().ids);
   const carta = c => { if (!porC.has(c.id)) porC.set(c.id, { id: 'c:' + c.id, c, tareas: [], resp: null, neg: null }); return porC.get(c.id); };
-  D.resp.forEach(x => carta(x.c).resp = x);
+  let respViejas = 0;
+  D.resp.forEach(x => { if (diffDays(String(x.g.idea.fecha).slice(0, 10), hoy()) > 10){ respViejas++; return; } carta(x.c).resp = x; });
   D.negs.forEach(x => { const c = x.a.c || (x.n.contacto ? contactoPorId(x.n.contacto) : null); if (c) carta(c).neg = x; else solos.push({ id: 'n:' + x.n.id, c: null, tareas: [], resp: null, neg: x }); });
   D.hacer.forEach(t => { if (esCancelada(t)) return; const c = clienteDeTarea(t); if (c && fueraDelDia(c)){ fuera.push(t); return; } if (c) carta(c).tareas.push(t); else solos.push({ id: 't:' + t.row, c: null, tareas: [t], resp: null, neg: null }); });
   const prio = k => { let s = 0, por = [];
     if (k.resp){ const d = Math.max(0, diffDays(String(k.resp.g.idea.fecha).slice(0, 10), hoy())); s += 60 + Math.min(20, d * 2); por.push('espera respuesta' + (d ? ' hace ' + d + ' d' : '')); }
     if (k.neg){ const v = +k.neg.n.valor || 0; s += 20 + Math.min(40, Math.log10(v + 1) * 5) + (k.neg.a.proxVencida ? 10 : 0); por.push('negociación ' + (v ? clpCorto(v) : k.neg.n.etapa)); }
     if (k.tareas.length){ s += Math.max(...k.tareas.map(t => puntaje(t).s)) + (k.tareas.length - 1) * 3; }
-    k.prio = s; k.por = por; return k; };
+    k.prio = s; k.por = por; k.min = mdMinutos(k); return k; };
   const cartas = [...porC.values(), ...solos].map(prio).filter(k => !H.has(k.id)).sort((a, b) => b.prio - a.prio);
-  return { cartas, foco: cartas.slice(0, FOCO_DIA), resto: cartas.slice(FOCO_DIA), fuera, D };
+  return { cartas, foco: cartas.slice(0, FOCO_DIA), resto: cartas.slice(FOCO_DIA), fuera, D, respViejas, bruto: D.resp.length + D.hacer.length + D.negs.length };
+}
+// Minutos estimados de una tarjeta (para elegir cuánto hacer según el tiempo que tienes).
+function mdMinutos(k){ return (k.resp ? 3 : 0) + (k.neg ? 4 : 0) + k.tareas.slice(0, 3).reduce((s, t) => s + ({ Grande: 40, Mediana: 15 }[t.tamano] || 5), 0) || 3; }
+// Limpieza automática antes de empezar (una vez al día): lo que no necesita que tú lo hagas.
+//  · tareas del equipo, proveedores o silenciados → archivadas
+//  · tareas de clientes cuya negociación ya se cerró (perdida o archivada) → archivadas
+//  · tareas repetidas del mismo cliente (texto parecido) → se deja una
+//  · tareas vencidas hace más de 14 días (no urgentes, no en curso) → pasan a «Sin fecha» (siguen en Tareas)
+function mdPlanLimpieza(){
+  const h = hoy(), P = pendientes().filter(t => !esCancelada(t)), usado = new Set(), G = { fuera: [], cerradas: [], dup: [], viejas: [] };
+  const tk = t => new Set(tokens(t.tarea)), sim = (a, b) => { const A = tk(a), B = tk(b); let i = 0; A.forEach(w => { if (B.has(w)) i++; }); return i / Math.max(1, Math.min(A.size, B.size)); };
+  const porC = new Map();
+  P.forEach(t => {
+    const c = clienteDeTarea(t);
+    if (c && fueraDelDia(c)){ G.fuera.push(t); usado.add(t.row); return; }
+    if (c && S.neg){ const N = negociosTodos().filter(n => n.contacto === c.id); if (N.length && N.every(n => n.estado === 'Perdida')){ G.cerradas.push(t); usado.add(t.row); return; } }
+    if (c){ if (!porC.has(c.id)) porC.set(c.id, []); porC.get(c.id).push(t); }
+  });
+  porC.forEach(L => { L.sort((a, b) => puntaje(b).s - puntaje(a).s); for (let i = 0; i < L.length; i++){ if (usado.has(L[i].row)) continue; for (let j = i + 1; j < L.length; j++) if (!usado.has(L[j].row) && sim(L[i], L[j]) >= 0.6){ G.dup.push(L[j]); usado.add(L[j].row); } } });
+  P.forEach(t => { if (!usado.has(t.row) && t.limite && diffDays(t.limite, h) > 14 && t.estado !== 'En curso' && quadOf(t) !== 1){ G.viejas.push(t); usado.add(t.row); } });
+  return G;
+}
+function mdAplicarLimpieza(G){
+  const h = hoy(), ant = [], cambios = [], arch = (t, por) => { ant.push({ t, notas: t.notas, hecho: t.hecho, limite: t.limite }); const notas = '🗄️ Archivada por Tu día (' + por + ') ' + fmt(h) + (t.notas ? '\n' + t.notas : ''); cambios.push({ row: t.row, tarea: t.tarea, notas, hecho: true }); t.notas = notas; t.hecho = true; };
+  G.fuera.forEach(t => arch(t, 'equipo, proveedor o silenciado')); G.cerradas.forEach(t => arch(t, 'negociación cerrada')); G.dup.forEach(t => arch(t, 'repetida'));
+  G.viejas.forEach(t => { ant.push({ t, notas: t.notas, hecho: t.hecho, limite: t.limite }); cambios.push({ row: t.row, tarea: t.tarea, limite: '' }); t.limite = ''; });
+  lsSet('mdLimpio', h);
+  if (!cambios.length) return null;
+  const deshacer = () => { ant.forEach(a => Object.assign(a.t, { notas: a.notas, hecho: a.hecho, limite: a.limite })); };
+  guardarFondo({ guardar: async () => { for (let i = 0; i < cambios.length; i += 120) await apiX('tareasLote', { cambios: cambios.slice(i, i + 120) }); }, deshacer, error: 'No se completó la limpieza de Tu día', recargar: { state: 1 } });
+  return () => { deshacer(); guardarFondo({ guardar: () => apiX('tareasLote', { cambios: ant.map(a => ({ row: a.t.row, tarea: a.t.tarea, notas: a.notas || '', hecho: !!a.hecho, limite: a.limite || '' })) }), error: 'No se pudo deshacer la limpieza', recargar: { state: 1 } }); lsSet('mdLimpio', ''); };
 }
 // Contexto de la tarjeta para el intérprete del Cerebro.
 function mdContexto(k){
@@ -8528,15 +8568,37 @@ async function mdEjecutar(k, acciones){
   return hechos;
 }
 function modoEnfoque(){
-  let Q = colaDia(), lista = Q.foco, i = 0, hechas = 0, todo = false;
-  if (!Q.cartas.length && !Q.fuera.length){ toast('No tienes nada pendiente hoy 🙌'); return; }
+  // 1) Limpieza automática (una vez al día, con «Deshacer»).
+  const bruto0 = colaDia().bruto, G = lsGet('mdLimpio', '') === hoy() ? null : mdPlanLimpieza(), deshacerL = G && extNivel() >= 56 ? mdAplicarLimpieza(G) : null;
+  let Q = colaDia(), lista = Q.foco, i = 0, hechas = 0, todo = false, fase = 'intro', presupuesto = 0;
+  if (!Q.cartas.length && !deshacerL){ toast('No tienes nada pendiente hoy 🙌'); return; }
   const m = modal(icon('arrow') + ' Tu día', '<div id="mf"></div>', { wide: true, sinFoco: true }), box = m.el.querySelector('#mf'); m.el.classList.add('mdm');
+  const minRest = () => lista.slice(i).reduce((s, k) => s + k.min, 0);
+  // 2) Portada: lo que se resolvió solo y cuánto tiempo tienes ahora.
+  const intro = () => {
+    const tot = Q.cartas.reduce((s, k) => s + k.min, 0), auto = G ? [['🗄️', G.fuera.length, 'tareas del equipo, proveedores o silenciados archivadas'], ['🤝', G.cerradas.length, 'tareas de negociaciones ya cerradas archivadas'], ['🔁', G.dup.length, 'tareas repetidas unidas'], ['📥', G.viejas.length, 'tareas de hace más de 14 días pasadas a «Sin fecha»']].filter(x => x[1]) : [];
+    if (Q.respViejas) auto.push(['💬', Q.respViejas, 'respuestas sugeridas de hace más de 10 días descartadas']);
+    const T = [[10, '⚡ 10 min'], [30, '30 min'], [60, '1 hora'], [0, 'Todo el foco']];
+    box.innerHTML = '<div class="md-intro"><div class="md-ih"><h3>' + esc(saludoTxt()) + '</h3><p>' + (bruto0 > Q.cartas.length ? 'De <b>' + bruto0 + '</b> pendientes, quedan <b>' + Q.cartas.length + ' tarjetas</b> que necesitan de ti' : 'Tienes <b>' + Q.cartas.length + ' tarjetas</b>') + ' (≈ ' + tot + ' min).</p></div>' +
+      (auto.length ? '<div class="md-auto"><b>' + icon('spark') + ' Resolví solo antes de empezar</b>' + auto.map(x => '<div><span>' + x[0] + '</span><em>' + x[1] + '</em>' + esc(x[2]) + '</div>').join('') + (deshacerL ? '<button class="btn sm sec" id="mdUndo">Deshacer la limpieza</button>' : '') + '</div>' : '') +
+      '<div class="md-tq"><b>¿Cuánto tiempo tienes ahora?</b><div class="md-tb">' + T.map(([v, l]) => '<button data-tb="' + v + '"' + (v === 30 ? ' class="on"' : '') + '>' + l + '</button>').join('') + '</div><small id="mdTbS"></small></div>' +
+      '<button class="btn md-go" id="mdGo">' + icon('arrow') + ' Empezar</button></div>';
+    let sel = 30; const resumen = () => { const L = elegir(sel); box.querySelector('#mdTbS').textContent = L.length + (L.length === 1 ? ' tarjeta' : ' tarjetas') + ' · ≈ ' + L.reduce((s, k) => s + k.min, 0) + ' min · lo más importante primero'; };
+    box.querySelectorAll('[data-tb]').forEach(b => b.onclick = () => { sel = +b.dataset.tb; box.querySelectorAll('[data-tb]').forEach(z => z.classList.toggle('on', z === b)); resumen(); });
+    if (box.querySelector('#mdUndo')) box.querySelector('#mdUndo').onclick = () => { deshacerL(); Q = colaDia(); toast('Limpieza deshecha'); m.cerrar(); render(); };
+    box.querySelector('#mdGo').onclick = () => { lista = elegir(sel); presupuesto = sel; fase = 'cartas'; pintar(); };
+    resumen(); setTimeout(() => { const g = box.querySelector('#mdGo'); if (g) g.focus(); }, 30);
+  };
+  // Lo que cabe en el tiempo: en orden de prioridad hasta llenar los minutos (siempre al menos una).
+  const elegir = min => { if (!min) return Q.foco.slice(); const L = []; let s = 0; for (const k of Q.cartas){ if (L.length && s + k.min > min) continue; L.push(k); s += k.min; if (s >= min) break; } return L; };
   const nombre = k => k.c ? (k.c.nombre || k.c.telefono || k.c.email) : k.neg ? k.neg.n.titulo : k.tareas[0].tarea;
   const sig = ok => { if (ok) hechas++; mdMarcar(lista[i].id); i++; pintar(); };
   // Cada acción: se ve al instante y se guarda detrás (si falla, avisa con «Reintentar»).
   const ejecutar = (k, acciones, txt) => guardarFondo({ guardar: async () => { const h = await mdEjecutar(k, acciones); if (txt) toast('🧠 ' + nombre(k) + ': ' + txt); return h; }, error: 'No se completó lo de ' + nombre(k), recargar: { neg: 1, base: 1, state: 1 } });
   const pintar = () => {
+    if (fase === 'intro') return intro();
     if (i >= lista.length){
+      Q.resto = Q.cartas.filter(k => lista.indexOf(k) < 0 && mdHechos().ids.indexOf(k.id) < 0);
       const quedan = Q.resto.length && !todo;
       box.innerHTML = '<div class="hy-fin">' + ringSVG(1, 84) + '<h3>' + (quedan ? '¡Foco del día listo!' : '¡Listo por ahora!') + '</h3><p>Revisaste ' + hechas + ' de ' + lista.length + (quedan ? '. Quedan <b>' + Q.resto.length + '</b> de menor prioridad.' : '. Día al día 💪') + '</p>' +
         '<div class="btns" style="justify-content:center">' + (quedan ? '<button class="btn sec" id="mfMas">Seguir con las ' + Q.resto.length + ' restantes</button><button class="btn sec" id="mfPos">Pasar las restantes a la próxima semana</button>' : '') + '<button class="btn" id="mfX">Cerrar</button></div></div>';
@@ -8547,8 +8609,8 @@ function modoEnfoque(){
     }
     const k = lista[i], c = k.c, g = c ? agenteDe(c.id) : {}, n = k.neg && k.neg.n, tel = c ? telWA(c) : '';
     const chips = [k.resp ? '<span class="md-ch r">Espera respuesta</span>' : '', n ? '<span class="md-ch n">' + esc(n.etapa) + (n.valor && !esPiso() ? ' · ' + clpCorto(n.valor) : '') + '</span>' : '', k.tareas.length ? '<span class="md-ch t">' + k.tareas.length + (k.tareas.length === 1 ? ' tarea' : ' tareas') + '</span>' : ''].join('');
-    box.innerHTML = '<div class="md-top"><span>' + (i < Q.foco.length ? 'Foco del día' : 'Otras pendientes') + '</span><span>' + (i + 1) + ' de ' + lista.length + (Q.resto.length && !todo ? ' · ' + Q.resto.length + ' para después' : '') + '</span></div><div class="pb"><i style="width:' + (i / lista.length * 100) + '%"></i></div>' +
-      (i === 0 && Q.fuera.length ? '<div class="md-aviso">' + icon('flag') + '<span>Hay <b>' + Q.fuera.length + '</b> tareas del equipo, de proveedores o de contactos silenciados. Ya no aparecen aquí.</span><button class="btn sm sec" id="mdLimp">Archivarlas</button></div>' : '') +
+    box.innerHTML = '<div class="md-top"><span>' + (presupuesto ? presupuesto + ' min' : 'Foco del día') + ' · ≈ ' + minRest() + ' min restantes</span><span>' + (i + 1) + ' de ' + lista.length + '</span></div><div class="pb"><i style="width:' + (i / lista.length * 100) + '%"></i></div>' +
+      (i === 0 && Q.fuera.length && extNivel() < 56 ? '<div class="md-aviso">' + icon('flag') + '<span>Hay <b>' + Q.fuera.length + '</b> tareas del equipo, de proveedores o de contactos silenciados. Ya no aparecen aquí.</span><button class="btn sm sec" id="mdLimp">Archivarlas</button></div>' : '') +
       '<div class="md-card"><div class="md-h">' + (c ? avatar(c, 44) : '<span class="md-ic">' + icon(k.tareas.length ? 'check' : 'deal') + '</span>') + '<div class="grow"><b>' + esc(nombre(k)) + '</b><div class="md-chs">' + chips + '</div></div>' +
         (c ? '<div class="md-lk">' + (tel ? '<a class="btn sm sec" target="_blank" href="https://wa.me/' + esc(tel) + '">' + icon('chat') + ' WhatsApp</a>' : '') + '<button class="btn sm sec" id="mdFi">Ficha</button></div>' : '') + '</div>' +
         (g.r ? '<p class="md-ctx">' + icon('brain') + '<span>' + esc(String(g.r.detalle).split(' · ')[0].slice(0, 260)) + '</span></p>' : '') +

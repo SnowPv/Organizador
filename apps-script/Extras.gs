@@ -15,8 +15,8 @@
  * Para actualizar este archivo más adelante: reemplaza todo su contenido y repite los dos pasos anteriores.
  */
 
-const EX_VERSION = '2027-03-06';
-const EX_NIVEL = 55;      // la app lo usa para saber qué funciones tiene este script
+const EX_VERSION = '2027-03-13';
+const EX_NIVEL = 56;      // la app lo usa para saber qué funciones tiene este script
 const EX_HOJA = 'Tareas';
 const EX_PRIMERA = 4;
 const EX_ULTIMA = 400;
@@ -114,7 +114,7 @@ var EX_ROL = 'admin';
 // Lo único que puede pedir el Piso de Venta (todo lo demás responde «solo Admin»).
 const EX_OPS_PISO = ['extras', 'google', 'subtareas', 'repetir', 'siguiente', 'base', 'contacto', 'chat', 'chats', 'nota', 'negocios', 'negocio', 'negocioNota',
   'eventosContacto', 'perderNegocio', 'agente', 'bsale', 'instagram', 'contenido', 'perfilCorregir', 'oportunidad', 'leadsCanal', 'specialized', 'noticias', 'clima',
-  'avisos', 'copiloto', 'global', 'tareaIA', 'eventoCrear', 'eventos', 'sesion', 'salir', 'recompra', 'recompraMarca', 'igVivo', 'silenciar', 'resolverPaso'];
+  'avisos', 'copiloto', 'global', 'tareaIA', 'eventoCrear', 'eventos', 'sesion', 'salir', 'recompra', 'recompraMarca', 'igVivo', 'silenciar', 'resolverPaso', 'tareasLote'];
 // Herramientas del Cerebro que muestran números de la tienda o costos: el Piso de Venta no las tiene.
 const EX_TOOLS_SOLO_ADMIN = ['ventas_tienda', 'buscar_en_proveedores', 'oportunidades_compra', 'correos_proveedores', 'buscar_en_planillas', 'buscar_correos'];
 const EX_SES_DIAS = { admin: 30, piso: 14 };
@@ -296,6 +296,7 @@ function ex_ruta_(p) {
     case 'bsaleVentas': return ex_bsaleVentas_(p);
     case 'igVivo':     return ex_igVivo_(p);
     case 'silenciar':  return ex_silenciar_(p);
+    case 'tareasLote': return ex_tareasLote_(p);
     case 'resolverPaso': return ex_resolverPaso_(p);
     case 'recompra':   return ex_recompra_(p);
     case 'recompraMarca': return ex_recompraMarca_(p);
@@ -375,6 +376,22 @@ function ex_proxima_(d, rep) {
 
 // Al completar una tarea que se repite: crea la siguiente en la primera fila libre.
 // La repetición pasa a la nueva fila, así desmarcar y volver a marcar no la duplica.
+// Varias tareas en UNA consulta (limpieza de «Tu día»): hecha, fecha límite, estado y notas. Solo columnas de datos:
+// A hecha · J fecha límite · K estado · L cierre · O notas (las fórmulas H, M, N y P–T no se tocan).
+function ex_tareasLote_(p) {
+  const sh = ex_hoja_(), tz = ex_tz_(), L = (p.cambios || []).slice(0, 150); let n = 0; const errores = [];
+  L.forEach(function (c) {
+    try {
+      const row = ex_fila_(sh, c.row, c.tarea);
+      if (c.notas !== undefined) sh.getRange(row, 15).setValue(String(c.notas).slice(0, 5000));
+      if (c.limite !== undefined) sh.getRange(row, 10).setValue(c.limite ? ex_aFecha_(String(c.limite), tz) : '');
+      if (c.estado !== undefined) sh.getRange(row, 11).setValue(String(c.estado));
+      if (c.hecho !== undefined) { sh.getRange(row, 1).setValue(!!c.hecho); sh.getRange(row, 12).setValue(c.hecho ? new Date() : ''); }
+      n++;
+    } catch (e) { errores.push(String(c.tarea || c.row) + ': ' + e.message); }
+  });
+  return { ok: true, n: n, errores: errores };
+}
 function ex_siguiente_(p) {
   const sh = ex_hoja_(), row = ex_fila_(sh, p.row, p.tarea), tz = ex_tz_();
   const v = sh.getRange(row, 1, 1, EX_COL_REP).getValues()[0];
