@@ -1762,6 +1762,9 @@ kbd{display:inline-block;min-width:22px;text-align:center;font:700 12px/1 ui-mon
 .md-tip{font-size:11.5px;color:#98A2B3;padding:2px 0 2px 28px}
 .md-q{width:100%;font-size:15px;border-radius:14px;padding:12px 14px;min-height:64px}
 .md-acts{display:flex;flex-wrap:wrap;gap:6px}
+.md-h .grow > b{display:block}.md-tel{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:700;color:var(--ink);margin-top:2px;font-variant-numeric:tabular-nums}.md-tel .ico{width:13px;height:13px;color:var(--muted)}.md-tel small{font-size:11px;font-weight:600;color:var(--accent-ink);opacity:0;transition:opacity .15s}.md-tel:hover small{opacity:1}
+.md-acts button.ok{color:var(--ok-ink)}.md-acts button.ok:hover{background:#E7F6EF;border-color:#BFE6D3}
+
 .md-acts button{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--card);border-radius:999px;padding:7px 12px;font:inherit;font-size:13px;font-weight:650;color:var(--ink);cursor:pointer}
 .md-acts button .ico{width:14px;height:14px}.md-acts button:hover{background:var(--soft)}.md-acts button.bad{color:var(--bad-ink)}.md-acts button.bad:hover{background:#FDECEA;border-color:#F5C2BD}
 .md-foot{display:flex;justify-content:space-between;gap:10px;margin-top:12px}.md-foot .btn:last-child{flex:1;justify-content:center}
@@ -2712,7 +2715,7 @@ async function apiX(op, extra){
 // Nivel 2 del script Extras: recordatorios y base de contactos. Nivel 3: la base solo usa contacto@blacklinechile.cl. Nivel 4: eventos de varios días.
 function enCurso(k, fn){ S._p = S._p || {}; if (S._p[k]) return S._p[k]; const pr = Promise.resolve().then(fn).finally(() => { if (S._p[k] === pr) delete S._p[k]; }); S._p[k] = pr; return pr; }
 function extNivel(){ return S.extInactivo ? 0 : (S.ext && S.ext.nivel) || 1; }
-const APP_VER = 'v95', NIVEL_ULTIMO = 56;
+const APP_VER = 'v96', NIVEL_ULTIMO = 56;
 function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < NIVEL_ULTIMO; }
 let sincTimer = null;
 // Después de cambiar tareas, el script actualiza los recordatorios del calendario (en segundo plano).
@@ -8559,6 +8562,7 @@ async function mdEjecutar(k, acciones){
         hechos.push('próximo paso ' + fmtRel(f).toLowerCase()); }
       else if (a.tipo === 'crear_tarea' && a.texto){ const f = /^\d{4}-\d{2}-\d{2}$/.test(a.fecha) ? a.fecha : h; await api('add', { tarea: { tarea: a.texto, area: 'Trabajo', categoria: 'Ventas', proyecto: '', limite: f, urgente: 'No', importante: 'Sí', tamano: 'Pequeña', notas: (c ? '[' + c.id + '] ' : '') + (n ? '(' + n.id + ')' : '') } }); hechos.push('tarea nueva'); }
       else if (a.tipo === 'cerrar_perdida' && n){ await apiX('negocio', { negocio: { id: n.id, etapa: 'Perdida', motivo: a.motivo || 'No va a comprar' } }); n.etapa = 'Perdida'; n.estado = 'Perdida'; hechos.push('negociación cerrada'); }
+      else if (a.tipo === 'ganada' && !n && c){ await apiX('negocio', { negocio: { titulo: (c.nombre || c.telefono || 'Cliente') + ' – venta', contacto: c.id, etapa: 'Ganada', fechaEtapa: h, entrega: addDays(h, 3), origen: 'Tu día' } }); hechos.push('🏆 venta ganada'); }
       else if (a.tipo === 'ganada' && n){ await apiX('negocio', { negocio: { id: n.id, etapa: 'Ganada', fechaEtapa: h, entrega: addDays(h, 3) } }); n.etapa = 'Ganada'; n.estado = 'Ganada'; hechos.push('🏆 venta ganada'); }
       else if (a.tipo === 'archivar_negocio' && n){ await apiX('negocio', { negocio: { id: n.id, etapa: 'Perdida', motivo: 'Archivada · ' + fmt(h) } }); n.etapa = 'Perdida'; n.estado = 'Perdida'; n.motivo = 'Archivada'; hechos.push('negociación archivada'); }
       else if (a.tipo === 'silenciar' && c){ S.silLocal = Object.assign(S.silLocal || {}, { [c.id]: { f: h } }); const r = await apiX('silenciar', { id: c.id, motivo: a.motivo || '' }); if (S.ext) S.ext.silencio = r.silencio; hechos.push('silenciado'); }
@@ -8608,10 +8612,12 @@ function modoEnfoque(){
       return;
     }
     const k = lista[i], c = k.c, g = c ? agenteDe(c.id) : {}, n = k.neg && k.neg.n, tel = c ? telWA(c) : '';
+    // Teléfono a la vista (también el de los chats sin ficha completa), para buscarlo en WhatsApp o en Bsale.
+    const crudo = c ? String(c.telefono || (/^wa:(\+?\d{8,15})$/.exec(c.id) || [])[1] || '').replace(/[^\d+]/g, '') : '', fono = crudo ? (/^\+?56(9)(\d{4})(\d{4})$/.test(crudo) ? crudo.replace(/^\+?56(9)(\d{4})(\d{4})$/, '+56 $1 $2 $3') : crudo) : '';
     const chips = [k.resp ? '<span class="md-ch r">Espera respuesta</span>' : '', n ? '<span class="md-ch n">' + esc(n.etapa) + (n.valor && !esPiso() ? ' · ' + clpCorto(n.valor) : '') + '</span>' : '', k.tareas.length ? '<span class="md-ch t">' + k.tareas.length + (k.tareas.length === 1 ? ' tarea' : ' tareas') + '</span>' : ''].join('');
     box.innerHTML = '<div class="md-top"><span>' + (presupuesto ? presupuesto + ' min' : 'Foco del día') + ' · ≈ ' + minRest() + ' min restantes</span><span>' + (i + 1) + ' de ' + lista.length + '</span></div><div class="pb"><i style="width:' + (i / lista.length * 100) + '%"></i></div>' +
       (i === 0 && Q.fuera.length && extNivel() < 56 ? '<div class="md-aviso">' + icon('flag') + '<span>Hay <b>' + Q.fuera.length + '</b> tareas del equipo, de proveedores o de contactos silenciados. Ya no aparecen aquí.</span><button class="btn sm sec" id="mdLimp">Archivarlas</button></div>' : '') +
-      '<div class="md-card"><div class="md-h">' + (c ? avatar(c, 44) : '<span class="md-ic">' + icon(k.tareas.length ? 'check' : 'deal') + '</span>') + '<div class="grow"><b>' + esc(nombre(k)) + '</b><div class="md-chs">' + chips + '</div></div>' +
+      '<div class="md-card"><div class="md-h">' + (c ? avatar(c, 44) : '<span class="md-ic">' + icon(k.tareas.length ? 'check' : 'deal') + '</span>') + '<div class="grow"><b>' + esc(nombre(k)) + '</b>' + (fono ? '<button class="md-tel" id="mdTel" title="Copiar el número">' + icon('phone') + esc(fono) + '<small>copiar</small></button>' : '') + '<div class="md-chs">' + chips + '</div></div>' +
         (c ? '<div class="md-lk">' + (tel ? '<a class="btn sm sec" target="_blank" href="https://wa.me/' + esc(tel) + '">' + icon('chat') + ' WhatsApp</a>' : '') + '<button class="btn sm sec" id="mdFi">Ficha</button></div>' : '') + '</div>' +
         (g.r ? '<p class="md-ctx">' + icon('brain') + '<span>' + esc(String(g.r.detalle).split(' · ')[0].slice(0, 260)) + '</span></p>' : '') +
         (n ? '<p class="md-neg">' + icon('deal') + '<span><b>' + esc(n.titulo) + '</b>' + (n.proxima ? ' · próximo paso: ' + esc(n.proxima) + (n.fechaProx ? ' (' + esc(fmtRel(n.fechaProx).toLowerCase()) + ')' : '') : '') + '</span></p>' : '') +
@@ -8622,6 +8628,7 @@ function modoEnfoque(){
           (k.resp ? '<button data-md="resp">' + icon('check') + 'Ya respondí</button>' : '') +
           (k.tareas.length ? '<button data-md="listo">' + icon('check') + 'Todo listo</button>' : '') +
           '<button data-md="man">' + icon('clock') + 'Mañana</button><button data-md="sem">' + icon('cal') + 'Próx. semana</button>' +
+          (n || c ? '<button data-md="ganada" class="ok">' + icon('trophy') + 'Ganada</button>' : '') +
           (n || c ? '<button data-md="nocompra" class="bad">' + icon('x') + 'No compra · quitar</button>' : '') +
           (c ? '<button data-md="sil">' + icon('bell') + 'Silenciar</button>' : '') +
           (k.tareas.length ? '<button data-md="del" class="bad">' + icon('trash') + (k.tareas.length === 1 ? 'Eliminar tarea' : 'Eliminar tareas') + '</button>' : '') +
@@ -8631,6 +8638,7 @@ function modoEnfoque(){
     const marcadas = () => [...box.querySelectorAll('[data-mdt]:checked')].map(x => +x.dataset.mdt);
     $b('#mfSk').onclick = () => sig(false);
     if ($b('#mdFi')) $b('#mdFi').onclick = () => openCto(c);
+    if ($b('#mdTel')) $b('#mdTel').onclick = async () => { try { await navigator.clipboard.writeText(crudo); toast('📋 Número copiado: ' + fono); } catch(e){ toast(fono); } };
     if ($b('#mfWA')) $b('#mfWA').onclick = () => window.open('https://wa.me/' + tel + '?text=' + encodeURIComponent($b('#mfT').value), '_blank');
     if ($b('#mdLimp')) $b('#mdLimp').onclick = () => { const L = Q.fuera.slice(); ejecutar({ c: null, tareas: L, resp: null, neg: null }, [{ tipo: 'eliminar_tareas', filas: [], motivo: 'equipo, proveedor o silenciado' }], L.length + ' tareas archivadas'); Q.fuera = []; $b('.md-aviso').remove(); };
     // Botones rápidos: acción inmediata, sin escribir.
@@ -8641,9 +8649,10 @@ function modoEnfoque(){
       sem: () => { const f = nextMonday(hoy()); return (k.tareas.length ? [{ tipo: 'posponer_tareas', filas: [], fecha: f }] : []).concat(n ? [{ tipo: 'proximo_paso', texto: n.proxima || 'Seguimiento', fecha: f }] : []); },
       nocompra: () => (n ? [{ tipo: 'cerrar_perdida', motivo: 'No va a comprar' }] : []).concat(k.tareas.length ? [{ tipo: 'eliminar_tareas', filas: [], motivo: 'no compra' }] : []).concat(k.resp ? [{ tipo: 'marcar_respondido' }] : []).concat(c ? [{ tipo: 'silenciar', motivo: 'No va a comprar' }] : []),
       sil: () => (k.tareas.length ? [{ tipo: 'eliminar_tareas', filas: [], motivo: 'silenciado' }] : []).concat(n ? [{ tipo: 'archivar_negocio' }] : []).concat([{ tipo: 'silenciar', motivo: 'No volver a mostrar' }]),
-      del: () => [{ tipo: 'eliminar_tareas', filas: marcadas().length ? marcadas() : [] }]
+      del: () => [{ tipo: 'eliminar_tareas', filas: marcadas().length ? marcadas() : [] }],
+      ganada: () => [{ tipo: 'ganada' }].concat(k.tareas.length ? [{ tipo: 'cerrar_tareas', filas: [] }] : []).concat(k.resp ? [{ tipo: 'marcar_respondido' }] : [])
     };
-    const TXT = { resp: 'respondido', listo: 'todo listo', man: 'para mañana', sem: 'para la próxima semana', nocompra: 'cerrado y silenciado', sil: 'silenciado', del: 'tareas eliminadas' };
+    const TXT = { ganada: '🏆 venta ganada', resp: 'respondido', listo: 'todo listo', man: 'para mañana', sem: 'para la próxima semana', nocompra: 'cerrado y silenciado', sil: 'silenciado', del: 'tareas eliminadas' };
     box.querySelectorAll('[data-md]').forEach(b => b.onclick = () => {
       const q = b.dataset.md; if ((q === 'nocompra' || q === 'sil') && !confirm(q === 'sil' ? '¿Silenciar a ' + nombre(k) + '? No volverá a aparecer en Tu día ni generará tareas (se puede deshacer en su ficha).' : '¿Cerrar todo lo de ' + nombre(k) + '? Negociación perdida, tareas eliminadas y no vuelve a aparecer.')) return;
       const txt = $b('#mdQ').value.trim(), base = RAP[q]();

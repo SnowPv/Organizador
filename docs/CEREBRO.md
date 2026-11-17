@@ -579,3 +579,7 @@ Revisión con tres análisis en paralelo (diseño y uso, eficiencia y errores, u
 - **Limpieza automática al abrir** (una vez al día, con «Deshacer la limpieza»): archiva tareas del equipo, proveedores o silenciados; archiva tareas de clientes cuya negociación ya se cerró; une tareas repetidas del mismo cliente (texto parecido); pasa a «Sin fecha» las tareas vencidas hace más de 14 días que no son urgentes ni están en curso (siguen en Tareas). Descarta respuestas sugeridas de hace más de 10 días.
 - Todo en **una sola consulta** (op `tareasLote`: cambia muchas tareas a la vez; columnas A, J, K, L y O, sin tocar fórmulas).
 - **Portada**: cuántos pendientes había, cuántas tarjetas quedan, qué se resolvió solo y **¿cuánto tiempo tienes ahora?** (10 min · 30 min · 1 hora · Todo el foco): elige las tarjetas más importantes que caben en ese tiempo (estimación por tarjeta: responder 3 min, negociación 4, tarea pequeña 5 / mediana 15 / grande 40). Durante el recorrido muestra los minutos restantes.
+
+## v96 · Tarjetas de «Tu día»: Ganada y teléfono a la vista
+- Botón **Ganada** en cada tarjeta de cliente: marca la negociación como ganada (o crea la venta ganada si no había negociación), cierra sus tareas y lo da por respondido. Queda en seguimiento hasta la entrega, como siempre.
+- **Teléfono visible** bajo el nombre (también en chats sin ficha completa, sacado del número de WhatsApp), con formato +56 9 XXXX XXXX; al tocarlo se copia para buscarlo en WhatsApp o en Bsale.
