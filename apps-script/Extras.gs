@@ -15,8 +15,8 @@
  * Para actualizar este archivo más adelante: reemplaza todo su contenido y repite los dos pasos anteriores.
  */
 
-const EX_VERSION = '2027-03-20';
-const EX_NIVEL = 57;      // la app lo usa para saber qué funciones tiene este script
+const EX_VERSION = '2027-03-27';
+const EX_NIVEL = 58;      // la app lo usa para saber qué funciones tiene este script
 const EX_HOJA = 'Tareas';
 const EX_PRIMERA = 4;
 const EX_ULTIMA = 400;
@@ -178,7 +178,7 @@ function ex_filtrarPiso_(op, r) {
   if (!r || typeof r !== 'object') return r;
   if (op === 'global') { delete r.compras; delete r.cerebro; delete r.fuentes; }
   if (op === 'google') delete r.correos;
-  if (op === 'extras') { delete r.agente; delete r.waHist; }
+  if (op === 'extras') { r.agente = { activo: !!(r.agente && r.agente.activo) }; delete r.waHist; }   // Piso: solo saber si el Cerebro está disponible (sin modelo ni actividad)
   if (op === 'negocios' && r.metaVentas !== undefined) delete r.metaVentas;
   if (op === 'negocios' && Array.isArray(r.negocios)) r.negocios.forEach(function (n) { (n.items || []).forEach(function (x) { delete x.costo; }); });   // costos: solo Admin
   return r;
