@@ -596,3 +596,6 @@ Revisión con tres análisis en paralelo (diseño y uso, eficiencia y errores, u
 - Piso de venta ve y hace lo mismo que Admin: Inicio, Compras, Cerebro, ventas de la tienda, costos, márgenes, proveedores, montos de negociaciones, avisos y eliminar negociaciones. El Cerebro le responde todo (todas sus herramientas).
 - Solo queda reservado al Admin administrar la cuenta: claves y usuarios (`usuariosConf`), «Empezar de cero» (`inicio`) y «Liberar espacio» (`liberarTareas`). Piso conserva su Ajustes simple y su guía.
 - Código: `pisoLimitado()` (app) y `ex_filtrarPiso_` / `ex_toolsRol_` (script) quedan como puntos únicos por si se quisiera volver a limitar.
+
+## v100 · Piso de venta parte en «Hoy»
+- Piso vuelve a no tener la pestaña Inicio: al abrir entra a «Hoy» y si algo lo manda a Inicio, va a Hoy. El resto de las secciones y datos siguen completos (v99).

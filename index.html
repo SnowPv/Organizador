@@ -2129,7 +2129,8 @@ body.en-login > .wrap, body.en-login > nav.bottom, body.en-login > .fab, body.en
 .lg-btn{width:100%;justify-content:center;padding:13px;font-size:15.5px}
 .lg-foot{margin-top:14px;font-size:12px;color:var(--muted);line-height:1.45;text-align:center}
 /* Piso de venta: pestañas de gestión ocultas (el servidor igual bloquea sus datos) */
-/* Desde v99 Piso ve todas las secciones (antes se ocultaban Inicio, Compras y Cerebro). */
+/* Piso ve todas las secciones menos Inicio: su portada es «Hoy». */
+body.piso nav.bottom [data-tab=inicio]{display:none!important}
 /* ===== Hoy del Piso de venta ===== */
 .pv-prev{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:#FFF8E6;border:1px solid #F5D98B;color:#7A5200;border-radius:14px;padding:10px 14px;margin-bottom:14px;font-size:13.5px}.pv-prev .btn{margin-left:auto}
 .pv-hero{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:20px;align-items:center;background:radial-gradient(520px 260px at 100% 0%,rgba(18,160,107,.16),rgba(18,160,107,0) 70%),linear-gradient(120deg,#FFFFFF 0%,#F3F8FE 100%);border:var(--bd-card);box-shadow:var(--sh-card);border-radius:24px;padding:22px 24px}
@@ -2645,7 +2646,7 @@ const UI2 = () => document.body.classList.contains('ui2');
 const PROPOSITO = { hoy: 'Lo que hay que hacer hoy, en orden', tareas: 'Todas tus tareas y pendientes', semana: 'Agenda, entregas y eventos del mes', compras: 'Proveedores, stock y ventas de Bsale', negocios: 'Tus ventas en curso, de la primera consulta a la postventa', proy: 'Iniciativas largas y su avance', base: 'Clientes, proveedores y chats de WhatsApp', redes: 'Instagram, contenido y estudio de diseño', cerebro: 'Un solo cerebro con skills: qué hace solo, qué hace cuando lo pides y cuánto gasta' };
 let S = { data: null, tab: (/[?&]tab=(hoy|tareas|negocios|base|redes|semana|proy|compras)\b/.exec(location.search) || [])[1] || 'inicio', filtro: 'todas', q: '', verHechas: false, vista: LS.vista || 'lista', offline: false, busy: false, google: null, googleBusy: false, googleAt: 0, ext: null, extInactivo: false, base: null, baseAt: 0, bf: 'todos', bq: '', mutado: false, subH: 'habitos', neg: null, negAt: 0, nv: LS.nv2 || '', nf: 'abiertas', nq: '' };
 // Cuenta Piso de venta: parte en Hoy y sin las pestañas de gestión.
-if (LS.rol === 'piso'){ document.body.classList.add('piso'); if (['inicio', 'compras', 'cerebro'].includes(S.tab)) S.tab = 'hoy'; }
+if (LS.rol === 'piso'){ document.body.classList.add('piso'); if (S.tab === 'inicio') S.tab = 'hoy'; }
 let deferredInstall = null;
 
 /* ---------- utilidades ---------- */
@@ -2716,7 +2717,7 @@ async function apiX(op, extra){
 // Nivel 2 del script Extras: recordatorios y base de contactos. Nivel 3: la base solo usa contacto@blacklinechile.cl. Nivel 4: eventos de varios días.
 function enCurso(k, fn){ S._p = S._p || {}; if (S._p[k]) return S._p[k]; const pr = Promise.resolve().then(fn).finally(() => { if (S._p[k] === pr) delete S._p[k]; }); S._p[k] = pr; return pr; }
 function extNivel(){ return S.extInactivo ? 0 : (S.ext && S.ext.nivel) || 1; }
-const APP_VER = 'v99', NIVEL_ULTIMO = 59;
+const APP_VER = 'v100', NIVEL_ULTIMO = 59;
 function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < NIVEL_ULTIMO; }
 let sincTimer = null;
 // Después de cambiar tareas, el script actualiza los recordatorios del calendario (en segundo plano).
@@ -6097,7 +6098,8 @@ function esPiso(){ return rol() === 'piso'; }
 // Desde v99 Piso de venta ve y hace lo mismo que Admin; solo administrar la cuenta (claves, usuarios, empezar de cero) es del Admin.
 // esPiso() sigue sirviendo para el saludo, la guía y su Ajustes simple; pisoLimitado() es lo que antes escondía datos.
 function pisoLimitado(){ return false; }
-function tabPermitida(t){ return !pisoLimitado() || TABS_SOLO_ADMIN.indexOf(t) < 0; }
+// Piso de venta parte en «Hoy»: Inicio es la portada del Admin (el resto de las secciones las ve completas).
+function tabPermitida(t){ if (esPiso() && t === 'inicio') return false; return !pisoLimitado() || TABS_SOLO_ADMIN.indexOf(t) < 0; }
 function limpiarDatosLocales(){ try { Object.keys(LS).forEach(k => { if (LS_CONSERVAR.indexOf(k) < 0) LS.removeItem(k); }); } catch(e){} }
 function sesionVencida(){
   if (!LS.ses && $('#login')) return;
