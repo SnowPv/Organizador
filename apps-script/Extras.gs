@@ -15,8 +15,8 @@
  * Para actualizar este archivo más adelante: reemplaza todo su contenido y repite los dos pasos anteriores.
  */
 
-const EX_VERSION = '2027-03-13';
-const EX_NIVEL = 56;      // la app lo usa para saber qué funciones tiene este script
+const EX_VERSION = '2027-03-20';
+const EX_NIVEL = 57;      // la app lo usa para saber qué funciones tiene este script
 const EX_HOJA = 'Tareas';
 const EX_PRIMERA = 4;
 const EX_ULTIMA = 400;
@@ -297,6 +297,7 @@ function ex_ruta_(p) {
     case 'igVivo':     return ex_igVivo_(p);
     case 'silenciar':  return ex_silenciar_(p);
     case 'tareasLote': return ex_tareasLote_(p);
+    case 'liberarTareas': return ex_liberarTareas_(p);
     case 'resolverPaso': return ex_resolverPaso_(p);
     case 'recompra':   return ex_recompra_(p);
     case 'recompraMarca': return ex_recompraMarca_(p);
@@ -337,7 +338,33 @@ function ex_leer_() {
     bsale: { activo: !!pr.getProperty('BSALE_TOKEN'), sinc: pr.getProperty('EX_BSALE_SINC') || '' },
     instagram: { activo: !!pr.getProperty('IG_TOKEN'), usuario: pr.getProperty('IG_USUARIO') || '', sinc: pr.getProperty('EX_IG_SINC') || '' },
     agente: { activo: !!pr.getProperty('ANTHROPIC_API_KEY'), modelo: pr.getProperty('AGENTE_MODELO') || EX_AG_MODELO, ultimo: pr.getProperty('EX_AG_ULTIMO') || '' },
-    silencio: ex_silencio_(), equipo: ex_equipoNombres_() };
+    silencio: ex_silencio_(), equipo: ex_equipoNombres_(), tareasCap: ex_tareasCap_() };
+}
+// Espacio de la hoja Tareas (filas 4 a 400): cuántas están ocupadas y cuántas de esas ya están hechas.
+function ex_tareasCap_() {
+  const sh = ex_hoja_(), n = EX_ULTIMA - EX_PRIMERA + 1, v = sh.getRange(EX_PRIMERA, 1, n, 2).getValues();
+  let usadas = 0, hechas = 0; v.forEach(function (r) { if (String(r[1] || '').trim()) { usadas++; if (r[0] === true) hechas++; } });
+  return { total: n, usadas: usadas, hechas: hechas, libres: n - usadas };
+}
+// Libera filas: copia las tareas hechas (o canceladas/archivadas) cerradas hace más de N días a la hoja «Tareas archivadas»
+// y vacía solo sus columnas de datos (A–G, I–L, O, U–W); las fórmulas (H, M, N, P–T) no se tocan.
+function ex_liberarTareas_(p) {
+  const sh = ex_hoja_(), tz = ex_tz_(), dias = Math.max(1, Number(p.dias) || 14), lim = Date.now() - dias * 86400000, n = EX_ULTIMA - EX_PRIMERA + 1;
+  const v = sh.getRange(EX_PRIMERA, 1, n, EX_COL_EVT).getValues(), arch = [], filas = [];
+  v.forEach(function (r, i) {
+    if (!String(r[1] || '').trim() || r[0] !== true) return;
+    const cierre = r[11] instanceof Date ? r[11].getTime() : (Date.parse(String(r[11] || '')) || 0);
+    if (cierre && cierre > lim) return;
+    arch.push([new Date()].concat(r.slice(0, 15)).concat([r[EX_COL_SUB - 1] || '', r[EX_COL_REP - 1] || ''])); filas.push(EX_PRIMERA + i);
+  });
+  if (!filas.length) return { ok: true, liberadas: 0, cap: ex_tareasCap_() };
+  const ha = ex_hojaCab_('Tareas archivadas', ['Archivada el', 'Hecha', 'Tarea', 'Área', 'Categoría', 'Proyecto', 'Urgente', 'Importante', 'Cuadrante', 'Tamaño', 'Fecha límite', 'Estado', 'Cierre', 'M', 'N', 'Notas', 'Subtareas', 'Repetir']);
+  ha.getRange(ha.getLastRow() + 1, 1, arch.length, arch[0].length).setValues(arch);
+  filas.forEach(function (row) {
+    sh.getRange(row, 1, 1, 7).setValues([[false, '', '', '', '', '', '']]);
+    sh.getRange(row, 9, 1, 4).clearContent(); sh.getRange(row, 15).clearContent(); sh.getRange(row, EX_COL_SUB, 1, 3).clearContent();
+  });
+  return { ok: true, liberadas: filas.length, cap: ex_tareasCap_() };
 }
 
 // Confirma que la fila sigue siendo la misma tarea (por si alguien movió filas en el Sheet).

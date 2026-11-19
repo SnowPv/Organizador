@@ -583,3 +583,8 @@ Revisión con tres análisis en paralelo (diseño y uso, eficiencia y errores, u
 ## v96 · Tarjetas de «Tu día»: Ganada y teléfono a la vista
 - Botón **Ganada** en cada tarjeta de cliente: marca la negociación como ganada (o crea la venta ganada si no había negociación), cierra sus tareas y lo da por respondido. Queda en seguimiento hasta la entrega, como siempre.
 - **Teléfono visible** bajo el nombre (también en chats sin ficha completa, sacado del número de WhatsApp), con formato +56 9 XXXX XXXX; al tocarlo se copia para buscarlo en WhatsApp o en Bsale.
+
+## v97 · Próximo paso sin fallas silenciosas y espacio en la hoja Tareas (script nivel 57)
+- **Próximo paso**: se guarda al instante (en segundo plano) y la ventana se cierra; la tarea del calendario va aparte. Si la tarea no se puede crear, el próximo paso queda guardado igual y aparece un aviso con el motivo exacto. En ventas ganadas, entregadas o en postventa sugiere un paso de esa etapa (coordinar entrega, llamar, revisión de 30 días) en vez de «Enviar el primer mensaje».
+- **Hoja Tareas llena**: tiene 397 filas (4 a 400) y las tareas hechas siguen ocupando la suya. El script informa cuántas filas hay usadas, hechas y libres (`tareasCap` en extras). Con menos de 25 libres aparece un aviso en Inicio, Hoy y Tareas; en Ajustes hay una tarjeta «Espacio en la hoja Tareas».
+- **Liberar espacio** (op `liberarTareas`, solo Admin): copia las tareas hechas o canceladas cerradas hace más de 14 días a la hoja «Tareas archivadas» y deja su fila libre (solo columnas de datos; las fórmulas no se tocan). Las pendientes no se tocan.

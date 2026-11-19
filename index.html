@@ -1762,6 +1762,7 @@ kbd{display:inline-block;min-width:22px;text-align:center;font:700 12px/1 ui-mon
 .md-tip{font-size:11.5px;color:#98A2B3;padding:2px 0 2px 28px}
 .md-q{width:100%;font-size:15px;border-radius:14px;padding:12px 14px;min-height:64px}
 .md-acts{display:flex;flex-wrap:wrap;gap:6px}
+.cap-av{display:flex;align-items:center;gap:10px;background:#FFF8E6;border:1px solid #F5D98B;border-radius:12px;padding:9px 12px;margin:0 0 12px;font-size:13.5px}.cap-av span{flex:1}
 .md-h .grow > b{display:block}.md-tel{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:700;color:var(--ink);margin-top:2px;font-variant-numeric:tabular-nums}.md-tel .ico{width:13px;height:13px;color:var(--muted)}.md-tel small{font-size:11px;font-weight:600;color:var(--accent-ink);opacity:0;transition:opacity .15s}.md-tel:hover small{opacity:1}
 .md-acts button.ok{color:var(--ok-ink)}.md-acts button.ok:hover{background:#E7F6EF;border-color:#BFE6D3}
 
@@ -2715,7 +2716,7 @@ async function apiX(op, extra){
 // Nivel 2 del script Extras: recordatorios y base de contactos. Nivel 3: la base solo usa contacto@blacklinechile.cl. Nivel 4: eventos de varios días.
 function enCurso(k, fn){ S._p = S._p || {}; if (S._p[k]) return S._p[k]; const pr = Promise.resolve().then(fn).finally(() => { if (S._p[k] === pr) delete S._p[k]; }); S._p[k] = pr; return pr; }
 function extNivel(){ return S.extInactivo ? 0 : (S.ext && S.ext.nivel) || 1; }
-const APP_VER = 'v96', NIVEL_ULTIMO = 56;
+const APP_VER = 'v97', NIVEL_ULTIMO = 57;
 function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < NIVEL_ULTIMO; }
 let sincTimer = null;
 // Después de cambiar tareas, el script actualiza los recordatorios del calendario (en segundo plano).
@@ -2733,7 +2734,9 @@ function guardarFondo(o){
   if (o.aplicar) o.aplicar();
   S.wseq++; S.pend++; head();
   S.cola = S.cola.then(() => o.guardar()).then(r => { if (o.listo) try { o.listo(r); } catch(_){} refrescoFondo(o.recargar); },
-    e => { if (o.deshacer) try { o.deshacer(); } catch(_){} if (!$('#layer').innerHTML) render(); aviso('⚠️ ' + (o.error || 'No se guardó') + ': ' + e.message, 'Reintentar', () => guardarFondo(o)); })
+    e => { if (o.deshacer) try { o.deshacer(); } catch(_){} if (!$('#layer').innerHTML) render();
+      if (/filas libres/i.test(e.message)) aviso('⚠️ ' + (o.error || 'No se guardó') + ': la hoja Tareas está llena (máximo 397 tareas).', 'Liberar espacio', liberarTareasUI);
+      else aviso('⚠️ ' + (o.error || 'No se guardó') + ': ' + e.message, 'Reintentar', () => guardarFondo(o)); })
     .finally(() => { S.pend--; head(); });
   return S.cola;
 }
@@ -2745,6 +2748,17 @@ function notaLocal(id, tipo, detalle, neg){
   const c = contactoPorId(id); if (c) c.ultima = hoy();
   return () => { const k = I.indexOf(x); if (k >= 0) I.splice(k, 1); S._intX = null; };
 }
+// La hoja Tareas tiene 397 filas (4 a 400) y las hechas siguen ocupando la suya: esto las pasa a «Tareas archivadas».
+function tareasCap(){ return (S.ext && S.ext.tareasCap) || null; }
+async function liberarTareasUI(){
+  const c = tareasCap();
+  if (!confirm('Liberar espacio en la hoja Tareas: las tareas HECHAS (o canceladas) cerradas hace más de 14 días se copian a la hoja «Tareas archivadas» y dejan su fila libre. Las pendientes no se tocan.' + (c ? '\n\nHoy: ' + c.usadas + ' de ' + c.total + ' filas usadas, ' + c.hechas + ' hechas.' : '') + '\n\n¿Seguir?')) return;
+  toast('⏳ Liberando espacio…');
+  try { const r = await apiX('liberarTareas', { dias: 14 }); if (S.ext) S.ext.tareasCap = r.cap; aviso('🧹 ' + r.liberadas + ' tareas hechas pasaron a «Tareas archivadas». Quedan ' + r.cap.libres + ' filas libres.'); load(); }
+  catch(e){ aviso('No se pudo liberar espacio: ' + e.message); }
+}
+function avisoCapHTML(){ const c = tareasCap(); if (!c || esPiso() || c.libres >= 25) return ''; return '<div class="cap-av">⚠️ <span>La hoja Tareas está ' + (c.libres ? 'casi llena: quedan <b>' + c.libres + '</b> filas libres' : '<b>llena</b>: no se pueden crear tareas nuevas') + ' (' + c.hechas + ' ocupadas por tareas ya hechas).</span><button class="btn sm" data-liberar="1">Liberar espacio</button></div>'; }
+document.addEventListener('click', e => { if (e.target && e.target.closest && e.target.closest('[data-liberar]')) liberarTareasUI(); });
 function refrescoFondo(que){
   S._rfQ = Object.assign(S._rfQ || {}, que || { neg: 1, base: 1 });
   clearTimeout(S._rfT);
@@ -2891,6 +2905,7 @@ function head(){
   $$('nav.bottom button').forEach(b => b.classList.toggle('on', b.dataset.tab === S.tab || (b.id === 'nbMas' && ['semana', 'compras', 'proy', 'redes', 'cerebro'].includes(S.tab))));
   const hb = $('nav.bottom [data-tab=hoy]'); if (hb){ let n = 0; try { n = pendientesHoyN(); } catch(e){} let x = hb.querySelector('.nb'); if (!x){ x = document.createElement('i'); x.className = 'nb'; hb.appendChild(x); } x.textContent = n > 99 ? '99+' : n; x.style.display = n ? '' : 'none'; }
 }
+function capBanner(){ const v = $('#view'); if (!v || !['hoy', 'tareas', 'inicio'].includes(S.tab) || v.querySelector('.cap-av')) return; const h = avisoCapHTML(); if (h) v.insertAdjacentHTML('afterbegin', h); }
 function go(tab){ $$('.qpop').forEach(x => x.remove()); if (!tabPermitida(tab)) tab = 'hoy'; S.tab = tab; render(); window.scrollTo(0, 0); }
 $$('nav.bottom button[data-tab]').forEach(b => b.onclick = () => go(b.dataset.tab));
 // Celular: la barra muestra las 5 secciones del día a día; el resto queda en «Más».
@@ -2992,7 +3007,7 @@ function render(){
   if (!S.data){ $('#view').innerHTML = '<div class="empty"><span class="spin"></span>Cargando…</div>'; return; }
   ({ inicio: viewInicio, hoy: () => esPiso() || S.vistaPiso || UI2() ? viewHoyPiso() : viewHoy(), tareas: viewTareas, habitos: () => S.subH === 'semana' ? viewSemana() : viewHabitos(), semana: () => (S.per || 'mes') !== 'semana' ? (S.per || (S.per = 'mes'), viewPeriodo()) : viewSemana(), proy: viewProy, base: viewBase, negocios: viewNegocios, redes: viewRedes, compras: viewCompras, cerebro: viewCerebro })[S.tab]();
   if (!S.guiaAuto){ S.guiaAuto = 1; let v = '1'; try { v = LS[esPiso() ? 'guiaVistaP' : 'guiaVista']; } catch(e){} if (!v) setTimeout(() => { if (!$('.pop-bg')) openGuia(); }, 900); }
-  focusPill(); imxPill();
+  focusPill(); imxPill(); try { capBanner(); } catch(e){}
 }
 
 /* ---------- lógica: listas y prioridad inteligente ---------- */
@@ -3454,7 +3469,7 @@ function noticiasHome(){
 // Texto corto de lo que trae la versión nueva del script (el banner de actualización del Inicio).
 function novedadScript(){
   const n = extNivel();
-  return n >= 56 ? 'Tu día limpia solo lo que no necesita de ti (tareas repetidas, viejas o de contactos cerrados) y se adapta al tiempo que tienes.' : n >= 55 ? 'Tu día renovado: una tarjeta por cliente, el Cerebro ejecuta lo que escribes en «¿Qué pasó?», silenciar contactos y el equipo y proveedores fuera de Hoy.' : n >= 54 ? 'La app abre más rápido: carga todo en una sola consulta al script en vez de siete.' : n >= 53 ? 'El Estudio investiga en la web (lanzamiento, prensa y ficha oficial) y escribe con el modelo experto; cada lámina recibe la foto oficial que corresponde.' : n >= 52 ? 'Redes renovado: Instagram en vivo con tus fotos reales, y el Estudio investiga la ficha oficial, las fotos del modelo y la prensa antes de crear una pieza.' : n >= 51 ? 'Noticias con su foto y link original.' : n >= 50 ? 'Guardar notas y mover negociaciones es más rápido: el script actualiza solo el contacto afectado.' : n >= 49 ? 'Recompra de consumibles: la app detecta quién debería cambiar pastillas, cadena o cubiertas según sus compras en Bsale, con el stock para ofrecer y el mensaje listo (Contactos → Campañas).' : n >= 48 ? 'La revisión de los 30 días sugiere los accesorios que el cliente no compró (asesoría, sin descuentos).' : n >= 47 ? 'Cada negociación tiene su lista de productos (desde Bsale o a mano) con precios, costo, ganancia y margen; el Cerebro también los puede agregar.' : n >= 46 ? 'Los contactos internos (Blackline Servicio Técnico, el equipo) ya no generan tareas, negociaciones ni «espera respuesta».' : n >= 45 ? 'El Cerebro responde más rápido (busca en varias fuentes a la vez y tiene un tope de tiempo) y no deja a la app esperando tanto.' : n >= 44 ? 'El Cerebro confirma en el catálogo de Andes Industrial si un repuesto Shimano o Continental existe en el distribuidor.' : n >= 43 ? 'El Cerebro entiende mejor el ciclismo (Di2, AXS, modelos) y busca opciones de compra cuando una tarea es conseguir un repuesto.' : n >= 42 ? 'Proveedores fuera del pipeline (el agente ya no les abre negociaciones) y el Cerebro puede agregar contactos nuevos cuando le dictas.' : n >= 41 ? 'Empezar de cero: la fecha de inicio se guarda en el script y la ven todos los equipos (Admin y Piso de venta).' : n >= 40 ? 'Ahora hay dos cuentas con contraseña: Admin (todo, como siempre) y Piso de venta (parte en un Hoy nuevo, sin cifras de la tienda). Créalas en ⚙️ Ajustes → Usuarios.' : n >= 39 ? 'La app ahora tiene un solo Cerebro con 9 skills (en vez de agentes sueltos): mira qué hace solo, cuánto gasta y paúsalo en la pestaña Cerebro.' : n >= 37 ? 'Las tareas automáticas ya no bloquean la app (por ejemplo, la lectura de ventas de Bsale).' : n >= 36 ? 'Cuando un cliente con negociación abierta compra en Bsale, la app te propone marcarla como ganada.' : n >= 35 ? 'Ventas del mes igual que en Bsale (solo boletas y facturas, menos notas de crédito) y noticias con foto de portada.' : n >= 34 ? 'Meta y gráfico de ventas del mes en el Inicio, con el avance diario desde Bsale.' : n >= 33 ? 'Une sola las negociaciones duplicadas de una venta ganada.' : n >= 32 ? 'Etapas después del pago: seguimiento, entrega y postventa.' : n >= 31 ? 'Venta perdida: cierra tareas, eventos y la idea de respuesta del Cerebro.' : 'Funciones nuevas para el Organizador.';
+  return n >= 57 ? 'Aviso cuando la hoja Tareas se llena y botón para liberar espacio (las hechas pasan a «Tareas archivadas»).' : n >= 56 ? 'Tu día limpia solo lo que no necesita de ti (tareas repetidas, viejas o de contactos cerrados) y se adapta al tiempo que tienes.' : n >= 55 ? 'Tu día renovado: una tarjeta por cliente, el Cerebro ejecuta lo que escribes en «¿Qué pasó?», silenciar contactos y el equipo y proveedores fuera de Hoy.' : n >= 54 ? 'La app abre más rápido: carga todo en una sola consulta al script en vez de siete.' : n >= 53 ? 'El Estudio investiga en la web (lanzamiento, prensa y ficha oficial) y escribe con el modelo experto; cada lámina recibe la foto oficial que corresponde.' : n >= 52 ? 'Redes renovado: Instagram en vivo con tus fotos reales, y el Estudio investiga la ficha oficial, las fotos del modelo y la prensa antes de crear una pieza.' : n >= 51 ? 'Noticias con su foto y link original.' : n >= 50 ? 'Guardar notas y mover negociaciones es más rápido: el script actualiza solo el contacto afectado.' : n >= 49 ? 'Recompra de consumibles: la app detecta quién debería cambiar pastillas, cadena o cubiertas según sus compras en Bsale, con el stock para ofrecer y el mensaje listo (Contactos → Campañas).' : n >= 48 ? 'La revisión de los 30 días sugiere los accesorios que el cliente no compró (asesoría, sin descuentos).' : n >= 47 ? 'Cada negociación tiene su lista de productos (desde Bsale o a mano) con precios, costo, ganancia y margen; el Cerebro también los puede agregar.' : n >= 46 ? 'Los contactos internos (Blackline Servicio Técnico, el equipo) ya no generan tareas, negociaciones ni «espera respuesta».' : n >= 45 ? 'El Cerebro responde más rápido (busca en varias fuentes a la vez y tiene un tope de tiempo) y no deja a la app esperando tanto.' : n >= 44 ? 'El Cerebro confirma en el catálogo de Andes Industrial si un repuesto Shimano o Continental existe en el distribuidor.' : n >= 43 ? 'El Cerebro entiende mejor el ciclismo (Di2, AXS, modelos) y busca opciones de compra cuando una tarea es conseguir un repuesto.' : n >= 42 ? 'Proveedores fuera del pipeline (el agente ya no les abre negociaciones) y el Cerebro puede agregar contactos nuevos cuando le dictas.' : n >= 41 ? 'Empezar de cero: la fecha de inicio se guarda en el script y la ven todos los equipos (Admin y Piso de venta).' : n >= 40 ? 'Ahora hay dos cuentas con contraseña: Admin (todo, como siempre) y Piso de venta (parte en un Hoy nuevo, sin cifras de la tienda). Créalas en ⚙️ Ajustes → Usuarios.' : n >= 39 ? 'La app ahora tiene un solo Cerebro con 9 skills (en vez de agentes sueltos): mira qué hace solo, cuánto gasta y paúsalo en la pestaña Cerebro.' : n >= 37 ? 'Las tareas automáticas ya no bloquean la app (por ejemplo, la lectura de ventas de Bsale).' : n >= 36 ? 'Cuando un cliente con negociación abierta compra en Bsale, la app te propone marcarla como ganada.' : n >= 35 ? 'Ventas del mes igual que en Bsale (solo boletas y facturas, menos notas de crédito) y noticias con foto de portada.' : n >= 34 ? 'Meta y gráfico de ventas del mes en el Inicio, con el avance diario desde Bsale.' : n >= 33 ? 'Une sola las negociaciones duplicadas de una venta ganada.' : n >= 32 ? 'Etapas después del pago: seguimiento, entrega y postventa.' : n >= 31 ? 'Venta perdida: cierra tareas, eventos y la idea de respuesta del Cerebro.' : 'Funciones nuevas para el Organizador.';
 }
 
 /* ---------- Ventas del mes: avance diario acumulado contra el mes anterior y la meta ---------- */
@@ -7375,8 +7390,8 @@ function openActividad(n){
 }
 // Sub-ventana: definir el próximo paso (con tarea y recordatorio en el calendario).
 function openProximo(n, sug){
-  const h = hoy(), e = ETAPAS[Math.max(0, etapaIdx(n.etapa))];
-  const txt = sug ? sug.t : (n.proxima || e.sig || ''), fecha = sug ? addDays(h, sug.d) : (n.fechaProx || addDays(h, e.sd || 1));
+  const h = hoy(), e = ETAPAS[Math.max(0, etapaIdx(n.etapa))], post = { Ganada: ['📦 Coordinar la entrega', 1], Entregada: ['📞 Llamar: ¿cómo le va con su compra?', 7], Postventa: ['🔧 Revisión de los 30 días', 7] }[n.etapa];
+  const txt = sug ? sug.t : (n.proxima || (post ? post[0] : e.sig) || ''), fecha = sug ? addDays(h, sug.d) : (n.fechaProx || addDays(h, post ? post[1] : (e.sd || 1)));
   const m = modal(sug ? 'Nueva etapa: ' + esc(n.etapa) + ' · ¿próximo paso?' : 'Próximo paso', '<div class="hint" style="margin-top:0">' + esc(n.titulo) + (sug ? ' · Te sugiero el paso típico de esta etapa; cámbialo si quieres.' : '') + '</div>' +
     '<label class="l">¿Qué vas a hacer?</label><input type="text" id="px_t" value="' + esc(txt) + '" placeholder="Ej.: Llamar para agendar test ride">' +
     '<label class="l">¿Cuándo?</label><div class="row"><input type="date" id="px_f" value="' + esc(fecha) + '" style="flex:1"><div class="choice" style="flex:none">' + [['Hoy', 0], ['Mañana', 1], ['+3', 3], ['+7', 7]].map(x => '<button data-pd="' + x[1] + '">' + x[0] + '</button>').join('') + '</div></div>' +
@@ -7385,15 +7400,16 @@ function openProximo(n, sug){
   m.el.querySelectorAll('[data-pd]').forEach(b => b.onclick = () => { m.el.querySelector('#px_f').value = addDays(h, +b.dataset.pd); });
   const no = m.el.querySelector('#px_no'); if (no) no.onclick = m.cerrar;
   setTimeout(() => { const x = m.el.querySelector('#px_t'); x.focus(); x.select(); }, 80);
-  m.el.querySelector('#px_ok').onclick = async () => {
-    const t = m.el.querySelector('#px_t').value.trim(), f = m.el.querySelector('#px_f').value; if (!t){ toast('Escribe el próximo paso'); return; }
-    m.el.querySelector('#px_ok').disabled = true;
-    try {
-      await apiX('negocio', { negocio: { id: n.id, proxima: t, fechaProx: f } });
-      if (m.el.querySelector('#px_k').checked) await api('add', { tarea: { tarea: '🤝 ' + t + ' – ' + n.titulo, area: 'Trabajo', categoria: (S.data.config.categorias.find(c => c.nombre === 'Ventas') || {}).nombre || '', proyecto: '', limite: f || h, urgente: 'No', importante: 'Sí', tamano: 'Pequeña', notas: negTag(n), estado: 'Pendiente' } });
-      m.cerrar(); toast('➡️ Próximo paso guardado'); await loadNeg(true); if (m.el.querySelector('#px_k').checked) S.mutado = true;
-      refrescarNeg(negociosTodos().find(x => x.id === n.id));
-    } catch(err){ m.el.querySelector('#px_ok').disabled = false; toast('No se pudo guardar: ' + err.message); }
+  // Se ve al instante y se guarda detrás. La tarea va aparte: si no se puede crear (por ejemplo, la hoja Tareas está llena),
+  // el próximo paso igual queda guardado y te avisa con el motivo exacto.
+  m.el.querySelector('#px_ok').onclick = () => {
+    const t = m.el.querySelector('#px_t').value.trim(), f = m.el.querySelector('#px_f').value, conTarea = m.el.querySelector('#px_k').checked; if (!t){ toast('Escribe el próximo paso'); return; }
+    const ant = { proxima: n.proxima, fechaProx: n.fechaProx };
+    guardarFondo({ aplicar: () => { n.proxima = t; n.fechaProx = f; }, guardar: () => apiX('negocio', { negocio: { id: n.id, proxima: t, fechaProx: f } }), deshacer: () => Object.assign(n, ant), error: 'No se guardó el próximo paso de «' + n.titulo + '»', recargar: { neg: 1 } });
+    if (conTarea) guardarFondo({ guardar: () => api('add', { tarea: { tarea: '🤝 ' + t + ' – ' + n.titulo, area: 'Trabajo', categoria: (S.data.config.categorias.find(c => c.nombre === 'Ventas') || {}).nombre || '', proyecto: '', limite: f || h, urgente: 'No', importante: 'Sí', tamano: 'Pequeña', notas: negTag(n), estado: 'Pendiente' } }).then(() => { S.mutado = true; }),
+      error: 'El próximo paso quedó guardado, pero no se pudo crear la tarea', recargar: { state: 1 } });
+    m.cerrar(); toast('➡️ Próximo paso guardado' + (conTarea ? ' · tarea en el calendario' : ''));
+    refrescarNeg(n);
   };
 }
 function refrescarNeg(n){ if ($('#layer').innerHTML && n && $('#ng_root') && $('#ng_root').dataset.id === n.id) openNegocio(n); else render(); }
@@ -9757,7 +9773,7 @@ function showSettings(){
     '<div class="card"><b>🧹 Empezar de cero</b><div class="hint">' + (inicioApp() ? 'Partiste de cero el ' + esc(fmtLong(inicioApp())) + '. ' : '') + 'Archiva las tareas viejas, archiva los negocios chicos o sin movimiento y deja como al día los mensajes anteriores. Antes de hacer nada te muestra la lista para que elijas.</div><div class="btns"><button class="btn sec" id="s_rein">Revisar qué se limpia</button></div></div>' +
     (S.ext && !S.ext.waHist && extNivel() >= 24 ? '<div class="card"><b>💬 Historial de WhatsApp</b><div class="hint">Todavía no llega el historial. Al conectar el número con «compartir historial», Meta lo envía por partes durante las primeras 24 horas y aquí verás el avance.</div></div>' : '') +
     (S.ext && S.ext.waHist ? '<div class="card"><b>💬 Historial de WhatsApp</b><div class="hint">' + (S.ext.waHist.rechazado ? 'No se compartió el historial al conectar el número (' + esc(S.ext.waHist.rechazado) + '). Para recibirlo hay que desconectar y volver a conectar el número aceptando «compartir historial».' : 'Recibidos ' + (S.ext.waHist.mensajes || 0).toLocaleString('es-CL') + ' mensajes de ' + (S.ext.waHist.chats || 0) + ' chats' + (S.ext.waHist.fases ? ' · avance por etapa: ' + Object.keys(S.ext.waHist.fases).sort().map(f => ['último día', 'hasta 90 días', 'hasta 180 días'][+f] + ' ' + S.ext.waHist.fases[f] + '%').join(', ') : S.ext.waHist.progreso != null ? ' · avance ' + S.ext.waHist.progreso + '%' : '') + ' · último envío ' + esc(haceTxt(String(S.ext.waHist.ultimo || '').slice(0, 10))) + '. El Cerebro arma el perfil de cada contacto en modo masivo (sin tareas ni negocios antiguos).') + '</div></div>' : '') +
-    (function(){ try { const u = LS.ultErr && JSON.parse(LS.ultErr); return u ? '<div class="card"><b>🐞 Último error</b><div class="hint">' + esc(u.f.replace('T', ' ') + ' · ' + u.tab + ' · ' + u.v) + '<br>' + esc(u.m) + '</div>' + (u.s ? '<pre class="err-st">' + esc(u.s) + '</pre>' : '') + '<div class="hint">Si se repite, mándale un pantallazo de esto a Claude.</div><div class="btns"><button class="btn sm sec" id="errBorrar">Borrar este registro</button></div></div>' : ''; } catch(e){ return ''; } })() + '<div class="card"><b>🔢 Versiones</b><div class="hint">App: ' + esc(APP_VER) + ' · Script: ' + (S.extInactivo ? 'funciones extra no activadas' : 'versión ' + esc((S.ext && S.ext.version) || '?') + ' (nivel ' + extNivel() + ')') + (extNivel() < NIVEL_ULTIMO ? ' · <b style="color:var(--bad-ink)">hay una versión nueva del script</b>: pega el Extras.gs nuevo y crea una Nueva versión de la implementación.' : ' · al día ✓') + '</div></div>' +
+    (function(){ try { const u = LS.ultErr && JSON.parse(LS.ultErr); return u ? '<div class="card"><b>🐞 Último error</b><div class="hint">' + esc(u.f.replace('T', ' ') + ' · ' + u.tab + ' · ' + u.v) + '<br>' + esc(u.m) + '</div>' + (u.s ? '<pre class="err-st">' + esc(u.s) + '</pre>' : '') + '<div class="hint">Si se repite, mándale un pantallazo de esto a Claude.</div><div class="btns"><button class="btn sm sec" id="errBorrar">Borrar este registro</button></div></div>' : ''; } catch(e){ return ''; } })() + (tareasCap() && !esPiso() ? '<div class="card"><b>🗂️ Espacio en la hoja Tareas</b><div class="hint">' + tareasCap().usadas + ' de ' + tareasCap().total + ' filas usadas (' + tareasCap().hechas + ' son tareas ya hechas) · ' + tareasCap().libres + ' libres.</div><div class="btns"><button class="btn sm sec" data-liberar="1">Liberar espacio</button></div></div>' : '') + '<div class="card"><b>🔢 Versiones</b><div class="hint">App: ' + esc(APP_VER) + ' · Script: ' + (S.extInactivo ? 'funciones extra no activadas' : 'versión ' + esc((S.ext && S.ext.version) || '?') + ' (nivel ' + extNivel() + ')') + (extNivel() < NIVEL_ULTIMO ? ' · <b style="color:var(--bad-ink)">hay una versión nueva del script</b>: pega el Extras.gs nuevo y crea una Nueva versión de la implementación.' : ' · al día ✓') + '</div></div>' +
     (deferredInstall ? '<div class="btns"><button class="btn" id="s_inst">📲 Instalar app en este dispositivo</button></div>' : '') +
     '<div class="card"><b>🧠 Cerebro y fuentes</b><div class="hint">' + (extNivel() >= 16 ? 'Activo ✓ Un solo cerebro con 9 skills: arma el plan del día a las 7:00, sigue a tus clientes, planifica tareas, busca compras y elige fotos. Su chat (botón ✨ o la tecla /) responde con tus datos.' : 'Actualiza el script para activar el plan del día, el chat del Cerebro, Specialized Chile, noticias y avisos.') + '</div><div class="btns" style="margin-top:8px"><button class="btn sm" id="s_cb">🧠 Abrir el Cerebro</button><button class="btn sm sec" id="s_gd">❓ Guía de la app</button><button class="btn sm sec" id="s_fz">📊 Fuentes de información</button>' + (extNivel() >= 16 ? '<button class="btn sm sec" id="s_av">📣 Avisos</button>' : '') + '</div></div>' +
     '<div class="card"><b>✨ Funciones extra</b> <span class="hint">(calendario, correo, subtareas, repetir)</span><div class="hint">' + esc(gTxt) + '</div><button class="btn sm sec" id="s_g">' + (g && !g.inactivo ? 'Ver sugerencias' : 'Cómo activarlas') + '</button></div>' +
