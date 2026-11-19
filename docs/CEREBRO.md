@@ -591,3 +591,8 @@ Revisión con tres análisis en paralelo (diseño y uso, eficiencia y errores, u
 
 ## v98 · Cerebro en la cuenta Piso de venta (script nivel 58)
 - El script ocultaba a Piso toda la información del agente, incluido si la clave existe; la app de Piso creía que faltaba ANTHROPIC_API_KEY y bloqueaba el Cerebro. Ahora el script le dice solo «activo sí/no» (sin modelo ni actividad) y la app de Piso, aun sin ese dato, deja preguntar: si de verdad faltara la clave, el script lo responde.
+
+## v99 · Piso de venta sin restricciones de datos (script nivel 59)
+- Piso de venta ve y hace lo mismo que Admin: Inicio, Compras, Cerebro, ventas de la tienda, costos, márgenes, proveedores, montos de negociaciones, avisos y eliminar negociaciones. El Cerebro le responde todo (todas sus herramientas).
+- Solo queda reservado al Admin administrar la cuenta: claves y usuarios (`usuariosConf`), «Empezar de cero» (`inicio`) y «Liberar espacio» (`liberarTareas`). Piso conserva su Ajustes simple y su guía.
+- Código: `pisoLimitado()` (app) y `ex_filtrarPiso_` / `ex_toolsRol_` (script) quedan como puntos únicos por si se quisiera volver a limitar.

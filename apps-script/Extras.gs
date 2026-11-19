@@ -15,8 +15,8 @@
  * Para actualizar este archivo más adelante: reemplaza todo su contenido y repite los dos pasos anteriores.
  */
 
-const EX_VERSION = '2027-03-27';
-const EX_NIVEL = 58;      // la app lo usa para saber qué funciones tiene este script
+const EX_VERSION = '2027-04-03';
+const EX_NIVEL = 59;      // la app lo usa para saber qué funciones tiene este script
 const EX_HOJA = 'Tareas';
 const EX_PRIMERA = 4;
 const EX_ULTIMA = 400;
@@ -172,17 +172,13 @@ function ex_usuariosConf_(p) {
 }
 function ex_usuariosEstado_() { const u = ex_usuarios_(); return { ok: true, activos: !!u, piso: !!(u && u.piso), adminDesde: u && u.admin ? u.admin.f : '', pisoDesde: u && u.piso ? u.piso.f : '' }; }
 // Herramientas del Cerebro según la cuenta.
-function ex_toolsRol_(L) { return EX_ROL === 'piso' ? L.filter(function (t) { return EX_TOOLS_SOLO_ADMIN.indexOf(t.name) < 0; }) : L; }
+// Desde v99 Piso de venta usa todas las herramientas del Cerebro (costos, proveedores, ventas), igual que Admin.
+function ex_toolsRol_(L) { return L; }
+// Lo único reservado al Admin: administrar la cuenta.
+const EX_SOLO_ADMIN_OPS = ['usuariosConf', 'inicio', 'liberarTareas'];
 // Lo que el Piso de Venta no debe recibir aunque la consulta esté permitida.
-function ex_filtrarPiso_(op, r) {
-  if (!r || typeof r !== 'object') return r;
-  if (op === 'global') { delete r.compras; delete r.cerebro; delete r.fuentes; }
-  if (op === 'google') delete r.correos;
-  if (op === 'extras') { r.agente = { activo: !!(r.agente && r.agente.activo) }; delete r.waHist; }   // Piso: solo saber si el Cerebro está disponible (sin modelo ni actividad)
-  if (op === 'negocios' && r.metaVentas !== undefined) delete r.metaVentas;
-  if (op === 'negocios' && Array.isArray(r.negocios)) r.negocios.forEach(function (n) { (n.items || []).forEach(function (x) { delete x.costo; }); });   // costos: solo Admin
-  return r;
-}
+// Desde v99 Piso de venta ve lo mismo que Admin (ventas, costos, proveedores, Cerebro). Se deja la función por compatibilidad.
+function ex_filtrarPiso_(op, r) { return r; }
 
 // Puerta de entrada de la app (la llama WebApp). Revisa la sesión y los permisos, y luego ejecuta la consulta.
 function app_extra_(p) {
@@ -204,18 +200,13 @@ function app_extra_(p) {
     const partes = {}, pedir = (Array.isArray(p.partes) ? p.partes : ['extras', 'base', 'negocios', 'global', 'instagram', 'contenido', 'igEstrategia']).slice(0, 10);
     pedir.forEach(function (o) {
       if (['extras', 'base', 'negocios', 'global', 'instagram', 'contenido', 'igEstrategia', 'leadsCanal', 'bsaleVentas'].indexOf(o) < 0) return;
-      if (EX_ROL === 'piso' && EX_OPS_PISO.indexOf(o) < 0) { partes[o] = { ok: false, error: 'PERMISO' }; return; }
       try { let r = ex_ruta_({ op: o }); if (r && typeof r === 'object' && o === 'extras') { r.usuarios = !!u; r.rol = EX_ROL; } partes[o] = EX_ROL === 'piso' ? ex_filtrarPiso_(o, r) : r; }
       catch (e) { partes[o] = { ok: false, error: String(e && e.message || e).slice(0, 300) }; }
     });
     return { ok: true, partes: partes };
   }
   if (p.op === 'usuariosConf') { if (EX_ROL !== 'admin') return { ok: false, error: 'PERMISO: solo la cuenta Admin' }; return ex_usuariosConf_(p); }
-  if (EX_ROL === 'piso') {
-    const ok = EX_OPS_PISO.indexOf(p.op) >= 0 || (p.op === 'bsaleVentas' && p.cliente);   // compras de UN cliente (para atenderlo), no las ventas de la tienda
-    if (!ok) return { ok: false, error: 'PERMISO: esta función es solo para la cuenta Admin' };
-    if (p.op === 'avisos' && (p.guardar || p.borrar || p.archivar)) return { ok: false, error: 'PERMISO: los avisos los publica el Admin' };
-  }
+  if (EX_ROL === 'piso' && EX_SOLO_ADMIN_OPS.indexOf(p.op) >= 0) return { ok: false, error: 'PERMISO: esto solo lo hace la cuenta Admin (administrar la cuenta)' };
   const r = ex_ruta_(p);
   if (r && typeof r === 'object' && p.op === 'extras') { r.usuarios = !!u; r.rol = EX_ROL; }
   return EX_ROL === 'piso' ? ex_filtrarPiso_(p.op, r) : r;
@@ -832,7 +823,7 @@ function ex_guardarNegocio_(n) {
   if (n.items !== undefined) {
     const L = ex_itemsNeg_(n.items);
     // El Piso de venta no ve costos: al guardar se conservan los costos que ya tenían esos productos.
-    if (EX_ROL === 'piso') { const prev = ex_itemsNeg_(r[16]); L.forEach(function (x) { delete x.costo; const m = prev.filter(function (y) { return (x.sku && y.sku === x.sku) || ex_norm_(y.nombre) === ex_norm_(x.nombre); })[0]; if (m && m.costo !== undefined) x.costo = m.costo; }); }
+    if (false) { const prev = ex_itemsNeg_(r[16]); L.forEach(function (x) { delete x.costo; const m = prev.filter(function (y) { return (x.sku && y.sku === x.sku) || ex_norm_(y.nombre) === ex_norm_(x.nombre); })[0]; if (m && m.costo !== undefined) x.costo = m.costo; }); }
     r[16] = L.length ? JSON.stringify(L).slice(0, 45000) : '';
     if (n.valor === undefined && L.length) r[4] = ex_totalItems_(L);
   } else if (i < 0 && r[5] && !r[16]) {
@@ -4450,7 +4441,7 @@ function ex_copiloto_(p) {
   const t0 = Date.now();
   for (let paso = 0; paso < 7; paso++) {
     const cerrar = paso === 6 || Date.now() - t0 > 40000;
-    const j = ex_claudeMensajes_({ model: modelo, max_tokens: 3000, output_config: { effort: /haiku/.test(modelo) ? 'medium' : 'low' }, system: [{ type: 'text', text: EX_COP_SISTEMA + '\n\n' + ex_skillsIndice_() + (EX_ROL === 'piso' ? '\n\nCUENTA PISO DE VENTA: quien pregunta es un vendedor del equipo, no Gustavo. No entregues ventas totales de la tienda, metas, márgenes, costos de compra ni gasto; si lo piden, di que eso lo ve el Admin. Sí puedes dar precios de venta al público, stock y el historial de un cliente para atenderlo.' : ''), cache_control: { type: 'ephemeral' } }], tools: tools, tool_choice: { type: cerrar ? 'none' : 'auto' }, messages: messages });
+    const j = ex_claudeMensajes_({ model: modelo, max_tokens: 3000, output_config: { effort: /haiku/.test(modelo) ? 'medium' : 'low' }, system: [{ type: 'text', text: EX_COP_SISTEMA + '\n\n' + ex_skillsIndice_() + (EX_ROL === 'piso' ? '\n\nCUENTA PISO DE VENTA: quien pregunta puede ser un vendedor del equipo (no necesariamente Gustavo). Tiene acceso completo: puedes darle ventas, costos, márgenes, proveedores y todo lo que pida.' : ''), cache_control: { type: 'ephemeral' } }], tools: tools, tool_choice: { type: cerrar ? 'none' : 'auto' }, messages: messages });
     if (j.stop_reason === 'refusal') { texto = 'No puedo ayudar con eso.'; break; }
     messages.push({ role: 'assistant', content: j.content });
     texto = (j.content || []).filter(function (c) { return c.type === 'text'; }).map(function (c) { return c.text; }).join('\n').trim() || texto;

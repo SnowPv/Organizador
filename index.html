@@ -2129,7 +2129,7 @@ body.en-login > .wrap, body.en-login > nav.bottom, body.en-login > .fab, body.en
 .lg-btn{width:100%;justify-content:center;padding:13px;font-size:15.5px}
 .lg-foot{margin-top:14px;font-size:12px;color:var(--muted);line-height:1.45;text-align:center}
 /* Piso de venta: pestañas de gestión ocultas (el servidor igual bloquea sus datos) */
-body.piso nav.bottom [data-tab=inicio],body.piso nav.bottom [data-tab=compras],body.piso nav.bottom [data-tab=cerebro],body.piso nav.bottom .nb-ia{display:none!important}
+/* Desde v99 Piso ve todas las secciones (antes se ocultaban Inicio, Compras y Cerebro). */
 /* ===== Hoy del Piso de venta ===== */
 .pv-prev{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:#FFF8E6;border:1px solid #F5D98B;color:#7A5200;border-radius:14px;padding:10px 14px;margin-bottom:14px;font-size:13.5px}.pv-prev .btn{margin-left:auto}
 .pv-hero{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:20px;align-items:center;background:radial-gradient(520px 260px at 100% 0%,rgba(18,160,107,.16),rgba(18,160,107,0) 70%),linear-gradient(120deg,#FFFFFF 0%,#F3F8FE 100%);border:var(--bd-card);box-shadow:var(--sh-card);border-radius:24px;padding:22px 24px}
@@ -2716,7 +2716,7 @@ async function apiX(op, extra){
 // Nivel 2 del script Extras: recordatorios y base de contactos. Nivel 3: la base solo usa contacto@blacklinechile.cl. Nivel 4: eventos de varios días.
 function enCurso(k, fn){ S._p = S._p || {}; if (S._p[k]) return S._p[k]; const pr = Promise.resolve().then(fn).finally(() => { if (S._p[k] === pr) delete S._p[k]; }); S._p[k] = pr; return pr; }
 function extNivel(){ return S.extInactivo ? 0 : (S.ext && S.ext.nivel) || 1; }
-const APP_VER = 'v98', NIVEL_ULTIMO = 58;
+const APP_VER = 'v99', NIVEL_ULTIMO = 59;
 function necesitaActualizar(){ return !S.extInactivo && S.ext && extNivel() < NIVEL_ULTIMO; }
 let sincTimer = null;
 // Después de cambiar tareas, el script actualiza los recordatorios del calendario (en segundo plano).
@@ -2836,7 +2836,7 @@ async function load(){
   loadGoogle(false);
 }
 async function loadArranque(){
-  const quiere = ['extras', 'base', 'negocios', 'global', 'contenido'].concat(igActivo() ? ['instagram'] : []).concat(extNivel() >= 13 ? ['igEstrategia', 'leadsCanal'] : []).concat(!esPiso() && bsvListo() ? ['bsaleVentas'] : []);
+  const quiere = ['extras', 'base', 'negocios', 'global', 'contenido'].concat(igActivo() ? ['instagram'] : []).concat(extNivel() >= 13 ? ['igEstrategia', 'leadsCanal'] : []).concat(!pisoLimitado() && bsvListo() ? ['bsaleVentas'] : []);
   const w0 = S.wseq, r = await apiX('arranque', { partes: quiere }), P = r.partes || {}, ok = x => x && typeof x === 'object' && x.ok !== false, t = Date.now();
   if (!ok(P.extras)) return false;
   S.ext = P.extras; S.extInactivo = false; lsSet('extCache', S.ext); applyExtras();
@@ -3469,7 +3469,7 @@ function noticiasHome(){
 // Texto corto de lo que trae la versión nueva del script (el banner de actualización del Inicio).
 function novedadScript(){
   const n = extNivel();
-  return n >= 58 ? 'El Cerebro funciona también en la cuenta Piso de venta.' : n >= 57 ? 'Aviso cuando la hoja Tareas se llena y botón para liberar espacio (las hechas pasan a «Tareas archivadas»).' : n >= 56 ? 'Tu día limpia solo lo que no necesita de ti (tareas repetidas, viejas o de contactos cerrados) y se adapta al tiempo que tienes.' : n >= 55 ? 'Tu día renovado: una tarjeta por cliente, el Cerebro ejecuta lo que escribes en «¿Qué pasó?», silenciar contactos y el equipo y proveedores fuera de Hoy.' : n >= 54 ? 'La app abre más rápido: carga todo en una sola consulta al script en vez de siete.' : n >= 53 ? 'El Estudio investiga en la web (lanzamiento, prensa y ficha oficial) y escribe con el modelo experto; cada lámina recibe la foto oficial que corresponde.' : n >= 52 ? 'Redes renovado: Instagram en vivo con tus fotos reales, y el Estudio investiga la ficha oficial, las fotos del modelo y la prensa antes de crear una pieza.' : n >= 51 ? 'Noticias con su foto y link original.' : n >= 50 ? 'Guardar notas y mover negociaciones es más rápido: el script actualiza solo el contacto afectado.' : n >= 49 ? 'Recompra de consumibles: la app detecta quién debería cambiar pastillas, cadena o cubiertas según sus compras en Bsale, con el stock para ofrecer y el mensaje listo (Contactos → Campañas).' : n >= 48 ? 'La revisión de los 30 días sugiere los accesorios que el cliente no compró (asesoría, sin descuentos).' : n >= 47 ? 'Cada negociación tiene su lista de productos (desde Bsale o a mano) con precios, costo, ganancia y margen; el Cerebro también los puede agregar.' : n >= 46 ? 'Los contactos internos (Blackline Servicio Técnico, el equipo) ya no generan tareas, negociaciones ni «espera respuesta».' : n >= 45 ? 'El Cerebro responde más rápido (busca en varias fuentes a la vez y tiene un tope de tiempo) y no deja a la app esperando tanto.' : n >= 44 ? 'El Cerebro confirma en el catálogo de Andes Industrial si un repuesto Shimano o Continental existe en el distribuidor.' : n >= 43 ? 'El Cerebro entiende mejor el ciclismo (Di2, AXS, modelos) y busca opciones de compra cuando una tarea es conseguir un repuesto.' : n >= 42 ? 'Proveedores fuera del pipeline (el agente ya no les abre negociaciones) y el Cerebro puede agregar contactos nuevos cuando le dictas.' : n >= 41 ? 'Empezar de cero: la fecha de inicio se guarda en el script y la ven todos los equipos (Admin y Piso de venta).' : n >= 40 ? 'Ahora hay dos cuentas con contraseña: Admin (todo, como siempre) y Piso de venta (parte en un Hoy nuevo, sin cifras de la tienda). Créalas en ⚙️ Ajustes → Usuarios.' : n >= 39 ? 'La app ahora tiene un solo Cerebro con 9 skills (en vez de agentes sueltos): mira qué hace solo, cuánto gasta y paúsalo en la pestaña Cerebro.' : n >= 37 ? 'Las tareas automáticas ya no bloquean la app (por ejemplo, la lectura de ventas de Bsale).' : n >= 36 ? 'Cuando un cliente con negociación abierta compra en Bsale, la app te propone marcarla como ganada.' : n >= 35 ? 'Ventas del mes igual que en Bsale (solo boletas y facturas, menos notas de crédito) y noticias con foto de portada.' : n >= 34 ? 'Meta y gráfico de ventas del mes en el Inicio, con el avance diario desde Bsale.' : n >= 33 ? 'Une sola las negociaciones duplicadas de una venta ganada.' : n >= 32 ? 'Etapas después del pago: seguimiento, entrega y postventa.' : n >= 31 ? 'Venta perdida: cierra tareas, eventos y la idea de respuesta del Cerebro.' : 'Funciones nuevas para el Organizador.';
+  return n >= 59 ? 'Piso de venta ahora ve todo: ventas, costos, proveedores, Inicio, Compras y Cerebro.' : n >= 58 ? 'El Cerebro funciona también en la cuenta Piso de venta.' : n >= 57 ? 'Aviso cuando la hoja Tareas se llena y botón para liberar espacio (las hechas pasan a «Tareas archivadas»).' : n >= 56 ? 'Tu día limpia solo lo que no necesita de ti (tareas repetidas, viejas o de contactos cerrados) y se adapta al tiempo que tienes.' : n >= 55 ? 'Tu día renovado: una tarjeta por cliente, el Cerebro ejecuta lo que escribes en «¿Qué pasó?», silenciar contactos y el equipo y proveedores fuera de Hoy.' : n >= 54 ? 'La app abre más rápido: carga todo en una sola consulta al script en vez de siete.' : n >= 53 ? 'El Estudio investiga en la web (lanzamiento, prensa y ficha oficial) y escribe con el modelo experto; cada lámina recibe la foto oficial que corresponde.' : n >= 52 ? 'Redes renovado: Instagram en vivo con tus fotos reales, y el Estudio investiga la ficha oficial, las fotos del modelo y la prensa antes de crear una pieza.' : n >= 51 ? 'Noticias con su foto y link original.' : n >= 50 ? 'Guardar notas y mover negociaciones es más rápido: el script actualiza solo el contacto afectado.' : n >= 49 ? 'Recompra de consumibles: la app detecta quién debería cambiar pastillas, cadena o cubiertas según sus compras en Bsale, con el stock para ofrecer y el mensaje listo (Contactos → Campañas).' : n >= 48 ? 'La revisión de los 30 días sugiere los accesorios que el cliente no compró (asesoría, sin descuentos).' : n >= 47 ? 'Cada negociación tiene su lista de productos (desde Bsale o a mano) con precios, costo, ganancia y margen; el Cerebro también los puede agregar.' : n >= 46 ? 'Los contactos internos (Blackline Servicio Técnico, el equipo) ya no generan tareas, negociaciones ni «espera respuesta».' : n >= 45 ? 'El Cerebro responde más rápido (busca en varias fuentes a la vez y tiene un tope de tiempo) y no deja a la app esperando tanto.' : n >= 44 ? 'El Cerebro confirma en el catálogo de Andes Industrial si un repuesto Shimano o Continental existe en el distribuidor.' : n >= 43 ? 'El Cerebro entiende mejor el ciclismo (Di2, AXS, modelos) y busca opciones de compra cuando una tarea es conseguir un repuesto.' : n >= 42 ? 'Proveedores fuera del pipeline (el agente ya no les abre negociaciones) y el Cerebro puede agregar contactos nuevos cuando le dictas.' : n >= 41 ? 'Empezar de cero: la fecha de inicio se guarda en el script y la ven todos los equipos (Admin y Piso de venta).' : n >= 40 ? 'Ahora hay dos cuentas con contraseña: Admin (todo, como siempre) y Piso de venta (parte en un Hoy nuevo, sin cifras de la tienda). Créalas en ⚙️ Ajustes → Usuarios.' : n >= 39 ? 'La app ahora tiene un solo Cerebro con 9 skills (en vez de agentes sueltos): mira qué hace solo, cuánto gasta y paúsalo en la pestaña Cerebro.' : n >= 37 ? 'Las tareas automáticas ya no bloquean la app (por ejemplo, la lectura de ventas de Bsale).' : n >= 36 ? 'Cuando un cliente con negociación abierta compra en Bsale, la app te propone marcarla como ganada.' : n >= 35 ? 'Ventas del mes igual que en Bsale (solo boletas y facturas, menos notas de crédito) y noticias con foto de portada.' : n >= 34 ? 'Meta y gráfico de ventas del mes en el Inicio, con el avance diario desde Bsale.' : n >= 33 ? 'Une sola las negociaciones duplicadas de una venta ganada.' : n >= 32 ? 'Etapas después del pago: seguimiento, entrega y postventa.' : n >= 31 ? 'Venta perdida: cierra tareas, eventos y la idea de respuesta del Cerebro.' : 'Funciones nuevas para el Organizador.';
 }
 
 /* ---------- Ventas del mes: avance diario acumulado contra el mes anterior y la meta ---------- */
@@ -3566,7 +3566,7 @@ function editarMetaVentas(){
 }
 // Avisos como post-it: lo importante del equipo, siempre a la vista.
 function postitHTML(){
-  const L = avisos().slice(0, 4), puede = extNivel() >= 16 && !esPiso();
+  const L = avisos().slice(0, 4), puede = extNivel() >= 16 && !pisoLimitado();
   return '<div class="hm a-avisos hm-postit"><span class="pi-tape"></span><div class="pi-h">' + icon('flag') + 'Avisos de la tienda' + (puede ? '<button class="pi-add" id="avNew" aria-label="Nuevo aviso">＋</button>' : '') + '</div>' +
     (L.length ? '<div class="pi-n">' + L.map(a => { const f = a.fecha || '', im = a.importancia || 'normal'; return '<button class="pi-it ' + im + '" data-av="' + esc(a.id) + '"><span class="pi-d">' + (f ? '<b>' + pd(f).getDate() + '</b>' + MESES[pd(f).getMonth()] : '•') + '</span><span class="pi-t"><b>' + esc(a.titulo) + '</b>' + (a.detalle ? '<small>' + esc(a.detalle) + '</small>' : '') + '</span></button>'; }).join('') + '</div>' +
       (avisos().length > 4 ? '<button class="pi-more" id="avAll">Ver los ' + avisos().length + ' avisos</button>' : '')
@@ -6094,7 +6094,10 @@ const TABS_SOLO_ADMIN = ['inicio', 'compras', 'cerebro'];
 const LS_CONSERVAR = ['url', 'token', 'ui', 'inicio', 'reinUmbral', 'reinDias', 'usrActivos', 'rolUlt', 'guiaVista', 'guiaVistaP', 'waTienda', 'vista', 'extOff', 'rutinaItems', 'rutina', 'respondidos', 'respHoy'];
 function rol(){ return LS.rol === 'piso' ? 'piso' : 'admin'; }
 function esPiso(){ return rol() === 'piso'; }
-function tabPermitida(t){ return !esPiso() || TABS_SOLO_ADMIN.indexOf(t) < 0; }
+// Desde v99 Piso de venta ve y hace lo mismo que Admin; solo administrar la cuenta (claves, usuarios, empezar de cero) es del Admin.
+// esPiso() sigue sirviendo para el saludo, la guía y su Ajustes simple; pisoLimitado() es lo que antes escondía datos.
+function pisoLimitado(){ return false; }
+function tabPermitida(t){ return !pisoLimitado() || TABS_SOLO_ADMIN.indexOf(t) < 0; }
 function limpiarDatosLocales(){ try { Object.keys(LS).forEach(k => { if (LS_CONSERVAR.indexOf(k) < 0) LS.removeItem(k); }); } catch(e){} }
 function sesionVencida(){
   if (!LS.ses && $('#login')) return;
@@ -6285,7 +6288,7 @@ function viewHoyPiso(){
   v.querySelectorAll('[data-ngo]').forEach(b => b.onclick = () => openDeal(D.negs[+b.dataset.ngo].n));
   v.querySelectorAll('[data-etapa]').forEach(b => b.onclick = () => { S.nf = 'abiertas'; S.nv = 'lista'; S.nq = ''; S.netapa = b.dataset.etapa; go('negocios'); });
   v.querySelectorAll('[data-hct]').forEach(b => b.onclick = () => openIdea((S.cont || []).find(x => x.id === b.dataset.hct)));
-  v.querySelectorAll('.pv-pi [data-av]').forEach(b => b.onclick = () => { const a = avisos().find(x => x.id === b.dataset.av); if (!a) return; if (esPiso()) modal('📌 ' + esc(a.titulo), '<p style="line-height:1.55;margin:0">' + esc(a.detalle || '') + '</p>' + (a.fecha ? '<div class="hint" style="margin-top:10px">' + esc(fmtLong(a.fecha)) + '</div>' : '')); else avisoForm(a); });
+  v.querySelectorAll('.pv-pi [data-av]').forEach(b => b.onclick = () => { const a = avisos().find(x => x.id === b.dataset.av); if (!a) return; if (pisoLimitado()) modal('📌 ' + esc(a.titulo), '<p style="line-height:1.55;margin:0">' + esc(a.detalle || '') + '</p>' + (a.fecha ? '<div class="hint" style="margin-top:10px">' + esc(fmtLong(a.fecha)) + '</div>' : '')); else avisoForm(a); });
   bindExterno(v);
   const f = (id, fn) => { const b = $('#' + id); if (b) b.onclick = fn; };
   f('pvDia', () => modoEnfoque()); f('pvAdd', () => openAdd({ limite: h })); f('pvTkAdd', () => openAdd({ limite: h })); f('pvCop', () => copiloto()); f('pvGuia', () => openGuia());
@@ -7245,7 +7248,7 @@ function itemsTot(L){
 }
 const numCL = v => (+v || 0).toLocaleString('es-CL');
 function itemsNegHTML(n){
-  const L = n.items || [], T = itemsTot(L), adm = !esPiso();
+  const L = n.items || [], T = itemsTot(L), adm = !pisoLimitado();
   const fila = (x, i) => '<div class="itn-r" data-i="' + i + '">' +
     '<div class="itn-a"><input class="itn-nm" data-f="nombre" value="' + esc(x.nombre) + '" placeholder="Producto (ej.: Bolso EVOC Frame)" enterkeyhint="done"><button class="itn-o ' + esc(x.origen || 'manual') + '" data-ed="' + i + '" title="Editar detalles">' + (ORIG_TX[x.origen] || 'Manual') + (x.sku ? ' · ' + esc(x.sku) : '') + (x.stock != null ? ' · stock ' + x.stock : '') + (adm && x.costo != null && x.costo !== '' ? ' · costo ' + clpCorto(x.costo) : '') + ' ✎</button></div>' +
     '<div class="itn-c"><button data-m="-1" aria-label="Menos">−</button><span>' + x.cant + '</span><button data-m="1" aria-label="Más">+</button></div>' +
@@ -7253,7 +7256,7 @@ function itemsNegHTML(n){
     '<b class="itn-st">' + clp((+x.cant || 0) * (+x.precio || 0)) + '</b><button class="itn-x" data-x aria-label="Quitar">✕</button></div>';
   return '<div class="itn" id="itn"><div class="itn-h"><b>' + icon('box') + ' Productos que se negocian</b><span class="itn-s" id="itnS"></span><div class="itn-b">' + (bsaleActivo() ? '<button class="btn sm sec" id="itnB">' + icon('search') + ' De Bsale</button>' : '') + '<button class="btn sm sec" id="itnM">＋ A mano</button></div></div>' +
     '<div class="itn-q" id="itnQ" hidden><input type="search" id="itnQi" placeholder="Buscar en Bsale: modelo, talla o SKU" autocomplete="off" data-enter="no"><div id="itnR" class="itn-res"></div></div>' +
-    (L.length ? '<div class="itn-l">' + L.map(fila).join('') + '</div>' : '<div class="itn-v">Sin productos todavía. Agrégalos desde Bsale o a mano, o díctaselos al Cerebro («agrega a esta negociación dos bolsos EVOC»).' + (n.producto ? '<div><button class="btn sm" id="itnP">＋ Agregar «' + esc(String(n.producto).slice(0, 60)) + '»' + (n.valor && !esPiso() ? ' · ' + clp(n.valor) : '') + '</button></div>' : '') + '</div>') +
+    (L.length ? '<div class="itn-l">' + L.map(fila).join('') + '</div>' : '<div class="itn-v">Sin productos todavía. Agrégalos desde Bsale o a mano, o díctaselos al Cerebro («agrega a esta negociación dos bolsos EVOC»).' + (n.producto ? '<div><button class="btn sm" id="itnP">＋ Agregar «' + esc(String(n.producto).slice(0, 60)) + '»' + (n.valor && !pisoLimitado() ? ' · ' + clp(n.valor) : '') + '</button></div>' : '') + '</div>') +
     (L.length ? '<div class="itn-t"><div><small>Total</small><b>' + clp(T.t) + '</b></div>' + (adm ? '<div><small>Costo</small><b>' + (T.conCosto ? clp(T.costo) : '–') + '</b></div><div><small>Ganancia</small><b class="' + (T.ganancia < 0 ? 'neg' : 'pos') + '">' + (T.conCosto ? clp(Math.round(T.ganancia)) : '–') + '</b></div><div><small>Margen</small><b>' + (T.margen != null ? Math.round(T.margen * 100) + '%' : '–') + '</b></div>' : '') + '</div>' +
       (adm ? '<div class="itn-n">' + (T.faltan ? T.faltan + (T.faltan === 1 ? ' producto sin costo' : ' productos sin costo') + ' (toca ✎ para ponerlo). ' : '') + 'Ganancia y margen sobre el precio sin IVA.</div>' : '') : '') + '</div>';
 }
@@ -7268,7 +7271,7 @@ function bindItemsNeg(n){
       const ok = L.filter(x => String(x.nombre || '').trim());
       const tot = itemsTot(ok).t;
       try {
-        await apiX('negocio', { negocio: Object.assign({ id: n.id, items: ok.map(x => { const y = Object.assign({}, x); delete y.stock; if (esPiso()) delete y.costo; return y; }) }, ok.length ? { valor: tot } : {}) });
+        await apiX('negocio', { negocio: Object.assign({ id: n.id, items: ok.map(x => { const y = Object.assign({}, x); delete y.stock; if (pisoLimitado()) delete y.costo; return y; }) }, ok.length ? { valor: tot } : {}) });
         if (ok.length) n.valor = tot; estado('✓ Guardado'); loadNeg(true).catch(() => {});
       } catch(e){ estado(''); toast('No se pudo guardar: ' + e.message); }
     }, 500);
@@ -7296,15 +7299,15 @@ function bindItemsNeg(n){
     res.innerHTML = '<div class="hint"><span class="spin"></span>Buscando en Bsale…</div>';
     tq = setTimeout(async () => {
       try {
-        ult = (await apiX('bsale', { q: t, max: 8, costos: !esPiso() })).items || [];
-        res.innerHTML = ult.length ? ult.map((v, k) => '<button class="itn-rb" data-k="' + k + '"><span class="grow"><b>' + esc(v.producto) + (v.variante ? ' · ' + esc(v.variante) : '') + '</b><small>' + (v.sku ? esc(v.sku) + ' · ' : '') + (v.total > 0 ? v.total + ' en stock' : 'sin stock') + (!esPiso() && v.costo ? ' · costo ' + clpCorto(v.costo) : '') + '</small></span><b>' + (v.precio ? clp(v.precio) : '–') + '</b></button>').join('') : '<div class="hint">No está en Bsale. Agrégalo «a mano» (por ejemplo como encargo).</div>';
+        ult = (await apiX('bsale', { q: t, max: 8, costos: !pisoLimitado() })).items || [];
+        res.innerHTML = ult.length ? ult.map((v, k) => '<button class="itn-rb" data-k="' + k + '"><span class="grow"><b>' + esc(v.producto) + (v.variante ? ' · ' + esc(v.variante) : '') + '</b><small>' + (v.sku ? esc(v.sku) + ' · ' : '') + (v.total > 0 ? v.total + ' en stock' : 'sin stock') + (!pisoLimitado() && v.costo ? ' · costo ' + clpCorto(v.costo) : '') + '</small></span><b>' + (v.precio ? clp(v.precio) : '–') + '</b></button>').join('') : '<div class="hint">No está en Bsale. Agrégalo «a mano» (por ejemplo como encargo).</div>';
         res.querySelectorAll('[data-k]').forEach(b => b.onclick = () => { const v = ult[+b.dataset.k]; L.push({ nombre: v.producto + (v.variante ? ' ' + v.variante : ''), sku: v.sku || '', vid: String(v.id), cant: 1, precio: v.precio || 0, costo: v.costo != null ? v.costo : undefined, origen: 'bsale', stock: v.total }); guardar(true); toast('✓ Agregado: ' + v.producto); });
       } catch(e){ res.innerHTML = '<div class="hint">No se pudo buscar: ' + esc(e.message) + '</div>'; }
     }, 380);
   };
 }
 function editarItem(n, L, i, listo){
-  const x = L[i], adm = !esPiso();
+  const x = L[i], adm = !pisoLimitado();
   const m = modal('Detalle del producto', '<label class="l" style="margin-top:0">Producto</label><input type="text" id="ie_n" value="' + esc(x.nombre) + '">' +
     '<div class="ie-g"><div><label class="l">Cantidad</label><input type="text" inputmode="numeric" id="ie_c" value="' + (x.cant || 1) + '"></div><div><label class="l">Precio unitario (con IVA)</label><input type="text" inputmode="numeric" id="ie_p" value="' + (x.precio ? numCL(x.precio) : '') + '"></div>' + (adm ? '<div><label class="l">Costo unitario (neto)</label><input type="text" inputmode="numeric" id="ie_k" value="' + (x.costo != null && x.costo !== '' ? numCL(x.costo) : '') + '" placeholder="Opcional"></div>' : '') + '</div>' +
     '<label class="l">Origen</label><div class="seg" id="ie_o">' + ['bsale', 'manual', 'encargo'].map(o => '<button type="button" class="pill' + ((x.origen || 'manual') === o ? ' on' : '') + '" data-o="' + o + '">' + ORIG_TX[o] + '</button>').join('') + '</div>' +
@@ -7359,7 +7362,7 @@ function dealTab(n, a, tab){
       '<label class="l">Valor estimado ($)</label><input type="text" id="ng_v" inputmode="numeric" value="' + (n.valor ? Math.round(n.valor).toLocaleString('es-CL') : '') + '">' +
       '<label class="l">Cierre esperado</label><input type="date" id="ng_ci" value="' + esc(n.cierre) + '">' +
       '<label class="l">Notas</label><textarea class="note" id="ng_n">' + esc(n.notas) + '</textarea><div class="btns"><button class="btn" id="dx_save">Guardar cambios</button></div>' +
-      (extNivel() >= 33 && !esPiso() ? '<div class="btns" style="margin-top:14px"><button class="btn sm sec bad" id="dx_del">🗑 Eliminar negociación (duplicada o por error)</button></div>' : '');
+      (extNivel() >= 33 && !pisoLimitado() ? '<div class="btns" style="margin-top:14px"><button class="btn sm sec bad" id="dx_del">🗑 Eliminar negociación (duplicada o por error)</button></div>' : '');
     const dDel = $('#dx_del'); if (dDel) dDel.onclick = async () => {
       if (!confirm('¿Eliminar «' + n.titulo + '»? Úsalo para duplicados o errores; si la venta se cayó, márcala como Perdida.')) return;
       dDel.disabled = true;
@@ -7615,7 +7618,7 @@ function kcardHTML(n, a, opt){
     return '<div class="kcard kc5' + (alerta ? ' alert' : '') + age + '" data-neg="' + esc(n.id) + '"' + (opt.drag ? ' draggable="true"' : '') + '>' +
       (opt.etapa ? '<div class="ks"><span class="dot" style="background:' + a.e.c + '"></span>' + esc(n.etapa) + '</div>' : '') +
       '<div class="kc5-h">' + avTenue(nombre) + '<div class="kc5-n"><div class="nm">' + esc(nombre) + '</div>' + (sub && sub !== nombre ? '<div class="pr">' + esc(sub) + '</div>' : '') + '</div></div>' +
-      (n.valor && !esPiso() ? '<div class="kc5-v">' + clp(n.valor) + ((n.items || []).length > 1 ? '<small class="kc5-ni"> · ' + n.items.length + ' productos</small>' : '') + '</div>' : '') +
+      (n.valor && !pisoLimitado() ? '<div class="kc5-v">' + clp(n.valor) + ((n.items || []).length > 1 ? '<small class="kc5-ni"> · ' + n.items.length + ' productos</small>' : '') + '</div>' : '') +
       (linea ? '<div class="kf' + (alerta ? ' bad' : '') + '">' + icon(alerta ? 'bolt' : a.abierta ? 'arrow' : 'check') + '<span class="ktx">' + esc(linea) + '</span></div>' : '') +
       (a.abierta ? '<div class="kc5-f"><span title="Días en esta etapa">' + icon('clock') + a.dEtapa + ' d en etapa</span><span class="kp" data-info="prob" data-ref="' + esc(n.id) + '">' + Math.round(a.prob * 100) + '%</span></div>' : '') +
       (opt.mv && i >= 0 ? '<div class="mv mob-only">' + (i > 0 ? '<button data-nmv="' + esc(n.id) + '" data-k="' + esc(ETAPAS[i - 1].k) + '">◀ ' + ETAPAS[i - 1].corto + '</button>' : '<span></span>') + '<button data-nmv="' + esc(n.id) + '" data-k="' + esc(i < ETAPAS.length - 1 ? ETAPAS[i + 1].k : 'Ganada') + '">' + (i < ETAPAS.length - 1 ? ETAPAS[i + 1].corto + ' ▶' : 'Ganada ▶') + '</button></div>' : opt.mv && (n.etapa === 'Ganada' || n.etapa === 'Entregada') ? '<div class="mv mob-only"><span></span><button data-nmv="' + esc(n.id) + '" data-k="' + (n.etapa === 'Ganada' ? 'Entregada">✅ Entregada ▶' : 'Postventa">Postventa ▶') + '</button></div>' : '') + '</div>';
@@ -7694,8 +7697,8 @@ function origenNegHTML(){
   const L = Object.entries(G).filter(([k, g]) => g.ga.length + g.pe + g.ab > 0).sort((a, b) => b[1].ga.length - a[1].ga.length || b[1].ab - a[1].ab);
   if (L.length < 2) return '';
   const fila = ([k, g]) => { const t = g.ga.length + g.pe ? Math.round(g.ga.length / (g.ga.length + g.pe) * 100) + '%' : '–', tk = g.ga.length ? clpCorto(g.ga.reduce((s, n) => s + (n.valor || 0), 0) / g.ga.length) : '–', ci = g.ga.map(n => diffDays(n.creada || fechaCierre(n), fechaCierre(n))).filter(x => x >= 0), cd = ci.length ? Math.round(ci.reduce((s, x) => s + x, 0) / ci.length) + ' d' : '–';
-    return '<tr><td><b>' + esc(k) + '</b></td><td>' + g.ab + '</td><td>' + g.ga.length + '</td><td>' + t + '</td>' + (esPiso() ? '' : '<td>' + tk + '</td>') + '<td>' + cd + '</td></tr>'; };
-  return card('De dónde vienen las ventas', '🧭', '<table class="org-t"><tr><th>Origen</th><th>Abiertas</th><th>Ganadas</th><th>Cierre</th>' + (esPiso() ? '' : '<th>Ticket</th>') + '<th>Días</th></tr>' + L.map(fila).join('') + '</table><div class="hint">Cierre = ganadas sobre cerradas (sin archivadas). Días = desde que se abrió hasta que se ganó.</div>');
+    return '<tr><td><b>' + esc(k) + '</b></td><td>' + g.ab + '</td><td>' + g.ga.length + '</td><td>' + t + '</td>' + (pisoLimitado() ? '' : '<td>' + tk + '</td>') + '<td>' + cd + '</td></tr>'; };
+  return card('De dónde vienen las ventas', '🧭', '<table class="org-t"><tr><th>Origen</th><th>Abiertas</th><th>Ganadas</th><th>Cierre</th>' + (pisoLimitado() ? '' : '<th>Ticket</th>') + '<th>Días</th></tr>' + L.map(fila).join('') + '</table><div class="hint">Cierre = ganadas sobre cerradas (sin archivadas). Días = desde que se abrió hasta que se ganó.</div>');
 }
 function oportunidadesHTML(){
   const O = oportunidadesNeg(); if (!O.length) return '';
@@ -8630,7 +8633,7 @@ function modoEnfoque(){
     const k = lista[i], c = k.c, g = c ? agenteDe(c.id) : {}, n = k.neg && k.neg.n, tel = c ? telWA(c) : '';
     // Teléfono a la vista (también el de los chats sin ficha completa), para buscarlo en WhatsApp o en Bsale.
     const crudo = c ? String(c.telefono || (/^wa:(\+?\d{8,15})$/.exec(c.id) || [])[1] || '').replace(/[^\d+]/g, '') : '', fono = crudo ? (/^\+?56(9)(\d{4})(\d{4})$/.test(crudo) ? crudo.replace(/^\+?56(9)(\d{4})(\d{4})$/, '+56 $1 $2 $3') : crudo) : '';
-    const chips = [k.resp ? '<span class="md-ch r">Espera respuesta</span>' : '', n ? '<span class="md-ch n">' + esc(n.etapa) + (n.valor && !esPiso() ? ' · ' + clpCorto(n.valor) : '') + '</span>' : '', k.tareas.length ? '<span class="md-ch t">' + k.tareas.length + (k.tareas.length === 1 ? ' tarea' : ' tareas') + '</span>' : ''].join('');
+    const chips = [k.resp ? '<span class="md-ch r">Espera respuesta</span>' : '', n ? '<span class="md-ch n">' + esc(n.etapa) + (n.valor && !pisoLimitado() ? ' · ' + clpCorto(n.valor) : '') + '</span>' : '', k.tareas.length ? '<span class="md-ch t">' + k.tareas.length + (k.tareas.length === 1 ? ' tarea' : ' tareas') + '</span>' : ''].join('');
     box.innerHTML = '<div class="md-top"><span>' + (presupuesto ? presupuesto + ' min' : 'Foco del día') + ' · ≈ ' + minRest() + ' min restantes</span><span>' + (i + 1) + ' de ' + lista.length + '</span></div><div class="pb"><i style="width:' + (i / lista.length * 100) + '%"></i></div>' +
       (i === 0 && Q.fuera.length && extNivel() < 56 ? '<div class="md-aviso">' + icon('flag') + '<span>Hay <b>' + Q.fuera.length + '</b> tareas del equipo, de proveedores o de contactos silenciados. Ya no aparecen aquí.</span><button class="btn sm sec" id="mdLimp">Archivarlas</button></div>' : '') +
       '<div class="md-card"><div class="md-h">' + (c ? avatar(c, 44) : '<span class="md-ic">' + icon(k.tareas.length ? 'check' : 'deal') + '</span>') + '<div class="grow"><b>' + esc(nombre(k)) + '</b>' + (fono ? '<button class="md-tel" id="mdTel" title="Copiar el número">' + icon('phone') + esc(fono) + '<small>copiar</small></button>' : '') + '<div class="md-chs">' + chips + '</div></div>' +
@@ -8699,14 +8702,14 @@ function modoEnfoque(){
 /* ---------- Empezar de cero: archiva tareas viejas y limpia el pipeline (con vista previa y selección) ---------- */
 async function empezarDeCero(opt){
   opt = opt || {}; const soloNeg = !!opt.soloNeg;
-  if (esPiso() && !soloNeg) return;
+  if (pisoLimitado() && !soloNeg) return;
   const h = hoy();
   if (!S.neg && extNivel() >= 5){ try { await loadNeg(true); } catch(e){} }
   const T = soloNeg ? [] : pendientes().filter(t => t.row != null).map(t => ({ t, on: !t.repetir && (!t.limite || t.limite <= h) }));
   // Negocios en juego: abiertos y ganados aún no entregados (los entregados salen solos del tablero después de 30 días).
   const N = (S.neg ? negocios() : []).filter(n => n.estado === 'Abierta' || n.etapa === 'Ganada');
   const AN = {}; N.forEach(n => AN[n.id] = analizar(n));
-  let umbral = esPiso() ? 0 : +(LS.reinUmbral || 1000000), dias = +(LS.reinDias || 21);
+  let umbral = pisoLimitado() ? 0 : +(LS.reinUmbral || 1000000), dias = +(LS.reinDias || 21);
   const selN = {}; const reglaN = n => n.estado === 'Abierta' && ((+n.valor || 0) < umbral || AN[n.id].dAct > dias);
   N.forEach(n => selN[n.id] = reglaN(n));
   const m = modal(soloNeg ? '🗄️ Limpiar pipeline' : '🧹 Empezar de cero', '<div id="rz"></div>', { wide: true }), box = m.el.querySelector('#rz');
@@ -8719,8 +8722,8 @@ async function empezarDeCero(opt){
       (soloNeg ? '' : '<div class="rz-s"><div class="rz-h"><b>Tareas pendientes</b><span>' + nT + ' de ' + T.length + ' se archivan</span><button class="link" data-todo="t">Todas</button><button class="link" data-nada="t">Ninguna</button></div>' +
       '<div class="rz-l">' + (T.length ? T.map((x, i) => fila('ti="' + i + '"', x.on, x.t.tarea, x.t.limite ? (x.t.limite < h ? 'Vencida · ' : '') + fmt(x.t.limite) + (x.t.repetir ? ' · se repite' : '') : 'Sin fecha', '')).join('') : '<div class="hint">No hay tareas pendientes.</div>') + '</div></div>') +
       '<div class="rz-s"><div class="rz-h"><b>Negocios</b><span>' + nN + ' se sacan · ' + quedan.length + ' quedan</span></div>' +
-      '<div class="rz-u">Salen los abiertos <b>sin movimiento hace más de</b> <input type="text" inputmode="numeric" id="rzD" class="rz-n" value="' + dias + '"> días' + (esPiso() ? '' : ' o de <b>menos de</b> <input type="text" inputmode="numeric" id="rzU" value="' + umbral.toLocaleString('es-CL') + '">') + '. Los ganados por entregar se quedan.</div>' +
-      '<div class="rz-l">' + (N.length ? N.slice().sort((a, b) => (selN[b.id] ? 0 : 1) - (selN[a.id] ? 0 : 1) || AN[b.id].dAct - AN[a.id].dAct).map(n => fila('ni="' + esc(n.id) + '"', selN[n.id], nomN(n), (n.producto || n.titulo || '') + ' · ' + n.etapa + ' · ' + (AN[n.id].dAct ? 'sin movimiento hace ' + AN[n.id].dAct + ' d' : 'movida hoy'), esPiso() ? '' : n.valor ? clpCorto(n.valor) : '<i>sin monto</i>')).join('') : '<div class="hint">No hay negocios abiertos.</div>') + '</div></div>' +
+      '<div class="rz-u">Salen los abiertos <b>sin movimiento hace más de</b> <input type="text" inputmode="numeric" id="rzD" class="rz-n" value="' + dias + '"> días' + (pisoLimitado() ? '' : ' o de <b>menos de</b> <input type="text" inputmode="numeric" id="rzU" value="' + umbral.toLocaleString('es-CL') + '">') + '. Los ganados por entregar se quedan.</div>' +
+      '<div class="rz-l">' + (N.length ? N.slice().sort((a, b) => (selN[b.id] ? 0 : 1) - (selN[a.id] ? 0 : 1) || AN[b.id].dAct - AN[a.id].dAct).map(n => fila('ni="' + esc(n.id) + '"', selN[n.id], nomN(n), (n.producto || n.titulo || '') + ' · ' + n.etapa + ' · ' + (AN[n.id].dAct ? 'sin movimiento hace ' + AN[n.id].dAct + ' d' : 'movida hoy'), pisoLimitado() ? '' : n.valor ? clpCorto(n.valor) : '<i>sin monto</i>')).join('') : '<div class="hint">No hay negocios abiertos.</div>') + '</div></div>' +
       (soloNeg ? '' : '<div class="rz-s"><label class="rz-f"><input type="checkbox" id="rzE" checked><span class="rz-t"><b>Dejar al día los mensajes anteriores a hoy</b><small>' + (esp ? esp + ' clientes aparecen esperando respuesta por mensajes viejos. ' : '') + 'Desde hoy solo cuentan los mensajes nuevos y lo que anoten.</small></span></label></div>') +
       '<div class="btns"><button class="btn sec" id="rzX">Cancelar</button><button class="btn" id="rzOk"' + (nT + nN ? '' : ' disabled') + '>' + (soloNeg ? 'Archivar ' + nN + ' negocios' : 'Limpiar ' + nT + ' tareas y ' + nN + ' negocios') + '</button></div>';
     const $b = q => box.querySelector(q);
@@ -9982,7 +9985,7 @@ function dashCompras(){
     ] };
 }
 function dashNeg(){
-  if (!S.neg || esPiso()) return null;   // el Piso de venta no ve el resumen en pesos
+  if (!S.neg || pisoLimitado()) return null;   // el Piso de venta no ve el resumen en pesos
   const m = metricasNeg(), A = abiertos(), aten = m.an.filter(x => requiereAtencion(x.a)).sort((x, y) => y.a.prioridad - x.a.prioridad);
   const seg = ETAPAS.map((e, i) => { const v = A.filter(n => n.etapa === e.k).reduce((s, n) => s + (n.valor || 0), 0); return { l: e.corto, v, t: v ? clpCorto(v) : '–', c: SEQ[i] }; });
   return { ic: 'deal', t: 'Resumen de ventas', intro: 'Cuánto hay en juego, en qué etapa está cada venta y cuáles necesitan un empujón.',
